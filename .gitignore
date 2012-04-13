@@ -1,0 +1,12 @@
+*.orig
+*.cache
+*.swp
+.rbenv-version
+README.html
+runner.filter.html
+runner.html
+test.html
+test_templates.html
+tags
+.jhw-cache/
+vendor/

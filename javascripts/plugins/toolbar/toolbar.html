@@ -1,0 +1,140 @@
+<!-- METHOD 1 -->
+<div id="toolbar_template">
+  <div class="toolbar">
+    {{#button_groups}}
+      <div class="group">
+        {{#buttons}}
+          {{html}}
+        {{/buttons}}
+      </div>
+    {{/button_groups}}
+  </div>
+</div>
+
+<div id="toolbar_button_template">
+  <input type="button" class="toolbar-button {{classname}}" title="{{title}}" data-event="{{event}}" />
+</div>
+
+<div id="contextmenu_template">
+  <div class="contextmenu">
+    {{#item_groups}}
+      {{#items}}
+        {html}
+      {{/items}}
+      <div class="separator"></div>
+    {{/item_groups}}
+  </div>
+</div>
+
+<div id="contextmenu_item_template">
+  <div class="contextmenu-item {{classname}}" data-event="{{event}}">{{content}}</div>
+</div>
+
+<script>
+  var embedPlugin = {
+    register: function (api) {
+      this.api = api;
+    },
+
+    getDefaultToolbar: function () { 
+      "Embed"
+    },
+    getToolbar: function () {
+      return {
+        "Embed": function() {},
+        "Embed.Insert": function () { return "<input data-event='insertembed'></input>"; }
+      }
+    },
+    getToolbarActions: function () {
+      return {
+        insertembed: function () { alert('Hello'); }
+      }
+    },
+
+    handleEmbed: function () {}
+  };
+
+  var editor = new SnapEditor({
+    assets: {
+      template: "/editor/assets/editor.html",
+      css: "/editor/assets/editor.css"
+    },
+    image: {
+      maxSize: [640, 480],
+      urlBase: "/user/123456/images",
+      uploadPath: "upload",
+      resizePath: "resize"
+    },
+    plugins: [embedPlugin],
+
+    toolbar: [
+      "Bold", "Italic", "-", "Underline", "|", 
+      "H1", "H2", "H3", "|", 
+      "Image", "Link", "Table", "|", 
+      "Embed", "Center"
+    ],
+    contextmenu: {
+      table: ["AddRow", "DeleteRow"],
+      embed: ["Embed"]
+    },
+    plugins: [undoPlugin]
+  });
+</script>
+
+<!-- METHOD 2 -->
+<div id="toolbar_template">
+  <div class="toolbar">
+    <div class="group">
+      <input type="button" class="toolbar-button bold" title="Bold (Ctrl+B)" data-event="bold" />
+      <input type="button" class="toolbar-button italic" title="Italic (Ctrl+I)" data-event="italic" />
+      <span class="gap"></span>
+      <input type="button" class="toolbar-button underline" title="Underline (Ctrl+U)" data-event="underline" />
+    </div>
+    <div class="break"></div>
+    <div class="group">
+      <input type="button" class="toolbar-button h1" title="H1 (Ctrl+1)" data-event="h1" />
+      <input type="button" class="toolbar-button h2" title="H2 (Ctrl+2)" data-event="h2" />
+      <input type="button" class="toolbar-button h3" title="H3 (Ctrl+3)" data-event="h3" />
+    </div>
+    <div class="group">
+      <div class="image_slider"><div class="knob"></div></div>
+      <input type="button" class="toolbar-button link" title="Link (Ctrl+K)" data-event="link" />
+      <input type="button" class="toolbar-button table" title="Add Table (Ctrl+Shift+T)" data-event="addtable" />
+    </div>
+    <div class="group">
+      <input type="button" class="toolbar-button embed" title="Embed (Ctrl+M)" data-event="embed" />
+      <input type="button" class="toolbar-button center" title="Embed (Ctrl+E)" data-event="center" />
+    </div>
+  </div>
+</div>
+
+<div id="contextmenu_template">
+  <div class="contextmenu">
+</div>
+
+<script>
+  var embedPlugin = {
+    register: function(api) {
+      this.api = api;
+      this.api.on("embed.toolbar", this.handleEmbed)
+      this.api.on("embed.contextmenu", this.handleEmbed)
+    },
+    handleEmbed: function() {}
+  };
+  var editor = new SnapEditor({
+    assets: {
+      template: "/editor/assets/editor.html",
+      css: "/editor/assets/editor.css"
+    },
+    plugins: [
+      embedPlugin,
+      ["Image", {
+        id: "image_slider",
+        size: [640, 480],
+        urlBase: "/user/123456/images",
+        uploadPath: "upload",
+        resizePath: "resize"
+      }]
+    ],
+  });
+</script>
