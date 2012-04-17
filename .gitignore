@@ -2,11 +2,10 @@
 *.cache
 *.swp
 .rbenv-version
+hardcopy.*
 README.html
 runner.filter.html
 runner.html
-test.html
-test_templates.html
 tags
 .jhw-cache/
 vendor/
