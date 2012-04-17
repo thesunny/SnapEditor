@@ -61,6 +61,30 @@ define ["cs!jquery.custom"], ($) ->
       for key, value of module
         klass.prototype[key] = value
 
+    # Delegate the fns from object to del.
+    # del:
+    #   A string that corresponds to the key to access the delegate from the
+    #   object.
+    #   If the delegate is a function, the string can end in "()".
+    # fns:
+    #   Strings to represent the functions to delegate.
+    delegate: (object, del, fns...) ->
+      # Check to see if the delegate is a function.
+      isDelFn = del.slice(-2) == "()"
+      del = del.substring(0, del.length-2) if isDelFn
+
+      # A separate function is needed because the for loop does not create a
+      # new scope.
+      delFn = (object, del, fn) ->
+        object[fn] = ->
+          delObject = object[del]
+          delObject = delObject.apply(object) if isDelFn
+          delObject[fn](arguments...)
+      for fn in fns
+        throw "Delegate: #{fn} is already defined on #{object}" if typeof object[fn] != "undefined"
+        throw "Delegate: #{del} does not exist on #{object}" if typeof object[del] == "undefined"
+        delFn(object, del, fn)
+
     # Keyboard key mappings taken from MooTools.
     keys:
       enter: 13,

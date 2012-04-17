@@ -94,6 +94,62 @@ describe "helpers", ->
       expect(test.moduleKey).toEqual("module value")
       expect(test.moduleFn()).toEqual("module")
 
+  describe "#delegate", ->
+    ait "throws an error if the function is defined", required, (Helpers) ->
+      object = delFn1: ->
+      expect(-> Helpers.delegate(object, "delObject", "delFn1")).toThrow()
+
+    ait "throws an error if the delegate does not exist", required, (Helpers) ->
+      object = {}
+      expect(-> Helpers.delegate(object, "doesNotExist", "delFn1")).toThrow()
+
+    ait "delegates the functions to the delegate object", required, (Helpers) ->
+      delFn1Value = delFn2Value = false
+      object =
+        delObject:
+          delFn1: -> delFn1Value = true
+          delFn2: -> delFn2Value = true
+      Helpers.delegate(object, "delObject", "delFn1", "delFn2")
+      object.delFn1()
+      expect(delFn1Value).toBeTruthy()
+      object.delFn2()
+      expect(delFn2Value).toBeTruthy()
+
+    ait "delegates the functions to the delegate function", required, (Helpers) ->
+      delFn1Value = false
+      object = delFn: -> delFn1: -> delFn1Value = true
+      Helpers.delegate(object, "delFn()", "delFn1")
+      object.delFn1()
+      expect(delFn1Value).toBeTruthy()
+
+    ait "passes arguments through", required, (Helpers) ->
+      arg1 = false
+      arg2 = ""
+      object = delObject: delFn: (a, b) -> arg1 = a and arg2 = b
+      Helpers.delegate(object, "delObject", "delFn")
+      object.delFn(true, "passed")
+      expect(arg1).toBeTruthy()
+      expect(arg2).toEqual("passed")
+
+    ait "binds the delegate function to the object", required, (Helpers) ->
+      object =
+        value: false
+        delFn: ->
+          @value = true
+          return delFn1: ->
+      Helpers.delegate(object, "delFn()", "delFn1")
+      object.delFn1()
+      expect(object.value).toBeTruthy()
+
+    ait "binds the delegated function to the delegate object", required, (Helpers) ->
+      object =
+        delObject:
+          value: false
+          delFn1: -> @value = true
+      Helpers.delegate(object, "delObject", "delFn1")
+      object.delFn1()
+      expect(object.delObject.value).toBeTruthy()
+
   describe "#keyOf", ->
     event = null
     beforeEach ->

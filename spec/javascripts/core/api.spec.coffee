@@ -41,11 +41,3 @@ describe "API", ->
       api = new API(editor)
       range = api.range($td[0])
       expect(range.getParentElement("tr")).not.toBeNull()
-
-  describe "#select", ->
-    ait "selects the given element", required, (API, Range) ->
-      api = new API(editor)
-      api.select($td[0])
-
-      range = new Range($editable[0], window)
-      expect(range.getParentElement("tr")).not.toBeNull()
