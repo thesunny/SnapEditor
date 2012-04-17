@@ -10,3 +10,4 @@ test_templates.html
 tags
 .jhw-cache/
 vendor/
+build/snapeditor.js
