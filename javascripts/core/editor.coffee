@@ -20,8 +20,10 @@ define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugi
       @loadCSS()
 
     loadTemplates: ->
-      $.ajax(url: @config.assets.templates, async: false, success: (html) =>
-        @$templates = $("<div/>").html(html)
+      $.ajax(
+        url: @config.assets.templates,
+        async: false,
+        success: (html) => @$templates = $("<div/>").html(html)
       )
 
     loadCSS: ->
@@ -56,8 +58,13 @@ define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugi
       @api.trigger("activate.editor")
       @api.trigger("ready.editor")
 
+    deactivate: ->
+      @api.trigger("deactivate.editor")
+
     update: ->
+      @api.trigger("update.editor")
 
     contents: ->
+      @$el.html()
 
   return Editor
