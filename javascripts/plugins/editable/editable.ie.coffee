@@ -1,7 +1,7 @@
-define ["cs!jquery.custom", "cs!core/range"], ($, Range) ->
+define ["cs!core/range"], (Range) ->
   return {
     start: ->
-      $(@api.el).attr("contentEditable", true)
+      @api.el.contentEditable = true
       # IE includes annoying image resize handlers that cannot be removed.
       # Instead, we prevent any resizing from happening by preventing the
       # event.
@@ -10,7 +10,7 @@ define ["cs!jquery.custom", "cs!core/range"], ($, Range) ->
       # JavaScript or it will not work.
       @api.el.attachEvent("onresizestart", @preventResize)
 
-    finishBrowser: () ->
+    deactivateBrowser: () ->
       @api.el.detachEvent("onresizestart", @preventResize)
 
     preventResize: (e) ->

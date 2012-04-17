@@ -29,17 +29,16 @@ define ["cs!jquery.custom", "cs!core/browser", "cs!core/helpers", "cs!core/event
       #@api.trigger("click.activate", $(e.target).tagName() == "img")
       @api.trigger("click.activate")
 
-    # Activates the editing session including setting it up if it is the first
-    # time.
+    # Activates the editing session.
     activate: ->
       @api.activate()
-      @api.on("finish.editor", @finish)
+      @api.on("deactivate.editor", @deactivate)
 
-    # Finishes the editing session.
-    finish: =>
-      @api.off("finish.editor", @finish)
-      # TODO: remove this once editable is listening to finish.editor
-      #@editable.finish()
+    # Deactivates the editing session.
+    deactivate: =>
+      @api.off("deactivate.editor", @deactivate)
+      # TODO: remove this once editable is listening to deactivate.editor
+      #@editable.deactivate()
       @addActivateEvents()
 
     # True if el is a link or is inside a link. False otherwise.

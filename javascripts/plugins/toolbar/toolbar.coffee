@@ -55,7 +55,7 @@ define ["cs!jquery.custom", "cs!config/config.default", "cs!core/data_event_hand
 
     register: (@api) ->
       @api.on("activate.editor", @show)
-      @api.on("finish.editor", @hide)
+      @api.on("deactivate.editor", @hide)
 
     # Sets up the toolbar. Is only executed once.
     setup: ->

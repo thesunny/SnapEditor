@@ -1,7 +1,7 @@
-define ["cs!jquery.custom"], ($) ->
+define [], ->
   return {
     start: ->
-      $(@api.el).attr("contentEditable", true)
+      @api.el.contentEditable = true
       # In Gecko, we need to manually turn off the automatic image resize
       # handles that Gecko gives you. This is left in for other browsers since
       # there is no harm in doing so.

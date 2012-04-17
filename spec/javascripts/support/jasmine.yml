@@ -56,7 +56,6 @@ helpers:
 #
 spec_files:
   - "**/*[sS]pec.coffee"
-  #- "plugins/styler/styler.inline.spec.coffee"
 
 # src_dir
 #

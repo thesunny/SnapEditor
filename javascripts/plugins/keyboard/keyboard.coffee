@@ -33,7 +33,7 @@ define ["cs!jquery.custom", "cs!core/helpers"], ($, Helpers) ->
 
     register: (@api) ->
       @api.on("activate.editor", @start)
-      @api.off("finish.editor", @stop)
+      @api.off("deactivate.editor", @stop)
 
     setupPlugins: ->
       @add(plugin.getKeyboardShortcuts()) for plugin in @plugins

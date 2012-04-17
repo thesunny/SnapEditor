@@ -12,13 +12,13 @@ define ["cs!jquery.custom", "cs!core/browser", "cs!core/helpers", "cs!plugins/ed
       throw "Editable.start() needs to be overridden with a browser specific implementation"
 
     # turns editing off in the div. Includes removing the focus from the div.
-    finish: () ->
+    deactivate: () ->
       @el.contentEditable = false
       @el.blur()
-      @_finish()
+      @deactivateBrowser()
 
-    _finish: () ->
-      # Overridden
+    deactivateBrowser: () ->
+      # Overridden by browser specific implementation.
 
   Module = if Browser.isIE then IE else Others
   Helpers.include(Editable, Module)

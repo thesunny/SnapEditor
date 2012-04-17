@@ -38,30 +38,30 @@ describe "Activate", ->
       activate.activate(target: $target)
       expect(activate.api.activate).toHaveBeenCalled()
 
-    ait "listens to finish.editor", required, (Activate) ->
+    ait "listens to deactivate.editor", required, (Activate) ->
       $target = $("<div/>")
       activate = new Activate()
       activate.api = { activate: null, on: null }
       spyOn(activate.api, "activate")
       spyOn(activate.api, "on")
       activate.activate(target: $target)
-      expect(activate.api.on).toHaveBeenCalledWith("finish.editor", activate.finish)
+      expect(activate.api.on).toHaveBeenCalledWith("deactivate.editor", activate.deactivate)
 
-  describe "#finish", ->
-    ait "stops listening to finish.editor", required, (Activate) ->
+  describe "#deactivate", ->
+    ait "stops listening to deactivate.editor", required, (Activate) ->
       activate = new Activate()
       activate.api = { off: null }
       spyOn(activate.api, "off")
       spyOn(activate, "addActivateEvents")
-      activate.finish()
-      expect(activate.api.off).toHaveBeenCalledWith("finish.editor", activate.finish)
+      activate.deactivate()
+      expect(activate.api.off).toHaveBeenCalledWith("deactivate.editor", activate.deactivate)
 
     ait "adds the activate events", required, (Activate) ->
       activate = new Activate()
       activate.api = { off: null }
       spyOn(activate.api, "off")
       spyOn(activate, "addActivateEvents")
-      activate.finish()
+      activate.deactivate()
       expect(activate.addActivateEvents).toHaveBeenCalled()
 
   describe "#isLink", ->
