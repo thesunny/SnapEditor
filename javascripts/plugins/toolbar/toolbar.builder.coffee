@@ -84,8 +84,9 @@ define ["cs!jquery.custom", "cs!core/helpers", "cs!core/data_event_handler"], ($
       output = if Helpers.typeOf(renderer) == "function" then renderer() else renderer
       switch Helpers.typeOf(output)
         when "string" then return output
+        when "object" then return @buildButtons([output])
         when "array" then return @buildButtons(output)
-        else throw "Unknown toolbar format. Expecting an HTML string or an array of button objects. Please check the API. #{output}"
+        else throw "Unknown toolbar format. Expecting an HTML string, a button object, or an array of button objects. Please check the API. #{output}"
 
     buildButtons: (buttons) ->
       html = ""

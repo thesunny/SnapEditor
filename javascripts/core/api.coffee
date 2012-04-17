@@ -38,22 +38,49 @@ define ["cs!jquery.custom", "cs!core/helpers", "cs!core/events", "cs!core/range"
     # Gets the current selection if el is not given.
     # Otherwise returns the range that represents the el.
     range: (el) ->
-      if typeof el == "undefined"
-        new Range(@el, window)
-      else
-        new Range(@el, el)
+      new Range(@el, el or window)
 
     #
     # RANGE SHORTCUTS
     #
 
-    # Select the given el.
-    select: (el) ->
-      @range(el).select()
+    # QUERY RANGE STATE SHORTCUTS
+
+    # Is the selection a caret?
+    isCollapsed: ->
+      @range().isCollapsed()
 
     # Gets the coordinates of the current selection.
     getCoordinates: ->
       @range().getCoordinates()
+
+    # Gets the parent element of the current selection.
+    getParentElement: (match) ->
+      @range().getParentElement(match)
+
+    # MANIPULATE RANGE SHORTCUTS
+
+    # Select the given el.
+    select: (el) ->
+      @range(el).select()
+
+    # Select the end of the table cell.
+    selectEndOfTableCell: (cell) ->
+      @range().selectEndOfTableCell(cell)
+
+    # MODIFY RANGE SHORTCUTS
+
+    # Pastes the arg into the current selection.
+    paste: (arg) ->
+      @range().paste(arg)
+
+    # Surrounds the current selection with the given element.
+    surroundContents: (el) ->
+      @range().surroundContents(el)
+
+    # Removes the contents of the current selection.
+    remove: ->
+      @range().remove()
 
   Helpers.include(API, Events)
 

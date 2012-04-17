@@ -9,32 +9,27 @@ describe "Editor", ->
     $editable.remove()
 
   describe "#constructor", ->
+    assets = null
+    beforeEach ->
+      assets =
+        templates: "spec/javascripts/fixtures/templates.html"
+
     ait "saves the element as a jQuery element", required, (Editor) ->
-      editor = new Editor($editable[0])
+      editor = new Editor($editable[0], assets: assets)
       expect(editor.$el.attr).toBeDefined()
 
     ait "creates an API", required, (Editor) ->
-      editor = new Editor($editable[0])
+      editor = new Editor($editable[0], assets: assets)
       expect(editor.api).not.toBeNull()
 
-    ait "stores the given toolbar", required, (Editor) ->
-      editor = new Editor($editable[0], toolbar: "toolbar")
-      expect(editor.toolbarConfig).toEqual("toolbar")
-
-    ait "stores the default toolbar config if none is given", required, (Editor) ->
-      editor = new Editor($editable[0])
-      expect(editor.toolbarConfig).toBeDefined()
-      expect(editor.toolbarConfig).not.toBeNull()
-
     ait "registers the plugins", required, (Editor) ->
-      spyOn(Editor.prototype, "registerPlugins")
-      editor = new Editor($editable[0], plugins: "plugins")
-      expect(editor.registerPlugins).toHaveBeenCalled()
+      editor = new Editor($editable[0], assets: assets)
+      expect(editor.toolbarPlugins.length).toBeGreaterThan(0)
+      expect(editor.keyboardPlugins.length).toBeGreaterThan(0)
 
   describe "#addToolbarPlugin", ->
     ait "throws an error if there is no #getDefaultToolbar()", required, (Editor) ->
-      plugin = {
+      plugin =
         register: (api) ->,
         getToolbar: -> TestButton: "html"
-      }
       expect(-> new Editor($editable[0], plugins: [plugin])).toThrow()

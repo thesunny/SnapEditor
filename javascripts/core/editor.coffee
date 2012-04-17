@@ -1,5 +1,8 @@
-define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugins/toolbar/toolbar"], ($, API, Default, Toolbar) ->
+define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugins/toolbar/toolbar", "cs!plugins/keyboard/keyboard"], ($, API, Default, Toolbar, Keyboard) ->
   class Editor
+    toolbarPlugins: []
+    keyboardPlugins: []
+
     # Options:
     # * assets: an object that holds urls to assets
     #   * templates: the url of the HTML templates
@@ -9,10 +12,29 @@ define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugi
     constructor: (el, @config = {}) ->
       @$el = $(el)
       @api = new API(this)
-      @toolbarConfig = @config.toolbar or Default.toolbar
+      @loadAssets()
+      @setupPlugins()
+
+    loadAssets: ->
+      @loadTemplates()
+      @loadCSS()
+
+    loadTemplates: ->
+      $.ajax(url: @config.assets.templates, async: false, success: (html) =>
+        @$templates = $("<div/>").html(html)
+      )
+
+    loadCSS: ->
+      if @config.assets.css
+        $("<link href=\"#{@config.assets.css}\" rel=\"stylesheet\" type=\"text/css\">").appendTo("head")
+
+    setupPlugins: ->
       # All the available toolbar buttons will be squeezed into a single object.
-      @toolbarPlugins = []
       @registerPlugins(Default.plugins.concat(@config.plugins or []))
+      # Register the toolbar and keyboard after all the other plugins.
+      @toolbar = new Toolbar(@toolbarPlugins, @$templates, @config.toolbar or Default.toolbar)
+      @keyboard = new Keyboard(@keyboardPlugins, "keydown", @$el)
+      @registerPlugins([@toolbar, @keyboard])
 
     registerPlugins: (plugins) ->
       @registerPlugin(plugin) for plugin in plugins
@@ -20,26 +42,18 @@ define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugi
     registerPlugin: (plugin) ->
       plugin.register(@api)
       @addToolbarPlugin(plugin) if plugin.getToolbar
-      # TODO: contextmenu, keyboard
+      @addKeyboardPlugin(plugin) if plugin.getKeyboardShortcuts
+      # TODO: contextmenu
 
     addToolbarPlugin: (plugin) ->
       throw "The toolbar plugin is missing a default" unless plugin.getDefaultToolbar
       @toolbarPlugins.push(plugin)
 
-    getTemplates: ->
-      unless @$templates
-        $.ajax(url: @config.assets.templates, async: false, success: (html) =>
-          @$templates = $("<div/>").html(html)
-        )
-      return @$templates
-
-    setupToolbar: ->
-      @toolbar = new Toolbar(@toolbarPlugins, @getTemplates(), @toolbarConfig)
-      @toolbar.register(@api)
+    addKeyboardPlugin: (plugin) ->
+      @keyboardPlugins.push(plugin)
 
     activate: ->
       @api.trigger("activate.editor")
-      @setupToolbar()
       @api.trigger("ready.editor")
 
     update: ->

@@ -25,8 +25,6 @@
 # paste(arg): pastes the given node or html
 # surroundContents(el): surrounds the range with the given el
 # remove: removes the contents of the range
-# bold: selects and bolds the range
-# italic: selects and italicizes the range
 #
 # Range Intro from QuirksMode:
 # http://www.quirksmode.org/dom/range_intro.html

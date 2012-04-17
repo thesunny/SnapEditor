@@ -1,4 +1,4 @@
-define ["cs!jquery.custom", "cs!core/browser"], ($, Browser) ->
+define ["cs!jquery.custom"], ($) ->
   return {
     start: ->
       $(@api.el).attr("contentEditable", true)

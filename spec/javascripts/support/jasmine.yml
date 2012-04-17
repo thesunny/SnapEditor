@@ -55,8 +55,8 @@ helpers:
 #   - **/*[sS]pec.js
 #
 spec_files:
-  #- "**/*[sS]pec.coffee"
-  - "plugins/toolbar/toolbar.displayer.floating.spec.coffee"
+  - "**/*[sS]pec.coffee"
+  #- "plugins/styler/styler.inline.spec.coffee"
 
 # src_dir
 #

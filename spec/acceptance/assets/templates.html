@@ -1,0 +1,18 @@
+<div id="snapeditor_toolbar_template">
+  <div class="toolbar">
+    {{#buttonGroups}}
+      {{#buttons}}
+        {{{html}}}
+      {{/buttons}}
+      |
+    {{/buttonGroups}}
+  </div>
+</div>
+
+<div id="snapeditor_toolbar_button_template">
+  <input type="button" title="{{title}}" data-event="{{event}}" value="{{title}}" />
+</div>
+
+<div id="snapeditor_toolbar_button_gap_template">
+  -
+</div>
