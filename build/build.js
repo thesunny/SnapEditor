@@ -1,6 +1,7 @@
 ({
   baseUrl: "../javascripts",
   paths: {
+    "CoffeeScript": "../lib/coffee-script",
     "cs": "../lib/cs"
   },
   pragmasOnSave: {

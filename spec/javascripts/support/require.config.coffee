@@ -1,4 +1,4 @@
 require.config
   baseUrl: "javascripts",
   paths:
-    "cs": "../lib/cs",
+    "CoffeeScript": "../lib/coffee-script"
