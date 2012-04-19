@@ -22,10 +22,10 @@ define ["cs!jquery.custom", "cs!core/helpers", "cs!core/events", "cs!core/range"
   class API
     constructor: (@editor) ->
       @el = @editor.$el[0]
-      Helpers.delegate(this, "editor", "contents", "activate", "update")
+      Helpers.delegate(this, "editor", "contents", "activate", "deactivate", "update")
       Helpers.delegate(this, "range()",
         "isCollapsed", "isImageSelected", "getCoordinates", "getParentElement",
-        "collapse", "select", "unselect", "selectEndOfTableCell",
+        "collapse", "unselect", "selectEndOfTableCell",
         "paste", "surroundContents", "remove"
       )
 
@@ -33,6 +33,12 @@ define ["cs!jquery.custom", "cs!core/helpers", "cs!core/events", "cs!core/range"
     # Otherwise returns the range that represents the el.
     range: (el) ->
       new Range(@el, el or window)
+
+    # Select the given el. If no el is given, selects the current selection.
+    # NOTE: This is not directly delegated to the Range object because it is
+    # slightly different. This takes a given element and selects it.
+    select: (el) ->
+      @range(el).select()
 
   Helpers.include(API, Events)
 

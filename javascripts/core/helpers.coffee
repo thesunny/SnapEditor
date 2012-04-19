@@ -75,7 +75,7 @@ define ["cs!jquery.custom"], ($) ->
 
       # A separate function is needed because the for loop does not create a
       # new scope.
-      delFn = (object, del, fn) ->
+      delFn = (object, fn) ->
         object[fn] = ->
           delObject = object[del]
           delObject = delObject.apply(object) if isDelFn
@@ -83,7 +83,7 @@ define ["cs!jquery.custom"], ($) ->
       for fn in fns
         throw "Delegate: #{fn} is already defined on #{object}" if typeof object[fn] != "undefined"
         throw "Delegate: #{del} does not exist on #{object}" if typeof object[del] == "undefined"
-        delFn(object, del, fn)
+        delFn(object, fn)
 
     # Keyboard key mappings taken from MooTools.
     keys:
