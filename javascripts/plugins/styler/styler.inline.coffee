@@ -5,10 +5,10 @@ define ["cs!jquery.custom", "cs!core/browser"], ($, Browser) ->
     getDefaultToolbar: ->
       "Inline"
 
-    getToolbar: ->
-      bold = "class": "bold-button", title: "Bold (Ctrl+B)", event: "bold"
-      italic = "class": "italic-button", title: "Italic (Ctrl+I)", event: "italic"
-      link = "class": "link-button", title: "Link (Ctrl+K)", event: "link"
+    getToolbar: (ui) ->
+      bold = ui.button(action: "bold", attrs: { class: "bold-button", title: "Bold (Ctrl+B)" })
+      italic = ui.button(action: "italic", attrs: { class: "italic-button", title: "Italic (Ctrl+I)" })
+      link = ui.button(action: "link", attrs: { class: "link-button", title: "Insert Link (Ctrl+K)" })
       return {
         Inline: [bold, italic, link]
         Bold: bold,

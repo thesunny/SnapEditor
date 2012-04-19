@@ -10,19 +10,19 @@ define ["cs!jquery.custom", "cs!core/browser", "cs!core/helpers"], ($, Browser, 
     getDefaultToolbar: ->
       "Block"
 
-    getToolbar: ->
-      p = "class": "p-button", title: "Paragraph (Ctrl+Space)", event: "p"
-      h1 = "class": "h1-button", title: "H1 (Ctrl+1)", event: "h1"
-      h2 = "class": "h2-button", title: "H2 (Ctrl+2)", event: "h2"
-      h3 = "class": "h3-button", title: "H3 (Ctrl+3)", event: "h3"
-      alignLeft = "class": "alignleft-button", title: "Align Left (Ctrl+L)", event: "alignleft"
-      alignCenter = "class": "aligncenter-button", title: "Align Center (Ctrl+E)", event: "aligncenter"
-      alignRight = "class": "alignright-button", title: "Align Right (Ctrl+R)", event: "alignright"
-      unorderedList = "class": "unorderedlist-button", title: "Bullet List (Ctrl+8)", event: "unorderedlist"
-      orderedList = "class": "orderedlist-button", title: "Numbered List (Ctrl+7)", event: "orderedlist"
-      indent = "class": "indent-button", title: "Indent", event: "indent"
-      outdent = "class": "outdent-button", title: "Outdent", event: "outdent"
-      table = "class": "table-button", title: "Insert Table (Ctrl+Shift+T)", event: "table"
+    getToolbar: (ui) ->
+      p = ui.button(action: "p", attrs: {class: "p-button", title: "Paragraph (Ctrl+Space)"})
+      h1 = ui.button(action: "h1", attrs: {class: "h1-button", title: "H1 (Ctrl+1)"})
+      h2 = ui.button(action: "h2", attrs: {class: "h2-button", title: "H2 (Ctrl+2)"})
+      h3 = ui.button(action: "h3", attrs: {class: "h3-button", title: "H3 (Ctrl+3)"})
+      alignLeft = ui.button(action: "alignleft", attrs: {class: "alignleft-button", title: "Align Left (Ctrl+L)"})
+      alignCenter = ui.button(action: "aligncenter", attrs: {class: "aligncenter-button", title: "Align Center (Ctrl+E)"})
+      alignRight = ui.button(action: "alignright", attrs: {class: "alignright-button", title: "Align Right (Ctrl+R)"})
+      unorderedList = ui.button(action: "unorderedlist", attrs: {class: "unorderedlist-button", title: "Bullet List (Ctrl+8)"})
+      orderedList = ui.button(action: "orderedlist", attrs: {class: "orderedlist-button", title: "Numbered List (Ctrl+7)"})
+      indent = ui.button(action: "indent", attrs: {class: "indent-button", title: "Indent"})
+      outdent = ui.button(action: "outdent", attrs: {class: "outdent-button", title: "Outdent"})
+      table = ui.button(action: "table", attrs: {class: "table-button", title: "Insert Table (Ctrl+Shift+T)"})
       return {
         Block: [p, h1, h2, h3, alignLeft, alignCenter, alignRight, unorderedList, orderedList, indent, outdent, table],
         P: p,

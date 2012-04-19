@@ -44,40 +44,41 @@
 #     "Left, "Center", "Right", "|",
 #     "Image", "Link", "Table", "|"
 #   ]
-define ["cs!jquery.custom", "cs!config/config.default", "cs!core/data_event_handler", "cs!plugins/toolbar/toolbar.builder", "cs!plugins/toolbar/toolbar.displayer.floating"], ($, Default, DataEventHandler, Builder, FloatingDisplayer) ->
+define ["cs!jquery.custom", "cs!core/data_action_handler", "cs!plugins/toolbar/toolbar.ui", "cs!plugins/toolbar/toolbar.builder"], ($, DataActionHandler, UI, Builder) ->
   class Toolbar
-    namespace: "toolbar",
+    namespace: "toolbar"
+    $toolbar: null
 
-    constructor: (@plugins, templates, @buttons = []) ->
+    constructor: (templates, @defaultPlugins, @plugins, defaultButtons = [], @buttons = []) ->
       @customButtons = @buttons.length > 0
+      @buttons = defaultButtons unless @customButtons
       @$templates = $(templates)
-      @$toolbar = null
+      @ui = new UI(@$templates)
 
     register: (@api) ->
-      @api.on("activate.editor", @show)
-      @api.on("deactivate.editor", @hide)
+      throw "Toolbar#register must be overridden"
 
-    # Sets up the toolbar. Is only executed once.
+    # Sets up the toolbar.
     setup: ->
       @setupPlugins()
       @$toolbar = new Builder(@$templates, @availableButtons, @buttons).build()
-      @dataEventHandler = new DataEventHandler(@$toolbar, @api, @namespace)
-      @displayer = new FloatingDisplayer(@$toolbar, @api.el, @api)
+      @dataActionHandler = new DataActionHandler(@$toolbar, @api, @namespace)
 
     setupPlugins: ->
       @availableButtons = {}
+      @addPlugin(plugin, true) for plugin in @defaultPlugins
       @addPlugin(plugin) for plugin in @plugins
 
-    addPlugin: (plugin) ->
+    addPlugin: (plugin, isDefault = false) ->
       # Ensure that there is a default specified.
-      throw "The toolbar plugin is missing a default" unless plugin.getDefaultToolbar
+      throw "The toolbar plugin is missing a default: #{plugin}, #{isDefault}" unless plugin.getDefaultToolbar
       # Add the buttons.
-      $.extend(@availableButtons, plugin.getToolbar())
+      $.extend(@availableButtons, plugin.getToolbar(@ui))
       # Add any toolbar actions.
       @addActions(plugin) if plugin.getToolbarActions
       # If there was no config for the toolbar, then we append the default
       # buttons to the end of the existing toolbar.
-      unless @customButtons
+      unless isDefault or @customButtons
         @buttons.push("|") unless @buttons.length == 0
         @buttons.push(plugin.getDefaultToolbar())
 
@@ -93,14 +94,5 @@ define ["cs!jquery.custom", "cs!config/config.default", "cs!core/data_event_hand
     addAction: (plugin, event, action) ->
       # Ensure that the action is bound to the plugin.
       @api.on("#{event}.#{@namespace}", -> action.apply(plugin, arguments))
-
-    # Shows the toolbar.
-    show: =>
-      @setup() unless @$toolbar
-      @displayer.show()
-
-    # Hides the toolbar.
-    hide: =>
-      @displayer.hide() if @$toolbar
 
   return Toolbar

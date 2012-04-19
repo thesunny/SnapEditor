@@ -36,7 +36,7 @@
 #     "Left, "Center", "Right", "|",
 #     "Image", "Link", "Table", "|"
 #   ]
-define ["cs!jquery.custom", "cs!core/helpers", "cs!core/data_event_handler"], ($, Helpers) ->
+define ["cs!jquery.custom", "cs!core/helpers"], ($, Helpers) ->
   class ToolbarBuilder
     constructor: (templates, @availableButtons, @buttons) ->
       @$templates = $(templates)
@@ -45,12 +45,11 @@ define ["cs!jquery.custom", "cs!core/helpers", "cs!core/data_event_handler"], ($
     build: ->
       @setupTemplates()
       $toolbar = $(@toolbarTemplate.mustache(buttonGroups: @getButtons()))
-      $toolbar.find("[data-event]").each(->$(this).attr("unselectable", "on"))
+      $toolbar.find("[data-action]").each(->$(this).attr("unselectable", "on"))
       return $toolbar
 
     setupTemplates: ->
       @toolbarTemplate = @$templates.find("#snapeditor_toolbar_template")
-      @buttonTemplate = @$templates.find("#snapeditor_toolbar_button_template")
       @gapTemplate = @$templates.find("#snapeditor_toolbar_button_gap_template")
       @checkTemplates()
       @availableButtons["-"] = => @gapTemplate.html()
@@ -58,11 +57,15 @@ define ["cs!jquery.custom", "cs!core/helpers", "cs!core/data_event_handler"], ($
     checkTemplates: ->
       if @toolbarTemplate.length == 0
         throw "Missing template. Make sure there is an element with id snapeditor_toolbar_template."
-      if @buttonTemplate.length == 0
-        throw "Missing template. Make sure there is an element with id snapeditor_toolbar_button_template."
       if @gapTemplate.length == 0
         throw "Missing template. Make sure there is an element with id snapeditor_toolbar_button_gap_template."
 
+    # Returns an array of button groups.
+    # e.g.
+    #   [
+    #     [{buttons: {html: "HTML string"}}, ...],
+    #     ...
+    #   ]
     getButtons: ->
       htmlButtonGroups = []
       htmlButtons = []
@@ -78,22 +81,28 @@ define ["cs!jquery.custom", "cs!core/helpers", "cs!core/data_event_handler"], ($
       htmlButtonGroups.push(buttons: htmlButtons) unless htmlButtons.length == 0
       return htmlButtonGroups
 
+    # Return the HTML string that corresponds to the button.
     getButtonHtml: (button) ->
       renderer = @availableButtons[button]
       throw "The button(s) for #{button} is not available. Please check that the plugin has been included." unless renderer
-      output = if Helpers.typeOf(renderer) == "function" then renderer() else renderer
-      switch Helpers.typeOf(output)
-        when "string" then return output
-        when "object" then return @buildButtons([output])
-        when "array" then return @buildButtons(output)
-        else throw "Unknown toolbar format. Expecting an HTML string, a button object, or an array of button objects. Please check the API. #{output}"
+      @renderButton(button, renderer)
 
-    buildButtons: (buttons) ->
-      html = ""
-      for button in buttons
-        throw "The button is missing a title attribute: #{button}" unless button.title
-        throw "The button is missing an event attribute: #{button}" unless button.event
-        html += @buttonTemplate.mustache(button)
+    # The renderer is an HTML string or a function that returns an HTML string
+    # or an array that contains HTML strings and/or renderers.
+    renderButton: (button, renderer) ->
+      renderer = @normalizeRenderer(renderer)
+      output = renderer()
+      switch Helpers.typeOf(output)
+        when "string" then html = output
+        when "array"
+          html = ""
+          html += @renderButton(button, r) for r in output
+        else throw "Unrecognized button format for '#{button}'. The renderer should return an HTML string or an array of renderers."
       return html
+
+    # Ensure the renderer is a function.
+    normalizeRenderer: (renderer) ->
+      return renderer if Helpers.typeOf(renderer) == "function"
+      return -> renderer
 
   return ToolbarBuilder

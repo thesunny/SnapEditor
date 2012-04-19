@@ -1,42 +1,51 @@
-describe "Toolbar", ->
-  required = ["cs!plugins/toolbar/toolbar"]
+require ["cs!plugins/toolbar/toolbar"], (Toolbar) ->
+  describe "Toolbar", ->
+    $templates = null
+    $.ajax(url: "spec/javascripts/fixtures/templates.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
 
-  api = plugin = null
-  beforeEach ->
-    api = $("<div/>")
-    plugin =
-      register: (api) ->,
-      getDefaultToolbar: -> "TestButton"
-      getToolbar: -> TestButton: "html"
+    toolbar = plugin = null
+    beforeEach ->
+      toolbar = new Toolbar($templates)
+      plugin =
+        register: (api) ->,
+        getDefaultToolbar: -> "TestButton"
+        getToolbar: -> TestButton: "html"
 
-  describe "#addPlugin", ->
-    ait "throws an error if there is no #getDefaultToolbar()", required, (Toolbar) ->
-      plugin.getDefaultToolbar = null
-      toolbar = new Toolbar()
-      expect(-> toolbar.addPlugin(plugin)).toThrow()
+    describe "#addPlugin", ->
+      it "throws an error if there is no #getDefaultToolbar()", ->
+        plugin.getDefaultToolbar = null
+        expect(-> toolbar.addPlugin(plugin)).toThrow()
 
-    ait "adds the plugin buttons to the available buttons", required, (Toolbar) ->
-      toolbar = new Toolbar()
-      toolbar.availableButtons = {}
-      toolbar.addPlugin(plugin)
-      expect(toolbar.availableButtons["TestButton"]).toBeDefined()
+      it "adds the plugin buttons to the available buttons", ->
+        toolbar.availableButtons = {}
+        toolbar.addPlugin(plugin)
+        expect(toolbar.availableButtons["TestButton"]).toBeDefined()
 
-    ait "appends the plugin's default toolbar if no button groups were given", required, (Toolbar) ->
-      toolbar = new Toolbar()
-      toolbar.availableButtons = {}
-      toolbar.addPlugin(plugin)
-      expect(toolbar.buttons.length).toEqual(1)
-      expect(toolbar.buttons[0]).toEqual("TestButton")
+      it "does not append the plugin's default toolbar if a default plugin is given", ->
+        toolbar.availableButtons = {}
+        toolbar.addPlugin(plugin, true)
+        expect(toolbar.buttons.length).toEqual(0)
 
-  describe "#addAction", ->
-    ait "adds the action and binds to the plugin", required, (Toolbar) ->
-      testValue = false
-      plugin.testFn = null
-      plugin.testValue = true
-      spyOn(plugin, "testFn").andCallFake(-> testValue = this.testValue)
-      toolbar = new Toolbar()
-      toolbar.api = api
-      toolbar.addAction(plugin, "testEvent", plugin.testFn)
-      toolbar.api.trigger("testEvent.#{toolbar.namespace}")
-      expect(plugin.testFn).toHaveBeenCalled()
-      expect(testValue).toBeTruthy()
+      it "does not append the plugin's default toolbar if buttons were given", ->
+        toolbar = new Toolbar($templates, [], [], [], ["TestButton"])
+        toolbar.availableButtons = {}
+        toolbar.addPlugin(plugin, false)
+        expect(toolbar.buttons.length).toEqual(1)
+
+      it "appends the plugin's default toolbar if a custom plugin is given and no buttons were given", ->
+        toolbar.availableButtons = {}
+        toolbar.addPlugin(plugin, false)
+        expect(toolbar.buttons.length).toEqual(1)
+        expect(toolbar.buttons[0]).toEqual("TestButton")
+
+    describe "#addAction", ->
+      it "adds the action and binds to the plugin", ->
+        testValue = false
+        plugin.testFn = null
+        plugin.testValue = true
+        spyOn(plugin, "testFn").andCallFake(-> testValue = this.testValue)
+        toolbar.api = $("<div/>")
+        toolbar.addAction(plugin, "testEvent", plugin.testFn)
+        toolbar.api.trigger("testEvent.#{toolbar.namespace}")
+        expect(plugin.testFn).toHaveBeenCalled()
+        expect(testValue).toBeTruthy()

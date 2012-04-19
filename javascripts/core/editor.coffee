@@ -1,5 +1,6 @@
-define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugins/toolbar/toolbar", "cs!plugins/keyboard/keyboard"], ($, API, Default, Toolbar, Keyboard) ->
+define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugins/keyboard/keyboard"], ($, API, Defaults, Keyboard) ->
   class Editor
+    defaultToolbarPlugins: []
     toolbarPlugins: []
     keyboardPlugins: []
 
@@ -14,6 +15,9 @@ define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugi
       @api = new API(this)
       @loadAssets()
       @setupPlugins()
+
+    getDefaults: ->
+      @defaults or= Defaults
 
     loadAssets: ->
       @loadTemplates()
@@ -31,31 +35,35 @@ define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugi
         $("<link href=\"#{@config.assets.css}\" rel=\"stylesheet\" type=\"text/css\">").appendTo("head")
 
     setupPlugins: ->
-      # All the available toolbar buttons will be squeezed into a single object.
-      @registerPlugins(Default.plugins.concat(@config.plugins or []))
+      @registerPlugins(@getDefaults().plugins, true)
+      @registerPlugins(@config.plugins) if @config.plugins
       # Register the toolbar and keyboard after all the other plugins.
-      @toolbar = new Toolbar(@toolbarPlugins, @$templates, @config.toolbar or Default.toolbar)
       @keyboard = new Keyboard(@keyboardPlugins, "keydown", @$el)
-      @registerPlugins([@toolbar, @keyboard])
+      @registerPlugin(@keyboard)
 
-    registerPlugins: (plugins) ->
-      @registerPlugin(plugin) for plugin in plugins
+    registerPlugins: (plugins, isDefault = false) ->
+      @registerPlugin(plugin, isDefault) for plugin in plugins
 
-    registerPlugin: (plugin) ->
+    registerPlugin: (plugin, isDefault = false) ->
       plugin.register(@api)
-      @addToolbarPlugin(plugin) if plugin.getToolbar
+      @addToolbarPlugin(plugin, isDefault) if plugin.getToolbar
       @addKeyboardPlugin(plugin) if plugin.getKeyboardShortcuts
       # TODO: contextmenu
 
-    addToolbarPlugin: (plugin) ->
-      throw "The toolbar plugin is missing a default" unless plugin.getDefaultToolbar
-      @toolbarPlugins.push(plugin)
+    # All the available toolbar buttons will be squeezed into a single object.
+    addToolbarPlugin: (plugin, isDefault = false) ->
+      throw "The toolbar plugin is missing a default: #{plugin}, #{isDefault}" unless plugin.getDefaultToolbar
+      if isDefault
+        @defaultToolbarPlugins.push(plugin)
+      else
+        @toolbarPlugins.push(plugin)
 
     addKeyboardPlugin: (plugin) ->
       @keyboardPlugins.push(plugin)
 
     activate: ->
       @api.trigger("activate.editor")
+      # TODO: Is this needed?
       @api.trigger("ready.editor")
 
     deactivate: ->

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style type="text/css" media="screen">
+      #editable {
+        width: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="editable">
+      Make me editable!
+      <br/>
+      <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+      <h1>Heading 1</h1>
+      <p>More text!</p>
+    </div>
+    <script src="/lib/jquery.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      var editor = new SnapEditor("#editable", {
+        assets: {
+          templates: "/spec/acceptance/assets/templates.html",
+          css: "/spec/acceptance/assets/snapeditor.css"
+        }
+      });
+    </script>
+  </body>
+</html>

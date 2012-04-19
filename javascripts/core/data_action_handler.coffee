@@ -1,15 +1,15 @@
 # This is used to trigger events from button clicks and select or text input
-# changes. It looks for a "data-event" attribute on the target and triggers
+# changes. It looks for a "data-action" attribute on the target and triggers
 # that event. This makes it so that there is little wiring code needed and it
 # is easy to change the events and the HTML.
 define ["cs!jquery.custom"], ($) ->
-  class DataEventHandler
+  class DataActionHandler
     # $el is the container element.
     # api is the editor API object.
     constructor: (el, @api, @namespace) ->
       @$el = $(el)
       # Listen to any change events on <select>.
-      @$el.children("select[data-event]").on("change", @change)
+      @$el.children("select[data-action]").on("change", @change)
       # Mousedown is tracked because we want to handle the click only if it
       # started and ended within the el.
       @$el.on("mousedown", @setClick)
@@ -28,17 +28,17 @@ define ["cs!jquery.custom"], ($) ->
       @isClick = true
 
     # When anything is clicked in the el, except a <select> which is handled by
-    # the change function, it looks for a "data-event" attribute on the element
+    # the change function, it looks for a "data-action" attribute on the element
     # or its ancestors and uses that to trigger the event. The target is passed
     # along through the event.
     click: (e) =>
       if @isClick
         target = e.target
-        $button = $(target).closest("[data-event]:not(select)")
+        $button = $(target).closest("[data-action]:not(select)")
         if $button.length > 0
           e.preventDefault()
           e.stopPropagation()
-          @api.trigger("#{$button.attr("data-event")}.#{@namespace}", target)
+          @api.trigger("#{$button.attr("data-action")}.#{@namespace}", target)
       @isClick = false
       # Purposely added true here because the line above sets @isClick to false.
       # Since CoffeeScript returns the last statement, if the line above was the
@@ -48,10 +48,10 @@ define ["cs!jquery.custom"], ($) ->
       return true
 
     # When a select is changed or a keypress occurs in the el, it triggers the
-    # event specified by the 'data-event' attribute of the target. The target's
+    # event specified by the 'data-action' attribute of the target. The target's
     # value is passed along through the event.
     change: (e) =>
       $target = $(e.target)
-      @api.trigger("#{$target.attr("data-event")}.#{@namespace}", $target.val()) if $target.attr("data-event")
+      @api.trigger("#{$target.attr("data-action")}.#{@namespace}", $target.val()) if $target.attr("data-action")
 
-  return DataEventHandler
+  return DataActionHandler

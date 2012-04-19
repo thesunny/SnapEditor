@@ -23,8 +23,13 @@ describe "Editor", ->
       expect(editor.api).not.toBeNull()
 
     ait "registers the plugins", required, (Editor) ->
-      editor = new Editor($editable[0], assets: assets)
-      expect(editor.toolbarPlugins.length).toBeGreaterThan(0)
+      plugin =
+        register: ->
+        getDefaultToolbar: ->
+        getToolbar: ->
+      editor = new Editor($editable[0], assets: assets, plugins: [plugin])
+      expect(editor.defaultToolbarPlugins.length).toBeGreaterThan(0)
+      expect(editor.toolbarPlugins.length).toEqual(1)
       expect(editor.keyboardPlugins.length).toBeGreaterThan(0)
 
   describe "#addToolbarPlugin", ->
