@@ -31,14 +31,14 @@ if isIE
         editable.start()
         expect($(editable.api.el).attr("contentEditable")).toEqual("true")
 
-    describe "#finishBrowser", ->
+    describe "#deactivateBrowser", ->
       ait "detaches the onresizestart event handler", required, (Module, Helpers) ->
         Helpers.include(Editable, Module)
 
         editable = new Editable()
         spyOn(editable, "preventResize")
         editable.start()
-        editable.finishBrowser()
+        editable.deactivateBrowser()
 
         # NOTE: The event handler is attached using native JavaScript. Hence,
         # we need to fire the event using native JavaScript.

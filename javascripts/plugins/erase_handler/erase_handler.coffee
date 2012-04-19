@@ -26,7 +26,7 @@ define ["cs!jquery.custom", "cs!core/helpers", "cs!core/browser"], ($, Helpers, 
       $(@api.el).on("keydown", @onkeydown)
 
     deactivate: =>
-      $(@api.el).off("keydown")
+      $(@api.el).off("keydown", @onkeydown)
 
     onkeydown: (e) =>
       key = Helpers.keyOf(e)
