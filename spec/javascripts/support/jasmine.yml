@@ -12,10 +12,9 @@
 #   - dist/**/*.js
 #
 src_files:
-  - "lib/require.js"
+  - "spec/javascripts/support/require.custom.coffee"
   - "lib/jquery.js"
   - "spec/javascripts/support/jasmine-ait.coffee"
-  - "spec/javascripts/support/require.config.coffee"
 
 # stylesheets
 #
@@ -56,6 +55,8 @@ helpers:
 #
 spec_files:
   - "**/*[sS]pec.coffee"
+  #- "core/range.spec.coffee"
+  #- "jquery.custom.spec.coffee"
 
 # src_dir
 #
