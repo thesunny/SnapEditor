@@ -6,8 +6,7 @@ define ["cs!jquery.custom", "cs!plugins/toolbar/toolbar.floating.displayer.style
       @shown = false
       @positionedAtTop = true
       # Insert the toolbar into the DOM and make sure it's hidden.
-      @$toolbar.hide()
-      @$toolbar.appendTo("body")
+      @$toolbar.hide().appendTo("body")
 
     getHeight: ->
       parseInt(@$toolbar.css('height'))

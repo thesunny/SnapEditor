@@ -2,6 +2,9 @@
 // The third argument is the relName. We don't need it so we set it to null.
 // The fourth argument is set to true for loading the editor synchronously.
 // This is needed so that the SnapEditor object is available immediately.
-require(["cs!core/editor.snap"], function (SnapEditor) {
-  window.SnapEditor = SnapEditor;
+require(["cs!core/editor.snap", "cs!core/editor.form"], function (SnapEditor, FormEditor) {
+  window.SnapEditor = {
+    Snap: SnapEditor,
+    Form: FormEditor
+  };
 }, null, true);
