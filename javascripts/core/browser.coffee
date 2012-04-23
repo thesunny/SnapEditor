@@ -1,4 +1,4 @@
-define ["jquery"], ($) ->
+define ["cs!jquery.custom"], ($) ->
   isIE = $.browser.msie
   isIE7 = isIE and parseInt($.browser.version, 10) == 7
   isIE8 = isIE and parseInt($.browser.version, 10) == 8
