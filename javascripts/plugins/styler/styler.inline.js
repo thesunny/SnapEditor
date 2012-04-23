@@ -5,7 +5,6 @@ define(["jquery.custom", "core/browser"], function($, Browser) {
   InlineStyler = (function() {
 
     function InlineStyler() {
-      this.link = __bind(this.link, this);
       this.italic = __bind(this.italic, this);
       this.bold = __bind(this.bold, this);
     }
@@ -19,7 +18,7 @@ define(["jquery.custom", "core/browser"], function($, Browser) {
     };
 
     InlineStyler.prototype.getToolbar = function(ui) {
-      var bold, italic, link;
+      var bold, italic;
       bold = ui.button({
         action: "bold",
         attrs: {
@@ -34,34 +33,24 @@ define(["jquery.custom", "core/browser"], function($, Browser) {
           title: "Italic (Ctrl+I)"
         }
       });
-      link = ui.button({
-        action: "link",
-        attrs: {
-          "class": "link-button",
-          title: "Insert Link (Ctrl+K)"
-        }
-      });
       return {
-        Inline: [bold, italic, link],
+        Inline: [bold, italic],
         Bold: bold,
-        Italic: italic,
-        Link: link
+        Italic: italic
       };
     };
 
     InlineStyler.prototype.getToolbarActions = function() {
       return {
         bold: this.bold,
-        italic: this.italic,
-        link: this.link
+        italic: this.italic
       };
     };
 
     InlineStyler.prototype.getKeyboardShortcuts = function() {
       return {
         "ctrl.b": this.bold,
-        "ctrl.i": this.italic,
-        "ctrl.k": this.link
+        "ctrl.i": this.italic
       };
     };
 
@@ -88,26 +77,8 @@ define(["jquery.custom", "core/browser"], function($, Browser) {
       return this.update();
     };
 
-    InlineStyler.prototype.link = function() {
-      var href, link, parentLink;
-      href = prompt("Enter URL of link", "http://");
-      if (href) {
-        href = $.trim(href);
-        parentLink = this.api.getParentElement("a");
-        if (parentLink) {
-          $(parentLink).attr("href", href);
-        } else if (this.api.isCollapsed()) {
-          link = $("<a href=\"" + href + "\">" + href + "</a>");
-          this.api.paste(link[0]);
-        } else {
-          link = $("<a href=\"" + href + "\"></a>");
-          this.api.surroundContents(link[0]);
-        }
-        return this.update();
-      }
-    };
-
     InlineStyler.prototype.update = function() {
+      if (Browser.isMozilla) this.api.el.focus();
       return this.api.update();
     };
 

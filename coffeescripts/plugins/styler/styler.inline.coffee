@@ -8,26 +8,22 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
     getToolbar: (ui) ->
       bold = ui.button(action: "bold", attrs: { class: "bold-button", title: "Bold (Ctrl+B)" })
       italic = ui.button(action: "italic", attrs: { class: "italic-button", title: "Italic (Ctrl+I)" })
-      link = ui.button(action: "link", attrs: { class: "link-button", title: "Insert Link (Ctrl+K)" })
       return {
-        Inline: [bold, italic, link]
-        Bold: bold,
-        Italic: italic,
-        Link: link
+        Inline: [bold, italic]
+        Bold: bold
+        Italic: italic
       }
 
     getToolbarActions: ->
       return {
-        bold: @bold,
-        italic: @italic,
-        link: @link
+        bold: @bold
+        italic: @italic
       }
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.b": @bold,
-        "ctrl.i": @italic,
-        "ctrl.k": @link
+        "ctrl.b": @bold
+        "ctrl.i": @italic
       }
 
     # Bolds the selected text.
@@ -54,38 +50,17 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
         else throw "The inline style for tag #{tag} is unsupported"
       @update()
 
-    # TODO:
-    # NOTE:
-    # You cannot use this method to call up a prompt because the preventDefault()
-    # does not work properly in Firefox. The default action (go to search box)
-    # still fires for some reason. The solution is probably to use our own
-    # input boxes so we'll have to do that by ourself later. For now, we just
-    # use default 'http://'
-    #
-    # I did try using the setTimeout but in Firefox, the function loses its
-    # context making it difficult to locate the insertLinkDialog method that
-    # we used to launch the prompt. IE isn't the only quirky browser.
-    #
-    # TODO: In opera, preventDefault doesn't work so it keeps popping up a dialog.
-    link: =>
-      href = prompt("Enter URL of link", "http://")
-      if href
-        href = $.trim(href)
-        parentLink = @api.getParentElement("a")
-        # if a parentLink is found, then just change the href
-        if parentLink
-          $(parentLink).attr("href", href)
-        # if range is collapsed, then insert a new link
-        else if @api.isCollapsed()
-          link = $("<a href=\"#{href}\">#{href}</a>")
-          @api.paste(link[0])
-        # if range is not collapsed, then surround contents with the new link
-        else
-          link = $("<a href=\"#{href}\"></a>")
-          @api.surroundContents(link[0])
-        @update()
-
     update: ->
+      # In Firefox, when a user clicks on the toolbar to style, the
+      # editor loses focus. Instead, the focus is set on the toolbar
+      # button (even though unselectable="on"). Whenever the user
+      # types a character, it inserts it into the editor, but also
+      # presses the toolbar button. This can result in alternating
+      # behaviour. For example, if I click on the list button. When
+      # I start typing, it will toggle lists on and off.
+      # This cannot be called for IE because it will cause the window to scroll
+      # and jump. Hence this is only for Firefox.
+      @api.el.focus() if Browser.isMozilla
       @api.update()
 
     # Calls the document's execCommand with the second argument as false.

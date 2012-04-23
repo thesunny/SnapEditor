@@ -1,10 +1,5 @@
 define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
   class BlockStyler
-    constructor: (options = {}) ->
-      @options =
-        table: [2, 3]
-      $.extend(@options, options)
-
     register: (@api) ->
 
     getDefaultToolbar: ->
@@ -22,51 +17,47 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       orderedList = ui.button(action: "orderedlist", attrs: {class: "orderedlist-button", title: "Numbered List (Ctrl+7)"})
       indent = ui.button(action: "indent", attrs: {class: "indent-button", title: "Indent"})
       outdent = ui.button(action: "outdent", attrs: {class: "outdent-button", title: "Outdent"})
-      table = ui.button(action: "table", attrs: {class: "table-button", title: "Insert Table (Ctrl+Shift+T)"})
       return {
-        Block: [p, h1, h2, h3, alignLeft, alignCenter, alignRight, unorderedList, orderedList, indent, outdent, table],
-        P: p,
-        H1: h1,
-        H2: h2,
-        H3: h3,
-        AlignLeft: alignLeft,
-        AlignCenter: alignCenter,
-        AlignRight: alignRight,
+        Block: [p, h1, h2, h3, alignLeft, alignCenter, alignRight, unorderedList, orderedList, indent, outdent]
+        P: p
+        H1: h1
+        H2: h2
+        H3: h3
+        AlignLeft: alignLeft
+        AlignCenter: alignCenter
+        AlignRight: alignRight
         UnorderedList: unorderedList
-        OrderedList: orderedList,
-        Indent: indent,
-        Outdent: outdent,
-        Table: table
+        OrderedList: orderedList
+        Indent: indent
+        Outdent: outdent
       }
 
     getToolbarActions: ->
       return {
-        p: @p,
-        h1: @h1,
-        h2: @h2,
-        h3: @h3,
-        alignleft: @alignLeft,
-        aligncenter: @alignCenter,
-        alignright: @alignRight,
-        unorderedlist: @unorderedList,
-        orderedlist: @orderedList,
-        indent: @indent,
-        outdent: @outdent,
-        table: @table
+        p: @p
+        h1: @h1
+        h2: @h2
+        h3: @h3
+        alignleft: @alignLeft
+        aligncenter: @alignCenter
+        alignright: @alignRight
+        unorderedlist: @unorderedList
+        orderedlist: @orderedList
+        indent: @indent
+        outdent: @outdent
       }
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.space": @p,
-        "ctrl.1": @h1,
-        "ctrl.2": @h2,
-        "ctrl.3": @h3,
-        "ctrl.l": @alignLeft,
-        "ctrl.e": @alignCenter,
-        "ctrl.r": @alignRight,
-        "ctrl.8": @unorderedList,
-        "ctrl.7": @orderedList,
-        "ctr.shift.t": @table
+        "ctrl.space": @p
+        "ctrl.1": @h1
+        "ctrl.2": @h2
+        "ctrl.3": @h3
+        "ctrl.l": @alignLeft
+        "ctrl.e": @alignCenter
+        "ctrl.r": @alignRight
+        "ctrl.8": @unorderedList
+        "ctrl.7": @orderedList
       }
 
     p: =>
@@ -157,26 +148,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
     outdent: =>
       @exec("outdent")
-      @update()
-
-    table: =>
-      # Build the table.
-      table = $('<table id="INSERTED_TABLE"></table>')
-      tbody = $("<tbody/>").appendTo(table)
-      td = $("<td>&nbsp;</td>")
-      tr = $("<tr/>")
-      tr.append(td.clone()) for i in [1..@options.table[1]]
-      tbody.append(tr.clone()) for i in [1..@options.table[0]]
-
-      # Add the table.
-      @api.paste(table[0])
-
-      # Set the cursor inside the first td of the table. Then remove the id.
-      table = $("#INSERTED_TABLE")
-      @api.selectEndOfTableCell(table.find("td")[0])
-      table.removeAttr("id")
-
-      # Update.
       @update()
 
     exec: (cmd, value = null) ->

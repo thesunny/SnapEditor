@@ -4,9 +4,7 @@ define(["jquery.custom", "core/browser", "core/helpers"], function($, Browser, H
   var BlockStyler;
   BlockStyler = (function() {
 
-    function BlockStyler(options) {
-      if (options == null) options = {};
-      this.table = __bind(this.table, this);
+    function BlockStyler() {
       this.outdent = __bind(this.outdent, this);
       this.indent = __bind(this.indent, this);
       this.orderedList = __bind(this.orderedList, this);
@@ -19,10 +17,6 @@ define(["jquery.custom", "core/browser", "core/helpers"], function($, Browser, H
       this.h2 = __bind(this.h2, this);
       this.h1 = __bind(this.h1, this);
       this.p = __bind(this.p, this);
-      this.options = {
-        table: [2, 3]
-      };
-      $.extend(this.options, options);
     }
 
     BlockStyler.prototype.register = function(api) {
@@ -34,7 +28,7 @@ define(["jquery.custom", "core/browser", "core/helpers"], function($, Browser, H
     };
 
     BlockStyler.prototype.getToolbar = function(ui) {
-      var alignCenter, alignLeft, alignRight, h1, h2, h3, indent, orderedList, outdent, p, table, unorderedList;
+      var alignCenter, alignLeft, alignRight, h1, h2, h3, indent, orderedList, outdent, p, unorderedList;
       p = ui.button({
         action: "p",
         attrs: {
@@ -112,15 +106,8 @@ define(["jquery.custom", "core/browser", "core/helpers"], function($, Browser, H
           title: "Outdent"
         }
       });
-      table = ui.button({
-        action: "table",
-        attrs: {
-          "class": "table-button",
-          title: "Insert Table (Ctrl+Shift+T)"
-        }
-      });
       return {
-        Block: [p, h1, h2, h3, alignLeft, alignCenter, alignRight, unorderedList, orderedList, indent, outdent, table],
+        Block: [p, h1, h2, h3, alignLeft, alignCenter, alignRight, unorderedList, orderedList, indent, outdent],
         P: p,
         H1: h1,
         H2: h2,
@@ -131,8 +118,7 @@ define(["jquery.custom", "core/browser", "core/helpers"], function($, Browser, H
         UnorderedList: unorderedList,
         OrderedList: orderedList,
         Indent: indent,
-        Outdent: outdent,
-        Table: table
+        Outdent: outdent
       };
     };
 
@@ -148,8 +134,7 @@ define(["jquery.custom", "core/browser", "core/helpers"], function($, Browser, H
         unorderedlist: this.unorderedList,
         orderedlist: this.orderedList,
         indent: this.indent,
-        outdent: this.outdent,
-        table: this.table
+        outdent: this.outdent
       };
     };
 
@@ -163,8 +148,7 @@ define(["jquery.custom", "core/browser", "core/helpers"], function($, Browser, H
         "ctrl.e": this.alignCenter,
         "ctrl.r": this.alignRight,
         "ctrl.8": this.unorderedList,
-        "ctrl.7": this.orderedList,
-        "ctr.shift.t": this.table
+        "ctrl.7": this.orderedList
       };
     };
 
@@ -242,25 +226,6 @@ define(["jquery.custom", "core/browser", "core/helpers"], function($, Browser, H
 
     BlockStyler.prototype.outdent = function() {
       this.exec("outdent");
-      return this.update();
-    };
-
-    BlockStyler.prototype.table = function() {
-      var i, table, tbody, td, tr, _ref, _ref2;
-      table = $('<table id="INSERTED_TABLE"></table>');
-      tbody = $("<tbody/>").appendTo(table);
-      td = $("<td>&nbsp;</td>");
-      tr = $("<tr/>");
-      for (i = 1, _ref = this.options.table[1]; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
-        tr.append(td.clone());
-      }
-      for (i = 1, _ref2 = this.options.table[0]; 1 <= _ref2 ? i <= _ref2 : i >= _ref2; 1 <= _ref2 ? i++ : i--) {
-        tbody.append(tr.clone());
-      }
-      this.api.paste(table[0]);
-      table = $("#INSERTED_TABLE");
-      this.api.selectEndOfTableCell(table.find("td")[0]);
-      table.removeAttr("id");
       return this.update();
     };
 
