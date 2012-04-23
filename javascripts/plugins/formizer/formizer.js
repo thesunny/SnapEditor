@@ -3,23 +3,24 @@ define(["jquery.custom", "core/browser"], function($, Browser) {
   var Formizer;
   Formizer = (function() {
 
-    function Formizer(el, toolbar) {
+    function Formizer(el) {
       this.$el = $(el);
-      this.$toolbar = $(toolbar);
+      this.$content = $("<div/>").addClass("snapeditor-form-content");
     }
 
-    Formizer.prototype.call = function() {
-      var elCoords, toolbarCoords;
-      toolbarCoords = this.$toolbar.measure(function() {
+    Formizer.prototype.formize = function(toolbar) {
+      var $toolbar, elCoords, toolbarCoords;
+      $toolbar = $(toolbar);
+      toolbarCoords = $toolbar.measure(function() {
         return this.getCoordinates();
       });
       elCoords = this.$el.getCoordinates();
-      this.$div = $("<div/>").addClass("snapeditor-form-content").html(this.$el.html()).css({
+      this.$content.html(this.$el.html()).css({
         height: elCoords.height - toolbarCoords.height,
         overflowX: "auto",
         overflowY: Browser.isIE ? "scroll" : "auto"
       });
-      this.$el.empty().append(this.$toolbar.show()).append(this.$div);
+      this.$el.empty().append($toolbar.show()).append(this.$content);
       return this.$el.addClass("snapeditor-form");
     };
 

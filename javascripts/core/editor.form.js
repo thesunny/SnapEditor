@@ -8,15 +8,15 @@ define(["core/editor", "config/config.default.form", "plugins/toolbar/toolbar.st
     __extends(FormEditor, _super);
 
     function FormEditor(el, config) {
-      FormEditor.__super__.constructor.call(this, el, Defaults.build(), config);
+      this.formizer = new Formizer($(el));
+      FormEditor.__super__.constructor.call(this, this.formizer.$content, Defaults.build(), config);
+      this.formizer.formize(this.toolbar.$toolbar);
     }
 
     FormEditor.prototype.setupPlugins = function() {
       FormEditor.__super__.setupPlugins.apply(this, arguments);
       this.toolbar = new Toolbar(this.$templates, this.defaultToolbarPlugins, this.toolbarPlugins, this.defaults.toolbar, this.config.toolbar);
-      this.registerPlugin(this.toolbar);
-      this.formizer = new Formizer(this.$el, this.toolbar.$toolbar);
-      return this.formizer.call();
+      return this.registerPlugin(this.toolbar);
     };
 
     return FormEditor;

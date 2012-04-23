@@ -1,4 +1,6 @@
 .toolbar {
+  position: relative;
+  z-index: 200;
   background-color: #acacac;
   border: 1px solid black;
 }

@@ -5,24 +5,28 @@ require ["jquery.custom", "plugins/formizer/formizer"], ($, Formizer) ->
       $container = $("<div/>").appendTo("body")
       $el = $('<div style="width: 100px; height: 300px;">This is some content</div>').appendTo($container)
       $toolbar = $('<div id="toolbar" style="display: hidden; height: 50px;">Toolbar</div>').appendTo($container)
-      formizer = new Formizer($el, $toolbar)
+      formizer = new Formizer($el)
 
     afterEach ->
       $container.remove()
 
-    describe "#call", ->
+    describe "#constructor", ->
+      it "creates a content element", ->
+        expect(constructor.$content).not.toBeNull()
+
+    describe "#formize", ->
       it "splits the el into the toolbar and content", ->
-        formizer.call()
+        formizer.formize($toolbar)
         expect($el.children().length).toEqual(2)
         expect($el.children()[0].id).toEqual("toolbar")
         expect($($el.children()[1]).hasClass("snapeditor-form-content")).toBeTruthy()
 
       it "shows the toolbar", ->
-        formizer.call()
+        formizer.formize($toolbar)
         expect($toolbar.css("display")).toEqual("block")
 
       it "adjusts the height correctly", ->
-        formizer.call()
+        formizer.formize($toolbar)
 
         size = $el.getSize()
         expect(size.x).toEqual(100)
