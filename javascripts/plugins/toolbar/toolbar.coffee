@@ -46,17 +46,15 @@
 #   ]
 define ["cs!jquery.custom", "cs!core/data_action_handler", "cs!plugins/toolbar/toolbar.ui", "cs!plugins/toolbar/toolbar.builder"], ($, DataActionHandler, UI, Builder) ->
   class Toolbar
-    namespace: "toolbar"
-    $toolbar: null
-
     constructor: (templates, @defaultPlugins, @plugins, defaultButtons = [], @buttons = []) ->
+      @namespace = "toolbar"
+      @$toolbar = null
       @customButtons = @buttons.length > 0
       @buttons = defaultButtons unless @customButtons
       @$templates = $(templates)
       @ui = new UI(@$templates)
 
     register: (@api) ->
-      throw "Toolbar#register must be overridden"
 
     # Sets up the toolbar.
     setup: ->

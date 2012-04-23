@@ -1,23 +1,25 @@
 define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugins/keyboard/keyboard"], ($, API, Defaults, Keyboard) ->
   class Editor
-    defaultToolbarPlugins: []
-    toolbarPlugins: []
-    keyboardPlugins: []
-
     # Options:
     # * assets: an object that holds urls to assets
     #   * templates: the url of the HTML templates
     #   * css: the url of the CSS
     # * plugins: an array of editor plugins to add
     # * toolbar: toolbar config that replaces the default one
-    constructor: (el, @config = {}) ->
+    constructor: (el, defaults = {}, @config = {}) ->
       @$el = $(el)
       @api = new API(this)
+      @defaultToolbarPlugins = []
+      @toolbarPlugins = []
+      @keyboardPlugins = []
       @loadAssets()
+      @setupDefaults(defaults)
       @setupPlugins()
 
-    getDefaults: ->
-      @defaults or= Defaults
+    setupDefaults: (defaults) ->
+      @defaults = Defaults.build()
+      @defaults.plugins = @defaults.plugins.concat(defaults.plugins) if defaults.plugins
+      @defaults.toolbar = defaults.toolbar if defaults.toolbar
 
     loadAssets: ->
       @loadTemplates()
@@ -35,7 +37,7 @@ define ["cs!jquery.custom", "cs!core/api", "cs!config/config.default", "cs!plugi
         $("<link href=\"#{@config.assets.css}\" rel=\"stylesheet\" type=\"text/css\">").appendTo("head")
 
     setupPlugins: ->
-      @registerPlugins(@getDefaults().plugins, true)
+      @registerPlugins(@defaults.plugins, true)
       @registerPlugins(@config.plugins) if @config.plugins
       # Register the toolbar and keyboard after all the other plugins.
       @keyboard = new Keyboard(@keyboardPlugins, "keydown", @$el)

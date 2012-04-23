@@ -55,8 +55,6 @@ helpers:
 #
 spec_files:
   - "**/*[sS]pec.coffee"
-  #- "core/range.spec.coffee"
-  #- "jquery.custom.spec.coffee"
 
 # src_dir
 #
