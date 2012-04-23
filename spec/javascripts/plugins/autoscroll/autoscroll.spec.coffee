@@ -1,4 +1,4 @@
-require ["cs!jquery.custom", "cs!plugins/autoscroll/autoscroll"], ($, Autoscroll) ->
+require ["jquery.custom", "plugins/autoscroll/autoscroll"], ($, Autoscroll) ->
   describe "Autoscroll", ->
     describe "#autoscroll", ->
       api = autoscroll = null

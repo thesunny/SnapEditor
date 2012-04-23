@@ -1,5 +1,5 @@
 describe "Range.Module", ->
-  required = ["cs!core/range/range.module"]
+  required = ["core/range/range.module"]
 
   ait "returns a Module object", required, (Module) ->
     expect(Module).not.toBeNull()

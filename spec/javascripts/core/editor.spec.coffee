@@ -1,5 +1,5 @@
 describe "Editor", ->
-  required = ["cs!core/editor"]
+  required = ["core/editor"]
 
   $editable = null
   beforeEach ->

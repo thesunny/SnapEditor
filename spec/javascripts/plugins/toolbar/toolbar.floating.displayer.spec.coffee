@@ -1,5 +1,5 @@
 describe "Toolbar.Floating.Displayer", ->
-  required = ["cs!plugins/toolbar/toolbar.floating.displayer"]
+  required = ["plugins/toolbar/toolbar.floating.displayer"]
 
   $container = $el = $toolbar = null
   beforeEach ->

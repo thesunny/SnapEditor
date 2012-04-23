@@ -3,7 +3,7 @@
 # still be only testing the functionality of the module.
 if isWebkit
   describe "Range.Coordinates.Webkit", ->
-    required = ["cs!core/range"]
+    required = ["core/range"]
 
     $editable = $div = $first = $second = null
     beforeEach ->

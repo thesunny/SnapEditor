@@ -2,7 +2,7 @@
 # unit testing ecah function separately. For instance, when binding, in order
 # to test if it worked, you would have to trigger the event.
 describe "Events", ->
-  required = ["cs!core/events", "cs!core/helpers"]
+  required = ["core/events", "core/helpers"]
 
   Events = null
   beforeEach ->

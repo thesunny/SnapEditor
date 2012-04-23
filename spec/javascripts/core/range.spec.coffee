@@ -1,4 +1,4 @@
-require ["cs!core/range"], (Range) ->
+require ["core/range"], (Range) ->
   describe "Range", ->
     $editable = $start = $end = null
     beforeEach ->

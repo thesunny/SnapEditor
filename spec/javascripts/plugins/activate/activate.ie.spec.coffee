@@ -1,6 +1,6 @@
 if isIE
   describe "Activate.IE", ->
-    required = ["cs!plugins/activate/activate.ie", "cs!jquery.custom", "cs!core/helpers"]
+    required = ["plugins/activate/activate.ie", "jquery.custom", "core/helpers"]
 
     Activate = $editable = null
     beforeEach ->

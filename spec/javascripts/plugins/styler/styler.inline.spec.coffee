@@ -1,5 +1,5 @@
 describe "Styler.Inline", ->
-  required = ["cs!plugins/styler/styler.inline", "cs!core/range"]
+  required = ["plugins/styler/styler.inline", "core/range"]
 
   $editable = null
   beforeEach ->

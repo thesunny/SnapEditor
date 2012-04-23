@@ -1,5 +1,5 @@
 describe "Browser", ->
-  required = ["cs!core/browser"]
+  required = ["core/browser"]
 
   ait "returns true for the right browser", required, (Browser) ->
     p("isIE: #{Browser.isIE}")

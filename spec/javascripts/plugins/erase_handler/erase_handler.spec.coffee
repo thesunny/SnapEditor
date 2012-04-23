@@ -1,6 +1,6 @@
 if isWebkit
   describe "EraseHandler", ->
-    required = ["cs!plugins/erase_handler/erase_handler", "cs!core/range"]
+    required = ["plugins/erase_handler/erase_handler", "core/range"]
 
     $editable = $h1 = $p = API = null
     beforeEach ->

@@ -1,4 +1,4 @@
-require ["cs!core/helpers"], (Helpers) ->
+require ["core/helpers"], (Helpers) ->
   describe "helpers", ->
     describe "#isElement", ->
       it "returns true for an element", ->

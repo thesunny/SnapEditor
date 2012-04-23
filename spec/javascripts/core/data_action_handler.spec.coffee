@@ -3,7 +3,7 @@
 # results of the handlers. This means that there will be dependencies between
 # functions when testing.
 describe "DataActionHandler", ->
-  required = ["cs!core/data_action_handler"]
+  required = ["core/data_action_handler"]
 
   $el = namespace = null
   beforeEach ->

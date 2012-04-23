@@ -63,7 +63,3 @@ require.load = (context, moduleName, url) ->
 # Configuration for require.js.
 require.config
   baseUrl: "javascripts"
-  paths:
-    "CoffeeScript": "../lib/coffee-script"
-    "cs": "../spec/javascripts/support/cs.custom"
-

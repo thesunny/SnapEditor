@@ -1,4 +1,4 @@
-require ["cs!plugins/snap/snap"], (Snap) ->
+require ["plugins/snap/snap"], (Snap) ->
   describe "Snap", ->
     $editable = api = snap = null
     beforeEach ->

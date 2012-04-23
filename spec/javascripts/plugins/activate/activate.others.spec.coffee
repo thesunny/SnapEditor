@@ -1,6 +1,6 @@
 unless isIE
   describe "Activate.Others", ->
-    required = ["cs!plugins/activate/activate.others", "cs!core/helpers"]
+    required = ["plugins/activate/activate.others", "core/helpers"]
 
     Activate = $editable = null
     beforeEach ->

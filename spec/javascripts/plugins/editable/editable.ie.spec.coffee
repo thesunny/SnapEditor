@@ -1,6 +1,6 @@
 if isIE
   describe "Editable.IE", ->
-    required = ["cs!plugins/editable/editable.ie", "cs!core/helpers"]
+    required = ["plugins/editable/editable.ie", "core/helpers"]
 
     Editable = $el = null
     beforeEach ->

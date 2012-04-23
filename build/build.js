@@ -1,10 +1,5 @@
 ({
   baseUrl: "../javascripts",
-  paths: {
-    "CoffeeScript": "../lib/coffee-script",
-    "cs": "../lib/csBuild",
-    "csBuild": "../lib/cs"
-  },
   pragmasOnSave: {
     excludeCoffeeScript: true
   },

@@ -1,6 +1,6 @@
 if hasW3CRanges
   describe "Range.W3C", ->
-    required = ["cs!core/range/range.w3c", "cs!core/helpers"]
+    required = ["core/range/range.w3c", "core/helpers"]
 
     Range = $editable = $start = $end = null
     beforeEach ->

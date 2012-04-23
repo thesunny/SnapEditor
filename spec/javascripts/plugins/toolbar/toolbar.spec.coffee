@@ -1,4 +1,4 @@
-require ["cs!plugins/toolbar/toolbar"], (Toolbar) ->
+require ["plugins/toolbar/toolbar"], (Toolbar) ->
   describe "Toolbar", ->
     $templates = null
     $.ajax(url: "spec/javascripts/fixtures/templates.html", async: false, success: (html) -> $templates = $("<div/>").html(html))

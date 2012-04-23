@@ -12,7 +12,7 @@ window.ait = (description, testModules, testFn) ->
   it description, ->
     # Require the custom jQuery. We don't use #unshift() because that would
     # modify the actual modules array.
-    modules = ["cs!jquery.custom"].concat(testModules)
+    modules = ["jquery.custom"].concat(testModules)
     readyModules = []
     waitsFor ->
       require modules, -> readyModules = arguments

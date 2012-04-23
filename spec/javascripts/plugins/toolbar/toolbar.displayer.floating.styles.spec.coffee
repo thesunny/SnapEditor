@@ -1,5 +1,5 @@
 describe "Toolbar.Floating.Displayer.Styles", ->
-  required = ["cs!plugins/toolbar/toolbar.floating.displayer.styles"]
+  required = ["plugins/toolbar/toolbar.floating.displayer.styles"]
 
   $container = $el = $floater = null
   beforeEach ->

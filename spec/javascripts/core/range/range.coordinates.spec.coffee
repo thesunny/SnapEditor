@@ -1,5 +1,5 @@
 describe "Range.Coordinates", ->
-  required = ["cs!core/range/range.coordinates"]
+  required = ["core/range/range.coordinates"]
 
   ait "returns a Coordinates object", required, (Coordinates) ->
     expect(Coordinates).not.toBeNull()

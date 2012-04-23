@@ -1,5 +1,5 @@
 describe "Keyboard", ->
-  required = ["cs!plugins/keyboard/keyboard"]
+  required = ["plugins/keyboard/keyboard"]
 
   describe "#add", ->
     ait "adds the key when given a key and a function", required, (Keyboard) ->

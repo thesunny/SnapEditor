@@ -1,5 +1,5 @@
 describe "API", ->
-  required = ["cs!core/api", "cs!core/range"]
+  required = ["core/api", "core/range"]
 
   editor = $editable = $table = $td = null
   beforeEach ->

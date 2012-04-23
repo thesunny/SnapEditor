@@ -1,5 +1,5 @@
 describe "Activate", ->
-  required = ["cs!plugins/activate/activate"]
+  required = ["plugins/activate/activate"]
 
   describe "modules", ->
     ait "includes browser specific functions", required, (Activate) ->

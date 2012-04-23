@@ -3,7 +3,7 @@
 # still be only testing the functionality of the module.
 if isIE7
   describe "Range.Coordinates.IE7", ->
-    required = ["cs!core/range"]
+    required = ["core/range"]
 
     $editable = $div = $first = $second = null
     beforeEach ->

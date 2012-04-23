@@ -3,7 +3,7 @@
 # still be only testing the functionality of the module.
 if isGecko and not isGecko1
   describe "Range.Coordinates.Gecko", ->
-    required = ["cs!core/range"]
+    required = ["core/range"]
 
     $editable = $div = $first = $second = null
     beforeEach ->

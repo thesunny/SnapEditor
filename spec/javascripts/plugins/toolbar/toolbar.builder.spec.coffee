@@ -1,4 +1,4 @@
-require ["cs!plugins/toolbar/toolbar.builder"], (Builder) ->
+require ["plugins/toolbar/toolbar.builder"], (Builder) ->
   describe "Toolbar.Builder", ->
     availableButtons = null
     beforeEach ->

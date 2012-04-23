@@ -1,4 +1,4 @@
-require ["cs!jquery.custom"], ($) ->
+require ["jquery.custom"], ($) ->
   describe "jquery", ->
     $editable = null
     beforeEach ->

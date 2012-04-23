@@ -2,7 +2,7 @@
 # because IE returns the HTML tags as uppercase.
 unless hasW3CRanges
   describe "Range.IE", ->
-    required = ["cs!core/range/range.ie", "cs!core/helpers"]
+    required = ["core/range/range.ie", "core/helpers"]
 
     Range = $editable = $start = $end = null
     beforeEach ->

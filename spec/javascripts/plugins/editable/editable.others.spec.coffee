@@ -1,6 +1,6 @@
 unless isIE
   describe "Editable.Others", ->
-    required = ["cs!plugins/editable/editable.others", "cs!core/helpers"]
+    required = ["plugins/editable/editable.others", "core/helpers"]
 
     Editable = $el = null
     beforeEach ->

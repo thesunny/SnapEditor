@@ -2,7 +2,7 @@
 # module depends quite heavily on the Range object. However, the tests should
 # still be only testing the functionality of the module.
 if isIE9
-  require ["cs!core/range"], (Range) ->
+  require ["core/range"], (Range) ->
     describe "Range.Coordinates.IE9", ->
       $editable = $div = $first = $second = null
       beforeEach ->

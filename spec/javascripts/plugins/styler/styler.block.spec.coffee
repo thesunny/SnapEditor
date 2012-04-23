@@ -1,5 +1,5 @@
 describe "Styler.Block", ->
-  required = ["cs!plugins/styler/styler.block", "cs!core/range"]
+  required = ["plugins/styler/styler.block", "core/range"]
 
   $editable = $div = null
   beforeEach ->

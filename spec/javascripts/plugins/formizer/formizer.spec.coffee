@@ -1,4 +1,4 @@
-require ["cs!jquery.custom", "cs!plugins/formizer/formizer"], ($, Formizer) ->
+require ["jquery.custom", "plugins/formizer/formizer"], ($, Formizer) ->
   describe "Formizer", ->
     $container = $el = $toolbar = formizer = null
     beforeEach ->

@@ -30,6 +30,18 @@ The following command will install the necessary prerequisites.
     sudo apt-get install libqt4-dev qt4-qmake -y
     sudo update-alternatives --config qmake
 
+## Compiling
+
+### CoffeeScript
+
+All SnapEditor code is written in the `coffeescripts/` directory. These files are compiled into JavaScript and placed in the `javascripts/` directory.
+
+### Guard
+
+Guard is used for continuous compiling. It listens to the `coffeescripts/` directory for any changes. If there is, it will compile the CoffeeScript file into a JavaScript file and place it in `javascripts/`. Use the following command to run Guard.
+
+    bundle exec guard start
+
 ## Running Tests
 
 ### jasmine-headless-webkit
@@ -40,7 +52,7 @@ The Jasmine specs are written in CoffeeScript. Use the following command to comp
 
 ### Guard
 
-Guard is used for continuous testing. It watches for any changes to CoffeeScript files in the `javascripts/` and `spec/` directories and `spec/javascripts/support/jasmine.yml`. Use the following command to run Guard.
+Guard is used for continuous testing. It watches for any changes to JavaScript files in the `javascripts/` directory, CoffeeScript files in the `spec/` directories, and `spec/javascripts/support/jasmine.yml`. Use the following command to run Guard.
 
     bundle exec guard start
 
@@ -133,6 +145,10 @@ The beginning of the build starts at `javascripts/snapeditor.js`. It is the star
 
 ## Build File
 
-`build.js` has been provided as a profile for building the SnapEditor using `r.js`. Use the following command to use `r.js`.
+`build/` contains all the necessary files for building the SnapEditor. `build.js` has been provided as a profile for building the SnapEditor using `r.js`. Use the following command to use `r.js`.
 
     node r.js -o build.js
+
+## Guard
+
+TODO: At the moment, the SnapEditor is built whenever the CoffeeScript compiler is invoked. A separate guard should be used for this.
