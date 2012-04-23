@@ -7,7 +7,22 @@ window.isGecko1 = isGecko and parseInt($.browser.version, 10) == 1
 window.isWebkit = $.browser.webkit
 window.hasW3CRanges = !!window.getSelection
 
+# Puts.
 window.p = ->
+  # We can't just use
+  #   if console
+  # or
+  #   if !!console
+  # because IE craps all over the place when console is undefined
+  # complaining that it is undefined.
+  #
+  # We also can't just stop at console.log because CoffeeScript compiles it
+  # down to
+  #   console.log.apply(...)
+  # Apparently, in IE, if you open the developer tool bar (F12), it adds
+  # console.log. Unfortunately, for some crazy reason, console.log.apply is
+  # undefined. Hence, even though IE now has the ability to console.log, we
+  # can't use it.
   if typeof console != "undefined" and typeof console.log != "undefined"
     if typeof console.log.apply == "undefined"
       console.log(a) for a in arguments
