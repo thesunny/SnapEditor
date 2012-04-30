@@ -25,14 +25,23 @@ define ["jquery.custom", "core/helpers", "core/events", "core/range"], ($, Helpe
       Helpers.delegate(this, "editor", "contents", "activate", "deactivate", "update")
       Helpers.delegate(this, "range()",
         "isCollapsed", "isImageSelected", "getCoordinates", "getParentElement",
-        "collapse", "unselect", "selectEndOfTableCell",
+        "collapse", "unselect",
         "paste", "surroundContents", "remove"
+      )
+      Helpers.delegate(this, "blankRange()",
+        "selectEndOfElement", "selectEndOfTableCell"
       )
 
     # Gets the current selection if el is not given.
     # Otherwise returns the range that represents the el.
+    # If a selection does not exist, use #blankRange().
     range: (el) ->
       new Range(@el, el or window)
+
+    # Get a blank range. This is here in case a selection does not exist.
+    # If a selection exists, use #range().
+    blankRange: ->
+      new Range(@el)
 
     # Select the given el. If no el is given, selects the current selection.
     # NOTE: This is not directly delegated to the Range object because it is
