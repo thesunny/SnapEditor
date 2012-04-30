@@ -4,7 +4,7 @@ spec_location = "spec/javascripts/%s.spec"
 # uncomment if you use NerdCapsSpec.js
 # spec_location = "spec/javascripts/%sSpec"
 
-guard :coffeescript, input: "coffeescripts", output: "javascripts", bare: true, shallow: false
+guard :coffeescript, input: "coffeescripts", output: "javascripts", bare: true, shallow: false, all_on_start: true
 
 guard :shell, all_on_start: false do
   watch(%r{^javascripts/.*[.]js}) do |m|
