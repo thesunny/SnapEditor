@@ -1,40 +1,26 @@
-describe "Editor", ->
-  required = ["core/editor"]
-
-  $editable = null
-  beforeEach ->
-    $editable = addEditableFixture()
-
-  afterEach ->
-    $editable.remove()
-
-  describe "#constructor", ->
-    assets = null
+require ["core/editor"], (Editor) ->
+  describe "Editor", ->
+    $editable = null
     beforeEach ->
-      assets =
-        templates: "spec/javascripts/fixtures/templates.html"
+      $editable = addEditableFixture()
 
-    ait "saves the element as a jQuery element", required, (Editor) ->
-      editor = new Editor($editable[0], {}, assets: assets)
-      expect(editor.$el.attr).toBeDefined()
+    afterEach ->
+      $editable.remove()
 
-    ait "creates an API", required, (Editor) ->
-      editor = new Editor($editable[0], {},  assets: assets)
-      expect(editor.api).not.toBeNull()
+    describe "#constructor", ->
+      defaults = config = null
+      beforeEach ->
+        defaults =
+          plugins: []
+          toolbar: []
+        config =
+          assets:
+            templates: "spec/javascripts/support/fixtures/templates.html"
 
-    ait "registers the plugins", required, (Editor) ->
-      plugin =
-        register: ->
-        getDefaultToolbar: ->
-        getToolbar: ->
-      editor = new Editor($editable[0], {}, assets: assets, plugins: [plugin])
-      expect(editor.defaultToolbarPlugins.length).toBeGreaterThan(0)
-      expect(editor.toolbarPlugins.length).toEqual(1)
-      expect(editor.keyboardPlugins.length).toBeGreaterThan(0)
+      it "saves the element as a jQuery element", ->
+        editor = new Editor($editable[0], defaults, config)
+        expect(editor.$el.attr).toBeDefined()
 
-  describe "#addToolbarPlugin", ->
-    ait "throws an error if there is no #getDefaultToolbar()", required, (Editor) ->
-      plugin =
-        register: (api) ->,
-        getToolbar: -> TestButton: "html"
-      expect(-> new Editor($editable[0], plugins: [plugin])).toThrow()
+      it "creates an API", ->
+        editor = new Editor($editable[0], defaults, config)
+        expect(editor.api).not.toBeNull()

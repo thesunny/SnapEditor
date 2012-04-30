@@ -1,6 +1,7 @@
-define ["plugins/toolbar/toolbar", "plugins/toolbar/toolbar.floating.displayer"], (Toolbar, Displayer) ->
+define ["core/toolbar/toolbar", "core/toolbar/toolbar.floating.displayer"], (Toolbar, Displayer) ->
   class FloatingToolbar extends Toolbar
-    register: (@api) ->
+    constructor: ->
+      super(arguments...)
       @api.on("activate.editor", @show)
       @api.on("deactivate.editor", @hide)
 

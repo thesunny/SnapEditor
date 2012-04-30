@@ -44,7 +44,7 @@ define ["../lib/jquery", "../lib/mustache"], ->
     return fn.call(this) if this.isVisible()
     parent = this.parent()
     toMeasure = []
-    while !parent.isVisible() && parent.get(0) != document.body
+    while !parent.isVisible() && parent[0] != document.body
       toMeasure.push(parent.expose())
       parent = parent.parent()
     restore = this.expose()
@@ -57,7 +57,7 @@ define ["../lib/jquery", "../lib/mustache"], ->
   # Mimics MooTools expose.
   $.fn.expose = ->
     unless this.css("display") == 'none' then return ->
-    el = this.get(0)
+    el = this[0]
     before = el.style.cssText
     this.css(
       display: 'block',
@@ -65,6 +65,15 @@ define ["../lib/jquery", "../lib/mustache"], ->
       visibility: 'hidden'
     )
     => el.style.cssText = before
+
+  # Given the contexts, find all the matching contexts.
+  $.fn.contexts = (contexts, untilEl = null) ->
+    $el = $(this)
+    matchedContexts = {}
+    for context in contexts
+      $match = $el.closest(context, untilEl)
+      matchedContexts[context] = $match[0] if $match.length > 0
+    return matchedContexts
 
   # Generic mustache render function.
   # Taken from jquery.mustache.js when using "rake jquery" to build mustache.js.

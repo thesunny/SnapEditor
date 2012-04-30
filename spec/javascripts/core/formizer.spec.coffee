@@ -1,4 +1,4 @@
-require ["jquery.custom", "plugins/formizer/formizer"], ($, Formizer) ->
+require ["jquery.custom", "core/formizer/formizer"], ($, Formizer) ->
   describe "Formizer", ->
     $container = $el = $toolbar = formizer = null
     beforeEach ->
@@ -12,14 +12,14 @@ require ["jquery.custom", "plugins/formizer/formizer"], ($, Formizer) ->
 
     describe "#constructor", ->
       it "creates a content element", ->
-        expect(constructor.$content).not.toBeNull()
+        expect(formizer.$content).not.toBeNull()
 
     describe "#formize", ->
       it "splits the el into the toolbar and content", ->
         formizer.formize($toolbar)
         expect($el.children().length).toEqual(2)
         expect($el.children()[0].id).toEqual("toolbar")
-        expect($($el.children()[1]).hasClass("snapeditor-form-content")).toBeTruthy()
+        expect($($el.children()[1]).hasClass("snapeditor_form_content")).toBeTruthy()
 
       it "shows the toolbar", ->
         formizer.formize($toolbar)
@@ -36,6 +36,6 @@ require ["jquery.custom", "plugins/formizer/formizer"], ($, Formizer) ->
         expect(size.x).toEqual(100)
         expect(size.y).toEqual(50)
 
-        size = $(".snapeditor-form-content").getSize()
+        size = $(".snapeditor_form_content").getSize()
         expect(size.x).toEqual(100)
         expect(size.y).toEqual(250)

@@ -6,8 +6,9 @@ define ["jquery.custom"], ($) ->
   class DataActionHandler
     # $el is the container element.
     # api is the editor API object.
-    constructor: (el, @api, @namespace) ->
+    constructor: (el, @api) ->
       @$el = $(el)
+      # TODO: Figure out if change event propogates.
       # Listen to any change events on <select>.
       @$el.children("select[data-action]").on("change", @change)
       # Mousedown is tracked because we want to handle the click only if it
@@ -38,7 +39,7 @@ define ["jquery.custom"], ($) ->
         if $button.length > 0
           e.preventDefault()
           e.stopPropagation()
-          @api.trigger("#{$button.attr("data-action")}.#{@namespace}", target)
+          @api.trigger("#{$button.attr("data-action")}", target)
       @isClick = false
       # Purposely added true here because the line above sets @isClick to false.
       # Since CoffeeScript returns the last statement, if the line above was the
@@ -52,6 +53,6 @@ define ["jquery.custom"], ($) ->
     # value is passed along through the event.
     change: (e) =>
       $target = $(e.target)
-      @api.trigger("#{$target.attr("data-action")}.#{@namespace}", $target.val()) if $target.attr("data-action")
+      @api.trigger("#{$target.attr("data-action")}", $target.val()) if $target.attr("data-action")
 
   return DataActionHandler

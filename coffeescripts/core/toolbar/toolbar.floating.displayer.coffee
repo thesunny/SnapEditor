@@ -1,4 +1,4 @@
-define ["jquery.custom", "plugins/toolbar/toolbar.floating.displayer.styles"], ($, Styles) ->
+define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles"], ($, Styles) ->
   class Displayer
     constructor: (toolbar, el, @api) ->
       @$toolbar = $(toolbar)

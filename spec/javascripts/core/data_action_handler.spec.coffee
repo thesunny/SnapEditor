@@ -5,7 +5,7 @@
 describe "DataActionHandler", ->
   required = ["core/data_action_handler"]
 
-  $el = namespace = null
+  $el = null
   beforeEach ->
     $el = $('
       <div>
@@ -17,7 +17,6 @@ describe "DataActionHandler", ->
         <input id="text_event" type="text" data-action="text" />
       </div>
     ').prependTo("body")
-    namespace = "test"
 
   afterEach ->
     $el.remove()
@@ -26,19 +25,19 @@ describe "DataActionHandler", ->
     ait "listens to change events on <select> with the 'data-action' attribute", required, (Handler) ->
       api = { trigger: null }
       spyOn(api, "trigger")
-      handler = new Handler($el, api, namespace)
+      handler = new Handler($el, api)
       $("#select_no_event").trigger("change")
       $("#select_event").trigger("change")
       expect(api.trigger.callCount).toEqual(1)
 
     ait "listens to the mousedown event", required, (Handler) ->
-      handler = new Handler($el, {}, namespace)
+      handler = new Handler($el, {})
       expect(handler.isClick).toBeUndefined()
       $el.trigger("mousedown")
       expect(handler.isClick).toBeTruthy()
 
     ait "listens to the mouseup event", required, (Handler) ->
-      handler = new Handler($el, {}, namespace)
+      handler = new Handler($el, {})
       expect(handler.isClick).toBeUndefined()
       $el.trigger("mouseup")
       expect(handler.isClick).toBeFalsy()
@@ -46,13 +45,13 @@ describe "DataActionHandler", ->
     ait "listens to the keypress event", required, (Handler) ->
       api = { trigger: null }
       spyOn(api, "trigger")
-      handler = new Handler($el, api, namespace)
+      handler = new Handler($el, api)
       $("#button_event").trigger("keypress")
       expect(api.trigger).toHaveBeenCalled()
 
   describe "#click", ->
     ait "sets isClick to false", required, (Handler) ->
-      handler = new Handler($el, {}, namespace)
+      handler = new Handler($el, {})
       expect(handler.isClick).toBeUndefined()
       $("#button_event").trigger("mouseup")
       expect(handler.isClick).toBeFalsy()
@@ -60,14 +59,14 @@ describe "DataActionHandler", ->
     ait "does not trigger the event if the click did not start on the button", required, (Handler) ->
       api = { trigger: null }
       spyOn(api, "trigger")
-      handler = new Handler($el, api, namespace)
+      handler = new Handler($el, api)
       $("#button_event").trigger("mouseup")
       expect(api.trigger).not.toHaveBeenCalled()
 
     ait "does not trigger the event if the button does not have a data-action attribute", required, (Handler) ->
       api = { trigger: null }
       spyOn(api, "trigger")
-      handler = new Handler($el, api, namespace)
+      handler = new Handler($el, api)
       handler.isClick = true
       $("#button_no_event").trigger("mouseup")
       expect(api.trigger).not.toHaveBeenCalled()
@@ -75,22 +74,22 @@ describe "DataActionHandler", ->
     ait "triggers the event if the button has a data-action attribute", required, (Handler) ->
       api = { trigger: null }
       spyOn(api, "trigger")
-      handler = new Handler($el, api, namespace)
+      handler = new Handler($el, api)
       handler.isClick = true
       $("#button_event").trigger("mouseup")
-      expect(api.trigger).toHaveBeenCalledWith("button.test", $("#button_event")[0])
+      expect(api.trigger).toHaveBeenCalledWith("button", $("#button_event")[0])
 
   describe "#change", ->
     ait "does not trigger the event if the target does not have a data-action attribute", required, (Handler) ->
       api = { trigger: null }
       spyOn(api, "trigger")
-      handler = new Handler($el, api, namespace)
+      handler = new Handler($el, api)
       $("#select_no_event").trigger("change")
       expect(api.trigger).not.toHaveBeenCalled()
 
     ait "triggers the event if the target has a data-action attribute", required, (Handler) ->
       api = { trigger: null }
       spyOn(api, "trigger")
-      handler = new Handler($el, api, namespace)
+      handler = new Handler($el, api)
       $("#select_event").trigger("change")
-      expect(api.trigger).toHaveBeenCalledWith("select.test", "1")
+      expect(api.trigger).toHaveBeenCalledWith("select", "1")

@@ -1,8 +1,13 @@
- require ["plugins/styler/styler.inline", "core/range"], (Styler, Range) ->
+ require ["plugins/styler/styler.inline", "core/range", "core/helpers"], (Styler, Range, Helpers) ->
   describe "Styler.Inline", ->
-    $editable = null
+    $editable = styler = null
     beforeEach ->
       $editable = addEditableFixture()
+      styler = new Styler()
+      styler.api =
+        update: ->
+        range: -> new Range($editable[0], window)
+      Helpers.delegate(styler.api, "range()", "isCollapsed", "getParentElement", "paste", "surroundContents")
 
     afterEach ->
       $editable.remove()
@@ -11,8 +16,6 @@
       it "bolds the selection", ->
         $div = $("<div>some text</div>").appendTo($editable)
         new Range($editable[0], $div[0]).select()
-        styler = new Styler()
-        styler.api = { update: -> }
         styler.bold()
         if isIE
           # NOTE: IE returns tags as uppercase, hence th use of toLowerCase()
@@ -22,12 +25,9 @@
 
     describe "#italic", ->
       it "italicizes the selection", ->
-        $editable = addEditableFixture()
         $div = $("<div>some text</div>").appendTo($editable)
 
         new Range($editable[0], $div[0]).select()
-        styler = new Styler()
-        styler.api = { update: -> }
         styler.italic()
         if isIE
           # NOTE: IE returns tags as uppercase, hence th use of toLowerCase()
@@ -35,18 +35,14 @@
         else
           expect($div.html()).toEqual("<i>some text</i>")
 
-        $editable.remove()
-
     describe "#format", ->
       it "throws an error when the tag is not supported", ->
         spyOn(document, "execCommand")
-        styler = new Styler()
         spyOn(styler, "update")
         expect(-> styler.format("test")).toThrow()
 
       it "bolds given 'b'", ->
         spyOn(document, "execCommand")
-        styler = new Styler()
         spyOn(styler, "exec")
         spyOn(styler, "update")
         styler.format("b")
@@ -54,7 +50,6 @@
 
       it "italicizes given 'i'", ->
         spyOn(document, "execCommand")
-        styler = new Styler()
         spyOn(styler, "exec")
         spyOn(styler, "update")
         styler.format("i")
@@ -62,7 +57,6 @@
 
       it "updates the api", ->
         spyOn(document, "execCommand")
-        styler = new Styler()
         spyOn(styler, "exec")
         spyOn(styler, "update")
         styler.format("b")
@@ -71,7 +65,80 @@
       if isGecko
         it "styles without CSS in Gecko", ->
           spyOn(document, "execCommand")
-          styler = new Styler()
-          styler.api = { update: -> }
           styler.format("b")
           expect(document.execCommand).toHaveBeenCalledWith("styleWithCSS", false, false)
+
+    describe "#link", ->
+      api = null
+      beforeEach ->
+        spyOn(window, "prompt").andReturn("http://snapeditor.com")
+
+      it "does not do anything if nothing is entered", ->
+        window.prompt.andReturn(null)
+        spyOn(styler, "update")
+        styler.link()
+        expect(styler.update).not.toHaveBeenCalled()
+
+      it "changes the href if a link is selected", ->
+        $a = $('<a href="http://example.com">some text</a>').appendTo($editable)
+        range = new Range($editable[0])
+        if hasW3CRanges
+          range.range.setStart($a[0].childNodes[0], 5)
+        else
+          range.range.findText("text")
+          range.collapse(true)
+        range.select()
+
+        spyOn(styler, "update")
+        styler.link()
+        expect($a.attr("href")).toEqual("http://snapeditor.com")
+
+      it "adds a link if the range is collapsed", ->
+        $div = $("<div>some text</div>").appendTo($editable)
+
+        range = new Range($editable[0])
+        if hasW3CRanges
+          range.range.setStart($div[0].childNodes[0], 5)
+        else
+          range.range.findText("text")
+        range.collapse(true)
+        range.select()
+
+        spyOn(styler, "update")
+        styler.link()
+        if isIE7
+          expect($div.html().toLowerCase()).toEqual('some <a href="http://snapeditor.com/">http://snapeditor.com</a>text')
+        else
+          expect($div.html().toLowerCase()).toEqual('some <a href="http://snapeditor.com">http://snapeditor.com</a>text')
+
+      it "surrounds the content with a link", ->
+        $div = $("<div>some text</div>").appendTo($editable)
+        $span = $div.find("span")
+        range = new Range($editable[0])
+        if hasW3CRanges
+          range.range.setStart($div[0].childNodes[0], 5)
+          range.range.setEnd($div[0].childNodes[0], 9)
+        else
+          range.range.findText("text")
+        range.select()
+
+        spyOn(styler, "update")
+        styler.link()
+        if isIE7
+          expect($div.html().toLowerCase()).toEqual('some <a href="http://snapeditor.com/">text</a>')
+        else
+          expect($div.html().toLowerCase()).toEqual('some <a href="http://snapeditor.com">text</a>')
+
+      it "updates the api", ->
+        $a = $('<a href="http://example.com">some text</a>').appendTo($editable)
+        range = new Range($editable[0])
+        if hasW3CRanges
+          range.range.setStart($a[0].childNodes[0], 5)
+        else
+          range.range.findText("text")
+          range.collapse(true)
+        range.select()
+
+        spyOn(styler, "update")
+        styler.link()
+        expect(styler.update).toHaveBeenCalled()

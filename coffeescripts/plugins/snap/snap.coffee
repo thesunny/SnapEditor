@@ -4,6 +4,7 @@ define ["jquery.custom"], ($) ->
       @$el = $(@api.el)
       @api.on("activate.editor", @snap)
       @api.on("deactivate.editor", @unsnap)
+      @api.on("update.editor", @update)
 
     # Prepare the semi-transparent divs and the snap/unsnap effects.
     setup: ->
@@ -147,7 +148,7 @@ define ["jquery.custom"], ($) ->
       elCoord = @$el.getCoordinates()
       documentSize = $(document).getSize()
       styles = @getSnappedStyles(elCoord, documentSize)
-      div.css(styles[position]) for position, div in @divs
+      div.css(styles[position]) for position, div of @divs
 
     setCancel: =>
       # Allow canceling if the mousedown started on a snap div.

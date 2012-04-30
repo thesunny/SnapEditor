@@ -1,7 +1,5 @@
-define [], ->
+define ["config/config.default"], (Defaults) ->
   return {
     build: ->
-      return {
-        plugins: []
-      }
+      Defaults.build()
   }

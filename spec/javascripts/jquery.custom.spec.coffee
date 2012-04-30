@@ -45,6 +45,17 @@ require ["jquery.custom"], ($) ->
         expect(scroll.y).toEqual(500)
         window.scrollTo(0, 0)
 
+    describe "#contexts", ->
+      it "returns the matched contexts and the matched elements", ->
+        $div = $('<div class="top">some <b>bold and <i>italic</i></b> text with an <img src="spec/javascripts/support/images/stub.png"> in it</div>')
+        contexts = [".top", ".top b", "i", "#editable"]
+        matchedContexts = $div.find("i").contexts(contexts, $editable[0])
+        expect(matchedContexts[".top"]).toEqual($div[0])
+        expect(matchedContexts[".top b"]).toEqual($div.find("b")[0])
+        expect(matchedContexts["i"]).toEqual($div.find("i")[0])
+        expect(matchedContexts["#editable"]).toBeUndefined()
+
+
     describe ".mustache", ->
       it "renders the given template and view", ->
         template = "before {{value}} after"

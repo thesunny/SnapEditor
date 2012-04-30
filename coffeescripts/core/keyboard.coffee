@@ -26,17 +26,12 @@
 # body.
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class Keyboard
-    constructor: (@plugins, @type, el = document.body) ->
-      @$el = $(el)
+    constructor: (@api, keyboardShortcuts, @type) ->
+      @$el = $(@api.el)
       @keys = {}
-      @setupPlugins()
-
-    register: (@api) ->
+      @add(keyboardShortcuts)
       @api.on("activate.editor", @start)
       @api.off("deactivate.editor", @stop)
-
-    setupPlugins: ->
-      @add(plugin.getKeyboardShortcuts()) for plugin in @plugins
 
     # (key, fn) - Takes a key and a function.
     # (map) - Takes a map of keys and functions.

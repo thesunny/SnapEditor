@@ -4,3 +4,9 @@
   background-color: #acacac;
   border: 1px solid black;
 }
+
+.contextmenu {
+  z-index: 200;
+  background-color: #acacac;
+  border: 1px solid black;
+}

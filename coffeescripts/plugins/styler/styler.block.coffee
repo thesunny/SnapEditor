@@ -2,37 +2,35 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
   class BlockStyler
     register: (@api) ->
 
-    getDefaultToolbar: ->
-      "Block"
-
-    getToolbar: (ui) ->
-      p = ui.button(action: "p", attrs: {class: "p-button", title: "Paragraph (Ctrl+Space)"})
-      h1 = ui.button(action: "h1", attrs: {class: "h1-button", title: "H1 (Ctrl+1)"})
-      h2 = ui.button(action: "h2", attrs: {class: "h2-button", title: "H2 (Ctrl+2)"})
-      h3 = ui.button(action: "h3", attrs: {class: "h3-button", title: "H3 (Ctrl+3)"})
-      alignLeft = ui.button(action: "alignleft", attrs: {class: "alignleft-button", title: "Align Left (Ctrl+L)"})
-      alignCenter = ui.button(action: "aligncenter", attrs: {class: "aligncenter-button", title: "Align Center (Ctrl+E)"})
-      alignRight = ui.button(action: "alignright", attrs: {class: "alignright-button", title: "Align Right (Ctrl+R)"})
-      unorderedList = ui.button(action: "unorderedlist", attrs: {class: "unorderedlist-button", title: "Bullet List (Ctrl+8)"})
-      orderedList = ui.button(action: "orderedlist", attrs: {class: "orderedlist-button", title: "Numbered List (Ctrl+7)"})
-      indent = ui.button(action: "indent", attrs: {class: "indent-button", title: "Indent"})
-      outdent = ui.button(action: "outdent", attrs: {class: "outdent-button", title: "Outdent"})
+    getUI: (ui) ->
+      p = ui.button(action: "p", title: "Paragraph (Ctrl+Space)", icon: "image.png")
+      h1 = ui.button(action: "h1", title: "H1 (Ctrl+1)", icon: "image.png")
+      h2 = ui.button(action: "h2", title: "H2 (Ctrl+2)", icon: "image.png")
+      h3 = ui.button(action: "h3", title: "H3 (Ctrl+3)", icon: "image.png")
+      alignLeft = ui.button(action: "alignleft", title: "Align Left (Ctrl+L)", icon: "image.png")
+      alignCenter = ui.button(action: "aligncenter", title: "Align Center (Ctrl+E)", icon: "image.png")
+      alignRight = ui.button(action: "alignright", title: "Align Right (Ctrl+R)", icon: "image.png")
+      unorderedList = ui.button(action: "unorderedlist", title: "Bullet List (Ctrl+8)", icon: "image.png")
+      orderedList = ui.button(action: "orderedlist", title: "Numbered List (Ctrl+7)", icon: "image.png")
+      indent = ui.button(action: "indent", title: "Indent", icon: "image.png")
+      outdent = ui.button(action: "outdent", title: "Outdent", icon: "image.png")
       return {
-        Block: [p, h1, h2, h3, alignLeft, alignCenter, alignRight, unorderedList, orderedList, indent, outdent]
-        P: p
-        H1: h1
-        H2: h2
-        H3: h3
-        AlignLeft: alignLeft
-        AlignCenter: alignCenter
-        AlignRight: alignRight
-        UnorderedList: unorderedList
-        OrderedList: orderedList
-        Indent: indent
-        Outdent: outdent
+        "toolbar:default": "block"
+        block: [p, h1, h2, h3, alignLeft, alignCenter, alignRight, unorderedList, orderedList, indent, outdent]
+        p: p
+        h1: h1
+        h2: h2
+        h3: h3
+        alignLeft: alignLeft
+        alignCenter: alignCenter
+        alignRight: alignRight
+        unorderedList: unorderedList
+        orderedList: orderedList
+        indent: indent
+        outdent: outdent
       }
 
-    getToolbarActions: ->
+    getActions: ->
       return {
         p: @p
         h1: @h1

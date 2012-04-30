@@ -1,6 +1,7 @@
-define ["plugins/toolbar/toolbar"], (Toolbar) ->
+define ["core/toolbar/toolbar"], (Toolbar) ->
   class StaticToolbar extends Toolbar
-    register: (@api) ->
+    constructor: ->
+      super(arguments...)
       @setup()
       @$toolbar.hide().appendTo("body")
 

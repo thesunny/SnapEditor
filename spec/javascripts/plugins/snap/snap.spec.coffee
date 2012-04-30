@@ -13,6 +13,9 @@ require ["plugins/snap/snap"], (Snap) ->
       api.el = $editable[0]
       snap = new Snap()
 
+    afterEach ->
+      $editable.remove()
+
     describe "#setup", ->
       it "creates the snap divs", ->
         snap.setup()
