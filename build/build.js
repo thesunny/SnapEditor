@@ -6,6 +6,6 @@
   name: "../build/almond.js",
   include: "snapeditor",
   out: "snapeditor.js",
-  optimize: "uglify",
+  optimize: "none",
   wrap: true
 })

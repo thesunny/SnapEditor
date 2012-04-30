@@ -8,8 +8,10 @@ define ["jquery.custom"], ($) ->
     # api is the editor API object.
     constructor: (el, @api) ->
       @$el = $(el)
-      # TODO: Figure out if change event propogates.
       # Listen to any change events on <select>.
+      # NOTE: Unfortunately, IE does not bubble onchange events, even though
+      # the standard says it should. Surprise. The workaround is to look for
+      # and listen to the selects directly.
       @$el.children("select[data-action]").on("change", @change)
       # Mousedown is tracked because we want to handle the click only if it
       # started and ended within the el.
