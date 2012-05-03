@@ -7,7 +7,7 @@ README.html
 runner.filter.html
 runner.html
 tags
-.jhw-cache/
-javascripts/
-vendor/
-build/snapeditor.js
+/.jhw-cache/
+/javascripts/
+/vendor/
+/build/snapeditor.js
