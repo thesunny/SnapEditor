@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/api", "core/plugins", "core/keyboard", "core/contexts", "core/contextmenu"], ($, API, Plugins, Keyboard, Contexts, ContextMenu) ->
+define ["jquery.custom", "core/api", "core/plugins", "core/keyboard", "core/contexts", "core/contextmenu", "core/whitelist/whitelist"], ($, API, Plugins, Keyboard, Contexts, ContextMenu, Whitelist) ->
   class Editor
     # Options:
     # * assets: an object that holds urls to assets
@@ -8,6 +8,7 @@ define ["jquery.custom", "core/api", "core/plugins", "core/keyboard", "core/cont
     # * toolbar: toolbar config that replaces the default one
     constructor: (el, @defaults, @config = {}) ->
       @$el = $(el)
+      @whitelist = new Whitelist(@defaults.whitelist)
       @api = new API(this)
       @loadAssets()
       @plugins = new Plugins(@api, @$templates, @defaults.plugins, @config.plugins, @defaults.toolbar, @config.toolbar)

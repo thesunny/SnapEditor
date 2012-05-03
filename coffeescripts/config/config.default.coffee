@@ -2,10 +2,11 @@ define ["plugins/activate/activate", "plugins/editable/editable", "plugins/clean
   return {
     build: ->
       return {
-        plugins: [new Activate(), new Editable(), new Cleaner(), new EraseHandler(), new InlineStyler(), new BlockStyler()],
+        plugins: [new Activate(), new Editable(), new Cleaner(), new EraseHandler(), new InlineStyler(), new BlockStyler()]
         toolbar: [
           "Inline", "|",
           "Block"
         ]
+        whitelist: {}
       }
   }

@@ -22,7 +22,10 @@ define ["jquery.custom", "core/helpers", "core/events", "core/range"], ($, Helpe
   class API
     constructor: (@editor) ->
       @el = @editor.$el[0]
-      Helpers.delegate(this, "editor", "contents", "activate", "deactivate", "update")
+      @whitelist = @editor.whitelist
+      Helpers.delegate(this, "editor",
+        "contents", "activate", "deactivate", "update"
+      )
       Helpers.delegate(this, "range()",
         "isCollapsed", "isImageSelected", "getCoordinates", "getParentElement",
         "collapse", "unselect",
@@ -30,6 +33,9 @@ define ["jquery.custom", "core/helpers", "core/events", "core/range"], ($, Helpe
       )
       Helpers.delegate(this, "blankRange()",
         "selectEndOfElement", "selectEndOfTableCell"
+      )
+      Helpers.delegate(this, "whitelist",
+        "allowed", "replacement", "next"
       )
 
     # Gets the current selection if el is not given.
