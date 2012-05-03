@@ -9,7 +9,7 @@
 # * next
 #
 # All labels are dereferenced to their objects.
-define [], ->
+define ["jquery.custom"], ($) ->
   class Generator
     constructor: (@whitelist) ->
 
@@ -57,8 +57,8 @@ define [], ->
       !!label.match(/^[A-Z]/)
 
     parse: (string) ->
-      [element, next] = (s.trim() for s in string.split(">"))
-      [tag, classes...] = (s.trim() for s in element.split("."))
+      [element, next] = ($.trim(s) for s in string.split(">"))
+      [tag, classes...] = ($.trim(s) for s in element.split("."))
       next = @parse(next) if next and !@isLabel(next)
       return {
         tag: tag
