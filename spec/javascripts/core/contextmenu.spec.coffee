@@ -6,6 +6,9 @@ require ["jquery.custom", "core/contextmenu"], ($, ContextMenu) ->
     api.el = $editable
     contextmenu = new ContextMenu(api, {})
 
+  afterEach ->
+    $editable.remove()
+
   describe "ContextMenu", ->
     describe "#tryHide", ->
       $menu = null
