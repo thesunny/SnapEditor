@@ -1,43 +1,37 @@
-describe "API", ->
-  required = ["core/api", "core/range"]
+require ["core/api", "core/range"], (API, Range) ->
+  describe "API", ->
+    api = $editable = $table = $td = null
+    beforeEach ->
+      $editable = addEditableFixture()
+      $table = $('<table><tbody><tr><td id="td">cell</td><td>another</td></tr></tbody></table>').appendTo($editable)
+      $td = $("#td")
+      api = new API(
+        $el: $editable
+        contents: null
+        activate: null
+        whitelist: {}
+      )
 
-  editor = $editable = $table = $td = null
-  beforeEach ->
-    $editable = addEditableFixture()
-    $table = $('<table><tbody><tr><td id="td">cell</td><td>another</td></tr></tbody></table>').appendTo($editable)
-    $td = $("#td")
-    editor =
-      $el: $editable
-      contents: null
-      activate: null
+    afterEach ->
+      $editable.remove()
 
-  afterEach ->
-    $editable.remove()
+    describe "#constructor", ->
+      it "saves the editor", ->
+        expect(api.editor).toBeDefined()
+        expect(api.editor).not.toBeNull()
 
-  describe "#constructor", ->
-    ait "saves the editor", required, (API, Range) ->
-      api = new API(editor)
-      expect(api.editor).toEqual(editor)
+      it "saves the el", ->
+        expect(api.el).toEqual($editable[0])
 
-    ait "saves the el", required, (API, Range) ->
-      api = new API(editor)
-      expect(api.el).toEqual(editor.$el[0])
+    describe "#range", ->
+      it "returns the selection when no element is given", ->
+        expectedRange = new Range($editable[0], $td[0])
+        expectedRange.selectEndOfTableCell($td[0])
 
-  describe "#contents", -> # TODO: Write tests.
+        range = api.range()
+        range.paste("test")
+        expect($td.html()).toEqual("celltest")
 
-  describe "#activate", -> # TODO: Write tests.
-
-  describe "#range", ->
-    ait "returns the selection when no element is given", required, (API, Range) ->
-      expectedRange = new Range($editable[0], $td[0])
-      expectedRange.selectEndOfTableCell($td[0])
-
-      api = new API(editor)
-      range = api.range()
-      range.paste("test")
-      expect($td.html()).toEqual("celltest")
-
-    ait "returns the element's range when an element is given", required, (API, Range) ->
-      api = new API(editor)
-      range = api.range($td[0])
-      expect(range.getParentElement("tr")).not.toBeNull()
+      it "returns the element's range when an element is given", ->
+        range = api.range($td[0])
+        expect(range.getParentElement("tr")).not.toBeNull()
