@@ -49,7 +49,7 @@ define ["core/helpers"], (Helpers) ->
       # Get immediate parent element.
       getImmediateParentElement: ->
         # Only textranges have parentElement. Controlranges do not.
-        (@range.parentElement and @range.parentElement()) or null
+        (@range.parentElement and @range.parentElement()) or @range.item(0)
 
       # TODO: Confirm that this is no longer used. Remove the test if so.
       # Returns an object representing the area between the current range
