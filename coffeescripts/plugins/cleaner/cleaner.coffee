@@ -1,75 +1,51 @@
-define ["jquery.custom"], ($) ->
+define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], ($, Helpers, Normalizer) ->
   class Cleaner
     register: (@api) ->
       @$el = $(@api.el)
-      @api.on("activate.editor", => @start(false))
-      @start(false)
+      @normalizer = new Normalizer(@api)
+      @api.on("activate.editor", => @clean(@api.el.firstChild, @api.el.lastChild))
+      @api.on("clean", (e, args...) => @clean.apply(this, args))
+      @clean(@api.el.firstChild, @api.el.lastChild)
 
-    start: (saveRange) =>
-      childNodes = @getChildNodesAsArray()
-      # If there are no children, insert an empty <p>.
-      if childNodes.length == 0
-        $p = $("<p><br/></p>")
-        $p.prepend($('<span id="CLEAN_CURSOR"></span>')) if saveRange
-        @$el.prepend($p)
-      else
-        # Save the range position because if we move anything around,
-        # the current range will be destroyed.
-        @saveRangePosition() if saveRange
-        @cleanup()
-      @positionSavedRange() if saveRange
+    # Given a range, it saves the range, performs the clean up, then
+    # repositions the range.
+    # Given a startNode and endNode, it cleans up between and including
+    # startNode and endNode.
+    clean: ->
+      switch arguments.length
+        when 0 then @api.keepRange(@cleanup)
+        when 2 then @cleanup.apply(this, arguments)
+        else throw "Wrong number of arguments to Cleaner.clean(). Expecting nothing () or (startNode, endNode)."
 
-    cleanup: ->
-      childNodes = @getChildNodesAsArray()
-      # nodeType 1 is an Element
-      # nodeType 3 is a text node
-      # Collect up all consecutive inline nodes and wrap them in a <p>.
-      lastEl = null
-      inlineNodes = []
-      for node in childNodes
-        type = node.nodeType
-        # Textnode or inline element.
-        if type == 3 or (type == 1 and $(node).css('display') == 'inline')
-          inlineNodes.push(node)
-        else
-          @wrapInlineNodes(inlineNodes, lastEl)
-          inlineNodes = []
-          lastEl = $(node)
-      # Wrap any remaining inline nodes.
-      @wrapInlineNodes(inlineNodes, lastEl)
+    # Cleans up and normalizes all the nodes between and including startNode
+    # and endNode.
+    cleanup: (startNode, endNode) =>
+      if startNode and endNode
+        startTopNode = @expandTopNode(@findTopNode(startNode), true)
+        endTopNode = @expandTopNode(@findTopNode(endNode), false)
+        @normalizer.normalize(startTopNode, endTopNode)
 
-    getChildNodesAsArray: ->
-      childNodes = @$el[0].childNodes
-      childNodesLength = childNodes.length
-      array = []
-      # Keep only elements and non-empty textnodes.
-      for node in childNodes
-        nodeType = node.nodeType
-        if nodeType == 1 or nodeType == 3 and node.data.trim() != ''
-          array.push(node)
-      array
+    # Runs up the parent chain and returns the node at the top.
+    findTopNode: (node) ->
+      topNode = node
+      parent = topNode.parentNode
+      while parent != @api.el
+        topNode = parent
+        parent = topNode.parentNode
+      return topNode
 
-    wrapInlineNodes: (inlineNodes, lastEl) ->
-      if inlineNodes.length > 0
-        p = $('<p>').append(inlineNodes)
-        # if there is no lastEl, then we know we are at the top so we
-        # inject at the top of the div.
-        if lastEl
-          $(lastEl).after(p)
-        else
-          @$el.prepend(p)
-
-    saveRangePosition: ->
-      # Save the cursor. The range will be destroyed if we move
-      # anything around. Therefore, we set a span to remember where
-      # the cursor is.
-      @api.collapse()
-      @api.paste('<span id="CLEAN_CURSOR"></span>')
-
-    positionSavedRange: ->
-      $span = $("#CLEAN_CURSOR")
-      range = @api.range($span[0])
-      range.select()
-      $span.remove()
+    # If the node is an inline node, it either looks backwards or forwards
+    # until it hits a block or the end. It then returns the node before the
+    # block.
+    # If the node is a block node, it returns it.
+    expandTopNode: (node, backwards) ->
+      return node if Helpers.isBlock(node)
+      direction = if backwards then "previousSibling" else "nextSibling"
+      topNode = node
+      sibling = topNode[direction]
+      while sibling and !Helpers.isBlock(sibling)
+        topNode = sibling
+        sibling = topNode[direction]
+      return topNode
 
   return Cleaner
