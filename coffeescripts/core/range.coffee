@@ -175,6 +175,15 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     selectEndOfTableCell: (cell) ->
       throw "#selectEndOfTableCell() needs to be overridden with a browser specific implementation"
 
+    # Saves the range, executes the given fn, then reselects the range.
+    # The function is given the start and end spans as arguments.
+    #
+    # NOTE: This inserts spans at the beginning and end of the range. These
+    # cannot be removed. If they are, the reselection will fail. Be careful
+    # what the given function does.
+    keepRange: (fn) ->
+      throw "#keepRange() needs to be overridden with a browser specific implementation"
+
     #
     # MODIFY RANGE CONTENT FUNCTIONS
     #

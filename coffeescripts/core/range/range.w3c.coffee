@@ -238,6 +238,34 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         @range.collapse(false)
         @select()
 
+      # Saves the range, executes the given fn, then reselects the range.
+      # The function is given the start and end spans as arguments.
+      #
+      # NOTE: This inserts spans at the beginning and end of the range. These
+      # cannot be removed. If they are, the reselection will fail. Be careful
+      # what the given function does.
+      keepRange: (fn) ->
+        $start = $('<span id="RANGE_START"></span>')
+        $end = $('<span id="RANGE_END"></span>')
+        start = @range.cloneRange()
+        start.collapse(true)
+        start.insertNode($start[0])
+        end = @range.cloneRange()
+        end.collapse(false)
+        end.insertNode($end[0])
+        fn($start[0], $end[0])
+        # Refind the start and end in case the function had modified them.
+        $start = $("#RANGE_START")
+        $end = $("#RANGE_END")
+        @range.setStart($start[0], 0)
+        @range.setEnd($end[0], 0)
+        $start.remove()
+        $end.remove()
+        @select()
+        # TODO: Figure out if focus is absolutely needed for Gecko. If so, make
+        # sure it is okay to add for Webkit too.
+        #@el.focus()
+
       #
       # MODIFY RANGE CONTENT FUNCTIONS
       #

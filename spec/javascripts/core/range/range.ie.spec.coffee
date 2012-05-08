@@ -176,6 +176,54 @@ unless hasW3CRanges
             actualRange.pasteHTML("<span></span>")
             expect($td.html().toLowerCase()).toEqual("<span></span>")
 
+        describe "#keepRange", ->
+          it "calls the given function", ->
+            called = false
+            fn = -> called = true
+
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.range.findText("tar")
+            range.range.collapse(true)
+            range.select()
+
+            range.keepRange(fn)
+            expect(called).toBeTruthy()
+
+          it "keeps the range when collapsed", ->
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.range.findText("tar")
+            range.range.collapse(true)
+            range.select()
+            range.keepRange(->)
+            range.range = Range.getRangeFromSelection()
+            range.pasteHTML("<b></b>")
+            expect($start.html().toLowerCase()).toEqual("s<b></b>tart")
+
+          it "keeps the range when not collapsed", ->
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.range.findText("tar")
+            range.select()
+            range.remove()
+            expect($start.html().toLowerCase()).toEqual("st")
+
+          it "keeps the range when the function changes the range", ->
+            fn = ->
+              range = new Range()
+              range.range = Range.getRangeFromElement($end[0])
+              range.select()
+
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.range.findText("tar")
+            range.select()
+
+            range.keepRange(fn)
+            range.remove()
+            expect($start.html().toLowerCase()).toEqual("st")
+
         describe "#pasteNode", ->
           it "pastes the given element node", ->
             range = new Range()

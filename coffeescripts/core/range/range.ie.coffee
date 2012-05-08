@@ -114,6 +114,32 @@ define ["core/helpers"], (Helpers) ->
         range.collapse(false)
         @select(range)
 
+      # Saves the range, executes the given fn, then reselects the range.
+      # The function is given the start and end spans as arguments.
+      #
+      # NOTE: This inserts spans at the beginning and end of the range. These
+      # cannot be removed. If they are, the reselection will fail. Be careful
+      # what the given function does.
+      keepRange: (fn) ->
+        range = @constructor.getBlankRange()
+        range.setEndPoint("StartToStart", @range)
+        range.collapse(true)
+        range.pasteHTML('<span id="RANGE_START"></span>')
+        range.setEndPoint("StartToEnd", @range)
+        range.collapse(false)
+        range.pasteHTML('<span id="RANGE_END"></span>')
+        fn($("#RANGE_START")[0], $("#RANGE_END")[0])
+        # Refind the start and end in case the function had modified them.
+        $start = $("#RANGE_START")
+        $end = $("#RANGE_END")
+        range.moveToElementText($start[0])
+        @range.setEndPoint("StartToStart", range)
+        range.moveToElementText($end[0])
+        @range.setEndPoint("EndToStart", range)
+        $start.remove()
+        $end.remove()
+        @select()
+
       #
       # MODIFY RANGE CONTENT FUNCTIONS
       #
