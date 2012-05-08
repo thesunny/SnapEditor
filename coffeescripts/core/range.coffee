@@ -57,7 +57,7 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     #   - nothing: the range is a new range
     constructor: (@el, arg) ->
       throw "new Range() is missing argument el" unless @el
-      throw "new Range() el is not an element" unless @el.nodeType == 1
+      throw "new Range() el is not an element" unless Helpers.isElement(@el)
       switch Helpers.typeOf(arg)
         when "window" then @range = Range.getRangeFromSelection()
         when "element" then @range = Range.getRangeFromElement(arg)
