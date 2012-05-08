@@ -57,3 +57,9 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
 
       it "returns false when the element is not allowed", ->
         expect(whitelist.match($('<h1 class="almost">Title</h1>'))).toBeNull()
+
+      it "returns false when the element's tag is not in the whitelist", ->
+        expect(whitelist.match($('<h2 class="almost">Title</h2>'))).toBeNull()
+
+      it "handles elements with no classes appropriately", ->
+        expect(whitelist.match($('<h1>Title</h1>'))).toBeNull()

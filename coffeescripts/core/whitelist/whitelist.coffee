@@ -19,6 +19,7 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
       replacement = @getDefaults()[tag]
       replacement = @getWhitelistByTag()[tag][0] if !replacement and @getWhitelistByTag()[tag]
       replacement = @getDefaults()["*"] unless replacement
+      throw "The whitelist is missing a '*' default" unless replacement
       return replacement
 
     # Finds the object that should be after the given el.
@@ -31,10 +32,12 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
     # Finds the object that matches the given el or else returns null.
     match: (el) ->
       $el = $(el)
-      classes = $el.attr("class").split(" ").sort()
+      classes = ($el.attr("class") or "").split(" ").sort()
       match = null
-      for obj in @getWhitelistByTag()[$el.tagName()]
-        if classes.toString() == obj.classes.toString()
-          match = obj
-          break
+      list = @getWhitelistByTag()[$el.tagName()]
+      if list
+        for obj in list
+          if classes.toString() == obj.classes.toString()
+            match = obj
+            break
       return match

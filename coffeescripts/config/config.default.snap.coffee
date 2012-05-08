@@ -5,5 +5,6 @@ define ["config/config.default", "plugins/snap/snap", "plugins/autoscroll/autosc
       return {
         plugins: defaults.plugins.concat([new Snap(), new Autoscroll()])
         toolbar: defaults.toolbar
+        whitelist: defaults.whitelist
       }
   }

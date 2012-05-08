@@ -55,6 +55,10 @@ define ["jquery.custom", "core/helpers", "core/events", "core/range"], ($, Helpe
     select: (el) ->
       @range(el).select()
 
+    # Gets the default block from the whitelist.
+    defaultBlock: ->
+      @whitelist.getDefaults()["*"]
+
   Helpers.include(API, Events)
 
   return API

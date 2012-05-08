@@ -7,6 +7,16 @@ define ["plugins/activate/activate", "plugins/editable/editable", "plugins/clean
           "Inline", "|",
           "Block"
         ]
-        whitelist: {}
+        whitelist: {
+          Paragraph: "p"
+          Div: "div"
+          "Heading 1": "h1"
+          "Heading 2": "h2"
+          "Heading 3": "h3"
+          "Unordered List": "ul"
+          "Ordered List": "ol"
+          "List Item": "li"
+          "*": "Paragraph"
+        }
       }
   }
