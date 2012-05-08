@@ -19,6 +19,11 @@ define ["jquery.custom"], ($) ->
     isTextnode: (object) ->
       object.nodeName && object.nodeType == @nodeType.TEXT
 
+    # Check if an object is a block.
+    # This assumes the node is already in the DOM.
+    isBlock: (object) ->
+      @isElement(object) and $(object).css("display") != "inline"
+
     # Mimics MoooTools typeOf.
     typeOf: (object) ->
       type = $.type(object)

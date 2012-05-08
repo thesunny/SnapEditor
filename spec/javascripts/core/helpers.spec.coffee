@@ -16,6 +16,25 @@ require ["core/helpers"], (Helpers) ->
         el = document.createElement("div")
         expect(Helpers.isTextnode(el)).toBeFalsy()
 
+    describe "#isBlock", ->
+      $editable = null
+      beforeEach ->
+        $editable = addEditableFixture()
+
+      afterEach ->
+        $editable.remove()
+
+      it "returns true when a block element is given", ->
+        expect(Helpers.isBlock($("<div/>").appendTo($editable)[0])).toBeTruthy()
+
+      it "returns false when an line element is given", ->
+        expect(Helpers.isBlock($("<span/>").appendTo($editable)[0])).toBeFalsy()
+
+      it "returns false if a textnode is given", ->
+        text = document.createTextNode("test")
+        $editable[0].appendChild(text)
+        expect(Helpers.isBlock(text)).toBeFalsy()
+
     describe "#typeOf", ->
       it "returns boolean", ->
         expect(Helpers.typeOf(true)).toEqual("boolean")
