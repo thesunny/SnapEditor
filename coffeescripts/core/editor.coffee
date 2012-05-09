@@ -43,6 +43,8 @@ define ["jquery.custom", "core/api", "core/plugins", "core/keyboard", "core/cont
       @api.trigger("update.editor")
 
     contents: ->
+      # Clean the content before returning it.
+      @api.clean(@api.el.firstChild, @api.el.lastChild)
       @$el.html()
 
   return Editor

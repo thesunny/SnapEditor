@@ -101,6 +101,7 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       # This cannot be called for IE because it will cause the window to scroll
       # and jump. Hence this is only for Firefox.
       @api.el.focus() if Browser.isMozilla
+      @api.clean()
       @api.update()
 
   return InlineStyler

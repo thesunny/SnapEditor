@@ -28,7 +28,7 @@ define ["jquery.custom", "core/helpers", "core/events", "core/range"], ($, Helpe
       )
       Helpers.delegate(this, "range()",
         "isCollapsed", "isImageSelected", "getCoordinates", "getParentElement",
-        "collapse", "unselect",
+        "collapse", "unselect", "keepRange",
         "paste", "surroundContents", "remove"
       )
       Helpers.delegate(this, "blankRange()",
@@ -57,7 +57,11 @@ define ["jquery.custom", "core/helpers", "core/events", "core/range"], ($, Helpe
 
     # Gets the default block from the whitelist.
     defaultBlock: ->
-      @whitelist.getDefaults()["*"]
+      @whitelist.getDefaults()["*"].getElement()
+
+    # Calls the cleaner with the given arguments.
+    clean: ->
+      @trigger("clean", arguments)
 
   Helpers.include(API, Events)
 

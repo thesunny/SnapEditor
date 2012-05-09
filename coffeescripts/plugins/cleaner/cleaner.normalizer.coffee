@@ -1,9 +1,9 @@
-define ["jquery.custom", "core/helpers"], ($, Helpers) ->
+define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], ($, Helpers, Flattener) ->
   class Normalizer
-    doNotFlatten: ["ol", "ul", "li"]
-    doNotUseAsTemplate: ["ol", "ul", "li"]
+    doNotUseAsTemplate: ["ol", "ul", "li", "table", "tbody", "thead", "tfoot", "tr", "th", "td", "caption", "colgroup", "col"]
 
     constructor: (@api) ->
+      @flattener = new Flattener()
 
     # Normalizes all the nodes between and including startNode and endNode.
     # All elements will be checked against the whitelist and replaced if needed.
@@ -34,6 +34,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # Loop through all the nodes between and including startNode and
         # endNode.
         loop
+          # Check the stop condition first because the node may be removed.
+          stop = node == endNode
           nextSibling = node.nextSibling
           node = @checkWhitelist(node)
           # Blockify any previous inline nodes and normalize and flatten the
@@ -42,17 +44,14 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
             blockFound = true
             @blockify(inlineNodes, node)
             inlineNodes = []
-            # If blocks were found, flatten them unless the node is in the do
-            # not flatten list.
+            # If blocks were found, flatten them.
             if @normalizeNodes(node.firstChild, node.lastChild)
-              @flattenBlock(node)
+              @flattener.flatten(node)
           else
             inlineNodes.push(node)
           # If we are at the endNode, finish up, then break out of the loop.
-          if node == endNode
-            break
-          else
-            node = nextSibling
+          break if stop
+          node = nextSibling
         # If a block was found, blockify the rest of the inline nodes.
         @blockify(inlineNodes, null) if blockFound
       return blockFound
@@ -65,16 +64,13 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     blockify: (inlineNodes, refNode) ->
       if inlineNodes.length > 0
         $parent = $(inlineNodes[0].parentNode)
-        # Figure out the template.
-        if $parent[0] == @api.el or @doNotUseAsTemplate.indexOf($parent.tagName()) != -1
-          template = @api.defaultBlock()
-        else
-          template =
-            tag: $parent.tagName()
-            classes: ($parent.attr("class") or "").split(" ")
         # Create the wrapper block.
-        $block = $("<#{template.tag}>").append(inlineNodes)
-        $block.addClass(classname) for classname in template.classes
+        if $parent[0] == @api.el or $.inArray($parent.tagName(), @doNotUseAsTemplate) != -1
+          $block = $(@api.defaultBlock())
+        else
+          $block = $("<#{$parent.tagName()}/>")
+          $block.attr("class", $parent.attr("class"))
+        $block.append(inlineNodes)
         # Place the block in the proper position unless it consists of all
         # whitespaces.
         $parent[0].insertBefore($block[0], refNode) unless $block.html().match(/^\s*$/)
@@ -88,17 +84,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     checkWhitelist: (node) ->
       return node unless Helpers.isBlock(node)
       return node if @api.allowed(node)
-      replacement = @api.replacement(node)
-      $replacement = $("<#{replacement.tag}/>").append(node.childNodes)
-      $replacement.addClass(classname) for classname in replacement.classes
+      $replacement = $(@api.replacement(node)).append(node.childNodes)
       $(node).replaceWith($replacement)
       return $replacement[0]
-
-    # Replaces the node with its children.
-    flattenBlock: (node) ->
-      if @doNotFlatten.indexOf($(node).tagName()) == -1
-        parent = node.parentNode
-        parent.insertBefore(node.childNodes[0], node) while node.childNodes[0]
-        parent.removeChild(node)
 
   return Normalizer
