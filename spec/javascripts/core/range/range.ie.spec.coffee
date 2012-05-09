@@ -38,14 +38,14 @@ unless hasW3CRanges
 
             # Insert a span and ensure it is in the correct place.
             actualRange.pasteHTML("<span/>")
-            expect($start.html().toLowerCase()).toEqual("<span></span>start")
+            expect(clean($start.html())).toEqual("<span></span>start")
 
         describe ".getRangeFromElement", ->
           it "returns a TextRange encompassing the contents of the element when it is not an image", ->
             range = Range.getRangeFromElement($start[0])
             range.execCommand("delete")
             # In IE, when returning attributes, the values are not wrapped in "".
-            expect($editable.html().toLowerCase()).toEqual("<div id=end>end</div>")
+            expect(clean($editable.html())).toEqual("<div id=end>end</div>")
 
           it "returns a ControlRange that includes the element when it is image", ->
             $img = $('<img />').appendTo($editable)
@@ -163,7 +163,7 @@ unless hasW3CRanges
 
             actualRange = document.selection.createRange()
             actualRange.pasteHTML("<span></span>")
-            expect($td.html().toLowerCase()).toEqual("before<span></span>")
+            expect(clean($td.html())).toEqual("before<span></span>")
 
           it "selects the end of the inside of the cell when there is no content", ->
             $table = $('<table><tbody><tr><td id="td"></td><td>after</td></tr></tbody></table>').appendTo($editable)
@@ -174,7 +174,7 @@ unless hasW3CRanges
 
             actualRange = document.selection.createRange()
             actualRange.pasteHTML("<span></span>")
-            expect($td.html().toLowerCase()).toEqual("<span></span>")
+            expect(clean($td.html())).toEqual("<span></span>")
 
         describe "#keepRange", ->
           it "calls the given function", ->
@@ -199,7 +199,7 @@ unless hasW3CRanges
             range.keepRange(->)
             range.range = Range.getRangeFromSelection()
             range.pasteHTML("<b></b>")
-            expect($start.html().toLowerCase()).toEqual("s<b></b>tart")
+            expect(clean($start.html())).toEqual("s<b></b>tart")
 
           it "keeps the range when not collapsed", ->
             range = new Range()
@@ -207,7 +207,7 @@ unless hasW3CRanges
             range.range.findText("tar")
             range.select()
             range.remove()
-            expect($start.html().toLowerCase()).toEqual("st")
+            expect(clean($start.html())).toEqual("st")
 
           it "keeps the range when the function changes the range", ->
             fn = ->
@@ -222,7 +222,7 @@ unless hasW3CRanges
 
             range.keepRange(fn)
             range.remove()
-            expect($start.html().toLowerCase()).toEqual("st")
+            expect(clean($start.html())).toEqual("st")
 
         describe "#pasteNode", ->
           it "pastes the given element node", ->
@@ -244,16 +244,14 @@ unless hasW3CRanges
               range.range = Range.getRangeFromElement($start[0])
               range.range.collapse(true)
               range.pasteHTML("<span><b>bold</b></span><div><ul><li>item</li></ul></div>")
-              # Need to remove whitespace because IE adds random whitespace in
-              # between elements.
-              expect($start.html().toLowerCase().replace(/\s*/g, "")).toEqual("<span><b>bold</b></span><div><ul><li>item</li></ul></div>start")
+              expect(clean($start.html())).toEqual("<span><b>bold</b></span><div><ul><li>item</li></ul></div>start")
 
             it "inserts text", ->
               range = new Range()
               range.range = Range.getRangeFromElement($start[0])
               range.range.collapse(true)
               range.pasteHTML("test")
-              expect($start.html().toLowerCase()).toEqual("teststart")
+              expect(clean($start.html())).toEqual("teststart")
 
             it "puts the selection after the HTML", ->
               range = new Range()
@@ -263,7 +261,7 @@ unless hasW3CRanges
 
               actualRange = document.selection.createRange()
               actualRange.pasteHTML("<b></b>")
-              expect($start.html().toLowerCase()).toEqual("<span></span><b></b>start")
+              expect(clean($start.html())).toEqual("<span></span><b></b>start")
 
           describe "not collapsed", ->
             it "inserts elements", ->
@@ -271,14 +269,14 @@ unless hasW3CRanges
               range.range = Range.getBlankRange()
               range.range.findText("start")
               range.pasteHTML("<span></span>")
-              expect($start.html().toLowerCase()).toEqual("<span></span>")
+              expect(clean($start.html())).toEqual("<span></span>")
 
             it "inserts text", ->
               range = new Range()
               range.range = Range.getBlankRange()
               range.range.findText("start")
               range.pasteHTML("test")
-              expect($start.html().toLowerCase()).toEqual("test")
+              expect(clean($start.html())).toEqual("test")
 
             it "puts the selection after the text", ->
               range = new Range()
@@ -288,7 +286,7 @@ unless hasW3CRanges
 
               actualRange = document.selection.createRange()
               actualRange.pasteHTML("<b></b>")
-              expect($start.html().toLowerCase()).toEqual("test<b></b>")
+              expect(clean($start.html())).toEqual("test<b></b>")
 
             it "puts the selection after the elements", ->
               range = new Range()
@@ -298,7 +296,7 @@ unless hasW3CRanges
 
               actualRange = document.selection.createRange()
               actualRange.pasteHTML("<b></b>")
-              expect($start.html().toLowerCase()).toEqual("<span>test<b></b></span>")
+              expect(clean($start.html())).toEqual("<span>test<b></b></span>")
 
         describe "#surroundContents", ->
           it "inserts the given HTML", ->

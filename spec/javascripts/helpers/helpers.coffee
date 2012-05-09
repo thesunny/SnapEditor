@@ -33,3 +33,8 @@ window.p = ->
 
 window.addEditableFixture = ->
   $('<div id="editable" contenteditable="true"></div>').prependTo("body")
+
+# Lowercase the string.
+# Remove ", \n, \r, and zero width no break space.
+window.clean = (s) ->
+  s.toLowerCase().replace(/["\n\r\ufeff]/g, "")

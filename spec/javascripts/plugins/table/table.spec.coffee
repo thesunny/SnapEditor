@@ -43,7 +43,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         table.insertTable()
         expect($before.find("table").length).toEqual(1)
         # NOTE: IE adds newlines before blocks. Remove them.
-        expect($before.html().toLowerCase().replace(/[\n\r]/g, "")).toMatch("be<table>.*</table>fore")
+        expect(clean($before.html())).toMatch("be<table>.*</table>fore")
 
       it "inserts a table with no id", ->
         placeSelection()
@@ -63,7 +63,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         table.insertTable()
         range = new Range($editable[0], window)
         range.paste("<b></b>")
-        expect($before.find("td").html().toLowerCase()).toEqual("&nbsp;<b></b>")
+        expect(clean($before.find("td").html())).toEqual("&nbsp;<b></b>")
 
       it "updates the api", ->
         placeSelection()
@@ -103,7 +103,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
           table.deleteTable()
           range = new Range($editable[0], window)
           range.paste("<b></b>")
-          expect($after.html().toLowerCase()).toEqual("<b></b>after")
+          expect(clean($after.html())).toEqual("<b></b>after")
 
       it "updates the api", ->
         spyOn(table, "update")

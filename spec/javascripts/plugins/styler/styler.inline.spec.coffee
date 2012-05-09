@@ -6,6 +6,7 @@
       styler = new Styler()
       styler.api =
         update: ->
+        clean: ->
         range: -> new Range($editable[0], window)
       Helpers.delegate(styler.api, "range()", "isCollapsed", "getParentElement", "paste", "surroundContents")
 
@@ -18,8 +19,7 @@
         new Range($editable[0], $div[0]).select()
         styler.bold()
         if isIE
-          # NOTE: IE returns tags as uppercase, hence th use of toLowerCase()
-          expect($div.html().toLowerCase()).toEqual("<strong>some text</strong>")
+          expect(clean($div.html())).toEqual("<strong>some text</strong>")
         else
           expect($div.html()).toEqual("<b>some text</b>")
 
@@ -30,8 +30,7 @@
         new Range($editable[0], $div[0]).select()
         styler.italic()
         if isIE
-          # NOTE: IE returns tags as uppercase, hence th use of toLowerCase()
-          expect($div.html().toLowerCase()).toEqual("<em>some text</em>")
+          expect(clean($div.html())).toEqual("<em>some text</em>")
         else
           expect($div.html()).toEqual("<i>some text</i>")
 
@@ -107,9 +106,9 @@
         spyOn(styler, "update")
         styler.link()
         if isIE7
-          expect($div.html().toLowerCase()).toEqual('some <a href="http://snapeditor.com/">http://snapeditor.com</a>text')
+          expect(clean($div.html())).toEqual('some <a href=http://snapeditor.com/>http://snapeditor.com</a>text')
         else
-          expect($div.html().toLowerCase()).toEqual('some <a href="http://snapeditor.com">http://snapeditor.com</a>text')
+          expect(clean($div.html())).toEqual('some <a href=http://snapeditor.com>http://snapeditor.com</a>text')
 
       it "surrounds the content with a link", ->
         $div = $("<div>some text</div>").appendTo($editable)
@@ -125,9 +124,9 @@
         spyOn(styler, "update")
         styler.link()
         if isIE7
-          expect($div.html().toLowerCase()).toEqual('some <a href="http://snapeditor.com/">text</a>')
+          expect(clean($div.html())).toEqual('some <a href=http://snapeditor.com/>text</a>')
         else
-          expect($div.html().toLowerCase()).toEqual('some <a href="http://snapeditor.com">text</a>')
+          expect(clean($div.html())).toEqual('some <a href=http://snapeditor.com>text</a>')
 
       it "updates the api", ->
         $a = $('<a href="http://example.com">some text</a>').appendTo($editable)

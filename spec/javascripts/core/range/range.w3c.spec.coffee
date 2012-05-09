@@ -308,7 +308,7 @@ if hasW3CRanges
             range.keepRange(->)
             range.range = Range.getRangeFromSelection()
             range.pasteHTML("<b></b>")
-            expect($start.html().toLowerCase()).toEqual("st<b></b>art")
+            expect(clean($start.html())).toEqual("st<b></b>art")
 
           it "keeps the range when not collapsed", ->
             range = new Range()
@@ -317,7 +317,7 @@ if hasW3CRanges
             range.range.setEnd($start[0].childNodes[0], 4)
             range.select()
             range.remove()
-            expect($start.html().toLowerCase()).toEqual("stt")
+            expect(clean($start.html())).toEqual("stt")
 
           it "keeps the range when the function changes the range", ->
             fn = ->
@@ -333,7 +333,7 @@ if hasW3CRanges
 
             range.keepRange(fn)
             range.remove()
-            expect($start.html().toLowerCase()).toEqual("stt")
+            expect(clean($start.html())).toEqual("stt")
 
         describe "#pasteNode", ->
           it "pastes the given element node", ->
