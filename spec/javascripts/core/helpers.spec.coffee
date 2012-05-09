@@ -24,16 +24,34 @@ require ["core/helpers"], (Helpers) ->
       afterEach ->
         $editable.remove()
 
-      it "returns true when a block element is given", ->
-        expect(Helpers.isBlock($("<div/>").appendTo($editable)[0])).toBeTruthy()
-
-      it "returns false when an line element is given", ->
-        expect(Helpers.isBlock($("<span/>").appendTo($editable)[0])).toBeFalsy()
-
       it "returns false if a textnode is given", ->
         text = document.createTextNode("test")
         $editable[0].appendChild(text)
         expect(Helpers.isBlock(text)).toBeFalsy()
+
+      describe "when the block is in the DOM", ->
+        it "returns true when a block element is given", ->
+          expect(Helpers.isBlock($("<div/>").appendTo($editable)[0])).toBeTruthy()
+
+        it "returns false when an line element is given", ->
+          expect(Helpers.isBlock($("<span/>").appendTo($editable)[0])).toBeFalsy()
+
+      describe "when the block is not in the DOM", ->
+        it "returns true when a block element is given", ->
+          expect(Helpers.isBlock($("<div/>")[0], false)).toBeTruthy()
+
+        it "returns false when an line element is given", ->
+          expect(Helpers.isBlock($("<span/>")[0], false)).toBeFalsy()
+
+        it "does not modify the element", ->
+          testValue = false
+          $div = $('<div id="div" class="normal"/>')
+          $div.on("test", -> testValue = true)
+          Helpers.isBlock($div[0], false)
+          expect($div.hasClass("normal")).toBeTruthy()
+          $div.trigger("test")
+          expect(testValue).toBeTruthy()
+          expect($("#div").length).toEqual(0)
 
     describe "#typeOf", ->
       it "returns boolean", ->

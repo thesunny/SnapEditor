@@ -1,5 +1,8 @@
 define ["jquery.custom"], ($) ->
   return {
+    zeroWidthNoBreakSpace: "&#65279;"
+    zeroWidthNoBreakSpaceUnicode: "\ufeff"
+
     # This is a hash of the different node types.
     #
     # NOTE: There are more node types, but these are the ones we use.
@@ -20,9 +23,17 @@ define ["jquery.custom"], ($) ->
       object.nodeName && object.nodeType == @nodeType.TEXT
 
     # Check if an object is a block.
-    # This assumes the node is already in the DOM.
-    isBlock: (object) ->
-      @isElement(object) and $(object).css("display") != "inline"
+    isBlock: (object, inDOM = true) ->
+      return false unless @isElement(object)
+      $object = $(object)
+      unless inDOM
+        $container = $("<div/>").hide().appendTo("body")
+        $object.appendTo($container)
+      isBlock = $object.css("display") != "inline"
+      unless inDOM
+        $object.detach()
+        $container.remove()
+      return isBlock
 
     # Mimics MoooTools typeOf.
     typeOf: (object) ->
