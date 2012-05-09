@@ -12,7 +12,7 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
     allowed: (el) ->
       return !!@match(el)
 
-    # Finds the object that should replace the given el.
+    # Finds the element that should replace the given el.
     replacement: (el) ->
       $el = $(el)
       tag = $el.tagName()
@@ -20,14 +20,14 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
       replacement = @getWhitelistByTag()[tag][0] if !replacement and @getWhitelistByTag()[tag]
       replacement = @getDefaults()["*"] unless replacement
       throw "The whitelist is missing a '*' default" unless replacement
-      return replacement
+      return replacement.getElement()
 
-    # Finds the object that should be after the given el.
+    # Finds the element that should be after the given el.
     next: (el) ->
       next = @getDefaults()["*"]
       match = @match(el)
       next = match.next if match and match.next
-      return next
+      return next.getElement()
 
     # Finds the object that matches the given el or else returns null.
     match: (el) ->

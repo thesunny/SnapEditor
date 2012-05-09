@@ -3,13 +3,10 @@
 # * whitelistByLabel
 # * whitelistByTag
 #
-# The values are stored as objects with the following keys:
-# * tag
-# * classes (sorted alphabetically)
-# * next
+# The values are stored as Whitelist.Objects.
 #
 # All labels are dereferenced to their objects.
-define ["jquery.custom"], ($) ->
+define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject) ->
   class Generator
     constructor: (@whitelist) ->
 
@@ -60,10 +57,6 @@ define ["jquery.custom"], ($) ->
       [element, next] = ($.trim(s) for s in string.split(">"))
       [tag, classes...] = ($.trim(s) for s in element.split("."))
       next = @parse(next) if next and !@isLabel(next)
-      return {
-        tag: tag
-        classes: classes.sort()
-        next: next
-      }
+      return new WhitelistObject(tag, classes, next)
 
   return Generator

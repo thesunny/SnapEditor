@@ -23,13 +23,19 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         )
 
       it "returns the default for the tag when it exists", ->
-        expect(whitelist.replacement($('<h2 class="subtitle"></h2>'))).toEqual(tag: "h2", classes: [])
+        $replacement = $(whitelist.replacement($('<h2 class="subtitle"></h2>')))
+        expect($replacement.tagName()).toEqual("h2")
+        expect($replacement.attr("class")).toBeUndefined()
 
       it "returns the first object in the whitelist by tag when the default does not exist", ->
-        expect(whitelist.replacement($('<h1 class="subtitle"></h1>'))).toEqual(tag: "h1", classes: ["title"], next: { tag: "p", classes: []})
+        $replacement = $(whitelist.replacement($('<h1 class="subtitle"></h1>')))
+        expect($replacement.tagName()).toEqual("h1")
+        expect($replacement.attr("class")).toEqual("title")
 
       it "returns the general default when there is no object for the tag", ->
-        expect(whitelist.replacement($('<h3 class="subsubtitle"></h3>'))).toEqual(tag: "div", classes: ["normal"])
+        $replacement = $(whitelist.replacement($('<h3 class="subsubtitle"></h3>')))
+        expect($replacement.tagName()).toEqual("div")
+        expect($replacement.attr("class")).toEqual("normal")
 
     describe "#next", ->
       whitelist = null
@@ -42,23 +48,31 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         )
 
       it "returns the object when it exists", ->
-        expect(whitelist.next($('<h1 class="title"></h1>'))).toEqual(tag: "p", classes: [])
+        $next = $(whitelist.next($('<h1 class="title"></h1>')))
+        expect($next.tagName()).toEqual("p")
+        expect($next.attr("class")).toBeUndefined()
 
       it "returns the default when none exists", ->
-        expect(whitelist.next($('<h1 class="subtitle"></h1>'))).toEqual(tag: "div", classes: ["normal"])
+        $next = $(whitelist.next($('<h1 class="subtitle"></h1>')))
+        expect($next.tagName()).toEqual("div")
+        expect($next.attr("class")).toEqual("normal")
 
     describe "#match", ->
       whitelist = null
       beforeEach ->
         whitelist = new Whitelist(Title: "h1.title > p")
 
-      it "returns true when the element is allowed", ->
-        expect(whitelist.match($('<h1 class="title">Title</h1>'))).toEqual(tag: "h1", classes: ["title"], next: { tag: "p", classes: [] })
+      it "returns the matched object", ->
+        match = whitelist.match($('<h1 class="title">Title</h1>'))
+        expect(match.tag).toEqual("h1")
+        expect(match.classes).toEqual(["title"])
+        expect(match.next.tag).toEqual("p")
+        expect(match.next.classes).toEqual([])
 
-      it "returns false when the element is not allowed", ->
+      it "returns null when the class does not match", ->
         expect(whitelist.match($('<h1 class="almost">Title</h1>'))).toBeNull()
 
-      it "returns false when the element's tag is not in the whitelist", ->
+      it "returns null when the tag does not match", ->
         expect(whitelist.match($('<h2 class="almost">Title</h2>'))).toBeNull()
 
       it "handles elements with no classes appropriately", ->
