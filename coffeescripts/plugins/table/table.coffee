@@ -76,7 +76,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         # this doesn't work in IE because selecting the end of the inserted
         # paragraph places the cursor at the start of the next element.
         if Browser.hasW3CRanges
-          $p = $("<p>&#65279;</p>")
+          $p = $("<p>#{Helpers.zeroWidthNoBreakSpace}</p>")
           $table.replaceWith($p)
           @api.selectEndOfElement($p[0])
         else
@@ -93,7 +93,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         $tr = $cell.parent("tr")
         $tds = $tr.children()
         $newTr = $("<tr/>")
-        $newTr.append($("<td>&#65279;</td>")) for i in [1..$tds.length]
+        $newTr.append($("<td>#{Helpers.zeroWidthNoBreakSpace}</td>")) for i in [1..$tds.length]
         $tr[if before then "before" else "after"]($newTr)
         # Put the cursor in the first td of the newly added tr.
         @api.selectEndOfTableCell($newTr.children("td")[0])
@@ -122,7 +122,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       if cell
         $cell = $(cell)
         @eachCellInCol($cell, ->
-          newCell = $(this).clone(false).html("&#65279;")
+          newCell = $(this).clone(false).html(Helpers.zeroWidthNoBreakSpace)
           $(this)[if before then "before" else "after"](newCell)
         )
         $nextCell = $cell[if before then "prev" else "next"]($cell.tagName())
