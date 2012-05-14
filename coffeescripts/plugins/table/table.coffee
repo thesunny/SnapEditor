@@ -57,7 +57,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
       # Set the cursor inside the first td of the table. Then remove the id.
       $table = $("#INSERTED_TABLE")
-      @api.selectEndOfTableCell($table.find("td")[0])
+      @api.selectEndOfElement($table.find("td")[0])
       $table.removeAttr("id")
 
       # Update.
@@ -96,7 +96,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         $newTr.append($("<td>#{Helpers.zeroWidthNoBreakSpace}</td>")) for i in [1..$tds.length]
         $tr[if before then "before" else "after"]($newTr)
         # Put the cursor in the first td of the newly added tr.
-        @api.selectEndOfTableCell($newTr.children("td")[0])
+        @api.selectEndOfElement($newTr.children("td")[0])
         @update()
 
     # Deletes a row and moves the caret to the first cell in the next row.
@@ -109,8 +109,11 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         $defaultTr = $tr.next("tr")
         $defaultTr = $tr.prev("tr") unless $defaultTr.length > 0
         if $defaultTr.length > 0
+          # NOTE: Place the selection first before removing the row. This is
+          # crucial in IE9. If we remove the row first, IE9 loses the range and
+          # craps out on the selection.
+          @api.selectEndOfElement($defaultTr.children()[0])
           $tr.remove()
-          @api.selectEndOfTableCell($defaultTr.children()[0])
         else
           @deleteTable($tr.closest("table")[0])
         @update()
@@ -127,7 +130,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         )
         $nextCell = $cell[if before then "prev" else "next"]($cell.tagName())
         # Put the cursor in the newly added column beside the original cell.
-        @api.selectEndOfTableCell($nextCell[0])
+        @api.selectEndOfElement($nextCell[0])
         @update()
 
     # deletes column and moves cursor to right. If no right cell, to left.
@@ -139,8 +142,11 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         $defaultCell = $cell.next()
         $defaultCell = $cell.prev() unless $defaultCell.length > 0
         if $defaultCell.length > 0
+          # NOTE: Place the selection first before removing the row. This is
+          # crucial in IE9. If we remove the row first, IE9 loses the range and
+          # craps out on the selection.
+          @api.selectEndOfElement($defaultCell[0])
           @eachCellInCol($cell, -> $(this).remove())
-          @api.selectEndOfTableCell($defaultCell[0])
         else
           @deleteTable($cell.closest("table"))
         @update()
@@ -173,7 +179,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         #if cellTag != tag
           #newCell($("<#{tag}/>").html($cell.html()))
           #$cell.replaceWith(newCell)
-          #@api.selectEndOfTableCell(newCell.get(0))
+          #@api.selectEndOfElement(newCell.get(0))
 
     update: ->
       # In Firefox, when a user clicks on the toolbar to style, the
