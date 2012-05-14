@@ -6,6 +6,7 @@ unless hasW3CRanges
       Range = $editable = $start = $end = null
       beforeEach ->
         class Range
+          getParentElements: ->
         Helpers.extend(Range, Module.static)
         Helpers.include(Range, Module.instance)
         $editable = addEditableFixture()
@@ -94,6 +95,39 @@ unless hasW3CRanges
             range.range = Range.getRangeFromSelection()
             expect(range.isImageSelected()).toBeTruthy()
 
+        describe "#isEndOfElement", ->
+          $text = textnode = null
+          beforeEach ->
+            $text = $("<div>text \t  \n\t      \n\n\t</div>").appendTo($editable)
+            textnode = $text[0].childNodes[0]
+
+          it "returns true if range is at the end", ->
+            range = new Range()
+            range.range = Range.getBlankRange()
+            # Place the selection at the end of "text|".
+            range.range.findText("text")
+            range.range.collapse(false)
+            expect(range.isEndOfElement($text[0])).toBeTruthy()
+
+          it "returns false if range is not at the end", ->
+            range = new Range()
+            range.range = Range.getBlankRange()
+            # Place the selection in the middle of "te|xt".
+            range.range.findText("xt")
+            range.range.collapse(true)
+            expect(range.isEndOfElement($text[0])).toBeFalsy()
+
+          it "returns false if &nbsp; is after", ->
+            $text.html("text&nbsp;")
+            textnode = $text[0].childNodes[0]
+
+            range = new Range()
+            range.range = Range.getBlankRange()
+            # Place the selection at the end of "text|".
+            range.range.findText("text")
+            range.range.collapse(false)
+            expect(range.isEndOfElement($text[0])).toBeFalsy()
+
         describe "#getImmediateParentElement", ->
           it "returns the immediate parent of a TextRange", ->
             range = new Range()
@@ -153,13 +187,25 @@ unless hasW3CRanges
             range.unselect()
             expect(document.selection.createRange().text).toEqual("")
 
-        describe "#selectEndOfTableCell", ->
+        describe "#selectEndOfElement", ->
+          it "selects the end of the inside of the element when there is content", ->
+            range = new Range()
+            range.el = $editable[0]
+            range.range = Range.getBlankRange()
+            range.selectEndOfElement($start[0])
+
+            actualRange = document.selection.createRange()
+            actualRange.pasteHTML("<span></span>")
+            expect(clean($start.html())).toEqual("start<span></span>")
+            p $editable.html()
+
           it "selects the end of the inside of the cell when there is content", ->
             $table = $('<table><tbody><tr><td id="td">before</td><td>after</td></tr></tbody></table>').appendTo($editable)
             $td = $("#td")
 
             range = new Range()
-            range.selectEndOfTableCell($td[0])
+            range.range = Range.getBlankRange()
+            range.selectEndOfElement($td[0])
 
             actualRange = document.selection.createRange()
             actualRange.pasteHTML("<span></span>")
@@ -170,7 +216,8 @@ unless hasW3CRanges
             $td = $("#td")
 
             range = new Range()
-            range.selectEndOfTableCell($td[0])
+            range.range = Range.getBlankRange()
+            range.selectEndOfElement($td[0])
 
             actualRange = document.selection.createRange()
             actualRange.pasteHTML("<span></span>")
@@ -190,6 +237,16 @@ unless hasW3CRanges
             range.keepRange(fn)
             expect(called).toBeTruthy()
 
+          it "inserts the spans in the correct order when the range is collapsed", ->
+            html = null
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.range.findText("tar")
+            range.range.collapse(true)
+            range.select()
+            range.keepRange(-> html = $start.html())
+            expect(clean(html)).toEqual("s<span id=range_start></span><span id=range_end></span>tart")
+
           it "keeps the range when collapsed", ->
             range = new Range()
             range.range = Range.getBlankRange()
@@ -206,7 +263,7 @@ unless hasW3CRanges
             range.range = Range.getBlankRange()
             range.range.findText("tar")
             range.select()
-            range.remove()
+            range.delete()
             expect(clean($start.html())).toEqual("st")
 
           it "keeps the range when the function changes the range", ->
@@ -221,7 +278,7 @@ unless hasW3CRanges
             range.select()
 
             range.keepRange(fn)
-            range.remove()
+            range.delete()
             expect(clean($start.html())).toEqual("st")
 
         describe "#pasteNode", ->
@@ -313,10 +370,38 @@ unless hasW3CRanges
             expect(el.tagName).toEqual("SPAN")
             expect(el.innerHTML).toEqual("start")
 
-        describe "#remove", ->
-          it "removes the contents of the range", ->
+        describe "#delete", ->
+          it "deletes the contents of the range", ->
             range = new Range()
             range.range = Range.getBlankRange()
             range.range.findText("start")
-            range.remove()
+            range.delete()
             expect($start.html()).toEqual("")
+
+          it "merges the nodes if the range starts and ends in different blocks", ->
+            range = new Range()
+            spyOn(range, "getParentElements").andReturn([$start[0], $end[0]])
+            range.range = Range.getBlankRange()
+            range.range.findText("star")
+            range.range.collapse(false)
+            endRange = Range.getBlankRange()
+            endRange.findText("en")
+            range.range.setEndPoint("EndToEnd", endRange)
+            range.select()
+            range.delete()
+            expect($editable.find("div").length).toEqual(1)
+            expect($editable.find("div").html()).toEqual("stard")
+
+          it "keeps the range", ->
+            range = new Range()
+            spyOn(range, "getParentElements").andReturn([$start[0], $end[0]])
+            range.range = Range.getBlankRange()
+            range.range.findText("star")
+            range.range.collapse(false)
+            endRange = Range.getBlankRange()
+            endRange.findText("en")
+            range.range.setEndPoint("EndToEnd", endRange)
+            range.select()
+            range.delete()
+            range.pasteHTML("<b></b>")
+            expect(clean($editable.find("div").html())).toEqual("star<b></b>d")

@@ -35,6 +35,12 @@ define ["core/helpers"], (Helpers) ->
 
     instance:
       #
+      # HELPER FUNCTIONS
+      #
+      cloneRange: ->
+        @range.duplicate()
+
+      #
       # QUERY RANGE STATE FUNCTIONS
       #
 
@@ -45,6 +51,35 @@ define ["core/helpers"], (Helpers) ->
       # Is an image selected.
       isImageSelected: ->
         typeof @range.parentElement == "undefined"
+
+      # Returns true if the current range is at the end of the given element.
+      # We are at end of the element if there are no width-generating
+      # characters. This includes all characters except for newline, space and
+      # tab. However, &nbsp; does create a space which is why we can't use \S.
+      #
+      # NOTE: If you print out endText, you will not see &nbsp;. It looks like
+      # a normal space.
+      #
+      # NOTE: IE9 changes &nbsp; to space whenever using #innerText. This is
+      # why we can't use the easier function of range.toString() because it
+      # uses #innerText to grab the text.The other W3C browsers keep &nbsp; as
+      # character code 160. As a workaround, we grab all the textnodes and get
+      # the text using nodeValue and concatenate them togther. Fortunately,
+      # jQuery does this already with the #text() function.
+      #
+      # TODO: Remove the following comment once we remove the regex.
+      # If there are only spaces until the end of element, we consider it end of
+      # element.
+      isEndOfElement: (el) ->
+        elRange = @constructor.getRangeFromElement(el)
+        range = @range.duplicate()
+        range.setEndPoint("EndToEnd", elRange)
+        #endText = $("<div/>").html(range.cloneContents()).text()
+        endText = range.htmlText
+        # TODO: Once we know for sure that it is safe to replace the following
+        # regex, remove it.
+        #!endText.match(/\S/)
+        endText.match(/^[\n\t ]*$/)
 
       # Get immediate parent element.
       getImmediateParentElement: ->
@@ -83,8 +118,7 @@ define ["core/helpers"], (Helpers) ->
 
       # Move selection to the inside of the end of the element.
       #
-      # TODO: Resurrect this function once we figure out how to get it to work.
-      # The problem:
+      # NOTE: There used to be the following problem.
       # When selecting the element and collapsing to the end, the range falls
       # outside of the element.
       #   select: <div>|text</div>|
@@ -94,25 +128,17 @@ define ["core/helpers"], (Helpers) ->
       # of the cell.
       #   select: <tr><td>|text|</td><td>more</td></tr>
       #   collapse: <tr><td>text|</td><td>more</td></tr>
-      # This is why #selectEndOfTableCell() works, but the more
-      # general case of any element doesn't.
-      # If we can get this work, #selectEndOfTableCell() should call this.
-      #selectEndOfElement: (el) ->
-        #range = @constructor.getRangeFromElement(cell)
-        #range.collapse(false)
-        #@select(range)
-
-      # Move selection to the end of a <td> or <th>.
-      #
-      # NOTE: This method is handled browser specific. In IE, collapsing the
-      # range to the end places the caret in the inside of the end of the cell
-      # so selecting the whole cell and moving the caret works. In W3C, the
-      # caret needs to be placed at the end of the last child of the cell
-      # manually.
-      selectEndOfTableCell: (cell) ->
-        range = @constructor.getRangeFromElement(cell)
-        range.collapse(false)
-        @select(range)
+      # FIX: We noticed that collapsing to the start always left it inside the
+      # element. Unfortunately, we could no just move the start to where the
+      # end was as that would have the same effect as collapsing to the end.
+      # Instead, we count the number of characters and move the start using the
+      # count. This guarantees that the the start will remain inside the
+      # element and at the end.
+      selectEndOfElement: (el) ->
+        @range.moveToElementText(el)
+        @range.moveStart("character", @range.text.length)
+        @range.collapse(true)
+        @select()
 
       # Saves the range, executes the given fn, then reselects the range.
       # The function is given the start and end spans as arguments.
@@ -121,6 +147,7 @@ define ["core/helpers"], (Helpers) ->
       # cannot be removed. If they are, the reselection will fail. Be careful
       # what the given function does.
       keepRange: (fn) ->
+        # Place spans at the start and end of the range.
         range = @constructor.getBlankRange()
         range.setEndPoint("StartToStart", @range)
         range.collapse(true)
@@ -217,8 +244,7 @@ define ["core/helpers"], (Helpers) ->
         el.innerHTML = @range.htmlText
         @pasteNode(el)
 
-      # Remove the contents of the range.
-      remove: ->
+      # Delete the contents of the range.
+      delete: ->
         @range.execCommand('delete')
-
   }

@@ -30,6 +30,12 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
 
     instance:
       #
+      # HELPER FUNCTIONS
+      #
+      cloneRange: ->
+        @range.cloneRange()
+
+      #
       # QUERY RANGE STATE FUNCTIONS
       #
 
@@ -65,12 +71,10 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         startText = $("<div/>").html(range.cloneContents()).text()
         startText.match(/^[\n\t ]*$/)
 
-      # Returns true if the current range is at the end of the given node.
-      # We are at ned of node if there are no width-generating characters.
-      # This includes all characters except for newline, space and tab
-      # However, &nbsp; does create a space which is why we can't use \S.
-      #
-      # NOTE: Only for W3C browsers. There is no corresponding IE function.
+      # Returns true if the current range is at the end of the given element.
+      # We are at end of the element if there are no width-generating
+      # characters. This includes all characters except for newline, space and
+      # tab. However, &nbsp; does create a space which is why we can't use \S.
       #
       # NOTE: If you print out endText, you will not see &nbsp;. It looks like
       # a normal space.
@@ -83,11 +87,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # jQuery does this already with the #text() function.
       #
       # TODO: Remove the following comment once we remove the regex.
-      # If there are only spaces until the end of node, we consider it end of
-      # node.
-      isEndOfNode: (node) ->
+      # If there are only spaces until the end of element, we consider it end of
+      # element.
+      isEndOfElement: (el) ->
         range = @range.cloneRange()
-        range.setEndAfter(node)
+        range.setEndAfter(el)
         endText = $("<div/>").html(range.cloneContents()).text()
         # TODO: Once we know for sure that it is safe to replace the following
         # regex, remove it.
@@ -184,22 +188,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # - If the element is empty, use range.setStart(el, 0) and
       #   range.setEnd(el, 0).
       selectEndOfElement: (el) ->
-        range = @constructor.getBlankRange()
-        range.selectNodeContents(el)
-        range.collapse(false)
-        @select(range)
+        @range.selectNodeContents(el)
+        @range.collapse(false)
+        @select()
         # TODO: Figure out why this is here. Then add tests if applicable.
         @el.focus()
-
-      # Move selection to the end of a <td> or <th>.
-      #
-      # NOTE: This method is handled browser specific. In IE, collapsing the
-      # range to the end places the caret in the inside of the end of the cell
-      # so selecting the whole cell and moving the caret works. In W3C, the
-      # caret needs to be placed at the end of the last child of the cell
-      # manually.
-      selectEndOfTableCell: (cell) ->
-        @selectEndOfElement(cell)
 
       # Place the selection after the element.
       #
@@ -245,14 +238,19 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # cannot be removed. If they are, the reselection will fail. Be careful
       # what the given function does.
       keepRange: (fn) ->
+        # Place spans at the start and end of the range.
         $start = $('<span id="RANGE_START"></span>')
         $end = $('<span id="RANGE_END"></span>')
-        start = @range.cloneRange()
-        start.collapse(true)
-        start.insertNode($start[0])
-        end = @range.cloneRange()
+        # NOTE: Add the end span first because the insertion of the node is a
+        # little weird when the selection is collapsed. If you add the start
+        # span first, the end span will end up before the start span. By doing
+        # the end span first, it shows up after the start span.
+        end = @cloneRange()
         end.collapse(false)
         end.insertNode($end[0])
+        start = @cloneRange()
+        start.collapse(true)
+        start.insertNode($start[0])
         fn($start[0], $end[0])
         # Refind the start and end in case the function had modified them.
         $start = $("#RANGE_START")
@@ -322,7 +320,16 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         @range.surroundContents(el)
         @selectAfterElement(el)
 
-      # Remove the contents of the range.
-      remove: ->
-        @range.deleteContents()
+      # Delete the contents of the range.
+      delete: ->
+        @select()
+        [startElement, endElement] = @getParentElements((el) -> Helpers.isBlock(el))
+        @keepRange((startEl, endEl) =>
+          # We need to make sure the range is between and does not include the
+          # span anchors or else we will lose the original range.
+          @range.setStartAfter(startEl)
+          @range.setEndBefore(endEl)
+          @range.deleteContents()
+          $(startElement).merge(endElement) if startElement != endElement
+        )
   }

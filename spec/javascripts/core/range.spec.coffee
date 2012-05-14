@@ -60,10 +60,6 @@ require ["core/range"], (Range) ->
         range = new Range($editable[0])
         expect(range.isCollapsed).toBeDefined()
 
-    describe "#getCoordinates", ->
-      it "TODO", ->
-        "TODO"
-
     describe "#getParentElement", ->
       it "returns null if the immediate parent is null", ->
         range = new Range($editable[0])
@@ -112,6 +108,38 @@ require ["core/range"], (Range) ->
         range = new Range($editable[0])
         spyOn(range, "getImmediateParentElement").andReturn($start[0])
         expect(range.getParentElement((el) -> throw Range.EDITOR_ESCAPE_ERROR)).toBeNull()
+
+    describe "#getParentElements", ->
+      beforeEach ->
+        range = new Range($editable[0])
+        if hasW3CRanges
+          range.range.setStart($start[0].childNodes[0], 4)
+          range.range.setEnd($end[0].childNodes[0], 3)
+        else
+          range.range.findText("star")
+          range.collapse(false)
+          endRange = new Range($editable[0])
+          endRange.range.findText("end")
+          range.range.setEndPoint("EndToEnd", endRange.range)
+        range.select()
+
+      it "returns the start and end parent elements", ->
+        range = new Range($editable[0], window)
+        [startElement, endElement] = range.getParentElements()
+        expect(startElement).toBe($start[0])
+        expect(endElement).toBe($end[0])
+
+      it "does not modify the selection", ->
+        range = new Range($editable[0], window)
+        [startElement, endElement] = range.getParentElements()
+        if hasW3CRanges
+          $div = $("<div/>").html(range.range.cloneContents())
+          $children = $div.children()
+          expect($children.length).toEqual(2)
+          expect($children[0].innerHTML).toEqual("t")
+          expect($children[1].innerHTML).toEqual("end")
+        else
+          expect(clean(range.range.text)).toEqual("tend")
 
     describe "#collapse", ->
       it "calls the range's #collapse() with the argument", ->

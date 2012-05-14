@@ -8,23 +8,27 @@
 # getRangeFromElement(el): gets the range that encompases the given el
 #
 # PUBLIC FUNCTIONS:
+# These functions are helpers:
+# clone(): clones the range
+#
 # These functions query the state of the range:
 # isCollapsed(): is the selection a caret
 # isImageSelected(): is an image selected
+# isEndOfElement(el): is the range at the end of the given element
 # getCoordinates(): gets the coordinates of the range
 # getParentElement() : gets parent element of the range
+# getParentElements() : gets the start and end parent elements of the range
 #
 # These functions manipulate the range.
 # collapse(start): collapse range to start or end (returns this)
 # select([range]): selects the given range or itself
 # unselect(): unselects the range
-# selectEndOfElement(el): selects the inside of the end of el (IE is not supported)
-# selectEndOfTableCell(cell): selects the inside of the end of cell
+# selectEndOfElement(el): selects the inside of the end of el
 #
 # These functions modify the content.
 # paste(arg): pastes the given node or html
 # surroundContents(el): surrounds the range with the given el
-# remove: removes the contents of the range
+# delete: delete the contents of the range
 #
 # Range Intro from QuirksMode:
 # http://www.quirksmode.org/dom/range_intro.html
@@ -64,6 +68,12 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
         else @range = arg or Range.getBlankRange()
 
     #
+    # HELPER FUNCTIONS
+    #
+    clone: ->
+      new @constructor(@el, @cloneRange())
+
+    #
     # QUERY RANGE STATE FUNCTIONS
     #
 
@@ -72,6 +82,13 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
       throw "#isCollapsed() needs to be overridden with a browser specific implementation"
 
     # Is an image selected.
+    isImageSelected: ->
+      throw "#isImageSelected() needs to be overridden with a browser specific implementation"
+
+    # Returns true if the current range is at the end of the given element.
+    # We are at end of the element if there are no width-generating
+    # characters. This includes all characters except for newline, space and
+    # tab. However, &nbsp; does create a space which is why we can't use \S.
     isImageSelected: ->
       throw "#isImageSelected() needs to be overridden with a browser specific implementation"
 
@@ -146,6 +163,17 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
           throw e
       el
 
+    # Finds the start and end parent elements from the range that matches the
+    # argument.
+    getParentElements: (match) ->
+      startRange = @clone()
+      startRange.collapse(true)
+      startParentElement = startRange.getParentElement(match)
+      endRange = @clone()
+      endRange.collapse(false)
+      endParentElement = endRange.getParentElement(match)
+      return [startParentElement, endParentElement]
+
     #
     # MANIPULATE RANGE FUNCTIONS
     #
@@ -165,15 +193,8 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
       throw "#unselect() needs to be overridden with a browser specific implementation"
 
     # Move selection to the inside of the end of the element.
-    #
-    # NOTE: The corresponding IE implementation is broken. This only works in
-    # W3C.
     selectEndOfElement: (el) ->
       throw "#selectEndOfElement() needs to be overridden with a browser specific implementation"
-
-    # Move selection to the end of a <td> or <th>.
-    selectEndOfTableCell: (cell) ->
-      throw "#selectEndOfTableCell() needs to be overridden with a browser specific implementation"
 
     # Saves the range, executes the given fn, then reselects the range.
     # The function is given the start and end spans as arguments.
@@ -204,9 +225,9 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     surroundContents: (el) ->
       throw "#surroundContents() needs to be overridden with a browser specific implementation"
 
-    # Remove the contents of the range.
-    remove: ->
-      throw "#remove() needs to be overridden with a browser specific implementation"
+    # Delete the contents of the range.
+    delete: ->
+      throw "#delete() needs to be overridden with a browser specific implementation"
 
   Helpers.extend(Range, Module.static)
   Helpers.include(Range, Module.instance)
