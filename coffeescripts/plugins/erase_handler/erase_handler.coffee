@@ -34,15 +34,15 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         if @api.isCollapsed()
           @handleCursor(e)
         else
-          @handleSelection(e)
+          @api.delete()
 
     handleCursor: (e) ->
       range = @api.range()
-      parentNode = range.getParentElement(@isBlockElement)
+      parentNode = range.getParentElement((el) -> Helpers.isBlock(el))
 
       # Attempt to find the two nodes to merge.
       key = Helpers.keyOf(e)
-      if key == 'delete' and range.isEndOfNode(parentNode)
+      if key == 'delete' and range.isEndOfElement(parentNode)
         aNode = parentNode
         bNode = $(parentNode).next()[0]
       else if key == 'backspace' and range.isStartOfNode(parentNode)
@@ -54,35 +54,6 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         # Call preventDefault first so that if @mergeNodes fails, nothing
         # happens. This will alert us to bugs sooner (crash early).
         e.preventDefault()
-        @mergeNodes(aNode, bNode)
-
-    handleSelection: (e) ->
-      startRange = @api.range().collapse(true)
-      endRange = @api.range().collapse(false)
-      startParentNode = startRange.getParentElement(@isBlockElement)
-      endParentNode = endRange.getParentElement(@isBlockElement)
-      # If the start and end parentNodes don't match, then we need to manually
-      # merge the nodes together.
-      if startParentNode != endParentNode
-        e.preventDefault()
-        @api.remove()
-        @mergeNodes(startParentNode, endParentNode)
-
-    isBlockElement: (el) ->
-      $el = $(el)
-      $el.css('display') == 'block' or $el.tagName() == 'li'
-
-    mergeNodes: (a, b) ->
-      # Remember where the cursor is.
-      $span = $('<span id="EDITOR_CURSOR_POS"></span>')
-      $(a).append($span)
-      # Merge b into a.
-      while(b.childNodes[0])
-        a.appendChild(b.childNodes[0])
-      $(b).remove()
-      a.normalize()
-      # Reselect the cursor.
-      @api.range($span[0]).collapse(false).select()
-      $span.remove()
+        @api.keepRange(-> $(aNode).merge(bNode))
 
   return EraseHandler
