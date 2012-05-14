@@ -27,7 +27,7 @@ define ["jquery.custom", "core/helpers", "core/events", "core/range"], ($, Helpe
         "contents", "activate", "deactivate", "update"
       )
       Helpers.delegate(this, "range()",
-        "isCollapsed", "isImageSelected", "isEndOfElement",
+        "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getCoordinates", "getParentElement",
         "collapse", "unselect", "keepRange",
         "paste", "surroundContents", "delete"

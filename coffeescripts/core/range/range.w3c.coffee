@@ -49,12 +49,10 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # An image is selected if it is the only content in the div.
         div.childNodes.length == 1 && div.childNodes[0].tagName.toLowerCase(0) == "img"
 
-      # Returns true if the current range is at the start of the given node.
-      # We are at start of node if there are no width-generating characters.
+      # Returns true if the current range is at the start of the given element.
+      # We are at start of element if there are no width-generating characters.
       # This includes all characters except for newline, space and tab
       # However, &nbsp; does create a space which is why we can't use \S.
-      #
-      # NOTE: Only for W3C browsers. There is no corresponding IE function.
       #
       # NOTE: If you print out startText, you will not see &nbsp;. It looks
       # like a normal space.
@@ -65,9 +63,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # character code 160. As a workaround, we grab all the textnodes and get
       # the text using nodeValue and concatenate them togther. Fortunately,
       # jQuery does this already with the #text() function.
-      isStartOfNode: (node) ->
-        range = @range.cloneRange()
-        range.setStartBefore(node)
+      isStartOfElement: (el) ->
+        range = @cloneRange()
+        range.setStartBefore(el)
         startText = $("<div/>").html(range.cloneContents()).text()
         startText.match(/^[\n\t ]*$/)
 
@@ -86,16 +84,10 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # the text using nodeValue and concatenate them togther. Fortunately,
       # jQuery does this already with the #text() function.
       #
-      # TODO: Remove the following comment once we remove the regex.
-      # If there are only spaces until the end of element, we consider it end of
-      # element.
       isEndOfElement: (el) ->
-        range = @range.cloneRange()
+        range = @cloneRange()
         range.setEndAfter(el)
         endText = $("<div/>").html(range.cloneContents()).text()
-        # TODO: Once we know for sure that it is safe to replace the following
-        # regex, remove it.
-        #!endText.match(/\S/)
         endText.match(/^[\n\t ]*$/)
 
       # Get immediate parent element.

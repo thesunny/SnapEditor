@@ -95,6 +95,39 @@ unless hasW3CRanges
             range.range = Range.getRangeFromSelection()
             expect(range.isImageSelected()).toBeTruthy()
 
+        describe "#isStartOfElement", ->
+          $text = textnode = null
+          beforeEach ->
+            $text = $("<div>\n  \t\n \t\n    text</div>").appendTo($editable)
+            textnode = $text[0].childNodes[0]
+
+          it "returns true if range is at the start", ->
+            range = new Range()
+            range.range = Range.getBlankRange()
+            # Place the selection at the beginning of "|text".
+            range.range.findText("text")
+            range.range.collapse(true)
+            expect(range.isStartOfElement($text[0])).toBeTruthy()
+
+          it "returns false if range is not at the start", ->
+            range = new Range()
+            range.range = Range.getBlankRange()
+            # Place the selection in the middle of "te|xt".
+            range.range.findText("xt")
+            range.range.collapse(true)
+            expect(range.isStartOfElement($text[0])).toBeFalsy()
+
+          it "returns false if &nbsp; is before", ->
+            $text.html("&nbsp;text")
+            textnode = $text[0].childNodes[0]
+
+            range = new Range()
+            range.range = Range.getBlankRange()
+            # Place the selection at the beginning of "|text".
+            range.range.findText("text")
+            range.range.collapse(true)
+            expect(range.isStartOfElement($text[0])).toBeFalsy()
+
         describe "#isEndOfElement", ->
           $text = textnode = null
           beforeEach ->

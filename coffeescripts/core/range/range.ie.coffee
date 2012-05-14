@@ -52,6 +52,27 @@ define ["core/helpers"], (Helpers) ->
       isImageSelected: ->
         typeof @range.parentElement == "undefined"
 
+      # Returns true if the current range is at the start of the given element.
+      # We are at start of element if there are no width-generating characters.
+      # This includes all characters except for newline, space and tab
+      # However, &nbsp; does create a space which is why we can't use \S.
+      #
+      # NOTE: If you print out startText, you will not see &nbsp;. It looks
+      # like a normal space.
+      #
+      # NOTE: IE9 changes &nbsp; to space whenever using #innerText. This is
+      # why we can't use the easier function of range.toString() because it
+      # uses #innerText to grab the text.The other W3C browsers keep &nbsp; as
+      # character code 160. As a workaround, we grab all the textnodes and get
+      # the text using nodeValue and concatenate them togther. Fortunately,
+      # jQuery does this already with the #text() function.
+      isStartOfElement: (el) ->
+        elRange = @constructor.getRangeFromElement(el)
+        range = @cloneRange()
+        range.setEndPoint("StartToStart", elRange)
+        startText = range.htmlText
+        startText.match(/^[\n\t ]*$/)
+
       # Returns true if the current range is at the end of the given element.
       # We are at end of the element if there are no width-generating
       # characters. This includes all characters except for newline, space and
@@ -66,19 +87,11 @@ define ["core/helpers"], (Helpers) ->
       # character code 160. As a workaround, we grab all the textnodes and get
       # the text using nodeValue and concatenate them togther. Fortunately,
       # jQuery does this already with the #text() function.
-      #
-      # TODO: Remove the following comment once we remove the regex.
-      # If there are only spaces until the end of element, we consider it end of
-      # element.
       isEndOfElement: (el) ->
         elRange = @constructor.getRangeFromElement(el)
-        range = @range.duplicate()
+        range = @cloneRange()
         range.setEndPoint("EndToEnd", elRange)
-        #endText = $("<div/>").html(range.cloneContents()).text()
         endText = range.htmlText
-        # TODO: Once we know for sure that it is safe to replace the following
-        # regex, remove it.
-        #!endText.match(/\S/)
         endText.match(/^[\n\t ]*$/)
 
       # Get immediate parent element.

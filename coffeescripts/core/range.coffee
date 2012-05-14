@@ -14,6 +14,7 @@
 # These functions query the state of the range:
 # isCollapsed(): is the selection a caret
 # isImageSelected(): is an image selected
+# isStartOfElement(el): is the range at the start of the given element
 # isEndOfElement(el): is the range at the end of the given element
 # getCoordinates(): gets the coordinates of the range
 # getParentElement() : gets parent element of the range
@@ -85,12 +86,19 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     isImageSelected: ->
       throw "#isImageSelected() needs to be overridden with a browser specific implementation"
 
+    # Returns true if the current range is at the start of the given element.
+    # We are at start of element if there are no width-generating characters.
+    # This includes all characters except for newline, space and tab
+    # However, &nbsp; does create a space which is why we can't use \S.
+    isStartOfElement: ->
+      throw "#isStartOfElement() needs to be overridden with a browser specific implementation"
+
     # Returns true if the current range is at the end of the given element.
     # We are at end of the element if there are no width-generating
     # characters. This includes all characters except for newline, space and
     # tab. However, &nbsp; does create a space which is why we can't use \S.
-    isImageSelected: ->
-      throw "#isImageSelected() needs to be overridden with a browser specific implementation"
+    isEndOfElement: ->
+      throw "#isEndOfElement() needs to be overridden with a browser specific implementation"
 
     # Get the coordinates of the range.
     #

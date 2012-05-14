@@ -89,7 +89,7 @@ if hasW3CRanges
             range.range = Range.getRangeFromSelection()
             expect(range.isImageSelected()).toBeTruthy()
 
-        describe "#isStartOfNode", ->
+        describe "#isStartOfElement", ->
           $text = textnode = null
           beforeEach ->
             $text = $("<div>\n  \t\n \t\n    text</div>").appendTo($editable)
@@ -101,8 +101,7 @@ if hasW3CRanges
             # Place the selection at the beginning of "|text".
             range.range.setStart(textnode, textnode.nodeValue.indexOf('t'))
             range.range.collapse(true)
-            expect(range.isStartOfNode($text[0])).toBeTruthy()
-            expect(range.isStartOfNode(textnode)).toBeTruthy()
+            expect(range.isStartOfElement($text[0])).toBeTruthy()
 
           it "returns false if range is not at the start", ->
             range = new Range()
@@ -110,8 +109,7 @@ if hasW3CRanges
             # Place the selection in the middle of "te|xt".
             range.range.setStart(textnode, textnode.nodeValue.indexOf('x'))
             range.range.collapse(true)
-            expect(range.isStartOfNode($text[0])).toBeFalsy()
-            expect(range.isStartOfNode(textnode)).toBeFalsy()
+            expect(range.isStartOfElement($text[0])).toBeFalsy()
 
           it "returns false if &nbsp; is before", ->
             $text.html("&nbsp;text")
@@ -122,8 +120,7 @@ if hasW3CRanges
             # Place the selection at the beginning of "|text".
             range.range.setStart(textnode, textnode.nodeValue.indexOf('t'))
             range.range.collapse(true)
-            expect(range.isStartOfNode($text[0])).toBeFalsy()
-            expect(range.isStartOfNode(textnode)).toBeFalsy()
+            expect(range.isStartOfElement($text[0])).toBeFalsy()
 
         describe "#isEndOfElement", ->
           $text = textnode = null
