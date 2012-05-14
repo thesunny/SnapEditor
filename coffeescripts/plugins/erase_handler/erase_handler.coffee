@@ -38,16 +38,16 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
 
     handleCursor: (e) ->
       range = @api.range()
-      parentNode = range.getParentElement((el) -> Helpers.isBlock(el))
+      parentEl = range.getParentElement((el) -> Helpers.isBlock(el))
 
       # Attempt to find the two nodes to merge.
       key = Helpers.keyOf(e)
-      if key == 'delete' and range.isEndOfElement(parentNode)
-        aNode = parentNode
-        bNode = $(parentNode).next()[0]
-      else if key == 'backspace' and range.isStartOfNode(parentNode)
-        aNode = $(parentNode).prev()[0]
-        bNode = parentNode
+      if key == 'delete' and range.isEndOfElement(parentEl)
+        aNode = parentEl
+        bNode = $(parentEl).next()[0]
+      else if key == 'backspace' and range.isStartOfElement(parentEl)
+        aNode = $(parentEl).prev()[0]
+        bNode = parentEl
 
       # Merge nodes if aNode given.
       if aNode
