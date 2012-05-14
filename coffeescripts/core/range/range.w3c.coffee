@@ -316,12 +316,15 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       delete: ->
         @select()
         [startElement, endElement] = @getParentElements((el) -> Helpers.isBlock(el))
-        @keepRange((startEl, endEl) =>
-          # We need to make sure the range is between and does not include the
-          # span anchors or else we will lose the original range.
-          @range.setStartAfter(startEl)
-          @range.setEndBefore(endEl)
-          @range.deleteContents()
-          $(startElement).merge(endElement) if startElement != endElement
-        )
+        deleted = $(startElement).closest("td, th")[0] == $(endElement).closest("td", "th")[0]
+        if deleted
+          @keepRange((startEl, endEl) =>
+            # We need to make sure the range is between and does not include the
+            # span anchors or else we will lose the original range.
+            @range.setStartAfter(startEl)
+            @range.setEndBefore(endEl)
+            @range.deleteContents()
+            $(startElement).merge(endElement) if startElement != endElement
+          )
+        return deleted
   }

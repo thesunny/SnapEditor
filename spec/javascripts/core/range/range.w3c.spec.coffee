@@ -415,34 +415,87 @@ if hasW3CRanges
             expect(range.selectAfterElement).toHaveBeenCalledWith($span[0])
 
         describe "#delete", ->
-          it "delete the contents of the range", ->
+          $table = $tds = $after = range = null
+          beforeEach ->
+            $table = $("<table><tbody><tr><td>first cell</td><td>second cell</td></tr></tbody></table>").appendTo($editable)
+            $tds = $table.find("td")
+            $after = $("<div>after</div>").appendTo($editable)
             range = new Range()
-            spyOn(range, "getParentElements").andReturn($start[0], $start[0])
+            range.el = $editable[0]
             range.range = Range.getBlankRange()
+            spyOn(range, "getParentElements")
+
+          it "deletes the contents of the range when not selecting from a table cell", ->
+            range.getParentElements.andReturn([$start[0], $start[0]])
             range.range.selectNodeContents($start[0])
             range.delete()
             expect($start.html()).toEqual("")
 
+          it "deletes the contents of the range including the table", ->
+            range.getParentElements.andReturn([$start[0], $after[0]])
+            range.range.setStart($start[0].childNodes[0], 0)
+            range.range.setEnd($after[0].childNodes[0], 5)
+            range.delete()
+            expect(clean($editable.html())).toEqual("<div id=start></div>")
+
+          it "does nothing when the start of the range starts in a table cell", ->
+            html = $editable.html()
+            range.getParentElements.andReturn([$tds[0], $after[0]])
+            range.range.setStart($tds[0].childNodes[0], 0)
+            range.range.setEnd($after[0].childNodes[0], 5)
+            range.delete()
+            expect(clean($editable.html())).toEqual(clean(html))
+
+          it "does nothing when the end of the range ends in a table cell", ->
+            html = $editable.html()
+            range.getParentElements.andReturn([$start[0], $tds[0]])
+            range.range.setStart($start[0].childNodes[0], 0)
+            range.range.setEnd($tds[0].childNodes[0], 5)
+            range.delete()
+            expect(clean($editable.html())).toEqual(clean(html))
+
+          it "does nothing when the start and end of the range are in different table cells", ->
+            html = $editable.html()
+            range.getParentElements.andReturn([$tds[0], $tds[1]])
+            range.range.setStart($tds[0].childNodes[0], 0)
+            range.range.setEnd($tds[1].childNodes[0], 5)
+            range.delete()
+            expect(clean($editable.html())).toEqual(clean(html))
+
+          it "deletes the contents of the range when it starts and ends in the same table cell", ->
+            html = $editable.html()
+            range.getParentElements.andReturn([$tds[0], $tds[0]])
+            range.range.setStart($tds[0].childNodes[0], 0)
+            range.range.setEnd($tds[0].childNodes[0], 5)
+            range.delete()
+            expect($tds[0].innerHTML).toEqual(" cell")
+
           it "merges the nodes if the range starts and ends in different blocks", ->
-            range = new Range()
-            spyOn(range, "getParentElements").andReturn([$start[0], $end[0]])
-            range.el = $editable
-            range.range = Range.getBlankRange()
+            range.getParentElements.andReturn([$start[0], $after[0]])
             range.range.setStart($start[0].childNodes[0], 4)
-            range.range.setEnd($end[0].childNodes[0], 2)
+            range.range.setEnd($after[0].childNodes[0], 2)
             range.select()
             range.delete()
             expect($editable.find("div").length).toEqual(1)
-            expect($editable.find("div").html()).toEqual("stard")
+            expect($editable.find("div").html()).toEqual("starter")
 
           it "keeps the range", ->
-            range = new Range()
-            spyOn(range, "getParentElements").andReturn([$start[0], $end[0]])
-            range.el = $editable
-            range.range = Range.getBlankRange()
+            range.getParentElements.andReturn([$start[0], $end[0]])
             range.range.setStart($start[0].childNodes[0], 4)
             range.range.setEnd($end[0].childNodes[0], 2)
             range.select()
             range.delete()
             range.pasteHTML("<b></b>")
             expect($editable.find("div").html()).toEqual("star<b></b>d")
+
+          it "returns true if something was deleted", ->
+            range.getParentElements.andReturn([$start[0], $start[0]])
+            range.range.selectNodeContents($start[0])
+            expect(range.delete()).toBeTruthy()
+
+          it "returns false if nothing was deleted", ->
+            html = $editable.html()
+            range.getParentElements.andReturn([$tds[0], $after[0]])
+            range.range.setStart($tds[0].childNodes[0], 0)
+            range.range.setEnd($after[0].childNodes[0], 5)
+            expect(range.delete()).toBeFalsy()

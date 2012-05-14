@@ -259,5 +259,9 @@ define ["core/helpers"], (Helpers) ->
 
       # Delete the contents of the range.
       delete: ->
-        @range.execCommand('delete')
+        @select()
+        [startElement, endElement] = @getParentElements((el) -> Helpers.isBlock(el))
+        deleted = $(startElement).closest("td, th")[0] == $(endElement).closest("td", "th")[0]
+        @range.execCommand("delete") if deleted
+        return deleted
   }
