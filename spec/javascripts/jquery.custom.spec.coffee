@@ -45,6 +45,21 @@ require ["jquery.custom"], ($) ->
         expect(scroll.y).toEqual(500)
         window.scrollTo(0, 0)
 
+    describe "#merge", ->
+      it "merges the other node in", ->
+        $el = $("<div>this is <b>my</b> div</div>")
+        $other = $("<h1><i>this</i> is my other h1</h1>")
+        $el.merge($other)
+        expect(clean($el.html())).toEqual("this is <b>my</b> div<i>this</i> is my other h1")
+
+    describe "$split", ->
+      it "splits on the child node", ->
+        $el = $("<div>this is <span>in the</span> first <b>and</b> this is in the <i>second</i></div>").appendTo($editable)
+        [$first, $second] = $el.split($el.find("b"))
+        expect($editable.find("div").length).toEqual(2)
+        expect(clean($first.html())).toEqual("this is <span>in the</span> first ")
+        expect(clean($second.html())).toEqual("<b>and</b> this is in the <i>second</i>")
+
     describe "#contexts", ->
       it "returns the matched contexts and the matched elements", ->
         $div = $('<div class="top">some <b>bold and <i>italic</i></b> text with an <img src="spec/javascripts/support/images/stub.png"> in it</div>')

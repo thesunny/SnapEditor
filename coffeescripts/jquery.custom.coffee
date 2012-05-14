@@ -66,12 +66,32 @@ define ["../lib/jquery", "../lib/mustache"], ->
     )
     => el.style.cssText = before
 
+  # Merge other into the element.
+  $.fn.merge = (other) ->
+    $other = $(other)
+    # Merge other into this.
+    while($other[0].childNodes[0])
+      this[0].appendChild($other[0].childNodes[0])
+    $other.remove()
+    this[0].normalize()
+
+  # Splits the element on the node.
+  # All nodes before the given node will belong to the first element.
+  # All nodes including and after the given node will belong to the second
+  # element.
+  # Returns the first and second element after splitting.
+  $.fn.split = (node) ->
+    $node = $(node)
+    $first = this.clone().html("").insertBefore(this)
+    while this[0].childNodes[0] and this[0].childNodes[0] != node[0]
+      $first.append(this[0].childNodes[0])
+    return [$first, this]
+
   # Given the contexts, find all the matching contexts.
   $.fn.contexts = (contexts, untilEl = null) ->
-    $el = $(this)
     matchedContexts = {}
     for context in contexts
-      $match = $el.closest(context, untilEl)
+      $match = this.closest(context, untilEl)
       matchedContexts[context] = $match[0] if $match.length > 0
     return matchedContexts
 
