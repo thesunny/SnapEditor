@@ -27,16 +27,13 @@ define ["jquery.custom", "core/helpers", "core/events", "core/range"], ($, Helpe
         "contents", "activate", "deactivate", "update"
       )
       Helpers.delegate(this, "range()",
-        "isCollapsed", "isImageSelected", "getCoordinates", "getParentElement",
+        "isCollapsed", "isImageSelected", "isEndOfElement",
+        "getCoordinates", "getParentElement",
         "collapse", "unselect", "keepRange",
-        "paste", "surroundContents", "remove"
+        "paste", "surroundContents", "delete"
       )
-      Helpers.delegate(this, "blankRange()",
-        "selectEndOfElement", "selectEndOfTableCell"
-      )
-      Helpers.delegate(this, "whitelist",
-        "allowed", "replacement", "next"
-      )
+      Helpers.delegate(this, "blankRange()", "selectEndOfElement")
+      Helpers.delegate(this, "whitelist", "allowed", "replacement", "next")
 
     # Gets the current selection if el is not given.
     # Otherwise returns the range that represents the el.

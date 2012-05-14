@@ -16,11 +16,11 @@ define ["jquery.custom"], ($) ->
 
     # Check if an object is an element.
     isElement: (object) ->
-      object.nodeName && object.nodeType == @nodeType.ELEMENT
+      object.nodeName and object.nodeType == @nodeType.ELEMENT
 
     # Check if an object is a textnode.
     isTextnode: (object) ->
-      object.nodeName && object.nodeType == @nodeType.TEXT
+      object.nodeName and object.nodeType == @nodeType.TEXT
 
     # Check if an object is a block.
     isBlock: (object, inDOM = true) ->

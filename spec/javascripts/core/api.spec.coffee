@@ -26,7 +26,7 @@ require ["core/api", "core/range"], (API, Range) ->
     describe "#range", ->
       it "returns the selection when no element is given", ->
         expectedRange = new Range($editable[0], $td[0])
-        expectedRange.selectEndOfTableCell($td[0])
+        expectedRange.selectEndOfElement($td[0])
 
         range = api.range()
         range.paste("test")
