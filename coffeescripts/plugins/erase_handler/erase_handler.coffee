@@ -35,6 +35,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           @handleCursor(e)
         else
           @api.delete()
+        @api.clean()
 
     handleCursor: (e) ->
       range = @api.range()
