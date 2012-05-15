@@ -38,12 +38,7 @@ define ["jquery.custom"], ($) ->
     getEdgeCoordinates: (start) ->
       bookmark = @range.getBookmark()
       @range.collapse(start)
-      # TODO: Remove this comment once it is confirmed that el.focus() is not
-      # called.
-      # Don't use pasteNode() here. pasteNode() calls el.focus()
-      # which will make IE scroll the window so that the range is
-      # on the bottom of the screen. Hence, we use pasteHTML.
-      @pasteHTML('<span id="CURSORPOS"></span>')
+      @range.pasteHTML('<span id="CURSORPOS"></span>')
       span = $('#CURSORPOS')
       coords = span.getCoordinates()
       span.remove()
