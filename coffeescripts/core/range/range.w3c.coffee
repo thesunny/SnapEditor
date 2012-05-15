@@ -316,7 +316,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       delete: ->
         @select()
         [startElement, endElement] = @getParentElements((el) -> Helpers.isBlock(el))
-        deleted = $(startElement).closest("td, th")[0] == $(endElement).closest("td", "th")[0]
+        deleted = $(startElement).closest("td, th")[0] == $(endElement).closest("td, th")[0]
         if deleted
           @keepRange((startEl, endEl) =>
             # We need to make sure the range is between and does not include the
