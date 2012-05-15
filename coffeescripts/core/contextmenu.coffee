@@ -1,5 +1,8 @@
 define ["jquery.custom", "core/data_action_handler"], ($, DataActionHandler) ->
   class ContextMenu
+    # Arguments:
+    # @api - editor API object
+    # @config - { "<context selector>": [<button object>, ...]
     constructor: (@api, @config) ->
       @$el = $(@api.el)
       @contexts = []
@@ -16,11 +19,12 @@ define ["jquery.custom", "core/data_action_handler"], ($, DataActionHandler) ->
       @hide()
 
     show: (e) =>
-      e.preventDefault()
       @buildMenu(e.target)
-      @$menu.css(@getStyles(e.pageX, e.pageY)).show()
-      $(document).on("click", @tryHide)
-      $(document).on("keydown", @hide)
+      if @$menu.children().length > 0
+        e.preventDefault()
+        @$menu.css(@getStyles(e.pageX, e.pageY)).show()
+        $(document).on("click", @tryHide)
+        $(document).on("keydown", @hide)
 
     hide: =>
       @$menu.hide() if @$menu
