@@ -11,18 +11,19 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       $(@api.el).off("keydown", @onkeydown)
 
     onkeydown: (e) =>
-      if Helpers.keyOf(e) == "enter"
+      if Helpers.keysOf(e) == "enter"
         e.preventDefault()
         @handleEnterKey()
 
     handleEnterKey: ->
-      @api.delete()
-      parent = @api.getParentElement()
-      next = @api.next(parent)
-      if $(next).tagName() == "br"
-        @handleBR(next)
-      else
-        @handleBlock(parent, next)
+      if @api.delete()
+        parent = @api.getParentElement()
+        next = @api.next(parent)
+        if $(next).tagName() == "br"
+          @handleBR(next)
+        else
+          @handleBlock(parent, next)
+        @api.clean()
 
     handleBR: (next) ->
       # When there is no text after the <br>, the caret cannot be placed
