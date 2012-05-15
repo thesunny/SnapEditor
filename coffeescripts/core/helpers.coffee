@@ -1,5 +1,5 @@
-define ["jquery.custom"], ($) ->
-  return {
+define ["jquery.custom", "core/helpers/helpers.keyboard"], ($, Keyboard) ->
+  Helpers = {
     zeroWidthNoBreakSpace: "&#65279;"
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
 
@@ -77,33 +77,6 @@ define ["jquery.custom"], ($) ->
         throw "Delegate: #{del} does not exist on #{object}" if typeof object[del] == "undefined"
         delFn(object, fn)
 
-    # Keyboard key mappings taken from MooTools.
-    keys:
-      enter: 13,
-      up: 38,
-      down: 40,
-      left: 37,
-      right: 39,
-      esc: 27,
-      space: 32,
-      backspace: 8,
-      tab: 9,
-      delete: 46
-
-    # Returns the string representation of the key pressed. Taken from MooTools.
-    keyOf: (event) ->
-      # Check for function key.
-      if event.type == 'keydown'
-        fKey = event.which - 111
-        key = 'f' + fKey if 0 < fKey < 13
-      unless key
-        # Check for special key.
-        for own k, v of @keys
-          key = k if v == event.which
-        # If still no match, a character key was pressed.
-        key = String.fromCharCode(event.which).toLowerCase() unless key
-      key
-
     #
     # Function
     #
@@ -120,3 +93,7 @@ define ["jquery.custom"], ($) ->
     capitalize: (string) ->
       string.replace(/\b[a-z]/g, (match) -> match.toUpperCase())
   }
+
+  $.extend(Helpers, Keyboard)
+
+  return Helpers

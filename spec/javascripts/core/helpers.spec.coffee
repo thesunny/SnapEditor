@@ -180,34 +180,6 @@ require ["core/helpers"], (Helpers) ->
         object.delFn1()
         expect(object.delObject.value).toBeTruthy()
 
-    describe "#keyOf", ->
-      event = null
-      beforeEach ->
-        event = { type: "keydown" }
-
-      it "returns function keys on keydown", ->
-        event.which = 111
-        expect(Helpers.keyOf(event)).toEqual("o")
-        event.which = 112
-        expect(Helpers.keyOf(event)).toEqual("f1")
-        event.which = 123
-        expect(Helpers.keyOf(event)).toEqual("f12")
-        event.which = 124
-        expect(Helpers.keyOf(event)).toEqual("|")
-      it "returns non function keys when not keydown", ->
-        event.type = "keypress"
-        event.which = 112
-        expect(Helpers.keyOf(event)).toNotBe("f1")
-        event.which = 123
-        expect(Helpers.keyOf(event)).toNotBe("f12")
-      it "returns defined special keys", ->
-        event.which = 13
-        expect(Helpers.keyOf(event)).toEqual("enter")
-        event.which = 39
-        expect(Helpers.keyOf(event)).toEqual("right")
-        event.which = 46
-        expect(Helpers.keyOf(event)).toEqual("delete")
-
     describe "#pass", ->
       it "passes arguments through", ->
         sum = (one, two, three) -> one + two + three
