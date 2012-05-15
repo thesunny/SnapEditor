@@ -41,7 +41,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         throw "Expected a map object" unless $.isPlainObject(arguments[0])
         @add(key, fn) for own key, fn of arguments[0]
       else if arglen == 2
-        @keys[@normalize(arguments[0])] = arguments[1]
+        @keys[Helpers.normalizeKeys(arguments[0])] = arguments[1]
       else
         throw "Wrong number of arguments to Keyboard#add"
 
@@ -51,7 +51,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       if $.isArray(arguments[0])
         @remove(key) for key in arguments[0]
       else
-        delete @keys[@normalize(arguments[0])]
+        delete @keys[Helpers.normalizeKeys(arguments[0])]
 
     start: =>
       @$el.on(@type, @onkeydown)
@@ -59,29 +59,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     stop: =>
       @$el.off(@type, @onkeydown)
 
-    normalize: (key) ->
-      keys = key.split('.')
-      char = keys.pop()
-      @buildKey(char, keys)
-
-    buildKey: (key, specialKeys=[], delim='.') ->
-      keys = specialKeys.sort()
-      keys.push(key)
-      keys.join(delim)
-
     onkeydown: (e) =>
-      key = @keyFromEvent(e)
+      key = Helpers.keysOf(e)
       fn = @keys[key]
       if fn
         e.preventDefault()
         fn()
-
-    keyFromEvent: (e) ->
-      key = Helpers.keyOf(e)
-      specialKeys = []
-      specialKeys.push('alt') if e.altKey
-      specialKeys.push('ctrl') if e.ctrlKey
-      specialKeys.push('shift') if e.shiftKey
-      @buildKey(key, specialKeys)
 
   return Keyboard
