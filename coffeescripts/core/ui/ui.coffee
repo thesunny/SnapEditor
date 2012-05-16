@@ -1,5 +1,15 @@
+# UI components have the following functions:
+# * htmlForToolbar - generates the HTML string for a toolbar
+# * htmlForContextMenu - generates the HTML string for a contextmenu
+# * cssForToolbar - generates the CSS string for a toolbar
+# * cssForContextMenu - generates the CSS string for a contextmenu
 define ["jquery.custom", "core/ui/ui.button", "core/ui/ui.gap"], ($, Button, Gap) ->
   class UI
+    # Templates should be an element that contains the following ids:
+    # * snapeditor_toolbar_button_template
+    # * snapeditor_toolbar_select_template
+    # * snapeditor_toolbar_gap_template
+    # * snapeditor_contextmenu_button_template
     constructor: (templates) ->
       @$templates = $(templates)
       @setupTemplates()
