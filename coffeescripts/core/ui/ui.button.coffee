@@ -62,9 +62,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
 
     # Generates the CSS for the toolbar.
     cssForToolbar: ->
-      klass = @generateClass("toolbar", @options.action)
+      classname = @generateClass("toolbar", @options.action)
       "
-        #{klass} {
+        #{classname} {
           background-image: url(#{@options.icon.url});
           background-repeat: no-repeat;
           background-position: #{@options.icon.offset[0]} #{@options.icon.offset[1]};
@@ -73,12 +73,12 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
 
     # Generates the CSS for the contextmenu.
     cssForContextMenu: ->
-      klass = @generateClass("contextmenu", @options.action)
+      classname = @generateClass("contextmenu", @options.action)
       "
-        #{klass} div {
+        #{classname} div {
           float: left;
         }
-        #{klass} icon {
+        #{classname} icon {
           background-image: url(#{@options.icon.url});
           background-repeat: no-repeat;
           background-position: #{@options.icon.offset[0]} #{@options.icon.offset[1]};
