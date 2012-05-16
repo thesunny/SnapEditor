@@ -10,8 +10,8 @@ define ["plugins/activate/activate", "plugins/editable/editable", "plugins/clean
         ]
         whitelist: {
           # Blocks
-          Paragraph: "p > Paragraph"
-          Div: "div > Div"
+          "Paragraph": "p > Paragraph"
+          "Div": "div > Div"
           # Headings
           "Heading 1": "h1 > Paragraph"
           "Heading 2": "h2 > Paragraph"

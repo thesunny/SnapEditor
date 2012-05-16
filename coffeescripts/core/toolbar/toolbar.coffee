@@ -18,7 +18,8 @@
 #     Returns an object with keys corresponding to the actions which will be triggered from the editor API. The values should be callbacks to handle the event.
 #     e.g.
 #       {
-#         "bold": function () {}
+#         "bold": function () {},
+#         "italic": function () {}
 #       }
 #
 # The templates argument is an element that contains the following id:
