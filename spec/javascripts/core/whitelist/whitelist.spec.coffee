@@ -12,8 +12,9 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         expect(whitelist.allowed($('<h1 class="almost"></h1>'))).toBeFalsy()
 
     describe "#replacement", ->
-      whitelist = null
+      $editable = whitelist = null
       beforeEach ->
+        $editable = addEditableFixture()
         whitelist = new Whitelist(
           Title: "h1.title > p"
           Subtitle: "h2"
@@ -21,6 +22,9 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
           "h2": "Subtitle"
           "*": "Normal"
         )
+
+      afterEach ->
+        $editable.remove()
 
       it "returns the default for the tag when it exists", ->
         $replacement = $(whitelist.replacement($('<h2 class="subtitle"></h2>')))
@@ -32,10 +36,13 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         expect($replacement.tagName()).toEqual("h1")
         expect($replacement.attr("class")).toEqual("title")
 
-      it "returns the general default when there is no object for the tag", ->
-        $replacement = $(whitelist.replacement($('<h3 class="subsubtitle"></h3>')))
+      it "returns the general default when there is no object for the tag and it's a block", ->
+        $replacement = $(whitelist.replacement($('<h3 class="subsubtitle"></h3>').appendTo($editable)))
         expect($replacement.tagName()).toEqual("div")
         expect($replacement.attr("class")).toEqual("normal")
+
+      it "returns null when there is no object for the tag and it's inline", ->
+        expect(whitelist.replacement($("<span/>").appendTo($editable))).toBeNull()
 
     describe "#next", ->
       whitelist = null

@@ -13,14 +13,19 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
       return !!@match(el)
 
     # Finds the element that should replace the given el.
+    # Returns null if the element is inline and does not have a replacement.
     replacement: (el) ->
       $el = $(el)
       tag = $el.tagName()
       replacement = @getDefaults()[tag]
       replacement = @getWhitelistByTag()[tag][0] if !replacement and @getWhitelistByTag()[tag]
-      replacement = @getDefaults()["*"] unless replacement
-      throw "The whitelist is missing a '*' default" unless replacement
-      return replacement.getElement()
+      unless replacement
+        if Helpers.isBlock($el[0])
+          replacement = @getDefaults()["*"]
+          throw "The whitelist is missing a '*' default" unless replacement
+        else
+          replacement = null
+      return replacement and replacement.getElement()
 
     # Finds the element that should be after the given el.
     next: (el) ->
