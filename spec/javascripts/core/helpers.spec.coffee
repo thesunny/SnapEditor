@@ -53,6 +53,23 @@ require ["core/helpers"], (Helpers) ->
           expect(testValue).toBeTruthy()
           expect($("#div").length).toEqual(0)
 
+    describe "#nodesFrom", ->
+      $div = null
+      beforeEach ->
+        $div = $("<div>hello <b>world</b> this is <p>some text<p> for testing</div>")
+
+      it "returns a single node when startNode equals endNode", ->
+        nodes = Helpers.nodesFrom($div[0].firstChild, $div[0].firstChild)
+        expect(nodes.length).toEqual(1)
+        expect(nodes[0]).toBe($div[0].firstChild)
+
+      it "returns all the nodes between and including startNode and endNode", ->
+        nodes = Helpers.nodesFrom($div[0].childNodes[2], $div[0].childNodes[4])
+        expect(nodes.length).toEqual(3)
+        expect(nodes[0]).toBe($div[0].childNodes[2])
+        expect(nodes[1]).toBe($div[0].childNodes[3])
+        expect(nodes[2]).toBe($div[0].childNodes[4])
+
     describe "#typeOf", ->
       it "returns boolean", ->
         expect(Helpers.typeOf(true)).toEqual("boolean")

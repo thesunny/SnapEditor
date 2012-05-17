@@ -35,6 +35,17 @@ define ["jquery.custom", "core/helpers/helpers.keyboard"], ($, Keyboard) ->
         $container.remove()
       return isBlock
 
+    # Returns an array of the nodes between and including startNode and endNode.
+    # This assumes the startNode and endNode have the same parent.
+    nodesFrom: (startNode, endNode) ->
+      nodes = []
+      node = startNode
+      loop
+        nodes.push(node)
+        break if node == endNode
+        node = node.nextSibling
+      return nodes
+
     # Mimics MoooTools typeOf.
     typeOf: (object) ->
       type = $.type(object)
