@@ -28,6 +28,12 @@ define ["plugins/activate/activate", "plugins/editable/editable", "plugins/clean
           "Table Cell": "td > BR"
           # BR
           "BR": "br"
+          # Inlines
+          "Bold": "b"
+          "Strong": "strong"
+          "Italic": "i"
+          "Emphasis": "em"
+          "Span": "span"
           # Defaults
           "*": "Paragraph"
         }

@@ -34,24 +34,46 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
         # Loop through all the nodes between and including startNode and
         # endNode.
         loop
-          # Check the stop condition first because the node may be removed.
+          # Grab all relevant info first because the node may be removed.
           stop = node == endNode
           nextSibling = node.nextSibling
-          node = @checkWhitelist(node)
-          # Blockify any previous inline nodes and normalize and flatten the
-          # block.
-          if Helpers.isBlock(node)
+
+          # Handle whitelisting of the node first.
+          replacement = @checkWhitelist(node)
+          # If the node has been replaced, use the replacement.
+          node = replacement if replacement
+
+          isBlock = Helpers.isBlock(node)
+          if isBlock
+            # Blockify any previous inline nodes.
             blockFound = true
             @blockify(inlineNodes, node)
             inlineNodes = []
-            # If blocks were found, flatten them.
-            if @normalizeNodes(node.firstChild, node.lastChild)
-              @flattener.flatten(node)
+
+          # Normalize the children. If there are any child blocks or a
+          # replacement was not found, flatten the node.
+          if Helpers.isElement(node) and (@normalizeNodes(node.firstChild, node.lastChild) or !replacement)
+            # The first and last children may have changed after the call to
+            # @normalizeNodes. Hence, we grab them here instead of earlier in
+            # the loop.
+            # We need to grab them before the node is flattened or we'll lose
+            # the children.
+            firstChild = node.firstChild
+            lastChild = node.lastChild
+            @flattener.flatten(node)
+            # If the node was inline, take all of its children and add them to
+            # the inline nodes.
+            unless isBlock
+              inlineNodes = inlineNodes.concat(Helpers.nodesFrom(firstChild, lastChild))
           else
-            inlineNodes.push(node)
-          # If we are at the endNode, finish up, then break out of the loop.
+            # If the node is inline and no blocks were found and a replacement
+            # was found, add the node to the inline nodes.
+            inlineNodes.push(node) unless isBlock
+
+          # If we are at the endNode break out of the loop.
           break if stop
           node = nextSibling
+
         # If a block was found, blockify the rest of the inline nodes.
         @blockify(inlineNodes, null) if blockFound
       return blockFound
@@ -75,17 +97,29 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
         # whitespaces.
         $parent[0].insertBefore($block[0], refNode) unless $block.html().match(/^\s*$/)
 
-    # TODO: Check whitelist for inline nodes too.
     # Checks the node against the whitelist.
-    # If the node is an inline node, returns the inline node.
+    # If the node is a textnode, returns the textnode.
     # If the node is an element and is on the whitelist, return the node.
-    # If the node is an element and is not on the whitelist, replace the node
-    # and return it.
+    # If the node is a not on the whitelist and a replacement can be found,
+    # replace the node with the replacement and return it.
+    # Otherwise, return null.
     checkWhitelist: (node) ->
-      return node unless Helpers.isBlock(node)
+      return node unless Helpers.isElement(node)
       return node if @api.allowed(node)
-      $replacement = $(@api.replacement(node)).append(node.childNodes)
-      $(node).replaceWith($replacement)
-      return $replacement[0]
+      return null if @blacklisted(node)
+      replacement = @api.replacement(node)
+      if replacement
+        $replacement = $(replacement).append(node.childNodes)
+        $(node).replaceWith($replacement)
+      return replacement
+
+    blacklisted: (node) ->
+      return false unless Helpers.isElement(node)
+      blacklisted = false
+      $el = $(node)
+      switch $el.tagName()
+        when "br" then blacklisted = $el.hasClass("Apple-interchange-newline")
+        when "span" then blacklisted = $el.hasClass("Apple-style-span")
+      return blacklisted
 
   return Normalizer

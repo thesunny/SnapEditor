@@ -1,4 +1,4 @@
-require ["jquery.custom", "plugins/cleaner/cleaner.normalizer"], ($, Normalizer) ->
+require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"], ($, Normalizer, Helpers) ->
   describe "Cleaner.Normalizer", ->
     $editable = normalizer = null
     beforeEach ->
@@ -48,8 +48,10 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer"], ($, Normalizer)
       beforeEach ->
         normalizer.api.allowed = null
         normalizer.api.replacement = null
+        normalizer.blacklisted = -> false
 
       it "returns the textnode", ->
+        spyOn(normalizer.api, "allowed").andReturn(true)
         text = document.createTextNode("test")
         node = normalizer.checkWhitelist(text)
         expect(node).toBe(text)
@@ -60,7 +62,13 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer"], ($, Normalizer)
         node = normalizer.checkWhitelist($el[0])
         expect(node).toBe(node)
 
-      it "replaces the node with the whitelisted element and returns the replacement", ->
+      it "returns null if the element is blacklisted", ->
+        spyOn(normalizer.api, "allowed").andReturn(false)
+        normalizer.blacklisted = -> true
+        $el = $("<p/>")
+        expect(normalizer.checkWhitelist($el[0])).toBeNull()
+
+      it "replaces the element with the whitelisted element and returns the replacement", ->
         spyOn(normalizer.api, "allowed").andReturn(false)
         spyOn(normalizer.api, "replacement").andReturn($('<div class="highlighted normal"></div>')[0])
         $el = $("<p>this is <b>some</b> inline <i>text</i></p>").appendTo($editable)
@@ -69,6 +77,27 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer"], ($, Normalizer)
         expect($node.hasClass("normal")).toBeTruthy()
         expect($node.hasClass("highlighted")).toBeTruthy()
         expect(clean($node.html())).toEqual("this is <b>some</b> inline <i>text</i>")
+
+      it "returns null when no replacement can be found", ->
+        spyOn(normalizer.api, "allowed").andReturn(false)
+        spyOn(normalizer.api, "replacement").andReturn(null)
+        $el = $("<span>this is <b>some</b> inline <i>text</i></span>").appendTo($editable)
+        expect(normalizer.checkWhitelist($el[0])).toBeNull()
+
+    describe "#blacklisted", ->
+      it "returns false when the node is a textnode", ->
+        text = document.createTextNode("test")
+        expect(normalizer.blacklisted(text)).toBeFalsy()
+
+      it "returns false when the element is not blacklisted", ->
+        $el = $("<p/>")
+        expect(normalizer.blacklisted($el[0])).toBeFalsy()
+
+      it "returns true when the element is blacklisted", ->
+        $br = $('<br class="Apple-interchange-newline"/>')
+        expect(normalizer.blacklisted($br[0])).toBeTruthy()
+        $span = $('<span class="Apple-style-span"/>')
+        expect(normalizer.blacklisted($span[0])).toBeTruthy()
 
     describe "#normalize", ->
       beforeEach ->
@@ -84,7 +113,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer"], ($, Normalizer)
       beforeEach ->
         spyOn(normalizer, "checkWhitelist").andCallFake((node) -> node)
 
-      it "does nothing when all the children are inline nodes", ->
+      it "does nothing when all the children are inline nodes and are all whitelisted", ->
         $div = $("<div>this is <b>some</b> text with <i>no</i> blocks</div>").appendTo($editable)
         expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeFalsy()
         expect(clean($editable.html())).toEqual("<div>this is <b>some</b> text with <i>no</i> blocks</div>")
@@ -98,7 +127,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer"], ($, Normalizer)
           # In IE7/8, the space disappears after a block. This should be okay.
           expect(clean($editable.html())).toEqual("<div><div>this is <b>some</b> text with another </div><p>block</p><div>in it</div></div>")
 
-      it "flattens recursively", ->
+      it "flattens blocks recursively", ->
         $div = $("<div>this is <b>some</b> text with another <div>block <em>and</em> even <p>another one</p> inside that</div> in it plus <div>another just in case</div></div>").appendTo($editable)
         expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
         if hasW3CRanges
@@ -107,20 +136,27 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer"], ($, Normalizer)
           # In IE7/8, the space disappears after a block. This should be okay.
           expect(clean($editable.html())).toEqual("<div><div>this is <b>some</b> text with another </div><div>block <em>and</em> even </div><p>another one</p><div>inside that</div><div>in it plus </div><div>another just in case</div></div>")
 
-      it "checks the whitelist", ->
-        normalizer.api.allowed = null
-        normalizer.api.replacement = null
-        spyOn(normalizer.api, "allowed").andReturn(false)
-        spyOn(normalizer.api, "replacement").andReturn($('<p class="normal"></p>')[0])
+      it "checks the whitelist and uses the replacement", ->
+        normalizer.api.allowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.replacement = -> $('<p class="normal"/>')[0]
         normalizer.checkWhitelist.andCallThrough()
 
-        $div = $("<div>this is <b>some</b> text with another <p>block</p> in it</div>").appendTo($editable)
+        $div = $("<div>this is some text with another <p>block</p> in it</div>").appendTo($editable)
         expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
         if hasW3CRanges
-          expect(clean($editable.html())).toEqual('<div><div>this is <b>some</b> text with another </div><p class=normal>block</p><div> in it</div></div>')
+          expect(clean($editable.html())).toEqual('<div><div>this is some text with another </div><p class=normal>block</p><div> in it</div></div>')
         else
           # In IE7/8, the space disappears after a block. This should be okay.
-          expect(clean($editable.html())).toEqual('<div><div>this is <b>some</b> text with another </div><p class=normal>block</p><div>in it</div></div>')
+          expect(clean($editable.html())).toEqual('<div><div>this is some text with another </div><p class=normal>block</p><div>in it</div></div>')
+
+      it "checks the whitelist and replaces the node with its children when there is no replacement", ->
+        normalizer.api.allowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.replacement = -> null
+        normalizer.checkWhitelist.andCallThrough()
+
+        $div = $("<div>this is <b>some <i>inline</i> text</b> with more text</div>").appendTo($editable)
+        expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeFalsy()
+        expect(clean($editable.html())).toEqual('<div>this is some inline text with more text</div>')
 
       it "starts and stops normalizing at the right places", ->
         $div = $("<div>this is <b>some</b> text with another <p>block</p> in it</div>").appendTo($editable)
