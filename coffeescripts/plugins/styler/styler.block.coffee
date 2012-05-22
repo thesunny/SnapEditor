@@ -7,11 +7,11 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       h1 = ui.button(action: "h1", title: "H1 (Ctrl+1)", icon: "image.png")
       h2 = ui.button(action: "h2", title: "H2 (Ctrl+2)", icon: "image.png")
       h3 = ui.button(action: "h3", title: "H3 (Ctrl+3)", icon: "image.png")
-      alignLeft = ui.button(action: "alignleft", title: "Align Left (Ctrl+L)", icon: "image.png")
-      alignCenter = ui.button(action: "aligncenter", title: "Align Center (Ctrl+E)", icon: "image.png")
-      alignRight = ui.button(action: "alignright", title: "Align Right (Ctrl+R)", icon: "image.png")
-      unorderedList = ui.button(action: "unorderedlist", title: "Bullet List (Ctrl+8)", icon: "image.png")
-      orderedList = ui.button(action: "orderedlist", title: "Numbered List (Ctrl+7)", icon: "image.png")
+      alignLeft = ui.button(action: "alignLeft", title: "Align Left (Ctrl+L)", icon: "image.png")
+      alignCenter = ui.button(action: "alignCenter", title: "Align Center (Ctrl+E)", icon: "image.png")
+      alignRight = ui.button(action: "alignRight", title: "Align Right (Ctrl+R)", icon: "image.png")
+      unorderedList = ui.button(action: "unorderedList", title: "Bullet List (Ctrl+8)", icon: "image.png")
+      orderedList = ui.button(action: "orderedList", title: "Numbered List (Ctrl+7)", icon: "image.png")
       indent = ui.button(action: "indent", title: "Indent", icon: "image.png")
       outdent = ui.button(action: "outdent", title: "Outdent", icon: "image.png")
       return {
@@ -36,43 +36,47 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         h1: @h1
         h2: @h2
         h3: @h3
-        alignleft: @alignLeft
-        aligncenter: @alignCenter
-        alignright: @alignRight
-        unorderedlist: @unorderedList
-        orderedlist: @orderedList
+        alignLeft: @alignLeft
+        alignCenter: @alignCenter
+        alignRight: @alignRight
+        unorderedList: @unorderedList
+        orderedList: @orderedList
         indent: @indent
         outdent: @outdent
       }
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.space": @p
-        "ctrl.1": @h1
-        "ctrl.2": @h2
-        "ctrl.3": @h3
-        "ctrl.l": @alignLeft
-        "ctrl.e": @alignCenter
-        "ctrl.r": @alignRight
-        "ctrl.8": @unorderedList
-        "ctrl.7": @orderedList
+        "ctrl.space": "p"
+        "ctrl.1": "h1"
+        "ctrl.2": "h2"
+        "ctrl.3": "h3"
+        "ctrl.l": "alignLeft"
+        "ctrl.e": "alignCenter"
+        "ctrl.r": "alignRight"
+        "ctrl.8": "unorderedList"
+        "ctrl.7": "orderedList"
       }
 
     p: =>
-      @formatBlock('p')
-      @update()
+      if @allowFormatBlock()
+        @formatBlock('p')
+        @update()
 
     h1: =>
-      @formatBlock('h1')
-      @update()
+      if @allowFormatBlock()
+        @formatBlock('h1')
+        @update()
 
     h2: =>
-      @formatBlock('h2')
-      @update()
+      if @allowFormatBlock()
+        @formatBlock('h2')
+        @update()
 
     h3: =>
-      @formatBlock('h3')
-      @update()
+      if @allowFormatBlock()
+        @formatBlock('h3')
+        @update()
 
     formatBlock: (tag) =>
       # TODO-SH:
@@ -133,12 +137,14 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @update()
 
     unorderedList: =>
-      @exec("insertunorderedlist")
-      @update()
+      if allowList()
+        @exec("insertunorderedlist")
+        @update()
 
     orderedList: =>
-      @exec("insertorderedlist")
-      @update()
+      if allowList()
+        @exec("insertorderedlist")
+        @update()
 
     indent: =>
       @exec("indent")
@@ -164,5 +170,15 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @api.el.focus() if Browser.isMozilla
       @api.clean()
       @api.update()
+
+    allowFormatBlock: ->
+      allowed = !@api.getParentElement("table, li")
+      alert("Sorry. This action cannot be performed inside a table or list.") unless allowed
+      return allowed
+
+    allowList: ->
+      allowed = !@api.getParentElement("table")
+      alert("Sorry. This action cannot be performed inside a table.") unless allowed
+      return allowed
 
   return BlockStyler

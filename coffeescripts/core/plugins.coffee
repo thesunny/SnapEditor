@@ -11,6 +11,7 @@ define ["jquery.custom", "core/ui/ui"], ($, UI) ->
       @keyboardShortcuts = {}
       @registerPlugin(plugin, true) for plugin in @defaultPlugins
       @registerPlugin(plugin, false) for plugin in @extraPlugins if @extraPlugins
+      @normalizeKeyboardShortcuts()
 
     getUI: ->
       @ui or= new UI(@templates)
@@ -72,6 +73,15 @@ define ["jquery.custom", "core/ui/ui"], ($, UI) ->
     # Add the plugin's keyboard shortcuts to the list.
     addKeyboard: (plugin) ->
       $.extend(@keyboardShortcuts, plugin.getKeyboardShortcuts())
+
+    # Take all the keyboard shortcuts that have actions as values and make it a
+    # function that triggers that action on the API.
+    normalizeKeyboardShortcuts: ->
+      @setKeyboardShortcut(key, action) for key, action of @keyboardShortcuts
+
+    # Set the key so that it triggers the API with the given action.
+    setKeyboardShortcut: (key, action) ->
+      @keyboardShortcuts[key] = => @api.trigger(action)
 
     # Returns the toolbar buttons as an object.
     # {

@@ -26,9 +26,9 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.b": @bold
-        "ctrl.i": @italic
-        "ctrl.k": @link
+        "ctrl.b": "bold"
+        "ctrl.i": "italic"
+        "ctrl.k": "link"
       }
 
     # Bolds the selected text.

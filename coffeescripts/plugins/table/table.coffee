@@ -36,32 +36,35 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.shift.t": @table
-        "ctrl.shift.enter": Helpers.pass(@addRow, true, this)
-        "ctrl.enter": Helpers.pass(@addRow, false, this)
-        "ctrl.9": Helpers.pass(@addCol, true, this)
-        "ctrl.0": Helpers.pass(@addCol, false, this)
+        "ctrl.shift.t": "table"
+        "ctrl.shift.enter": "addRowAbove"
+        "ctrl.enter": "addRowBelow"
+        "ctrl.9": "addColLeft"
+        "ctrl.0": "addColRight"
       }
 
     insertTable: =>
-      # Build the table.
-      $table = $('<table id="INSERTED_TABLE"></table>')
-      $tbody = $("<tbody/>").appendTo($table)
-      $td = $("<td>&nbsp;</td>")
-      $tr = $("<tr/>")
-      $tr.append($td.clone()) for i in [1..@options.table[1]]
-      $tbody.append($tr.clone()) for i in [1..@options.table[0]]
+      if @api.getParentElement("table, li")
+        alert("Sorry. This action cannot be performed inside a table or list.")
+      else
+        # Build the table.
+        $table = $('<table id="INSERTED_TABLE"></table>')
+        $tbody = $("<tbody/>").appendTo($table)
+        $td = $("<td>&nbsp;</td>")
+        $tr = $("<tr/>")
+        $tr.append($td.clone()) for i in [1..@options.table[1]]
+        $tbody.append($tr.clone()) for i in [1..@options.table[0]]
 
-      # Add the table.
-      @api.paste($table[0])
+        # Add the table.
+        @api.paste($table[0])
 
-      # Set the cursor inside the first td of the table. Then remove the id.
-      $table = $("#INSERTED_TABLE")
-      @api.selectEndOfElement($table.find("td")[0])
-      $table.removeAttr("id")
+        # Set the cursor inside the first td of the table. Then remove the id.
+        $table = $("#INSERTED_TABLE")
+        @api.selectEndOfElement($table.find("td")[0])
+        $table.removeAttr("id")
 
-      # Update.
-      @update()
+        # Update.
+        @update()
 
     # Deletes the entire table. If no table is passed in, it attempts to the
     # find a table that contains the range.
