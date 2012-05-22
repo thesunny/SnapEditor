@@ -1,6 +1,6 @@
 define ["jquery.custom"], ($) ->
   class Flattener
-    doNotReplace: ["ol", "ul", "li", "table", "tbody", "thead", "tfoot", "tr", "th", "td", "caption", "colgroup", "col"]
+    doNotReplace: ["ol", "ul", "li", "table", "tbody", "thead", "tfoot", "tr", "th", "td", "caption"]
 
     flatten: (node) ->
       switch $(node).tagName()
