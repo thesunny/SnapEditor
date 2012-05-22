@@ -87,6 +87,11 @@ define ["../lib/jquery", "../lib/mustache"], ->
       $first.append(this[0].childNodes[0])
     return [$first, this]
 
+  # Replaces the current element with the given el, leaving the children intact.
+  $.fn.replaceElementWith = (el) ->
+    $el = $(el).append(this[0].childNodes)
+    this.replaceWith($el)
+
   # Given the contexts, find all the matching contexts.
   $.fn.contexts = (contexts, untilEl = null) ->
     matchedContexts = {}

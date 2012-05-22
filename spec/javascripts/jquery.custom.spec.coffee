@@ -52,13 +52,19 @@ require ["jquery.custom"], ($) ->
         $el.merge($other)
         expect(clean($el.html())).toEqual("this is <b>my</b> div<i>this</i> is my other h1")
 
-    describe "$split", ->
+    describe "#split", ->
       it "splits on the child node", ->
         $el = $("<div>this is <span>in the</span> first <b>and</b> this is in the <i>second</i></div>").appendTo($editable)
         [$first, $second] = $el.split($el.find("b"))
         expect($editable.find("div").length).toEqual(2)
         expect(clean($first.html())).toEqual("this is <span>in the</span> first ")
         expect(clean($second.html())).toEqual("<b>and</b> this is in the <i>second</i>")
+
+    describe "#replaceElementWith", ->
+      it "replaces the element with the given element and retains all the children", ->
+        $el = $("<div>this is <b>some</b> text <i>to be<span>preserved</span></i></div>").appendTo($editable)
+        $el.replaceElementWith($("<p>"))
+        expect(clean($editable.html())).toEqual("<p>this is <b>some</b> text <i>to be<span>preserved</span></i></p>")
 
     describe "#contexts", ->
       it "returns the matched contexts and the matched elements", ->
