@@ -50,25 +50,38 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
             @blockify(inlineNodes, node)
             inlineNodes = []
 
-          # Normalize the children. If there are any child blocks or a
-          # replacement was not found, flatten the node.
-          if Helpers.isElement(node) and (@normalizeNodes(node.firstChild, node.lastChild) or !replacement)
-            # The first and last children may have changed after the call to
-            # @normalizeNodes. Hence, we grab them here instead of earlier in
-            # the loop.
-            # We need to grab them before the node is flattened or we'll lose
-            # the children.
-            firstChild = node.firstChild
-            lastChild = node.lastChild
-            @flattener.flatten(node)
-            # If the node was inline, take all of its children and add them to
-            # the inline nodes.
-            unless isBlock
-              inlineNodes = inlineNodes.concat(Helpers.nodesFrom(firstChild, lastChild))
+          if Helpers.isElement(node)
+            # Normalize the children first.
+            innerBlockFound = @normalizeNodes(node.firstChild, node.lastChild)
+            if isBlock and !innerBlockFound and !replacement and node.firstChild
+              # If there are children and all the children are inline nodes
+              # and no replacement was found for the block, we cannot just
+              # flatten the outer block as this would cause dangling inline
+              # nodes. Hence, we replace the outer block with the default block.
+              $(node).replaceElementWith(@api.defaultBlock())
+            else if innerBlockFound or !replacement
+              # If inner blocks were found or there is no replacement, flatten
+              # the outer element.
+
+              # The first and last children may have changed after the call to
+              # @normalizeNodes. Hence, we grab them here instead of earlier in
+              # the loop.
+              # We need to grab them before the node is flattened or we'll lose
+              # the children.
+              firstChild = node.firstChild
+              lastChild = node.lastChild
+              @flattener.flatten(node)
+              # If the node was inline, take all of its children and add them to
+              # the inline nodes.
+              unless isBlock
+                inlineNodes = inlineNodes.concat(Helpers.nodesFrom(firstChild, lastChild))
+            else if !isBlock
+              # If the node is inline, no blocks were found, and a replacement
+              # was found, add the node to the inline nodes.
+              inlineNodes.push(node)
           else
-            # If the node is inline and no blocks were found and a replacement
-            # was found, add the node to the inline nodes.
-            inlineNodes.push(node) unless isBlock
+            # If the node is a textnode, add it to the inline nodes.
+            inlineNodes.push(node)
 
           # If we are at the endNode break out of the loop.
           break if stop
@@ -108,9 +121,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
       return node if @api.allowed(node)
       return null if @blacklisted(node)
       replacement = @api.replacement(node)
-      if replacement
-        $replacement = $(replacement).append(node.childNodes)
-        $(node).replaceWith($replacement)
+      $(node).replaceElementWith(replacement) if replacement
       return replacement
 
     blacklisted: (node) ->
@@ -119,7 +130,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
       $el = $(node)
       switch $el.tagName()
         when "br" then blacklisted = $el.hasClass("Apple-interchange-newline")
-        when "span" then blacklisted = $el.hasClass("Apple-style-span")
+        when "span" then blacklisted = $el.hasClass("Apple-style-span") or $el.hasClass("Apple-tab-span")
       return blacklisted
 
   return Normalizer

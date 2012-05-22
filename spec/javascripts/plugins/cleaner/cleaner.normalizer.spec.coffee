@@ -98,6 +98,8 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         expect(normalizer.blacklisted($br[0])).toBeTruthy()
         $span = $('<span class="Apple-style-span"/>')
         expect(normalizer.blacklisted($span[0])).toBeTruthy()
+        $span = $('<span class="Apple-tab-span"/>')
+        expect(normalizer.blacklisted($span[0])).toBeTruthy()
 
     describe "#normalize", ->
       beforeEach ->
@@ -148,6 +150,25 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         else
           # In IE7/8, the space disappears after a block. This should be okay.
           expect(clean($editable.html())).toEqual('<div><div>this is some text with another </div><p class=normal>block</p><div>in it</div></div>')
+
+      it "replaces the non-whitelisted block with the default block when all children are inline", ->
+        normalizer.api.allowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.replacement = -> null
+        normalizer.api.defaultBlock = -> $("<p/>")
+        normalizer.checkWhitelist.andCallThrough()
+
+        $div = $("<div><div>this is some inline text</div></div>").appendTo($editable)
+        expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
+        expect(clean($div.html())).toEqual("<p>this is some inline text</p>")
+
+      it "flattens the non-whitelisted block when it has no children", ->
+        normalizer.api.allowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.replacement = -> null
+        normalizer.checkWhitelist.andCallThrough()
+
+        $div = $("<div><div></div></div>").appendTo($editable)
+        expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
+        expect(clean($div.html())).toEqual("")
 
       it "checks the whitelist and replaces the node with its children when there is no replacement", ->
         normalizer.api.allowed = (node) -> !Helpers.isElement(node)

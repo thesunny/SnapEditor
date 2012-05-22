@@ -33,7 +33,8 @@ define ["plugins/activate/activate", "plugins/editable/editable", "plugins/clean
           "Strong": "strong"
           "Italic": "i"
           "Emphasis": "em"
-          "Span": "span"
+          "Range Start": "span#RANGE_START"
+          "Range End": "span#RANGE_END"
           # Defaults
           "*": "Paragraph"
         }

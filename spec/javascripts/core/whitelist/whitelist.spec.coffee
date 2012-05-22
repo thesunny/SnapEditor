@@ -6,10 +6,10 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         whitelist = new Whitelist(Title: "h1.title > p")
 
       it "returns true when the element is allowed", ->
-        expect(whitelist.allowed($('<h1 class="title"></h1>'))).toBeTruthy()
+        expect(whitelist.allowed($('<h1 class="title"></h1>')[0])).toBeTruthy()
 
       it "returns false when the element is not allowed", ->
-        expect(whitelist.allowed($('<h1 class="almost"></h1>'))).toBeFalsy()
+        expect(whitelist.allowed($('<h1 class="almost"></h1>')[0])).toBeFalsy()
 
     describe "#replacement", ->
       $editable = whitelist = null
@@ -27,22 +27,17 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         $editable.remove()
 
       it "returns the default for the tag when it exists", ->
-        $replacement = $(whitelist.replacement($('<h2 class="subtitle"></h2>')))
+        $replacement = $(whitelist.replacement($('<h2 class="subtitle"></h2>')[0]))
         expect($replacement.tagName()).toEqual("h2")
         expect($replacement.attr("class")).toBeUndefined()
 
       it "returns the first object in the whitelist by tag when the default does not exist", ->
-        $replacement = $(whitelist.replacement($('<h1 class="subtitle"></h1>')))
+        $replacement = $(whitelist.replacement($('<h1 class="subtitle"></h1>')[0]))
         expect($replacement.tagName()).toEqual("h1")
         expect($replacement.attr("class")).toEqual("title")
 
-      it "returns the general default when there is no object for the tag and it's a block", ->
-        $replacement = $(whitelist.replacement($('<h3 class="subsubtitle"></h3>').appendTo($editable)))
-        expect($replacement.tagName()).toEqual("div")
-        expect($replacement.attr("class")).toEqual("normal")
-
-      it "returns null when there is no object for the tag and it's inline", ->
-        expect(whitelist.replacement($("<span/>").appendTo($editable))).toBeNull()
+      it "returns null when there is no replacement for the tag", ->
+        expect(whitelist.replacement($("<span/>").appendTo($editable)[0])).toBeNull()
 
     describe "#next", ->
       whitelist = null
@@ -55,12 +50,12 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         )
 
       it "returns the object when it exists", ->
-        $next = $(whitelist.next($('<h1 class="title"></h1>')))
+        $next = $(whitelist.next($('<h1 class="title"></h1>')[0]))
         expect($next.tagName()).toEqual("p")
         expect($next.attr("class")).toBeUndefined()
 
       it "returns the default when none exists", ->
-        $next = $(whitelist.next($('<h1 class="subtitle"></h1>')))
+        $next = $(whitelist.next($('<h1 class="subtitle"></h1>')[0]))
         expect($next.tagName()).toEqual("div")
         expect($next.attr("class")).toEqual("normal")
 
@@ -70,17 +65,29 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         whitelist = new Whitelist(Title: "h1.title > p")
 
       it "returns the matched object", ->
-        match = whitelist.match($('<h1 class="title">Title</h1>'))
-        expect(match.tag).toEqual("h1")
-        expect(match.classes).toEqual(["title"])
-        expect(match.next.tag).toEqual("p")
-        expect(match.next.classes).toEqual([])
+        expect(whitelist.match($('<h1 class="title">Title</h1>')[0])).not.toBeNull()
 
-      it "returns null when the class does not match", ->
-        expect(whitelist.match($('<h1 class="almost">Title</h1>'))).toBeNull()
+      it "returns null when a match is not found", ->
+        expect(whitelist.match($('<h1 class="almost">Title</h1>')[0])).toBeNull()
 
-      it "returns null when the tag does not match", ->
-        expect(whitelist.match($('<h2 class="almost">Title</h2>'))).toBeNull()
+    describe "#getReplacementFromWhitelistByTag", ->
+      whitelist = null
+      beforeEach ->
+        whitelist = new Whitelist(
+          "Super Title": "h1#super.title"
+          "Title": "h1.title > p"
+          "Heading": "h1.heading > p"
+          "Special Subtitle": "h2#special.subtitle"
+          "Normal Subtitle": "h2#normal.subtitle"
+        )
 
-      it "handles elements with no classes appropriately", ->
-        expect(whitelist.match($('<h1>Title</h1>'))).toBeNull()
+      it "returns null if the tag is not in the list", ->
+        expect(whitelist.getReplacementFromWhitelistByTag("p")).toBeNull()
+
+      it "returns null if the objects all have ids", ->
+        expect(whitelist.getReplacementFromWhitelistByTag("h2")).toBeNull()
+
+      it "returns the first object without an id", ->
+        replacement = whitelist.getReplacementFromWhitelistByTag("h1")
+        expect(replacement.id).toBeNull()
+        expect(replacement.classes).toEqual("title")

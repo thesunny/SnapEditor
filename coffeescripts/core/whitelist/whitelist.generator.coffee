@@ -55,8 +55,13 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
 
     parse: (string) ->
       [element, next] = ($.trim(s) for s in string.split(">"))
-      [tag, classes...] = ($.trim(s) for s in element.split("."))
+      [element, attrs] = ($.trim(s) for s in element.split("["))
+      [element, classes...] = ($.trim(s) for s in element.split("."))
+      [tag, id] = ($.trim(s) for s in element.split("#"))
+      # Handle attributes if there are any.
+      # Use [0..-2] to remove the trailing ']'.
+      attrs = ($.trim(s) for s in attrs[0..-2].split(",")) if attrs
       next = @parse(next) if next and !@isLabel(next)
-      return new WhitelistObject(tag, classes, next)
+      return new WhitelistObject(tag, id, classes, attrs, next)
 
   return Generator

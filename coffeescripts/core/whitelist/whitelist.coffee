@@ -17,32 +17,37 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
     replacement: (el) ->
       $el = $(el)
       tag = $el.tagName()
-      replacement = @getDefaults()[tag]
-      replacement = @getWhitelistByTag()[tag][0] if !replacement and @getWhitelistByTag()[tag]
-      unless replacement
-        if Helpers.isBlock($el[0])
-          replacement = @getDefaults()["*"]
-          throw "The whitelist is missing a '*' default" unless replacement
-        else
-          replacement = null
-      return replacement and replacement.getElement()
+      replacement = @getDefaults()[tag] or null
+      replacement = @getReplacementFromWhitelistByTag(tag) unless replacement
+      return replacement and replacement.getElement(el)
 
     # Finds the element that should be after the given el.
     next: (el) ->
       next = @getDefaults()["*"]
+      throw "The whitelist is missing a '*' default" unless next
       match = @match(el)
       next = match.next if match and match.next
       return next.getElement()
 
     # Finds the object that matches the given el or else returns null.
     match: (el) ->
-      $el = $(el)
-      classes = ($el.attr("class") or "").split(" ").sort()
       match = null
-      list = @getWhitelistByTag()[$el.tagName()]
+      list = @getWhitelistByTag()[$(el).tagName()]
       if list
         for obj in list
-          if classes.toString() == obj.classes.toString()
+          if obj.matches(el)
             match = obj
             break
       return match
+
+    # Finds the first object without an id.
+    # Returns null if no object can be found.
+    getReplacementFromWhitelistByTag: (tag) ->
+      list = @getWhitelistByTag()[tag]
+      return null unless list
+      replacement = null
+      for obj in list
+        unless obj.id
+          replacement = obj
+          break
+      return replacement
