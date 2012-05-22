@@ -39,6 +39,7 @@ define ["jquery.custom", "core/helpers/helpers.keyboard"], ($, Keyboard) ->
     # This assumes the startNode and endNode have the same parent.
     nodesFrom: (startNode, endNode) ->
       nodes = []
+      return nodes unless startNode and endNode
       node = startNode
       loop
         nodes.push(node)

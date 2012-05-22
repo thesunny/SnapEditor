@@ -58,6 +58,10 @@ require ["core/helpers"], (Helpers) ->
       beforeEach ->
         $div = $("<div>hello <b>world</b> this is <p>some text<p> for testing</div>")
 
+      it "returns an empty array when either the start or end node is null", ->
+        expect(Helpers.nodesFrom(null, $div[0].lastChild).length).toEqual(0)
+        expect(Helpers.nodesFrom($div[0].firstChild, null).length).toEqual(0)
+
       it "returns a single node when startNode equals endNode", ->
         nodes = Helpers.nodesFrom($div[0].firstChild, $div[0].firstChild)
         expect(nodes.length).toEqual(1)
