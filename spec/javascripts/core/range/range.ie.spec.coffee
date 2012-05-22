@@ -230,7 +230,6 @@ unless hasW3CRanges
             actualRange = document.selection.createRange()
             actualRange.pasteHTML("<span></span>")
             expect(clean($start.html())).toEqual("start<span></span>")
-            p $editable.html()
 
           it "selects the end of the inside of the cell when there is content", ->
             $table = $('<table><tbody><tr><td id="td">before</td><td>after</td></tr></tbody></table>').appendTo($editable)
