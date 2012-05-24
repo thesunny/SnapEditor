@@ -66,14 +66,35 @@ define ["../lib/jquery", "../lib/mustache"], ->
     )
     => el.style.cssText = before
 
+  # Returns true if the element is a table tag.
+  $.fn.isPartOfTable = ->
+    $.inArray(this.tagName(), ["table", "colgroup", "col", "tbody", "thead", "tfoot", "tr", "th", "td"]) != -1
+
+  # Returns true if the element is a list tag.
+  $.fn.isPartOfList = ->
+    $.inArray(this.tagName(), ["ul", "ol", "li"]) != -1
+
   # Merge other into the element.
+  # If this or other is part of a table, the merge will not happen.
+  # If this is a list, other will be merged into the last item.
+  # If other is a list, the first item will be merged into this. If the
+  # resulting list is empty, the list will be removed.
   $.fn.merge = (other) ->
     $other = $(other)
-    # Merge other into this.
-    while($other[0].childNodes[0])
-      this[0].appendChild($other[0].childNodes[0])
-    $other.remove()
-    this[0].normalize()
+    # Don't do anything if either element is part of a table.
+    return if this.isPartOfTable() or $other.isPartOfTable()
+    # Get the elements to merge.
+    $a = if this.isPartOfList() then this.find("li").last() else this
+    $b = if $other.isPartOfList() then $other.find("li").first() else $other
+    # Merge other into $b into $a.
+    while($b[0].childNodes[0])
+      $a[0].appendChild($b[0].childNodes[0])
+    # Normalize $a after the merge.
+    $a[0].normalize()
+    # Remove $b since it has been merged.
+    $b.remove()
+    # If other was a list and is now empty, remove it.
+    $other.remove() if $other.isPartOfList() and $other.find("li").length == 0
 
   # Splits the element on the node.
   # All nodes before the given node will belong to the first element.

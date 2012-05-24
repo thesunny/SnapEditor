@@ -47,10 +47,42 @@ require ["jquery.custom"], ($) ->
 
     describe "#merge", ->
       it "merges the other node in", ->
-        $el = $("<div>this is <b>my</b> div</div>")
-        $other = $("<h1><i>this</i> is my other h1</h1>")
+        $el = $("<div>this is <b>my</b> div</div>").appendTo($editable)
+        $other = $("<h1><i>this</i> is my other h1</h1>").appendTo($editable)
         $el.merge($other)
-        expect(clean($el.html())).toEqual("this is <b>my</b> div<i>this</i> is my other h1")
+        expect(clean($editable.html())).toEqual("<div>this is <b>my</b> div<i>this</i> is my other h1</div>")
+
+      it "does nothing when the element is a table", ->
+        $el = $("<table><tbody><tr><td>text</td></tr></tbody></table").appendTo($editable)
+        $other = $("<h1><i>this</i> is my other h1</h1>").appendTo($editable)
+        html = $editable.html()
+        $el.merge($other)
+        expect(clean($editable.html())).toEqual(html)
+
+      it "does nothing when the other is a table", ->
+        $el = $("<h1><i>this</i> is my other h1</h1>").appendTo($editable)
+        $other = $("<table><tbody><tr><td>text</td></tr></tbody></table").appendTo($editable)
+        html = $editable.html()
+        $el.merge($other)
+        expect(clean($editable.html())).toEqual(html)
+
+      it "merges the last item with the other when the element is a list", ->
+        $el = $("<ul><li>first</li><li>last</li></ul>").appendTo($editable)
+        $other = $("<h1><i>this</i> is my other h1</h1>").appendTo($editable)
+        $el.merge($other)
+        expect(clean($editable.html())).toEqual("<ul><li>first</li><li>last<i>this</i> is my other h1</li></ul>")
+
+      it "merges the first item into the element when other is a list", ->
+        $el = $("<h1><i>this</i> is my other h1</h1>").appendTo($editable)
+        $other = $("<ul><li>first</li><li>last</li></ul>").appendTo($editable)
+        $el.merge($other)
+        expect(clean($editable.html())).toEqual("<h1><i>this</i> is my other h1first</h1><ul><li>last</li></ul>")
+
+      it "removes the list when other is a list and the resulting list has no items after the merge", ->
+        $el = $("<h1><i>this</i> is my other h1</h1>").appendTo($editable)
+        $other = $("<ul><li>first</li></ul>").appendTo($editable)
+        $el.merge($other)
+        expect(clean($editable.html())).toEqual("<h1><i>this</i> is my other h1first</h1>")
 
     describe "#split", ->
       it "splits on the child node", ->
