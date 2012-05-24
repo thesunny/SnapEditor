@@ -17,28 +17,103 @@ if isWebkit
         $editable.remove()
 
       describe "#handleCursor", ->
-        it "merges the nodes together when deleting", ->
-          range = new Range($editable[0])
-          range.range.selectNodeContents($h1[0])
-          range.collapse(false)
-          range.select()
+        describe "delete", ->
+          event = null
+          beforeEach ->
+            event = which:46, type: "keydown", preventDefault: ->
 
-          handler.handleCursor(which: 46, type: "keydown", preventDefault: ->)
-          expect($editable.html()).toEqual("<h1>header headingsome text</h1>")
+          it "merges the nodes together", ->
+            range = new Range($editable[0])
+            range.range.selectNodeContents($h1[0])
+            range.collapse(false)
+            range.select()
 
-          range = new Range($editable[0], window)
-          range.paste("<b></b>")
-          expect($h1.html()).toEqual("header heading<b></b>some text")
+            handler.handleCursor(event)
+            expect($editable.html()).toEqual("<h1>header headingsome text</h1>")
 
-        it "merges the nodes together when backspacing", ->
-          range = new Range($editable[0])
-          range.range.selectNodeContents($p[0])
-          range.collapse(true)
-          range.select()
+            range = new Range($editable[0], window)
+            range.paste("<b></b>")
+            expect($h1.html()).toEqual("header heading<b></b>some text")
 
-          handler.handleCursor(which: 8, type: "keydown", preventDefault: ->)
-          expect($editable.html()).toEqual("<h1>header headingsome text</h1>")
+          it "does not merge the nodes together when the next node is a table", ->
+            $("<table><tbody><tr><td>text</td></tr></tbody</table>").insertAfter($h1)
+            html = $editable.html()
 
-          range = new Range($editable[0], window)
-          range.paste("<b></b>")
-          expect($h1.html()).toEqual("header heading<b></b>some text")
+            range = new Range($editable[0])
+            range.range.selectNodeContents($h1[0])
+            range.collapse(false)
+            range.select()
+
+            handler.handleCursor(event)
+            expect($editable.html()).toEqual(html)
+
+            range = new Range($editable[0], window)
+            range.paste("<b></b>")
+            expect($h1.html()).toEqual("header heading<b></b>")
+
+          it "merges the first list item into the node when the next node is a list", ->
+            $ul = $("<ul><li>item</li></ul>").insertAfter($h1)
+
+            range = new Range($editable[0])
+            range.range.selectNodeContents($h1[0])
+            range.collapse(false)
+            range.select()
+
+            handler.handleCursor(event)
+            expect($h1.html()).toEqual("header headingitem")
+            expect($editable.find("ul").length).toEqual(0)
+
+            range = new Range($editable[0], window)
+            range.paste("<b></b>")
+            expect($h1.html()).toEqual("header heading<b></b>item")
+
+        describe "backspace", ->
+          event = null
+          beforeEach ->
+            event = which: 8, type: "keydown", preventDefault: ->
+
+          it "merges the nodes together", ->
+            range = new Range($editable[0])
+            range.range.selectNodeContents($p[0])
+            range.collapse(true)
+            range.select()
+
+            handler.handleCursor(event)
+            expect($editable.html()).toEqual("<h1>header headingsome text</h1>")
+
+            range = new Range($editable[0], window)
+            range.paste("<b></b>")
+            expect($h1.html()).toEqual("header heading<b></b>some text")
+
+          it "does not merge the nodes together when the previous node is a table", ->
+            $("<table><tbody><tr><td>text</td></tr></tbody</table>").insertBefore($p)
+            html = $editable.html()
+
+            range = new Range($editable[0])
+            range.range.selectNodeContents($p[0])
+            range.collapse(true)
+            range.select()
+
+            handler.handleCursor(event)
+            expect($editable.html()).toEqual(html)
+
+            range = new Range($editable[0], window)
+            range.paste("<b></b>")
+            expect($p.html()).toEqual("<b></b>some text")
+
+          it "does not merge the nodes together when the previous node is a list", ->
+            $ul = $("<ul><li>item</li></ul>").insertBefore($p)
+            $li = $ul.find("li")
+
+            range = new Range($editable[0])
+            range.range.selectNodeContents($p[0])
+            range.collapse(true)
+            range.select()
+
+            handler.handleCursor(event)
+            expect($li.html()).toEqual("itemsome text")
+            expect($editable.find("p").length).toEqual(0)
+
+            range = new Range($editable[0], window)
+            range.paste("<b></b>")
+            expect($li.html()).toEqual("item<b></b>some text")
