@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/api", "core/plugins", "core/keyboard", "core/contexts", "core/contextmenu", "core/whitelist/whitelist"], ($, API, Plugins, Keyboard, Contexts, ContextMenu, Whitelist) ->
+define ["jquery.custom", "core/helpers", "core/api", "core/plugins", "core/keyboard", "core/contexts", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Helpers, API, Plugins, Keyboard, Contexts, ContextMenu, Whitelist) ->
   class Editor
     # Options:
     # * assets: an object that holds urls to assets
@@ -14,7 +14,7 @@ define ["jquery.custom", "core/api", "core/plugins", "core/keyboard", "core/cont
       @plugins = new Plugins(@api, @$templates, @defaults.plugins, @config.plugins, @defaults.toolbar, @config.toolbar)
       @keyboard = new Keyboard(@api, @plugins.getKeyboardShortcuts(), "keydown")
       @contexts = new Contexts(@api, @plugins.getContexts())
-      @contextmenu = new ContextMenu(@api, @plugins.getContextMenuButtons())
+      @contextmenu = new ContextMenu(@api, @$templates, @plugins.getContextMenuButtons())
 
     loadAssets: ->
       @loadTemplates()
@@ -29,7 +29,14 @@ define ["jquery.custom", "core/api", "core/plugins", "core/keyboard", "core/cont
 
     loadCSS: ->
       if @config.assets.css
-        $("<link href=\"#{@config.assets.css}\" rel=\"stylesheet\" type=\"text/css\">").appendTo("head")
+        # Don't use a <link> tag because it loads asynchronously. Attaching to
+        # the onload is not reliable. This hack loads the CSS through AJAX
+        # synchronously and dumps the styles into a <style> tag.
+        $.ajax(
+          url: @config.assets.css,
+          async: false,
+          success: (css) -> Helpers.insertStyles(css)
+        )
 
     activate: ->
       @api.trigger("activate.editor")
