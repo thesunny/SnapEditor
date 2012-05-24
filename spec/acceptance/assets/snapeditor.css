@@ -1,12 +1,62 @@
-.toolbar {
-  position: relative;
-  z-index: 200;
-  background-color: #acacac;
-  border: 1px solid black;
+/* GENERAL TOOLBAR */
+
+.snapeditor_toolbar {
+  background-color: #f2f2f2;
 }
 
-.contextmenu {
+.snapeditor_toolbar_content {
+  border: 1px solid #808080;
+  height: 45px;
+}
+
+.snapeditor_toolbar_content_inner {
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.snapeditor_toolbar_group {
+  float: left;
+  margin-right: 10px;
+}
+
+.snapeditor_toolbar_button {
+  float: left;
+}
+
+.snapeditor_toolbar_inserttable {
+  margin-right: 0px;
+}
+
+/* SPECIFIC TOOLBAR */
+
+.snapeditor_toolbar_static {
+  width: 100%;
+}
+
+.snapeditor_toolbar_floating {
+  position: relative;
   z-index: 200;
-  background-color: #acacac;
-  border: 1px solid black;
+  width: 517px;
+}
+
+.snapeditor_form_content {
+  border: 1px solid #808080;
+  border-top: none;
+}
+
+/* CONTEXTMENU */
+
+.snapeditor_contextmenu {
+  z-index: 200;
+  background-color: white;
+  width: 300px;
+}
+
+.snapeditor_contextmenu_content {
+  border: 1px solid #808080;
+}
+
+.snapeditor_contextmenu_separator {
+  height: 0px;
+  border-bottom: 1px solid #808080;
 }

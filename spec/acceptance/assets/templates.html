@@ -1,24 +1,52 @@
 <div id="snapeditor_toolbar_template">
-  <div class="toolbar">
-    {{#componentGroups}}
-      {{{html}}} |
-    {{/componentGroups}}
+  <div class="snapeditor_toolbar">
+    <div class="snapeditor_toolbar_content">
+      <div class="snapeditor_toolbar_content_inner">
+        {{#componentGroups}}
+          <div class="snapeditor_toolbar_group">{{{html}}}</div>
+        {{/componentGroups}}
+      </div>
+    </div>
   </div>
 </div>
 
 <div id="snapeditor_toolbar_button_template">
-  <input type="button" class="{{class}}" title="{{title}}" data-action="{{action}}" />
+  <div class="snapeditor_toolbar_button {{class}}">
+    <input type="button" title="{{title}}" data-action="{{action}}" />
+  </div>
 </div>
 
 <div id="snapeditor_toolbar_gap_template">
-  <span class="gap"></span>
+  <span class="snapeditor_toolbar_gap"></span>
+</div>
+
+<div id="snapeditor_contextmenu_template">
+  <div class="snapeditor_contextmenu">
+    <div class="snapeditor_contextmenu_content">
+      <div class="snapeditor_contextmenu_content_inner">
+        {{#componentGroups}}
+          {{{html}}}
+          {{^last}}
+            <div class="snapeditor_contextmenu_separator"></div>
+          {{/last}}
+        {{/componentGroups}}
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="snapeditor_contextmenu_button_template">
-  <div class="{{class}}">
-    <div class="icon"></div>
-    <div class="button">
-      <input type="button" title="{{title}}" data-action="{{action}}" />
-    </div>
+  <div class="snapeditor_contextmenu_button {{class}}">
+    <button title="{{title}}" data-action="{{action}}">
+      <table>
+        <tbody>
+          <tr>
+            <td class="snapeditor_contextmenu_icon"><div></div></td>
+            <td class="snapeditor_contextmenu_description">{{description}}</td>
+            <td class="snapeditor_contextmenu_shortcut">{{shortcut}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </button>
   </div>
 </div>
