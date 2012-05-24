@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers/helpers.keyboard"], ($, Keyboard) ->
+define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, Browser, Keyboard) ->
   Helpers = {
     zeroWidthNoBreakSpace: "&#65279;"
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
@@ -46,6 +46,19 @@ define ["jquery.custom", "core/helpers/helpers.keyboard"], ($, Keyboard) ->
         break if node == endNode
         node = node.nextSibling
       return nodes
+
+    # Inserts the given styles into a <style> tag in the <head>.
+    insertStyles: (styles) ->
+      return if $.trim(styles).length == 0
+      style = $('<style type="text/css" />')[0]
+      # Don't check for style.styleSheet. IE9 has this property but it doesn't
+      # work properly. Therefore, we have to revert to checking directly for
+      # IE7/8.
+      if Browser.isIE7 or Browser.isIE8
+        style.styleSheet.cssText = styles
+      else
+        style.innerHTML = styles
+      $(style).appendTo("head")
 
     # Mimics MoooTools typeOf.
     typeOf: (object) ->

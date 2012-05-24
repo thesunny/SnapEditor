@@ -74,6 +74,15 @@ require ["core/helpers"], (Helpers) ->
         expect(nodes[1]).toBe($div[0].childNodes[3])
         expect(nodes[2]).toBe($div[0].childNodes[4])
 
+    describe "#insertStyle", ->
+      it "inserts the styles into the head", ->
+        Helpers.insertStyles("test {position: absolute}")
+        $style = $("head").find("style").last()
+        expect($style).not.toBeNull()
+        expect($style.attr("type")).toEqual("text/css")
+        expect(clean($style.html())).toEqual("test {position: absolute}")
+        $style.remove()
+
     describe "#typeOf", ->
       it "returns boolean", ->
         expect(Helpers.typeOf(true)).toEqual("boolean")
