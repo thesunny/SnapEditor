@@ -5,13 +5,20 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     #
     # Options:
     # action: the action to trigger
-    # title: the title of the button
-    # icon: the icon of the button either as a url or { url: <url>, offset: [x, y] }
+    # description: description for the button
+    # shortcut: keyboard shortcut for the button
+    # icon: the icon of the button as an object (optional)
+    #   {
+    #     url: <url>,     // mandatory
+    #     width: x,       // mandatory, either integer or string
+    #     height: y,      // mandatory, either integer or string
+    #     offset: [x, y]  // optional
+    #   }
     constructor: (templates, @options) ->
       @$tbTemplate = $(templates.toolbar)
       @$cmTemplate = $(templates.contextmenu)
       @checkOptions()
-      @options.icon = @normalizeIcon(@options.icon)
+      @normalizeIcon()
 
     # Ensure all the options are correct.
     checkOptions: ->
@@ -21,34 +28,41 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       if typeof @options.action == "undefined"
         throw "Missing action for button UI"
 
-      if typeof @options.title == "undefined"
-        throw "Missing title for #{@options.action} button UI"
+      if typeof @options.description == "undefined"
+        throw "Missing description for #{@options.action} button UI"
 
-      switch Helpers.typeOf(@options.icon)
-        when "undefined" then throw "Missing icon for #{@options.action} button UI"
-        when "object"
-          if typeof @options.icon.url == "undefined"
-            throw "Icon must have a url for #{@options.action} button UI"
-          if typeof @options.icon.offset == "undefined"
-            throw "Icon must have an offset for #{@options.action} button UI"
+      iconType = Helpers.typeOf(@options.icon)
+      if iconType != "undefined"
+        if iconType != "object"
+          throw "Icon must be an object for #{@options.action} button UI"
+        if typeof @options.icon.url == "undefined"
+          throw "Icon must have a url for #{@options.action} button UI"
+        if typeof @options.icon.width == "undefined"
+          throw "Icon must have a width for #{@options.action} button UI"
+        if typeof @options.icon.height == "undefined"
+          throw "Icon must have a height for #{@options.action} button UI"
 
-    # Normalize the icon so that it is an object.
-    # { url: <url>, offset: [x, y] }
-    normalizeIcon: (icon) ->
-      icon = url: icon, offset: [0, 0] if typeof icon == "string"
-      return icon
+    normalizeIcon: ->
+      if @options.icon
+        @options.icon.offset or= [0, 0]
+        @options.icon.width = "#{@options.icon.width}px" if Helpers.typeOf(@options.icon.width) == "number"
+        @options.icon.height = "#{@options.icon.height}px" if Helpers.typeOf(@options.icon.height) == "number"
 
     # Generates a class for the particular type and action.
     # action is stripped of all non-alphanumeric characters.
     generateClass: (type, action) ->
-      "snapeditor_#{type}_#{action.replace(/[^a-zA-Z0-9]+/g, "")}"
+      @class or= "snapeditor_#{type}_#{action.replace(/[^a-zA-Z0-9]+/g, "")}".toLowerCase()
 
+    getTitle: ->
+      return @title if @title
+      @title = @options.description
+      @title += " (#{@options.shortcut})" if @options.shortcut
 
     # Generates the HTML for the toolbar.
     htmlForToolbar: ->
       @$tbTemplate.mustache(
         action: @options.action
-        title: @options.title
+        title: @getTitle()
         class: @generateClass("toolbar", @options.action)
       )
 
@@ -56,33 +70,98 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     htmlForContextMenu: ->
       @$cmTemplate.mustache(
         action: @options.action
-        title: @options.title
+        description: @options.description
+        shortcut: @options.shortcut
+        title: @getTitle()
         class: @generateClass("contextmenu", @options.action)
       )
 
     # Generates the CSS for the toolbar.
     cssForToolbar: ->
+      return "" unless @options.icon
       classname = @generateClass("toolbar", @options.action)
       "
-        #{classname} {
+        .#{classname} {
           background-image: url(#{@options.icon.url});
           background-repeat: no-repeat;
-          background-position: #{@options.icon.offset[0]} #{@options.icon.offset[1]};
+          background-position: #{@options.icon.offset[0]}px #{@options.icon.offset[1]}px;
+          width: #{@options.icon.width};
+          height: #{@options.icon.height};
         }
-        "
+        .#{classname} input {
+          background-color: #0066cc;
+          border: none;
+          width: 100%;
+          height: #{@options.icon.height};
+          opacity: 0.0;
+          filter: alpha(opacity=0);
+        }
+        .#{classname} input:hover {
+          opacity: 0.2;
+          filter: alpha(opacity=20);
+        }
+      "
 
     # Generates the CSS for the contextmenu.
     cssForContextMenu: ->
       classname = @generateClass("contextmenu", @options.action)
-      "
-        #{classname} div {
-          float: left;
+      css = "
+        .#{classname} {
+          width: 100%;
+          height: 30px;
         }
-        #{classname} icon {
-          background-image: url(#{@options.icon.url});
-          background-repeat: no-repeat;
-          background-position: #{@options.icon.offset[0]} #{@options.icon.offset[1]};
+        .#{classname} button {
+          background-color: white;
+          border: none;
+          padding: 0px 0px 0px 5px;
+          width: 100%;
+          height: 30px;
+        }
+        .#{classname} button:hover {
+          background-color: #f9ffd0;
+        }
+        .#{classname} table {
+          border-collapse: collapse;
+          border-spacing: 0px;
+          border: none;
+          width: 100%;
+        }
+        .#{classname} td {
+          border: none;
+          padding: 0px;
+          height: 30px;
+        }
+        .#{classname} .snapeditor_contextmenu_description {
+          text-align: left;
+          padding-left: 5px;
+          width: 60%;
+        }
+        .#{classname} .snapeditor_contextmenu_shortcut {
+          text-align: right;
+          font-size: 90%;
+          color: #505050;
+          padding-right: 5px;
+          width: 40%;
         }
       "
+      if @options.icon
+        css += "
+          .#{classname} .snapeditor_contextmenu_icon {
+            width: #{@options.icon.width}
+          }
+          .#{classname} .snapeditor_contextmenu_icon div {
+            background-image: url(#{@options.icon.url});
+            background-repeat: no-repeat;
+            background-position: #{@options.icon.offset[0]}px #{@options.icon.offset[1]}px;
+            width: #{@options.icon.width};
+            height: #{@options.icon.height};
+          }
+        "
+      else
+        css += "
+          .#{classname} .snapeditor_contextmenu_icon {
+            width: 0px;
+          }
+        "
 
   return Button
