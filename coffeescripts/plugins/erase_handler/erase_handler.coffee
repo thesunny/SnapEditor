@@ -51,7 +51,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         bNode = parentEl
 
       # Merge nodes if aNode given.
-      if aNode
+      if aNode and bNode
         # Call preventDefault first so that if @mergeNodes fails, nothing
         # happens. This will alert us to bugs sooner (crash early).
         e.preventDefault()
