@@ -4,6 +4,7 @@ require ["core/toolbar/toolbar.builder"], (Builder) ->
     beforeEach ->
       component =
         htmlForToolbar: -> "html"
+        cssForToolbar: -> "css"
       availableComponents =
         combo: ["component", component]
         component: [component]
@@ -18,41 +19,42 @@ require ["core/toolbar/toolbar.builder"], (Builder) ->
           availableComponents,
           ["component", "components", "|", "combo"]
         )
-        $div = builder.build()
+        [$div, css] = builder.build()
         expect($div.hasClass("toolbar")).toBeTruthy()
         expect($div.find(".group").length).toEqual(2)
 
         $group = $($div.find(".group")[0])
-        # IE returns uppercased HTML tags, extra whitespaces and missing ""
-        # around attributes. This basically normalizes it across all browsers.
-        expect($group.html().replace(/[\s"]*/g, "")).toEqual('htmlhtmlhtmlhtml')
+        expect(clean($group.html()).replace(/[\s]*/g, "")).toEqual('htmlhtmlhtmlhtml')
 
         $group = $($div.find(".group")[1])
         expect($group.html().replace(/\s*/g, "")).toEqual("htmlhtml")
 
+        expect(css).toEqual("csscsscsscsscsscss")
+
     describe "#getComponents", ->
       it "returns an object containing all the components", ->
         builder = new Builder(null, availableComponents, ["component", "component", "|", "components", "|", "combo"])
-        components = builder.getComponents()
+        [components, css] = builder.getComponents()
         expect(components.length).toEqual(3)
         expect(components[0].html).toEqual("htmlhtml")
         expect(components[1].html).toEqual("htmlhtmlhtml")
         expect(components[2].html).toEqual("htmlhtml")
+        expect(css).toEqual("csscsscsscsscsscsscss")
 
-    describe "#getComponentHtml", ->
+    describe "#getComponentHtmlAndCss", ->
       builder = null
       beforeEach ->
         builder = new Builder(null, availableComponents, null)
 
       it "throws an error when the component is not available", ->
         builder.availableComponents = {}
-        expect(-> builder.getComponentHtml("component")).toThrow()
+        expect(-> builder.getComponentHtmlAndCss("component")).toThrow()
 
       it "renders a single component", ->
-        expect(builder.getComponentHtml("component")).toEqual("html")
+        expect(builder.getComponentHtmlAndCss("component")).toEqual(["html", "css"])
 
       it "renders multiple components", ->
-        expect(builder.getComponentHtml("components")).toEqual("htmlhtmlhtml")
+        expect(builder.getComponentHtmlAndCss("components")).toEqual(["htmlhtmlhtml", "csscsscss"])
 
       it "renders a combination of components", ->
-        expect(builder.getComponentHtml("combo")).toEqual("htmlhtml")
+        expect(builder.getComponentHtmlAndCss("combo")).toEqual(["htmlhtml", "csscss"])

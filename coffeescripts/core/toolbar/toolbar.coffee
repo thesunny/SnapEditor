@@ -37,7 +37,7 @@
 #     "Left, "Center", "Right", "|",
 #     "Image", "Link", "Table", "|"
 #   ]
-define ["jquery.custom", "core/data_action_handler", "core/toolbar/toolbar.builder"], ($, DataActionHandler, Builder) ->
+define ["jquery.custom", "core/helpers", "core/data_action_handler", "core/toolbar/toolbar.builder"], ($, Helpers, DataActionHandler, Builder) ->
   class Toolbar
     constructor: (@api, templates, @availableComponents, @components) ->
       @$templates = $(templates)
@@ -51,7 +51,8 @@ define ["jquery.custom", "core/data_action_handler", "core/toolbar/toolbar.build
 
     # Sets up the toolbar.
     setup: ->
-      @$toolbar = new Builder(@$template, @availableComponents, @components).build()
+      [@$toolbar, @css] = new Builder(@$template, @availableComponents, @components).build()
       @dataActionHandler = new DataActionHandler(@$toolbar, @api)
+      Helpers.insertStyles(@css)
 
   return Toolbar

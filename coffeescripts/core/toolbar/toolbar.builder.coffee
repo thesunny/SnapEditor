@@ -25,10 +25,12 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       @$template = $(template)
 
     # Builds the toolbar with the given component groups.
+    # Returns [toolbar, css]
     build: ->
-      $toolbar = $(@$template.mustache(componentGroups: @getComponents()))
+      [components, css] = @getComponents()
+      $toolbar = $(@$template.mustache(componentGroups: components))
       $toolbar.find("[data-action]").each(->$(this).attr("unselectable", "on"))
-      return $toolbar
+      return [$toolbar, css]
 
     # Returns an array of component groups.
     # e.g.
@@ -39,6 +41,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     getComponents: ->
       groups = []
       html = ""
+      css = ""
       for component in @components
         if component == "|"
           # If there is a new group, store the old one and create a new one.
@@ -46,22 +49,27 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
           html = ""
         else
           # If it is a component, continue adding it to the current group.
-          html += @getComponentHtml(component)
+          [componentHTML, componentCSS] = @getComponentHtmlAndCss(component)
+          html += componentHTML
+          css += componentCSS
       # Store the last group if there are components in it.
       groups.push(html: html) unless html.length == 0
-      return groups
+      return [groups, css]
 
-    # Return the HTML string that corresponds to the component.
-    getComponentHtml: (key) ->
+    # Return the HTML and CSS strings that correspond to the component.
+    getComponentHtmlAndCss: (key) ->
       html = ""
+      css = ""
       # Normalize the key to lowercase.
       components = @availableComponents[key.toLowerCase()]
       throw "The component(s) for #{key} is not available. Please check that the plugin has been included." unless components
       for component in components
         switch Helpers.typeOf(component)
-          when "string" then html += @getComponentHtml(component)
-          when "object" then html += component.htmlForToolbar()
+          when "string" then [componentHTML, componentCSS] = @getComponentHtmlAndCss(component)
+          when "object" then [componentHTML, componentCSS] = [component.htmlForToolbar(), component.cssForToolbar()]
           else throw "Unrecognized component format for '#{key}'. Expecting a string or UI component object"
-      return html
+        html += componentHTML
+        css += componentCSS
+      return [html, css]
 
   return ToolbarBuilder
