@@ -84,6 +84,14 @@ require ["jquery.custom"], ($) ->
         $el.merge($other)
         expect(clean($editable.html())).toEqual("<h1><i>this</i> is my other h1first</h1>")
 
+      it "merges the two list items together", ->
+        $ul = $("<ul><li>first</li><li>last</li></ul>").appendTo($editable)
+        $el = $ul.find("li").first()
+        $other = $ul.find("li").last()
+        $el.merge($other)
+        expect($ul.find("li").length).toEqual(1)
+        expect($ul.find("li").html()).toEqual("firstlast")
+
     describe "#split", ->
       it "splits on the child node", ->
         $el = $("<div>this is <span>in the</span> first <b>and</b> this is in the <i>second</i></div>").appendTo($editable)

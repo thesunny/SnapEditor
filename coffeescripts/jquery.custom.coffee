@@ -71,8 +71,8 @@ define ["../lib/jquery", "../lib/mustache"], ->
     $.inArray(this.tagName(), ["table", "colgroup", "col", "tbody", "thead", "tfoot", "tr", "th", "td"]) != -1
 
   # Returns true if the element is a list tag.
-  $.fn.isPartOfList = ->
-    $.inArray(this.tagName(), ["ul", "ol", "li"]) != -1
+  $.fn.isList = ->
+    $.inArray(this.tagName(), ["ul", "ol"]) != -1
 
   # Merge other into the element.
   # If this or other is part of a table, the merge will not happen.
@@ -84,8 +84,8 @@ define ["../lib/jquery", "../lib/mustache"], ->
     # Don't do anything if either element is part of a table.
     return if this.isPartOfTable() or $other.isPartOfTable()
     # Get the elements to merge.
-    $a = if this.isPartOfList() then this.find("li").last() else this
-    $b = if $other.isPartOfList() then $other.find("li").first() else $other
+    $a = if this.isList() then this.find("li").last() else this
+    $b = if $other.isList() then $other.find("li").first() else $other
     # Merge other into $b into $a.
     while($b[0].childNodes[0])
       $a[0].appendChild($b[0].childNodes[0])
@@ -94,7 +94,7 @@ define ["../lib/jquery", "../lib/mustache"], ->
     # Remove $b since it has been merged.
     $b.remove()
     # If other was a list and is now empty, remove it.
-    $other.remove() if $other.isPartOfList() and $other.find("li").length == 0
+    $other.remove() if $other.isList() and $other.find("li").length == 0
 
   # Splits the element on the node.
   # All nodes before the given node will belong to the first element.
