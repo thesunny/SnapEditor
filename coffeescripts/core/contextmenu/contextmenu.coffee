@@ -1,15 +1,29 @@
-define ["jquery.custom", "core/data_action_handler"], ($, DataActionHandler) ->
+define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_action_handler"], ($, Builder, DataActionHandler) ->
   class ContextMenu
     # Arguments:
-    # @api - editor API object
-    # @config - { "<context selector>": [<button object>, ...]
-    constructor: (@api, @config) ->
+    # api - editor API object
+    # templates - element that contains #snapeditor_contextmenu_template
+    # config - { "<context selector>": [<button object>, ...]
+    constructor: (@api, templates, @config) ->
       @$el = $(@api.el)
+      @$templates = $(templates)
+      @setupTemplates()
       @contexts = []
       @contexts.push(context) for context, button of @config
-      @buttonGroups = {}
+      @setupMenu()
       @api.on("activate.editor", @activate)
       @api.on("deactivate.editor", @deactivate)
+
+    setupTemplates: ->
+      @$template = @$templates.find("#snapeditor_contextmenu_template")
+      if @$template.length == 0
+        throw "Missing template. Make sure there is an element with id snapeditor_contextmenu_template."
+
+    setupMenu: ->
+      @id = "snapeditor_contextmenu_#{Math.floor(Math.random() * 99999)}"
+      @$menu = $("<div/>").attr("id", @id).css("position", "absolute").hide().appendTo("body")
+      new DataActionHandler(@$menu, @api)
+      @builder = new Builder(@$template, @config)
 
     activate: =>
       @$el.on("contextmenu", @show)
@@ -39,28 +53,15 @@ define ["jquery.custom", "core/data_action_handler"], ($, DataActionHandler) ->
     # Build the menu based on the current context.
     buildMenu: (target) ->
       $target = $(target)
-      unless @$menu
-        @id = "snapeditor_contextmenu_#{Math.floor(Math.random() * 99999)}"
-        @$menu = $("<div id=\"#{@id}\" class=\"contextmenu\">").css("position", "absolute").hide().appendTo("body")
-        new DataActionHandler(@$menu, @api)
-      @$menu.empty()
       matchedContexts = $target.contexts(@contexts, @$el)
-      @$menu.append(@getButtonGroup("default"))
-      @$menu.append(@getButtonGroup(context)) for context, el of matchedContexts
-
-    # Grab the buttons for the given context.
-    getButtonGroup: (context) ->
-      return @buttonGroups[context] if @buttonGroups[context]
-      unless @config[context]
-        return null if context == "default"
-        throw "Missing contextmenu buttons for context '#{context}'"
-      $buttons = $('<div class="snapeditor_contextmenu_item_group">')
-      $buttons.append($(button.htmlForContextMenu())) for button in @config[context]
-      @buttonGroups[context] = $buttons
+      contexts = ["default"]
+      contexts.push(context) for context, el of matchedContexts
+      @$menu.empty()
+      @$menu.append(@builder.build(contexts))
 
     getMenuCoords: ->
       # Uses measure in case the menu is not visible.
-      @menuCoords or= @$menu.measure(-> @getCoordinates())
+      @$menu.measure(-> @getCoordinates())
 
     # Get the styles needed to display the contextmenu where the cursor is but
     # always stay within the viewable window.
@@ -70,8 +71,9 @@ define ["jquery.custom", "core/data_action_handler"], ($, DataActionHandler) ->
       windowSize = $(window).getSize()
       windowBottom = windowScroll.y + windowSize.y
       windowRight = windowScroll.x + windowSize.x
-      menuHeight = @getMenuCoords().height
-      menuWidth = @getMenuCoords().width
+      menuCoords = @getMenuCoords()
+      menuHeight = menuCoords.height
+      menuWidth = menuCoords.width
       # If the menu doesn't fit vertically.
       if styles.top + menuHeight > windowBottom
         styles.top = windowBottom - menuHeight
