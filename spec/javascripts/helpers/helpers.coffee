@@ -37,4 +37,4 @@ window.addEditableFixture = ->
 # Lowercase the string.
 # Remove ", \n, \r, and zero width no break space.
 window.clean = (s) ->
-  s.toLowerCase().replace(/["\n\r\ufeff]/g, "")
+  s.toLowerCase().replace(/["\n\r\t\ufeff]/g, "")
