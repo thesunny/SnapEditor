@@ -1,12 +1,14 @@
-define ["plugins/activate/activate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/edit/edit", "plugins/styler/styler.inline", "plugins/styler/styler.block", "plugins/table/table"], (Activate, Editable, Cleaner, EraseHandler, EnterHandler, Edit, InlineStyler, BlockStyler, Table) ->
+define ["plugins/activate/activate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/edit/edit", "plugins/styler/styler.inline", "plugins/styler/styler.block", "plugins/table/table"], (Activate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Edit, InlineStyler, BlockStyler, Table) ->
   return {
     build: ->
       return {
-        plugins: [new Activate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new Edit(), new InlineStyler(), new BlockStyler(), new Table()]
+        plugins: [new Activate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Edit(), new InlineStyler(), new BlockStyler(), new Table()]
         toolbar: [
-          "Inline", "|",
-          "Block", "|",
-          "Table"
+          "Bold", "Italic", "|",
+          "P", "H1", "H2", "H3", "|",
+          "UnorderedList", "OrderedList", "Indent", "Outdent", "|",
+          "AlignLeft", "AlignCenter", "AlignRight", "|",
+          "Link", "Table"
         ]
         whitelist: {
           # Blocks
@@ -33,6 +35,7 @@ define ["plugins/activate/activate", "plugins/editable/editable", "plugins/clean
           "Strong": "strong"
           "Italic": "i"
           "Emphasis": "em"
+          "Links": "a[href]"
           "Range Start": "span#RANGE_START"
           "Range End": "span#RANGE_END"
           # Defaults
