@@ -3,17 +3,17 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     register: (@api) ->
 
     getUI: (ui) ->
-      p = ui.button(action: "p", title: "Paragraph (Ctrl+Space)", icon: "image.png")
-      h1 = ui.button(action: "h1", title: "H1 (Ctrl+1)", icon: "image.png")
-      h2 = ui.button(action: "h2", title: "H2 (Ctrl+2)", icon: "image.png")
-      h3 = ui.button(action: "h3", title: "H3 (Ctrl+3)", icon: "image.png")
-      alignLeft = ui.button(action: "alignLeft", title: "Align Left (Ctrl+L)", icon: "image.png")
-      alignCenter = ui.button(action: "alignCenter", title: "Align Center (Ctrl+E)", icon: "image.png")
-      alignRight = ui.button(action: "alignRight", title: "Align Right (Ctrl+R)", icon: "image.png")
-      unorderedList = ui.button(action: "unorderedList", title: "Bullet List (Ctrl+8)", icon: "image.png")
-      orderedList = ui.button(action: "orderedList", title: "Numbered List (Ctrl+7)", icon: "image.png")
-      indent = ui.button(action: "indent", title: "Indent", icon: "image.png")
-      outdent = ui.button(action: "outdent", title: "Outdent", icon: "image.png")
+      p = ui.button(action: "p", description: "Paragraph", shortcut: "Ctrl+Space", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 31, height: 24, offset: [0, -53] })
+      h1 = ui.button(action: "h1", description: "H1", shortcut: "Ctrl+1", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 30, height: 24, offset: [-31, -53] })
+      h2 = ui.button(action: "h2", description: "H2", shortcut: "Ctrl+2", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 30, height: 24, offset: [-61, -53] })
+      h3 = ui.button(action: "h3", description: "H3", shortcut: "Ctrl+3", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 30, height: 24, offset: [-91, -53] })
+      alignLeft = ui.button(action: "alignLeft", description: "Align Left", shortcut: "Ctrl+L", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 31, height: 24, offset: [0, -149] })
+      alignCenter = ui.button(action: "alignCenter", description: "Align Center", shortcut: "Ctrl+E", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 30, height: 24, offset: [-31, -149] })
+      alignRight = ui.button(action: "alignRight", description: "Align Right", shortcut: "Ctrl+R", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 30, height: 24, offset: [-61, -149] })
+      unorderedList = ui.button(action: "unorderedList", description: "Bullet List", shortcut: "Ctrl+8", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 31, height: 24, offset: [0, -125] })
+      orderedList = ui.button(action: "orderedList", description: "Numbered List", shortcut: "Ctrl+7", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 30, height: 24, offset: [-31, -125] })
+      indent = ui.button(action: "indent", description: "Indent", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 30, height: 24, offset: [-61, -125] })
+      outdent = ui.button(action: "outdent", description: "Outdent", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 30, height: 24, offset: [-91, -125] })
       return {
         "toolbar:default": "block"
         block: [p, h1, h2, h3, alignLeft, alignCenter, alignRight, unorderedList, orderedList, indent, outdent]

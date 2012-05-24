@@ -8,14 +8,14 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     register: (@api) ->
 
     getUI: (ui) ->
-      insertTable = ui.button(action: "insertTable", title: "Insert Table (Ctrl+Shift+T)", icon: "image.png")
-      addRowAbove = ui.button(action: "addRowAbove", title: "Add Row Above (Ctrl+Shift+Enter)", icon: "image.png")
-      addRowBelow = ui.button(action: "addRowBelow", title: "Add Row Below (Ctrl+Shift+Enter)", icon: "image.png")
-      deleteRow = ui.button(action: "deleteRow", title: "Delete Row", icon: "image.png")
-      addColLeft = ui.button(action: "addColLeft", title: "Add Column Left (Ctrl+9)", icon: "image.png")
-      addColRight = ui.button(action: "addColRight", title: "Add Column Right (Ctrl+0)", icon: "image.png")
-      deleteCol = ui.button(action: "deleteCol", title: "Delete Col", icon: "image.png")
-      deleteTable = ui.button(action: "deleteTable", title: "Delete Table", icon: "image.png")
+      insertTable = ui.button(action: "insertTable", description: "Insert Table", shortcut: "Ctrl+Shift+T", icon: { url: "/spec/acceptance/assets/toolbar.png", width: 30, height: 24, offset: [-61, -77] })
+      addRowAbove = ui.button(action: "addRowAbove", description: "Add Row Above", shortcut: "Ctrl+Shift+Enter", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [0, -16] })
+      addRowBelow = ui.button(action: "addRowBelow", description: "Add Row Below", shortcut: "Ctrl+Enter", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-16, -16] })
+      deleteRow = ui.button(action: "deleteRow", description: "Delete Row", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-32, -16] })
+      addColLeft = ui.button(action: "addColLeft", description: "Add Column Left", shortcut: "Ctrl+9", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-48, -16] })
+      addColRight = ui.button(action: "addColRight", description: "Add Column Right", shortcut: "Ctrl+0", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-64, -16] })
+      deleteCol = ui.button(action: "deleteCol", description: "Delete Column", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-80, -16] })
+      deleteTable = ui.button(action: "deleteTable", description: "Delete Table", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-96, -16] })
       return {
         "toolbar:default": "table"
         table: insertTable
