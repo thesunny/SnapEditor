@@ -24,9 +24,11 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
 
     activate: =>
       $(@api.el).on("keydown", @onkeydown)
+      $(@api.el).on("keyup", @onkeyup)
 
     deactivate: =>
       $(@api.el).off("keydown", @onkeydown)
+      $(@api.el).off("keyup", @onkeyup)
 
     onkeydown: (e) =>
       key = Helpers.keyOf(e)
@@ -35,7 +37,12 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           @handleCursor(e)
         else
           @api.delete()
-        @api.clean()
+
+    onkeyup: (e) =>
+      # Cleaning is done on keyup in case the browser's default was allowed to
+      # occur. In this case, the cleaning will happen afterwards.
+      key = Helpers.keyOf(e)
+      @api.clean() if key == 'delete' or key == 'backspace'
 
     handleCursor: (e) ->
       range = @api.range()
