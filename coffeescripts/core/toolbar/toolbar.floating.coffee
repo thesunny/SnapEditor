@@ -7,6 +7,7 @@ define ["core/toolbar/toolbar", "core/toolbar/toolbar.floating.displayer"], (Too
 
     setup: ->
       super
+      @$toolbar.addClass("snapeditor_toolbar_floating")
       @displayer = new Displayer(@$toolbar, @api.el, @api)
 
     # Shows the toolbar.

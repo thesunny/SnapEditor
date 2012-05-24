@@ -5,6 +5,10 @@ define ["core/toolbar/toolbar"], (Toolbar) ->
       @setup()
       @$toolbar.hide().appendTo("body")
 
+    setup: ->
+      super
+      @$toolbar.addClass("snapeditor_toolbar_static")
+
     # Shows the toolbar.
     show: ->
       @$toolbar.show()
