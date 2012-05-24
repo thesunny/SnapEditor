@@ -137,12 +137,12 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @update()
 
     unorderedList: =>
-      if allowList()
+      if @allowList()
         @exec("insertunorderedlist")
         @update()
 
     orderedList: =>
-      if allowList()
+      if @allowList()
         @exec("insertorderedlist")
         @update()
 
