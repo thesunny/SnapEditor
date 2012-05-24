@@ -102,14 +102,22 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         expect(normalizer.blacklisted($span[0])).toBeTruthy()
 
     describe "#normalize", ->
+      $b = $i = null
       beforeEach ->
         normalizer.api.defaultBlock = -> $("<p/>")[0]
         spyOn(normalizer, "checkWhitelist").andCallFake((node) -> node)
+        $editable.html("these are some <b>inline</b> nodes that <i>should</i> be wrapped")
+        $b = $editable.find("b")
+        $i = $editable.find("i")
 
       it "blockifies all the children when they are all inline nodes", ->
-        $editable.html("these are some <b>inline</b> nodes that <i>should</i> be wrapped")
-        normalizer.normalize($editable[0].firstChild, $editable[0].lastChild)
-        expect(clean($editable.html())).toEqual("<p>these are some <b>inline</b> nodes that <i>should</i> be wrapped</p>")
+        normalizer.normalize($b[0], $i[0])
+        expect(clean($editable.html())).toEqual("these are some <p><b>inline</b> nodes that <i>should</i></p> be wrapped")
+
+      it "blockifies all the children when they are all inline nodes and the start and end nodes have been replaced", ->
+        normalizer.checkWhitelist.andCallFake((node) -> if Helpers.isTextnode(node) then node else null)
+        normalizer.normalize($b[0], $i[0])
+        expect(clean($editable.html())).toEqual("these are some <p>inline nodes that should</p> be wrapped")
 
     describe "#normalizeNodes", ->
       beforeEach ->

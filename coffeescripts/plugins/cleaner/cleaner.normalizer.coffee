@@ -6,19 +6,27 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
       @flattener = new Flattener()
 
     # Normalizes all the nodes between and including startNode and endNode.
+    # Assumes startNode and endNode have the same parent.
     # All elements will be checked against the whitelist and replaced if needed.
     # All contiguous inline top nodes will be wrapped in a block.
     # All top blocks will be flattened.
     normalize: (startNode, endNode) ->
+      # Gather the nodes before normalizing as the start and end nodes may be
+      # removed/replaced.
+      parentNode = startNode.parentNode
+      prevNode = startNode.previousSibling
+      nextNode = endNode.nextSibling
       # If no block was found, wrap all the children in a block.
       unless @normalizeNodes(startNode, endNode)
         inlineNodes = []
-        node = startNode
-        while node != endNode
+        newStartNode = (prevNode and prevNode.nextSibling) or parentNode.firstChild
+        newEndNode = (nextNode and nextNode.previousSibling) or parentNode.lastChild
+        node = newStartNode
+        loop
           inlineNodes.push(node)
+          break if node == newEndNode
           node = node.nextSibling
-        inlineNodes.push(endNode)
-        @blockify(inlineNodes, null)
+        @blockify(inlineNodes, nextNode)
 
     # It is expected that the startNode and endNode have the same parent.
     # If all the nodes are inline nodes, this does nothing.
