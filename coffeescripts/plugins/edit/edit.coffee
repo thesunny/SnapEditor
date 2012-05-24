@@ -10,9 +10,9 @@ define ["core/helpers"], (Helpers) ->
       @api.on("deactivate.editor", @deactivate)
 
     getUI: (ui) ->
-      cut = ui.button(action: "cut", title: "Cut (Ctrl+X)", icon: "image.png")
-      copy = ui.button(action: "copy", title: "Copy (Ctrl+C)", icon: "image.png")
-      paste = ui.button(action: "paste", title: "Paste (Ctrl+V)", icon: "image.png")
+      cut = ui.button(action: "cut", description: "Cut", shortcut: "Ctrl+X", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [0, 0] })
+      copy = ui.button(action: "copy", description: "Copy", shortcut: "Ctrl+C", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-16, 0] })
+      paste = ui.button(action: "paste", description: "Paste", shortcut: "Ctrl+V", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-32, 0] })
       return {
         "context:default": [cut, copy, paste]
       }
@@ -40,7 +40,7 @@ define ["core/helpers"], (Helpers) ->
         [startParent, endParent] = @api.getParentElements((el) -> Helpers.isBlock(el))
         # We take the parent's sibling because it is possible that the parent
         # gets deleted along with the paste.
-        @pasteStartParent = startParent.previousSibling
+        @pasteStartParent = startParent and startParent.previousSibling
 
     onkeyup: (e) =>
       keys = Helpers.keysOf(e)
