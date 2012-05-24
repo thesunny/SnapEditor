@@ -7,8 +7,11 @@ if isWebkit
         $h1 = $("<h1>header heading</h1>").appendTo($editable)
         $p = $("<p>some text</p>").appendTo($editable)
         handler = new Handler()
-        handler.api = range: (el) -> new Range($editable[0], el or window)
-        Helpers.delegate(handler.api, "range()", "delete", "keepRange")
+        handler.api =
+          el: $editable[0]
+          range: (el) -> new Range($editable[0], el or window)
+          select: (el) -> @range(el).select()
+        Helpers.delegate(handler.api, "range()", "delete", "keepRange", "collapse")
 
       afterEach ->
         $editable.remove()
