@@ -11,7 +11,7 @@ require ["jquery.custom", "core/plugins"], ($, Plugins) ->
         getUI: (ui) ->
           return {
             "toolbar:default": "TestButton"
-            TestButton: ui.button(action: "test", title: "testing", icon: "image.png")
+            TestButton: ui.button(action: "test", description: "testing")
           }
 
     describe "#addUIs", ->
@@ -24,7 +24,7 @@ require ["jquery.custom", "core/plugins"], ($, Plugins) ->
             register: (api) ->,
             getUI: (ui) ->
               return {
-                TestButton: ui.button(action: "test", title: "testing", icon: "image.png")
+                TestButton: ui.button(action: "test", description: "testing")
               }
 
         it "throws an error if no toolbar default is given and the plugin is not a default and there is no custom toolbar components", ->
