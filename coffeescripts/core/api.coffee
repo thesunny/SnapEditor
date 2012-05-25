@@ -18,10 +18,11 @@
 # Range Functions:
 # range([el]): returns the current selection if el is not given, else returns the range that represents the el
 # select(el): selects the el
-define ["jquery.custom", "core/helpers", "core/events", "core/range"], ($, Helpers, Events, Range) ->
+define ["jquery.custom", "core/api/api.assets", "core/helpers", "core/events", "core/range"], ($, Assets, Helpers, Events, Range) ->
   class API
     constructor: (@editor) ->
       @el = @editor.$el[0]
+      @assets = new Assets(@editor.config.path)
       @whitelist = @editor.whitelist
       Helpers.delegate(this, "editor",
         "contents", "activate", "deactivate", "update"
