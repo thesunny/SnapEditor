@@ -16,6 +16,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
         when 0 then @api.keepRange(@cleanup)
         when 2 then @cleanup.apply(this, arguments)
         else throw "Wrong number of arguments to Cleaner.clean(). Expecting nothing () or (startNode, endNode)."
+      @api.trigger("finished.cleaner")
 
     # Cleans up and normalizes all the nodes between and including startNode
     # and endNode.
