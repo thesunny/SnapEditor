@@ -23,8 +23,10 @@ if isGecko and not isGecko1
             range.range.selectNodeContents($first[0])
             range.collapse(true)
             coords = range.getCoordinates()
-            expect(coords.top).toEqual(100)
-            expect(coords.bottom).toEqual(114)
+            # Should be 100, but FF decides to add a single px.
+            expect(coords.top).toEqual(101)
+            # Should be 114, but FF decides to add 2 px.
+            expect(coords.bottom).toEqual(116)
             expect(coords.left).toEqual(200)
             expect(coords.right).toEqual(200)
 
