@@ -72,7 +72,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         action: @options.action
         description: @options.description
         shortcut: @options.shortcut
-        title: @getTitle()
         class: @generateClass("contextmenu", @options.action)
       )
 
