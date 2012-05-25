@@ -261,7 +261,7 @@ define ["core/helpers"], (Helpers) ->
       delete: ->
         @select()
         [startElement, endElement] = @getParentElements((el) -> Helpers.isBlock(el))
-        deleted = $(startElement).closest("td, th")[0] == $(endElement).closest("td, th")[0]
+        deleted = $(startElement).closest("td, th", @el)[0] == $(endElement).closest("td, th", @el)[0]
         @range.execCommand("delete") if deleted
         return deleted
   }
