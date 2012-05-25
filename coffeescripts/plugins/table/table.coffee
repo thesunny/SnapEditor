@@ -118,7 +118,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           @api.selectEndOfElement($defaultTr.children()[0])
           $tr.remove()
         else
-          @deleteTable($tr.closest("table")[0])
+          @deleteTable($tr.closest("table", @api.el)[0])
         @update()
 
     # inserts a new column. The first argument specifies whether the column
@@ -151,7 +151,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           @api.selectEndOfElement($defaultCell[0])
           @eachCellInCol($cell, -> $(this).remove())
         else
-          @deleteTable($cell.closest("table"))
+          @deleteTable($cell.closest("table", @api.el))
         @update()
 
     # Find the currently selected cell (i.e. td or th).
