@@ -7,6 +7,7 @@ require ["core/api", "core/range"], (API, Range) ->
       $td = $("#td")
       api = new API(
         $el: $editable
+        config: path: "/"
         contents: null
         activate: null
         whitelist: {}
