@@ -3,7 +3,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     register: (@api) ->
 
     getUI: (ui) ->
-      p = ui.button(action: "p", description: "Paragraph", shortcut: "Ctrl+Space", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -53] })
+      p = ui.button(action: "p", description: "Paragraph", shortcut: "Ctrl+0", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -53] })
       h1 = ui.button(action: "h1", description: "H1", shortcut: "Ctrl+1", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -53] })
       h2 = ui.button(action: "h2", description: "H2", shortcut: "Ctrl+2", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -53] })
       h3 = ui.button(action: "h3", description: "H3", shortcut: "Ctrl+3", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-91, -53] })
@@ -47,7 +47,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.space": "p"
+        "ctrl.0": "p"
         "ctrl.1": "h1"
         "ctrl.2": "h2"
         "ctrl.3": "h3"

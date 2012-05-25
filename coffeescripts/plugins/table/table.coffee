@@ -12,8 +12,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       addRowAbove = ui.button(action: "addRowAbove", description: "Add Row Above", shortcut: "Ctrl+Shift+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [0, -16] })
       addRowBelow = ui.button(action: "addRowBelow", description: "Add Row Below", shortcut: "Ctrl+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-16, -16] })
       deleteRow = ui.button(action: "deleteRow", description: "Delete Row", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-32, -16] })
-      addColLeft = ui.button(action: "addColLeft", description: "Add Column Left", shortcut: "Ctrl+9", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-48, -16] })
-      addColRight = ui.button(action: "addColRight", description: "Add Column Right", shortcut: "Ctrl+0", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-64, -16] })
+      addColLeft = ui.button(action: "addColLeft", description: "Add Column Left", shortcut: "Ctrl+Shift+M", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-48, -16] })
+      addColRight = ui.button(action: "addColRight", description: "Add Column Right", shortcut: "Ctrl+M", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-64, -16] })
       deleteCol = ui.button(action: "deleteCol", description: "Delete Column", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-80, -16] })
       deleteTable = ui.button(action: "deleteTable", description: "Delete Table", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-96, -16] })
       return {
@@ -39,8 +39,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         "ctrl.shift.t": "table"
         "ctrl.shift.enter": "addRowAbove"
         "ctrl.enter": "addRowBelow"
-        "ctrl.9": "addColLeft"
-        "ctrl.0": "addColRight"
+        "ctrl.shift.m": "addColLeft"
+        "ctrl.m": "addColRight"
       }
 
     insertTable: =>
