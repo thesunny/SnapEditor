@@ -7,7 +7,6 @@ define ["plugins/activate/activate", "plugins/editable/editable", "plugins/clean
           "Bold", "Italic", "|",
           "P", "H1", "H2", "H3", "|",
           "UnorderedList", "OrderedList", "Indent", "Outdent", "|",
-          "AlignLeft", "AlignCenter", "AlignRight", "|",
           "Link", "Table"
         ]
         whitelist: {
