@@ -16,7 +16,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       outdent = ui.button(action: "outdent", description: "Outdent", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-91, -125] })
       return {
         "toolbar:default": "block"
-        block: [p, h1, h2, h3, alignLeft, alignCenter, alignRight, unorderedList, orderedList, indent, outdent]
+        block: [p, h1, h2, h3, unorderedList, orderedList, indent, outdent]
         p: p
         h1: h1
         h2: h2
