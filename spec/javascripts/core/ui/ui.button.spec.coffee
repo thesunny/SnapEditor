@@ -1,7 +1,7 @@
 require ["jquery.custom", "core/ui/ui.button"], ($, Button) ->
   describe "UI.Button", ->
     $templates = null
-    $.ajax(url: "spec/javascripts/support/fixtures/templates.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
+    $.ajax(url: "spec/javascripts/support/assets/templates/snapeditor.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
     $tbButtonTemplate = $templates.find("snapeditor_toolbar_button_template")
     $cmButtonTemplate = $templates.find("snapeditor_contextmenu_button_template")
 

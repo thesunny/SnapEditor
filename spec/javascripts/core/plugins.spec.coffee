@@ -1,7 +1,7 @@
 require ["jquery.custom", "core/plugins"], ($, Plugins) ->
   describe "Plugins", ->
     $templates = null
-    $.ajax(url: "spec/javascripts/support/fixtures/templates.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
+    $.ajax(url: "spec/javascripts/support/assets/templates/snapeditor.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
 
     plugins = plugin = null
     beforeEach ->

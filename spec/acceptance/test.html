@@ -78,6 +78,7 @@
 
       <p>
         <h1>
+          <b></b>
         </h1>
         <p>
         </p>
@@ -115,16 +116,10 @@
     <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       var form = new SnapEditor.Form("#formable", {
-        assets: {
-          templates: "/spec/acceptance/assets/templates.html",
-          css: "/spec/acceptance/assets/snapeditor.css"
-        }
+        path: "/spec/acceptance/assets"
       });
       var snap = new SnapEditor.Snap("#snappable", {
-        assets: {
-          templates: "/spec/acceptance/assets/templates.html",
-          css: "/spec/acceptance/assets/snapeditor.css"
-        }
+        path: "/spec/acceptance/assets"
       });
     </script>
   </body>

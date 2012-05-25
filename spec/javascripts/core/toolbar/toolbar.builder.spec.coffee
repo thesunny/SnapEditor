@@ -13,7 +13,7 @@ require ["core/toolbar/toolbar.builder"], (Builder) ->
     describe "#build", ->
       it "builds the toolbar", ->
         $templates = null
-        $.ajax(url: "spec/javascripts/support/fixtures/templates.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
+        $.ajax(url: "spec/javascripts/support/assets/templates/snapeditor.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
         builder = new Builder(
           $templates.find("#snapeditor_toolbar_template")[0],
           availableComponents,

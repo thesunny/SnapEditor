@@ -1,6 +1,6 @@
 require ["jquery.custom", "core/contextmenu/contextmenu"], ($, ContextMenu) ->
   $templates = null
-  $.ajax(url: "spec/javascripts/support/fixtures/templates.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
+  $.ajax(url: "spec/javascripts/support/assets/templates/snapeditor.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
 
   $editable = contextmenu = null
   beforeEach ->

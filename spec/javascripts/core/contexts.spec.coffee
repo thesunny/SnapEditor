@@ -3,7 +3,7 @@ require ["jquery.custom", "core/contexts"], ($, Contexts) ->
     $editable = $div = contexts = null
     beforeEach ->
       $editable = addEditableFixture()
-      $div = $('<div class="top">some <b>bold and <i>italic</i></b> text with an <img src="spec/javascripts/support/images/stub.png"> in it</div>')
+      $div = $('<div class="top">some <b>bold and <i>italic</i></b> text with an <img src="spec/javascripts/support/assets/images/stub.png"> in it</div>')
       api = $("<div/>")
       api.el = $editable[0]
       contexts = new Contexts(api)

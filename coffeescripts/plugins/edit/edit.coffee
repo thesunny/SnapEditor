@@ -10,9 +10,9 @@ define ["core/helpers"], (Helpers) ->
       @api.on("deactivate.editor", @deactivate)
 
     getUI: (ui) ->
-      cut = ui.button(action: "cut", description: "Cut", shortcut: "Ctrl+X", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [0, 0] })
-      copy = ui.button(action: "copy", description: "Copy", shortcut: "Ctrl+C", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-16, 0] })
-      paste = ui.button(action: "paste", description: "Paste", shortcut: "Ctrl+V", icon: { url: "/spec/acceptance/assets/contextmenu.png", width: 16, height: 16, offset: [-32, 0] })
+      cut = ui.button(action: "cut", description: "Cut", shortcut: "Ctrl+X", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [0, 0] })
+      copy = ui.button(action: "copy", description: "Copy", shortcut: "Ctrl+C", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-16, 0] })
+      paste = ui.button(action: "paste", description: "Paste", shortcut: "Ctrl+V", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-32, 0] })
       return {
         "context:default": [cut, copy, paste]
       }

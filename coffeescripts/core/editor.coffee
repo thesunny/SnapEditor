@@ -1,9 +1,7 @@
 define ["jquery.custom", "core/helpers", "core/api", "core/plugins", "core/keyboard", "core/contexts", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Helpers, API, Plugins, Keyboard, Contexts, ContextMenu, Whitelist) ->
   class Editor
     # Options:
-    # * assets: an object that holds urls to assets
-    #   * templates: the url of the HTML templates
-    #   * css: the url of the CSS
+    # * path: path to the snapeditor directory
     # * plugins: an array of editor plugins to add
     # * toolbar: toolbar config that replaces the default one
     constructor: (el, @defaults, @config = {}) ->
@@ -22,21 +20,20 @@ define ["jquery.custom", "core/helpers", "core/api", "core/plugins", "core/keybo
 
     loadTemplates: ->
       $.ajax(
-        url: @config.assets.templates,
+        url: @api.assets.template("snapeditor.html")
         async: false,
         success: (html) => @$templates = $("<div/>").html(html)
       )
 
     loadCSS: ->
-      if @config.assets.css
-        # Don't use a <link> tag because it loads asynchronously. Attaching to
-        # the onload is not reliable. This hack loads the CSS through AJAX
-        # synchronously and dumps the styles into a <style> tag.
-        $.ajax(
-          url: @config.assets.css,
-          async: false,
-          success: (css) -> Helpers.insertStyles(css)
-        )
+      # Don't use a <link> tag because it loads asynchronously. Attaching to
+      # the onload is not reliable. This hack loads the CSS through AJAX
+      # synchronously and dumps the styles into a <style> tag.
+      $.ajax(
+        url: @api.assets.stylesheet("snapeditor.css")
+        async: false,
+        success: (css) -> Helpers.insertStyles(css)
+      )
 
     activate: ->
       @api.trigger("activate.editor")
