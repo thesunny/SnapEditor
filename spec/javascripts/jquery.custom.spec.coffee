@@ -57,14 +57,14 @@ require ["jquery.custom"], ($) ->
         $other = $("<h1><i>this</i> is my other h1</h1>").appendTo($editable)
         html = $editable.html()
         $el.merge($other)
-        expect(clean($editable.html())).toEqual(html)
+        expect($editable.html()).toEqual(html)
 
       it "does nothing when the other is a table", ->
         $el = $("<h1><i>this</i> is my other h1</h1>").appendTo($editable)
         $other = $("<table><tbody><tr><td>text</td></tr></tbody></table").appendTo($editable)
         html = $editable.html()
         $el.merge($other)
-        expect(clean($editable.html())).toEqual(html)
+        expect($editable.html()).toEqual(html)
 
       it "merges the last item with the other when the element is a list", ->
         $el = $("<ul><li>first</li><li>last</li></ul>").appendTo($editable)
