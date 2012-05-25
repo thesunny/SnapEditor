@@ -52,6 +52,7 @@ define ["jquery.custom", "core/helpers", "core/api", "core/plugins", "core/keybo
     contents: ->
       # Clean the content before returning it.
       @api.clean(@api.el.firstChild, @api.el.lastChild)
-      @$el.html()
+      regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
+      @$el.html().replace(regexp, "")
 
   return Editor
