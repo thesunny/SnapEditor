@@ -21,9 +21,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         h1: h1
         h2: h2
         h3: h3
-        alignLeft: alignLeft
-        alignCenter: alignCenter
-        alignRight: alignRight
+        #alignLeft: alignLeft
+        #alignCenter: alignCenter
+        #alignRight: alignRight
         unorderedList: unorderedList
         orderedList: orderedList
         indent: indent
@@ -36,9 +36,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         h1: @h1
         h2: @h2
         h3: @h3
-        alignLeft: @alignLeft
-        alignCenter: @alignCenter
-        alignRight: @alignRight
+        #alignLeft: @alignLeft
+        #alignCenter: @alignCenter
+        #alignRight: @alignRight
         unorderedList: @unorderedList
         orderedList: @orderedList
         indent: @indent
@@ -51,9 +51,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         "ctrl.1": "h1"
         "ctrl.2": "h2"
         "ctrl.3": "h3"
-        "ctrl.l": "alignLeft"
-        "ctrl.e": "alignCenter"
-        "ctrl.r": "alignRight"
+        #"ctrl.l": "alignLeft"
+        #"ctrl.e": "alignCenter"
+        #"ctrl.r": "alignRight"
         "ctrl.8": "unorderedList"
         "ctrl.7": "orderedList"
       }
@@ -88,53 +88,53 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @exec("formatblock", "<#{tag}>")
       @update()
 
-    alignLeft: =>
-      @align("left")
+    #alignLeft: =>
+      #@align("left")
 
-    alignCenter: =>
-      @align("center")
+    #alignCenter: =>
+      #@align("center")
 
-    alignRight: =>
-      @align("right")
+    #alignRight: =>
+      #@align("right")
 
-    # position can be left, center, right.
-    align: (position) ->
-      command = "justify#{Helpers.capitalize(position)}"
-      try
-        @exec(command)
-      catch e
-        # Bug #2027: Cannot align first line of text in FF
-        # This is a bug in Mozilla FireFox itself.
-        # Copied the patch from comment #8 and modified it.
-        # https:#bugzilla.mozilla.org/show_bug.cgi?id=442186#c8
-        # The basic idea is to insert a dummy element before the first element.
-        # This way, we're not aligning the first element and the bug doesn't
-        # show up. After alignment, the dummy element is removed.
-        # TODO-WW: When the bug is finally fixed, we can remove the whole entire
-        # try/catch block.
+    ## position can be left, center, right.
+    #align: (position) ->
+      #command = "justify#{Helpers.capitalize(position)}"
+      #try
+        #@exec(command)
+      #catch e
+        ## Bug #2027: Cannot align first line of text in FF
+        ## This is a bug in Mozilla FireFox itself.
+        ## Copied the patch from comment #8 and modified it.
+        ## https:#bugzilla.mozilla.org/show_bug.cgi?id=442186#c8
+        ## The basic idea is to insert a dummy element before the first element.
+        ## This way, we're not aligning the first element and the bug doesn't
+        ## show up. After alignment, the dummy element is removed.
+        ## TODO-WW: When the bug is finally fixed, we can remove the whole entire
+        ## try/catch block.
 
-        #special case for Mozilla Bug #442186
-        if e and e.result == 2147500037
-          #probably firefox bug 442186 - workaround
-          range = window.getSelection().getRangeAt(0)
-          dummy = document.createElement('span')
+        ##special case for Mozilla Bug #442186
+        #if e and e.result == 2147500037
+          ##probably firefox bug 442186 - workaround
+          #range = window.getSelection().getRangeAt(0)
+          #dummy = document.createElement('span')
 
-          # Wesley: Commented out the search for the contentEditable element
-          # since we already have it (@el).
-          #find node with contentEditable
-          #ceNode = range.startContainer.parentNode
-          #while (ceNode && ceNode.contentEditable != 'true') ->
-            #ceNode = ceNode.parentNode
-          #}
-          #if !ceNode throw 'Selected node is not editable!' }
-          ceNode = @el
+          ## Wesley: Commented out the search for the contentEditable element
+          ## since we already have it (@el).
+          ##find node with contentEditable
+          ##ceNode = range.startContainer.parentNode
+          ##while (ceNode && ceNode.contentEditable != 'true') ->
+            ##ceNode = ceNode.parentNode
+          ##}
+          ##if !ceNode throw 'Selected node is not editable!' }
+          #ceNode = @el
 
-          ceNode.insertBefore(dummy, ceNode.childNodes[0])
-          @exec(command)
-          dummy.parentNode.removeChild(dummy)
-        else if console and console.log
-          console.log(e)
-      @update()
+          #ceNode.insertBefore(dummy, ceNode.childNodes[0])
+          #@exec(command)
+          #dummy.parentNode.removeChild(dummy)
+        #else if console and console.log
+          #console.log(e)
+      #@update()
 
     unorderedList: =>
       if @allowList()
