@@ -10,8 +10,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       #alignLeft = ui.button(action: "alignLeft", description: "Align Left", shortcut: "Ctrl+L", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -149] })
       #alignCenter = ui.button(action: "alignCenter", description: "Align Center", shortcut: "Ctrl+E", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -149] })
       #alignRight = ui.button(action: "alignRight", description: "Align Right", shortcut: "Ctrl+R", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -149] })
-      unorderedList = ui.button(action: "unorderedList", description: "Bullet List", shortcut: "Ctrl+8", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -125] })
-      orderedList = ui.button(action: "orderedList", description: "Numbered List", shortcut: "Ctrl+7", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -125] })
+      unorderedList = ui.button(action: "unorderedList", description: "Bullet List", shortcut: "Ctrl+Shift+8", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -125] })
+      orderedList = ui.button(action: "orderedList", description: "Numbered List", shortcut: "Ctrl+Shift+3", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -125] })
       indent = ui.button(action: "indent", description: "Indent", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -125] })
       outdent = ui.button(action: "outdent", description: "Outdent", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-91, -125] })
       return {
@@ -54,8 +54,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         #"ctrl.l": "alignLeft"
         #"ctrl.e": "alignCenter"
         #"ctrl.r": "alignRight"
-        "ctrl.8": "unorderedList"
-        "ctrl.7": "orderedList"
+        "ctrl.shift.8": "unorderedList"
+        "ctrl.shift.3": "orderedList"
       }
 
     p: =>
