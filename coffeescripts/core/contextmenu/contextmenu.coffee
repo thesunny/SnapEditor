@@ -21,7 +21,7 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
 
     setupMenu: ->
       @id = "snapeditor_contextmenu_#{Math.floor(Math.random() * 99999)}"
-      @$menu = $("<div/>").attr("id", @id).css("position", "absolute").hide().appendTo("body")
+      @$menu = $("<div/>").attr("id", @id).addClass("snapeditor_contextmenu_container").css(position: "absolute", zIndex: 300).hide().appendTo("body")
       new DataActionHandler(@$menu, @api)
       @builder = new Builder(@$template, @config)
 

@@ -47,7 +47,6 @@
 /* CONTEXTMENU */
 
 .snapeditor_contextmenu {
-  z-index: 200;
   background-color: white;
   width: 300px;
 }
