@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style type="text/css" media="screen">
+      table {
+        border-collapse: collapse;
+      }
+      table, th, td {
+        border: 1px solid gray;
+      }
+
+      #formable {
+        width: 800px;
+        height: 500px;
+      }
+      #snappable {
+        width: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      Ordinary text
+    </div>
+    <div id="formable">
+      <h4>Heading 4</h4>
+      Make me editable!
+      <br/>
+      <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+      <ul>
+        <li>This</li>
+        <li>is</li>
+        <li>a</li>
+        <li>list</li>
+        <li>
+          This will have a
+          <p>block in it</p>
+        </li>
+        <li>
+          <p>more stuff</p>
+          <table>
+            <tbody>
+              <tr><th>Header</th></tr>
+              <tr><td>Data</td></tr>
+              <tr>
+                <td>
+                  Data
+                  <p>another</p>
+                  text
+                  <ul>
+                    <li>first</li>
+                    <li>second</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <h1>Heading 1</h1>
+      <p>More text!</p>
+      a little more complicated
+
+      <table>
+        <tbody>
+          <tr><th>Header</th></tr>
+          <tr><td>Data</td></tr>
+          <tr>
+            <td>
+              Data
+              <p>another</p>
+              text
+              <ul>
+                <li>first</li>
+                <li>second</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        <h1>
+          <b></b>
+        </h1>
+        <p>
+        </p>
+        <h1>
+        </h1>
+      </p>
+
+      <h1>
+        no it isn't
+        <p>i'm okay, i swear</p>
+        oh no!
+      </h1>
+
+      <div>
+        inner
+        <div>
+          things that make
+          <div>
+            somebody maybe <b>want</b> to cry
+          </div>
+          or
+        </div>
+      </div>
+      just maybe not...
+    </div>
+    <div id="snappable" style="word-wrap: break-word">
+      Make me editable!
+      <br/>
+      <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+      <h1>Heading 1</h1>
+      <p>More text!</p>
+    </div>
+    <script src="/lib/jquery.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      var form = new SnapEditor.Form("#formable", { path: "/spec/acceptance/assets" });
+      var snap = new SnapEditor.Snap("#snappable", { path: "/spec/acceptance/assets" });
+    </script>
+  </body>
+</html>
