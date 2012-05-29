@@ -19,6 +19,9 @@
     </style>
   </head>
   <body>
+    <div>
+      Ordinary text
+    </div>
     <div id="formable">
       <h4>Heading 4</h4>
       Make me editable!
@@ -113,7 +116,7 @@
     </div>
     <script src="/lib/jquery.js" type="text/javascript" charset="utf-8"></script>
     <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/spec/acceptance/snapeditor.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       var form = new SnapEditor.Form("#formable", { path: "/spec/acceptance/assets" });
       var snap = new SnapEditor.Snap("#snappable", { path: "/spec/acceptance/assets" });
