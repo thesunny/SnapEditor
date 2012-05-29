@@ -30,8 +30,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       @$el = $(@api.el)
       @keys = {}
       @add(keyboardShortcuts)
-      @api.on("activate.editor", @start)
-      @api.off("deactivate.editor", @stop)
+      @api.on("activate.editor", @activate)
+      @api.on("deactivate.editor", @deactivate)
 
     # (key, fn) - Takes a key and a function.
     # (map) - Takes a map of keys and functions.
@@ -53,10 +53,10 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       else
         delete @keys[Helpers.normalizeKeys(arguments[0])]
 
-    start: =>
+    activate: =>
       @$el.on(@type, @onkeydown)
 
-    stop: =>
+    deactivate: =>
       @$el.off(@type, @onkeydown)
 
     onkeydown: (e) =>
