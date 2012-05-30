@@ -17,19 +17,6 @@ define ["jquery.custom"], ($) ->
         left: 0
         zIndex: 100
       )
-      # mousedown is tracked because we want to unsnap if the entire click
-      # sequence, which includes the mousedown, was on a snap div. If the
-      # click did not originate from the snap div, we don't want to
-      # unsnap.
-      div.on("mousedown", @setCancel)
-      # This is set to mouseup purposely. If this is anything else, if you
-      # click and hold the mouse, the snap will disappear exposing the
-      # elements below. When you let go of the mouse, the mouseup event of
-      # the element below will trigger. This creates unwanted behaviour.
-      # By setting it as mouseup, it is not possible for another element
-      # to fire an event.
-      div.on("mouseup", @tryCancel)
-
       @divs =
         top: div.clone(true, false).appendTo("body")
         bottom: div.clone(true, false).appendTo("body")
@@ -149,15 +136,5 @@ define ["jquery.custom"], ($) ->
       documentSize = $(document).getSize()
       styles = @getSnappedStyles(elCoord, documentSize)
       div.css(styles[position]) for position, div of @divs
-
-    setCancel: =>
-      # Allow canceling if the mousedown started on a snap div.
-      @isCancel = true
-
-    tryCancel: =>
-      # Only unsnap if the mousedown started on a snap div.
-      if @isCancel
-        @isCancel = false
-        @api.deactivate()
 
   return Snap

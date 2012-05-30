@@ -12,6 +12,7 @@
 # clone(): clones the range
 #
 # These functions query the state of the range:
+# isValid(): is the range inside the element
 # isCollapsed(): is the selection a caret
 # isImageSelected(): is an image selected
 # isStartOfElement(el): is the range at the start of the given element
@@ -77,6 +78,11 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     #
     # QUERY RANGE STATE FUNCTIONS
     #
+
+    isValid: ->
+      parent = @getParentElement()
+      return true unless parent
+      return $(parent).parentsUntil(@el, "body").length == 0
 
     # Is the selection a caret.
     isCollapsed: ->

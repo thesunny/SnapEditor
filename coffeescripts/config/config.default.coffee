@@ -1,8 +1,8 @@
-define ["plugins/activate/activate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/edit/edit", "plugins/styler/styler.inline", "plugins/styler/styler.block", "plugins/table/table"], (Activate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Edit, InlineStyler, BlockStyler, Table) ->
+define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/edit/edit", "plugins/styler/styler.inline", "plugins/styler/styler.block", "plugins/table/table"], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Edit, InlineStyler, BlockStyler, Table) ->
   return {
     build: ->
       return {
-        plugins: [new Activate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Edit(), new InlineStyler(), new BlockStyler(), new Table()]
+        plugins: [new Activate(), new Deactivate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Edit(), new InlineStyler(), new BlockStyler(), new Table()]
         toolbar: [
           "Bold", "Italic", "|",
           "P", "H1", "H2", "H3", "|",

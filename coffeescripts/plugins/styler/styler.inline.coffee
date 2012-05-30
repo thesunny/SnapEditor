@@ -45,15 +45,16 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
 
     # Formats the selected text given the tag.
     format: (tag) ->
-      # Gecko defaults to styling with CSS. We want to disable that.
-      # NOTE: This disables styling with CSS for the entire document, not just
-      # for this editor.
-      document.execCommand("styleWithCSS", false, false) if Browser.isGecko
-      switch tag
-        when "b" then @exec("bold")
-        when "i" then @exec("italic")
-        else throw "The inline style for tag #{tag} is unsupported"
-      @update()
+      if @api.isValid()
+        # Gecko defaults to styling with CSS. We want to disable that.
+        # NOTE: This disables styling with CSS for the entire document, not just
+        # for this editor.
+        document.execCommand("styleWithCSS", false, false) if Browser.isGecko
+        switch tag
+          when "b" then @exec("bold")
+          when "i" then @exec("italic")
+          else throw "The inline style for tag #{tag} is unsupported"
+        @update()
 
     # Calls the document's execCommand with the second argument as false.
     exec: (command, value = null) ->
@@ -73,22 +74,23 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
     #
     # TODO: In opera, preventDefault doesn't work so it keeps popping up a dialog.
     link: =>
-      href = prompt("Enter URL of link", "http://")
-      if href
-        href = $.trim(href)
-        parentLink = @api.getParentElement("a")
-        # if a parentLink is found, then just change the href
-        if parentLink
-          $(parentLink).attr("href", href)
-        # if range is collapsed, then insert a new link
-        else if @api.isCollapsed()
-          link = $("<a href=\"#{href}\">#{href}</a>")
-          @api.paste(link[0])
-        # if range is not collapsed, then surround contents with the new link
-        else
-          link = $("<a href=\"#{href}\"></a>")
-          @api.surroundContents(link[0])
-        @update()
+      if @api.isValid()
+        href = prompt("Enter URL of link", "http://")
+        if href
+          href = $.trim(href)
+          parentLink = @api.getParentElement("a")
+          # if a parentLink is found, then just change the href
+          if parentLink
+            $(parentLink).attr("href", href)
+          # if range is collapsed, then insert a new link
+          else if @api.isCollapsed()
+            link = $("<a href=\"#{href}\">#{href}</a>")
+            @api.paste(link[0])
+          # if range is not collapsed, then surround contents with the new link
+          else
+            link = $("<a href=\"#{href}\"></a>")
+            @api.surroundContents(link[0])
+          @update()
 
     update: ->
       # In Firefox, when a user clicks on the toolbar to style, the
