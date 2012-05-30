@@ -42,6 +42,12 @@ Guard is used for continuous compiling. It listens to the `coffeescripts/` direc
 
     bundle exec guard start
 
+### Rake
+
+A rake task is provided for compiling.
+
+    rake compile
+
 ## Running Tests
 
 ### jasmine-headless-webkit
@@ -67,6 +73,20 @@ You can now point your browser to `locahost:9292` and the Jasmine specs will run
 ### Configuration
 
 If you would like to configure which specs to run, you can modify `spec/javascripts/support/jasmine.yml`. Look for the `spec_files` property.
+
+### Acceptance Tests
+
+Although automated tests are preferred, the editor requires a lot of actions that simply can't be automated.
+
+The `spec/acceptance/` contains two files: `dev.html` and `test.html`. These contain both the form and inline editor for testing purposes.
+
+`dev.html` sources `build/snapeditor.js` which changes whenever any CoffeeScript files are modified. This is used during development.
+
+`test.html` sources `spec/acceptance/assets/javascripts/snapeditor.js` which does not change unless it gets overwritten. This is meant to be used during testing.
+
+A rake task has been provided to generate `spec/acceptance/assets/javascripts/snapeditor.js`.
+
+    rake prepare:test
 
 ## Writing Tests
 
@@ -151,4 +171,34 @@ The beginning of the build starts at `javascripts/snapeditor.js`. It is the star
 
 ## Guard
 
-TODO: At the moment, the SnapEditor is built whenever the CoffeeScript compiler is invoked. A separate guard should be used for this.
+Whenever there are changes to the `javascripts/` directory, the build is invoked.
+
+## Rake
+
+Two rake tasks have been created to aid in building.
+
+    rake build            # builds snapeditor.js without compiling
+    rake compileAndBuild  # compile and build snapeditor.js
+
+# Bundling
+
+## Rake
+
+A rake task is provided for bundling the SnapEditor.
+
+    rake prepare:bundle
+
+## Files
+
+The bundle is placed in the `bundle/` directory. It has the following structure.
+
+    bundle/
+      javascripts/
+        snapeditor.js
+      stylesheets/
+        snapeditor.css
+      templates/
+        snapeditor.html
+      images/
+        toolbar.png
+        contextmenu.png
