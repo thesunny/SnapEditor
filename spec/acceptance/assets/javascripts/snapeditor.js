@@ -4397,6 +4397,7 @@ define('plugins/table/table',["jquery.custom", "core/browser", "core/helpers"], 
 
     Table.prototype.update = function() {
       if (Browser.isMozilla) this.api.el.focus();
+      this.api.clean();
       return this.api.update();
     };
 
