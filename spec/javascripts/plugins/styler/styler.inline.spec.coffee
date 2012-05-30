@@ -8,7 +8,8 @@
         update: ->
         clean: ->
         range: -> new Range($editable[0], window)
-      Helpers.delegate(styler.api, "range()", "isValid", "isCollapsed", "getParentElement", "paste", "surroundContents")
+        isValid: -> true
+      Helpers.delegate(styler.api, "range()", "isCollapsed", "getParentElement", "paste", "surroundContents")
 
     afterEach ->
       $editable.remove()

@@ -19,13 +19,15 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range: (el) -> new Range($editable[0], el or window)
         blankRange: -> new Range($editable[0])
         update: ->
+        isValid: -> true
+        clean: ->
       Helpers.delegate(table.api, "range()", "getParentElement", "paste")
       Helpers.delegate(table.api, "blankRange()", "selectEndOfElement")
 
     afterEach ->
       $editable.remove()
 
-    describe "#table", ->
+    describe "#insertTable", ->
       placeSelection =  null
       beforeEach ->
         placeSelection = ->
