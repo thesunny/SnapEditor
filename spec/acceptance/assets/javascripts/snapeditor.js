@@ -1827,7 +1827,7 @@ define('core/api',["jquery.custom", "core/api/api.assets", "core/helpers", "core
       this.el = this.editor.$el[0];
       this.assets = new Assets(this.editor.config.path);
       this.whitelist = this.editor.whitelist;
-      Helpers.delegate(this, "editor", "contents", "activate", "deactivate", "update");
+      Helpers.delegate(this, "editor", "getContents", "activate", "deactivate", "update");
       Helpers.delegate(this, "range()", "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement", "getCoordinates", "getParentElement", "getParentElements", "collapse", "unselect", "keepRange", "paste", "surroundContents", "delete");
       Helpers.delegate(this, "blankRange()", "selectEndOfElement");
       Helpers.delegate(this, "whitelist", "allowed", "replacement", "next");
@@ -2943,7 +2943,7 @@ define('core/editor',["jquery.custom", "core/helpers", "core/api", "core/plugins
       return this.api.trigger("update.editor");
     };
 
-    Editor.prototype.contents = function() {
+    Editor.prototype.getContents = function() {
       var regexp;
       this.api.clean(this.api.el.firstChild, this.api.el.lastChild);
       regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g");
