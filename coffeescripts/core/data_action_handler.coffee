@@ -8,6 +8,10 @@ define ["jquery.custom"], ($) ->
     # api is the editor API object.
     constructor: (el, @api) ->
       @$el = $(el)
+      @api.on("activate.editor", @activate)
+      @api.on("deactivate.editor", @deactivate)
+
+    activate: =>
       # Listen to any change events on <select>.
       # NOTE: Unfortunately, IE does not bubble onchange events, even though
       # the standard says it should. Surprise. The workaround is to look for
@@ -26,6 +30,12 @@ define ["jquery.custom"], ($) ->
       @$el.on("mouseup", @click)
       # Listen to any keypresses.
       @$el.on("keypress", @change)
+
+    deactivate: =>
+      @$el.children("select[data-action]").off("change", @change)
+      @$el.off("mousedown", @setClick)
+      @$el.off("mouseup", @click)
+      @$el.off("keypress", @change)
 
     setClick: (e) =>
       @isClick = true

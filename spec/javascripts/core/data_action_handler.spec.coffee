@@ -2,94 +2,72 @@
 # check that the events are triggering properly, we need to actually check the
 # results of the handlers. This means that there will be dependencies between
 # functions when testing.
-describe "DataActionHandler", ->
-  required = ["core/data_action_handler"]
+require ["jquery.custom", "core/data_action_handler"], ($, Handler) ->
+  describe "DataActionHandler", ->
+    $el = handler = null
+    beforeEach ->
+      $el = $('
+        <div>
+          <select id="select_no_event"><option value="1" selected="selected">1</option><option value="2">2</option></select>
+          <select id="select_event" data-action="select"><option value="1" selected="selected">1</option><option value="2">2</option></select>
+          <input id="button_no_event" type="button" />
+          <input id="button_event" type="button" data-action="button" />
+          <input id="text_no_event" type="text" />
+          <input id="text_event" type="text" data-action="text" />
+        </div>
+      ').prependTo("body")
+      handler = new Handler($el, $("<div/>"))
+      handler.activate()
+      spyOn(handler.api, "trigger")
 
-  $el = null
-  beforeEach ->
-    $el = $('
-      <div>
-        <select id="select_no_event"><option value="1" selected="selected">1</option><option value="2">2</option></select>
-        <select id="select_event" data-action="select"><option value="1" selected="selected">1</option><option value="2">2</option></select>
-        <input id="button_no_event" type="button" />
-        <input id="button_event" type="button" data-action="button" />
-        <input id="text_no_event" type="text" />
-        <input id="text_event" type="text" data-action="text" />
-      </div>
-    ').prependTo("body")
+    afterEach ->
+      $el.remove()
 
-  afterEach ->
-    $el.remove()
+    describe "#activate", ->
+      it "listens to change events on <select> with the 'data-action' attribute", ->
+        $("#select_no_event").trigger("change")
+        $("#select_event").trigger("change")
+        expect(handler.api.trigger.callCount).toEqual(1)
 
-  describe "#constructor", ->
-    ait "listens to change events on <select> with the 'data-action' attribute", required, (Handler) ->
-      api = { trigger: null }
-      spyOn(api, "trigger")
-      handler = new Handler($el, api)
-      $("#select_no_event").trigger("change")
-      $("#select_event").trigger("change")
-      expect(api.trigger.callCount).toEqual(1)
+      it "listens to the mousedown event", ->
+        expect(handler.isClick).toBeUndefined()
+        $el.trigger("mousedown")
+        expect(handler.isClick).toBeTruthy()
 
-    ait "listens to the mousedown event", required, (Handler) ->
-      handler = new Handler($el, {})
-      expect(handler.isClick).toBeUndefined()
-      $el.trigger("mousedown")
-      expect(handler.isClick).toBeTruthy()
+      it "listens to the mouseup event", ->
+        expect(handler.isClick).toBeUndefined()
+        $el.trigger("mouseup")
+        expect(handler.isClick).toBeFalsy()
 
-    ait "listens to the mouseup event", required, (Handler) ->
-      handler = new Handler($el, {})
-      expect(handler.isClick).toBeUndefined()
-      $el.trigger("mouseup")
-      expect(handler.isClick).toBeFalsy()
+      it "listens to the keypress event", ->
+        $("#button_event").trigger("keypress")
+        expect(handler.api.trigger).toHaveBeenCalled()
 
-    ait "listens to the keypress event", required, (Handler) ->
-      api = { trigger: null }
-      spyOn(api, "trigger")
-      handler = new Handler($el, api)
-      $("#button_event").trigger("keypress")
-      expect(api.trigger).toHaveBeenCalled()
+    describe "#click", ->
+      it "sets isClick to false", ->
+        expect(handler.isClick).toBeUndefined()
+        $("#button_event").trigger("mouseup")
+        expect(handler.isClick).toBeFalsy()
 
-  describe "#click", ->
-    ait "sets isClick to false", required, (Handler) ->
-      handler = new Handler($el, {})
-      expect(handler.isClick).toBeUndefined()
-      $("#button_event").trigger("mouseup")
-      expect(handler.isClick).toBeFalsy()
+      it "does not trigger the event if the click did not start on the button", ->
+        $("#button_event").trigger("mouseup")
+        expect(handler.api.trigger).not.toHaveBeenCalled()
 
-    ait "does not trigger the event if the click did not start on the button", required, (Handler) ->
-      api = { trigger: null }
-      spyOn(api, "trigger")
-      handler = new Handler($el, api)
-      $("#button_event").trigger("mouseup")
-      expect(api.trigger).not.toHaveBeenCalled()
+      it "does not trigger the event if the button does not have a data-action attribute", ->
+        handler.isClick = true
+        $("#button_no_event").trigger("mouseup")
+        expect(handler.api.trigger).not.toHaveBeenCalled()
 
-    ait "does not trigger the event if the button does not have a data-action attribute", required, (Handler) ->
-      api = { trigger: null }
-      spyOn(api, "trigger")
-      handler = new Handler($el, api)
-      handler.isClick = true
-      $("#button_no_event").trigger("mouseup")
-      expect(api.trigger).not.toHaveBeenCalled()
+      it "triggers the event if the button has a data-action attribute", ->
+        handler.isClick = true
+        $("#button_event").trigger("mouseup")
+        expect(handler.api.trigger).toHaveBeenCalledWith("button", $("#button_event")[0])
 
-    ait "triggers the event if the button has a data-action attribute", required, (Handler) ->
-      api = { trigger: null }
-      spyOn(api, "trigger")
-      handler = new Handler($el, api)
-      handler.isClick = true
-      $("#button_event").trigger("mouseup")
-      expect(api.trigger).toHaveBeenCalledWith("button", $("#button_event")[0])
+    describe "#change", ->
+      it "does not trigger the event if the target does not have a data-action attribute", ->
+        $("#select_no_event").trigger("change")
+        expect(handler.api.trigger).not.toHaveBeenCalled()
 
-  describe "#change", ->
-    ait "does not trigger the event if the target does not have a data-action attribute", required, (Handler) ->
-      api = { trigger: null }
-      spyOn(api, "trigger")
-      handler = new Handler($el, api)
-      $("#select_no_event").trigger("change")
-      expect(api.trigger).not.toHaveBeenCalled()
-
-    ait "triggers the event if the target has a data-action attribute", required, (Handler) ->
-      api = { trigger: null }
-      spyOn(api, "trigger")
-      handler = new Handler($el, api)
-      $("#select_event").trigger("change")
-      expect(api.trigger).toHaveBeenCalledWith("select", "1")
+      it "triggers the event if the target has a data-action attribute", ->
+        $("#select_event").trigger("change")
+        expect(handler.api.trigger).toHaveBeenCalledWith("select", "1")

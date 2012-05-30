@@ -9,6 +9,7 @@ define ["core/toolbar/toolbar", "core/toolbar/toolbar.floating.displayer"], (Too
       super
       @$toolbar.addClass("snapeditor_toolbar_floating")
       @displayer = new Displayer(@$toolbar, @api.el, @api)
+      @dataActionHandler.activate()
 
     # Shows the toolbar.
     show: =>

@@ -21,8 +21,17 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
 
     setupMenu: ->
       @id = "snapeditor_contextmenu_#{Math.floor(Math.random() * 99999)}"
-      @$menu = $("<div/>").attr("id", @id).addClass("snapeditor_contextmenu_container").css(position: "absolute", zIndex: 300).hide().appendTo("body")
-      new DataActionHandler(@$menu, @api)
+      # The class snapeditor_ignore_deactivate ensures the editor does not
+      # deactivate when the contextmenu is clicked on.
+      @$menu = $("<div/>").
+        attr("id", @id).
+        addClass("snapeditor_contextmenu_container").
+        addClass("snapeditor_ignore_deactivate").
+        css(position: "absolute", zIndex: 300).
+        hide().
+        appendTo("body")
+      @dataActionHandler = new DataActionHandler(@$menu, @api)
+      @dataActionHandler.activate()
       @builder = new Builder(@$template, @config)
 
     activate: =>

@@ -147,12 +147,14 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         @update()
 
     indent: =>
-      @exec("indent")
-      @update()
+      if @api.isValid()
+        @exec("indent")
+        @update()
 
     outdent: =>
-      @exec("outdent")
-      @update()
+      if @api.isValid()
+        @exec("outdent")
+        @update()
 
     exec: (cmd, value = null) ->
       document.execCommand(cmd, false, value)
@@ -172,11 +174,13 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @api.update()
 
     allowFormatBlock: ->
+      return false unless @api.isValid()
       allowed = !@api.getParentElement("table, li")
       alert("Sorry. This action cannot be performed inside a table or list.") unless allowed
       return allowed
 
     allowList: ->
+      return false unless @api.isValid()
       allowed = !@api.getParentElement("table")
       alert("Sorry. This action cannot be performed inside a table.") unless allowed
       return allowed

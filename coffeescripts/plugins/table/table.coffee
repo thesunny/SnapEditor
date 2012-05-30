@@ -44,27 +44,28 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       }
 
     insertTable: =>
-      if @api.getParentElement("table, li")
-        alert("Sorry. This action cannot be performed inside a table or list.")
-      else
-        # Build the table.
-        $table = $('<table id="INSERTED_TABLE"></table>')
-        $tbody = $("<tbody/>").appendTo($table)
-        $td = $("<td>&nbsp;</td>")
-        $tr = $("<tr/>")
-        $tr.append($td.clone()) for i in [1..@options.table[1]]
-        $tbody.append($tr.clone()) for i in [1..@options.table[0]]
+      if @api.isValid()
+        if @api.getParentElement("table, li")
+          alert("Sorry. This action cannot be performed inside a table or list.")
+        else
+          # Build the table.
+          $table = $('<table id="INSERTED_TABLE"></table>')
+          $tbody = $("<tbody/>").appendTo($table)
+          $td = $("<td>&nbsp;</td>")
+          $tr = $("<tr/>")
+          $tr.append($td.clone()) for i in [1..@options.table[1]]
+          $tbody.append($tr.clone()) for i in [1..@options.table[0]]
 
-        # Add the table.
-        @api.paste($table[0])
+          # Add the table.
+          @api.paste($table[0])
 
-        # Set the cursor inside the first td of the table. Then remove the id.
-        $table = $("#INSERTED_TABLE")
-        @api.selectEndOfElement($table.find("td")[0])
-        $table.removeAttr("id")
+          # Set the cursor inside the first td of the table. Then remove the id.
+          $table = $("#INSERTED_TABLE")
+          @api.selectEndOfElement($table.find("td")[0])
+          $table.removeAttr("id")
 
-        # Update.
-        @update()
+          # Update.
+          @update()
 
     # Deletes the entire table. If no table is passed in, it attempts to the
     # find a table that contains the range.

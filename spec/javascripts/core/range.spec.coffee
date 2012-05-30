@@ -55,6 +55,35 @@ require ["core/range"], (Range) ->
         expect(Range.getBlankRange).toHaveBeenCalled()
         expect(range.range).toEqual("range")
 
+    describe "#isValid", ->
+      it "returns true when the parent is inside the editable element", ->
+        range = new Range($editable[0])
+        if hasW3CRanges
+          range.range.setStart($start[0].childNodes[0], 0)
+        else
+          range.range.findText("start")
+        range.collapse(true)
+        expect(range.isValid()).toBeTruthy()
+
+      it "returns true when the parent is the editable element", ->
+        $editable.html("editable")
+        range = new Range($editable[0])
+        if hasW3CRanges
+          range.range.setStart($editable[0].childNodes[0], 0)
+        else
+          range.range.findText("editable")
+        range.collapse(true)
+        expect(range.isValid()).toBeTruthy()
+
+      it "returns false when the parent is not in the editable element", ->
+        range = new Range($start[0])
+        if hasW3CRanges
+          range.range.setStart($end[0].childNodes[0], 0)
+        else
+          range.range.findText("end")
+        range.collapse(true)
+        expect(range.isValid()).toBeFalsy()
+
     describe "#isCollapsed", ->
       it "is defined", ->
         range = new Range($editable[0])
