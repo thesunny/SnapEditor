@@ -22,11 +22,11 @@ require ["core/editor", "core/helpers"], (Editor, Helpers) ->
       it "creates an API", ->
         expect(editor.api).not.toBeNull()
 
-    describe "#contents", ->
+    describe "#getContents", ->
       it "returns the contents of the editor", ->
         $editable.html("<p>this is just a test</p><p>yes it is</p>")
-        expect(clean(editor.contents())).toEqual("<p>this is just a test</p><p>yes it is</p>")
+        expect(clean(editor.getContents())).toEqual("<p>this is just a test</p><p>yes it is</p>")
 
       it "removes any zero width no break spaces", ->
         $editable.html("<p>Hello, there #{Helpers.zeroWidthNoBreakSpace}are zero width no #{Helpers.zeroWidthNoBreakSpace}break spaces in#{Helpers.zeroWidthNoBreakSpace} here!")
-        expect(editor.contents().match(Helpers.zeroWidthNoBreakSpaceUnicode)).toBeNull()
+        expect(editor.getContents().match(Helpers.zeroWidthNoBreakSpaceUnicode)).toBeNull()

@@ -46,7 +46,7 @@ define ["jquery.custom", "core/helpers", "core/api", "core/plugins", "core/keybo
     update: ->
       @api.trigger("update.editor")
 
-    contents: ->
+    getContents: ->
       # Clean the content before returning it.
       @api.clean(@api.el.firstChild, @api.el.lastChild)
       regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")

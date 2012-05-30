@@ -9,7 +9,7 @@
 # trigger(event, args): event to trigger and an array of args to pass through
 #
 # Property Functions:
-# contents(): gets the contents of the editor
+# getContents(): gets the contents of the editor
 #
 # Editor Functions:
 # activate(): activates the editor
@@ -25,7 +25,7 @@ define ["jquery.custom", "core/api/api.assets", "core/helpers", "core/events", "
       @assets = new Assets(@editor.config.path)
       @whitelist = @editor.whitelist
       Helpers.delegate(this, "editor",
-        "contents", "activate", "deactivate", "update"
+        "getContents", "activate", "deactivate", "update"
       )
       Helpers.delegate(this, "range()",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
