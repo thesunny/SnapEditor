@@ -2207,13 +2207,13 @@ define('core/keyboard',["jquery.custom", "core/helpers"], function($, Helpers) {
       this.api = api;
       this.type = type;
       this.onkeydown = __bind(this.onkeydown, this);
-      this.stop = __bind(this.stop, this);
-      this.start = __bind(this.start, this);
+      this.deactivate = __bind(this.deactivate, this);
+      this.activate = __bind(this.activate, this);
       this.$el = $(this.api.el);
       this.keys = {};
       this.add(keyboardShortcuts);
-      this.api.on("activate.editor", this.start);
-      this.api.off("deactivate.editor", this.stop);
+      this.api.on("activate.editor", this.activate);
+      this.api.on("deactivate.editor", this.deactivate);
     }
 
     Keyboard.prototype.add = function() {
@@ -2251,11 +2251,11 @@ define('core/keyboard',["jquery.custom", "core/helpers"], function($, Helpers) {
       }
     };
 
-    Keyboard.prototype.start = function() {
+    Keyboard.prototype.activate = function() {
       return this.$el.on(this.type, this.onkeydown);
     };
 
-    Keyboard.prototype.stop = function() {
+    Keyboard.prototype.deactivate = function() {
       return this.$el.off(this.type, this.onkeydown);
     };
 
@@ -2420,26 +2420,12 @@ define('core/data_action_handler',["jquery.custom"], function($) {
       this.change = __bind(this.change, this);
       this.click = __bind(this.click, this);
       this.setClick = __bind(this.setClick, this);
-      this.deactivate = __bind(this.deactivate, this);
-      this.activate = __bind(this.activate, this);
       this.$el = $(el);
-      this.api.on("activate.editor", this.activate);
-      this.api.on("deactivate.editor", this.deactivate);
-    }
-
-    DataActionHandler.prototype.activate = function() {
       this.$el.children("select[data-action]").on("change", this.change);
       this.$el.on("mousedown", this.setClick);
       this.$el.on("mouseup", this.click);
-      return this.$el.on("keypress", this.change);
-    };
-
-    DataActionHandler.prototype.deactivate = function() {
-      this.$el.children("select[data-action]").off("change", this.change);
-      this.$el.off("mousedown", this.setClick);
-      this.$el.off("mouseup", this.click);
-      return this.$el.off("keypress", this.change);
-    };
+      this.$el.on("keypress", this.change);
+    }
 
     DataActionHandler.prototype.setClick = function(e) {
       return this.isClick = true;
@@ -2516,8 +2502,7 @@ define('core/contextmenu/contextmenu',["jquery.custom", "core/contextmenu/contex
         position: "absolute",
         zIndex: 300
       }).hide().appendTo("body");
-      this.dataActionHandler = new DataActionHandler(this.$menu, this.api);
-      this.dataActionHandler.activate();
+      new DataActionHandler(this.$menu, this.api);
       return this.builder = new Builder(this.$template, this.config);
     };
 
