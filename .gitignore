@@ -10,4 +10,5 @@ tags
 /.jhw-cache/
 /javascripts/
 /vendor/
+/bundle/
 /build/snapeditor.js
