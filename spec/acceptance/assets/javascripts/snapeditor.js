@@ -1683,6 +1683,13 @@ define('core/range',["jquery.custom", "core/helpers", "core/range/range.module",
       return new this.constructor(this.el, this.cloneRange());
     };
 
+    Range.prototype.isValid = function() {
+      var parent;
+      parent = this.getParentElement();
+      if (!parent) return true;
+      return $(parent).parentsUntil(this.el, "body").length === 0;
+    };
+
     Range.prototype.isCollapsed = function() {
       throw "#isCollapsed() needs to be overridden with a browser specific implementation";
     };
@@ -1821,7 +1828,7 @@ define('core/api',["jquery.custom", "core/api/api.assets", "core/helpers", "core
       this.assets = new Assets(this.editor.config.path);
       this.whitelist = this.editor.whitelist;
       Helpers.delegate(this, "editor", "contents", "activate", "deactivate", "update");
-      Helpers.delegate(this, "range()", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement", "getCoordinates", "getParentElement", "getParentElements", "collapse", "unselect", "keepRange", "paste", "surroundContents", "delete");
+      Helpers.delegate(this, "range()", "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement", "getCoordinates", "getParentElement", "getParentElements", "collapse", "unselect", "keepRange", "paste", "surroundContents", "delete");
       Helpers.delegate(this, "blankRange()", "selectEndOfElement");
       Helpers.delegate(this, "whitelist", "allowed", "replacement", "next");
     }
@@ -2420,12 +2427,26 @@ define('core/data_action_handler',["jquery.custom"], function($) {
       this.change = __bind(this.change, this);
       this.click = __bind(this.click, this);
       this.setClick = __bind(this.setClick, this);
+      this.deactivate = __bind(this.deactivate, this);
+      this.activate = __bind(this.activate, this);
       this.$el = $(el);
+      this.api.on("activate.editor", this.activate);
+      this.api.on("deactivate.editor", this.deactivate);
+    }
+
+    DataActionHandler.prototype.activate = function() {
       this.$el.children("select[data-action]").on("change", this.change);
       this.$el.on("mousedown", this.setClick);
       this.$el.on("mouseup", this.click);
-      this.$el.on("keypress", this.change);
-    }
+      return this.$el.on("keypress", this.change);
+    };
+
+    DataActionHandler.prototype.deactivate = function() {
+      this.$el.children("select[data-action]").off("change", this.change);
+      this.$el.off("mousedown", this.setClick);
+      this.$el.off("mouseup", this.click);
+      return this.$el.off("keypress", this.change);
+    };
 
     DataActionHandler.prototype.setClick = function(e) {
       return this.isClick = true;
@@ -2498,11 +2519,12 @@ define('core/contextmenu/contextmenu',["jquery.custom", "core/contextmenu/contex
 
     ContextMenu.prototype.setupMenu = function() {
       this.id = "snapeditor_contextmenu_" + (Math.floor(Math.random() * 99999));
-      this.$menu = $("<div/>").attr("id", this.id).addClass("snapeditor_contextmenu_container").css({
+      this.$menu = $("<div/>").attr("id", this.id).addClass("snapeditor_contextmenu_container").addClass("snapeditor_ignore_deactivate").css({
         position: "absolute",
         zIndex: 300
       }).hide().appendTo("body");
-      new DataActionHandler(this.$menu, this.api);
+      this.dataActionHandler = new DataActionHandler(this.$menu, this.api);
+      this.dataActionHandler.activate();
       return this.builder = new Builder(this.$template, this.config);
     };
 
@@ -3031,6 +3053,59 @@ define('plugins/activate/activate',["jquery.custom", "core/browser", "core/helpe
   })();
   Helpers.include(Activate, Browser.isIE ? IE : Others);
   return Activate;
+});
+
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+define('plugins/deactivate/deactivate',["jquery.custom"], function($) {
+  var Deactivate;
+  Deactivate = (function() {
+
+    function Deactivate() {
+      this.tryDeactivate = __bind(this.tryDeactivate, this);
+      this.setDeactivate = __bind(this.setDeactivate, this);
+      this.deactivate = __bind(this.deactivate, this);
+      this.activate = __bind(this.activate, this);
+    }
+
+    Deactivate.prototype.classname = "snapeditor_ignore_deactivate";
+
+    Deactivate.prototype.register = function(api) {
+      this.api = api;
+      $(this.api.el).addClass(this.classname);
+      this.api.on("activate.editor", this.activate);
+      return this.api.on("deactivate.editor", this.deactivate);
+    };
+
+    Deactivate.prototype.activate = function() {
+      $(document).on("mousedown", this.setDeactivate);
+      return $(document).on("mouseup", this.tryDeactivate);
+    };
+
+    Deactivate.prototype.deactivate = function() {
+      $(document).off("mousedown", this.setDeactivate);
+      return $(document).off("onmouseup", this.tryDeactivate);
+    };
+
+    Deactivate.prototype.setDeactivate = function(e) {
+      if (!this.isIgnore(e.target)) return this.isDeactivate = true;
+    };
+
+    Deactivate.prototype.tryDeactivate = function(e) {
+      if (this.isDeactivate && !this.isIgnore(e.target)) {
+        this.isDeactivate = false;
+        return this.api.deactivate();
+      }
+    };
+
+    Deactivate.prototype.isIgnore = function(el) {
+      return $(el).closest("." + this.classname).length > 0;
+    };
+
+    return Deactivate;
+
+  })();
+  return Deactivate;
 });
 
 
@@ -3828,18 +3903,20 @@ define('plugins/styler/styler.inline',["jquery.custom", "core/browser"], functio
     };
 
     InlineStyler.prototype.format = function(tag) {
-      if (Browser.isGecko) document.execCommand("styleWithCSS", false, false);
-      switch (tag) {
-        case "b":
-          this.exec("bold");
-          break;
-        case "i":
-          this.exec("italic");
-          break;
-        default:
-          throw "The inline style for tag " + tag + " is unsupported";
+      if (this.api.isValid()) {
+        if (Browser.isGecko) document.execCommand("styleWithCSS", false, false);
+        switch (tag) {
+          case "b":
+            this.exec("bold");
+            break;
+          case "i":
+            this.exec("italic");
+            break;
+          default:
+            throw "The inline style for tag " + tag + " is unsupported";
+        }
+        return this.update();
       }
-      return this.update();
     };
 
     InlineStyler.prototype.exec = function(command, value) {
@@ -3849,20 +3926,22 @@ define('plugins/styler/styler.inline',["jquery.custom", "core/browser"], functio
 
     InlineStyler.prototype.link = function() {
       var href, link, parentLink;
-      href = prompt("Enter URL of link", "http://");
-      if (href) {
-        href = $.trim(href);
-        parentLink = this.api.getParentElement("a");
-        if (parentLink) {
-          $(parentLink).attr("href", href);
-        } else if (this.api.isCollapsed()) {
-          link = $("<a href=\"" + href + "\">" + href + "</a>");
-          this.api.paste(link[0]);
-        } else {
-          link = $("<a href=\"" + href + "\"></a>");
-          this.api.surroundContents(link[0]);
+      if (this.api.isValid()) {
+        href = prompt("Enter URL of link", "http://");
+        if (href) {
+          href = $.trim(href);
+          parentLink = this.api.getParentElement("a");
+          if (parentLink) {
+            $(parentLink).attr("href", href);
+          } else if (this.api.isCollapsed()) {
+            link = $("<a href=\"" + href + "\">" + href + "</a>");
+            this.api.paste(link[0]);
+          } else {
+            link = $("<a href=\"" + href + "\"></a>");
+            this.api.surroundContents(link[0]);
+          }
+          return this.update();
         }
-        return this.update();
       }
     };
 
@@ -4074,13 +4153,17 @@ define('plugins/styler/styler.block',["jquery.custom", "core/browser", "core/hel
     };
 
     BlockStyler.prototype.indent = function() {
-      this.exec("indent");
-      return this.update();
+      if (this.api.isValid()) {
+        this.exec("indent");
+        return this.update();
+      }
     };
 
     BlockStyler.prototype.outdent = function() {
-      this.exec("outdent");
-      return this.update();
+      if (this.api.isValid()) {
+        this.exec("outdent");
+        return this.update();
+      }
     };
 
     BlockStyler.prototype.exec = function(cmd, value) {
@@ -4096,6 +4179,7 @@ define('plugins/styler/styler.block',["jquery.custom", "core/browser", "core/hel
 
     BlockStyler.prototype.allowFormatBlock = function() {
       var allowed;
+      if (!this.api.isValid()) return false;
       allowed = !this.api.getParentElement("table, li");
       if (!allowed) {
         alert("Sorry. This action cannot be performed inside a table or list.");
@@ -4105,6 +4189,7 @@ define('plugins/styler/styler.block',["jquery.custom", "core/browser", "core/hel
 
     BlockStyler.prototype.allowList = function() {
       var allowed;
+      if (!this.api.isValid()) return false;
       allowed = !this.api.getParentElement("table");
       if (!allowed) {
         alert("Sorry. This action cannot be performed inside a table.");
@@ -4264,24 +4349,26 @@ define('plugins/table/table',["jquery.custom", "core/browser", "core/helpers"], 
 
     Table.prototype.insertTable = function() {
       var $table, $tbody, $td, $tr, i, _ref, _ref2;
-      if (this.api.getParentElement("table, li")) {
-        return alert("Sorry. This action cannot be performed inside a table or list.");
-      } else {
-        $table = $('<table id="INSERTED_TABLE"></table>');
-        $tbody = $("<tbody/>").appendTo($table);
-        $td = $("<td>&nbsp;</td>");
-        $tr = $("<tr/>");
-        for (i = 1, _ref = this.options.table[1]; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
-          $tr.append($td.clone());
+      if (this.api.isValid()) {
+        if (this.api.getParentElement("table, li")) {
+          return alert("Sorry. This action cannot be performed inside a table or list.");
+        } else {
+          $table = $('<table id="INSERTED_TABLE"></table>');
+          $tbody = $("<tbody/>").appendTo($table);
+          $td = $("<td>&nbsp;</td>");
+          $tr = $("<tr/>");
+          for (i = 1, _ref = this.options.table[1]; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
+            $tr.append($td.clone());
+          }
+          for (i = 1, _ref2 = this.options.table[0]; 1 <= _ref2 ? i <= _ref2 : i >= _ref2; 1 <= _ref2 ? i++ : i--) {
+            $tbody.append($tr.clone());
+          }
+          this.api.paste($table[0]);
+          $table = $("#INSERTED_TABLE");
+          this.api.selectEndOfElement($table.find("td")[0]);
+          $table.removeAttr("id");
+          return this.update();
         }
-        for (i = 1, _ref2 = this.options.table[0]; 1 <= _ref2 ? i <= _ref2 : i >= _ref2; 1 <= _ref2 ? i++ : i--) {
-          $tbody.append($tr.clone());
-        }
-        this.api.paste($table[0]);
-        $table = $("#INSERTED_TABLE");
-        this.api.selectEndOfElement($table.find("td")[0]);
-        $table.removeAttr("id");
-        return this.update();
       }
     };
 
@@ -4408,11 +4495,11 @@ define('plugins/table/table',["jquery.custom", "core/browser", "core/helpers"], 
 });
 
 
-define('config/config.default',["plugins/activate/activate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/edit/edit", "plugins/styler/styler.inline", "plugins/styler/styler.block", "plugins/table/table"], function(Activate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Edit, InlineStyler, BlockStyler, Table) {
+define('config/config.default',["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/edit/edit", "plugins/styler/styler.inline", "plugins/styler/styler.block", "plugins/table/table"], function(Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Edit, InlineStyler, BlockStyler, Table) {
   return {
     build: function() {
       return {
-        plugins: [new Activate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Edit(), new InlineStyler(), new BlockStyler(), new Table()],
+        plugins: [new Activate(), new Deactivate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Edit(), new InlineStyler(), new BlockStyler(), new Table()],
         toolbar: ["Bold", "Italic", "|", "P", "H1", "H2", "H3", "|", "UnorderedList", "OrderedList", "Indent", "Outdent", "|", "Link", "Table"],
         whitelist: {
           "Paragraph": "p > Paragraph",
@@ -4450,8 +4537,6 @@ define('plugins/snap/snap',["jquery.custom"], function($) {
   Snap = (function() {
 
     function Snap() {
-      this.tryCancel = __bind(this.tryCancel, this);
-      this.setCancel = __bind(this.setCancel, this);
       this.update = __bind(this.update, this);
       this.unsnap = __bind(this.unsnap, this);
       this.snap = __bind(this.snap, this);
@@ -4475,8 +4560,6 @@ define('plugins/snap/snap',["jquery.custom"], function($) {
         left: 0,
         zIndex: 100
       });
-      div.on("mousedown", this.setCancel);
-      div.on("mouseup", this.tryCancel);
       return this.divs = {
         top: div.clone(true, false).appendTo("body"),
         bottom: div.clone(true, false).appendTo("body"),
@@ -4621,17 +4704,6 @@ define('plugins/snap/snap',["jquery.custom"], function($) {
         _results.push(div.css(styles[position]));
       }
       return _results;
-    };
-
-    Snap.prototype.setCancel = function() {
-      return this.isCancel = true;
-    };
-
-    Snap.prototype.tryCancel = function() {
-      if (this.isCancel) {
-        this.isCancel = false;
-        return this.api.deactivate();
-      }
     };
 
     return Snap;
@@ -4812,6 +4884,7 @@ define('core/toolbar/toolbar',["jquery.custom", "core/helpers", "core/data_actio
     Toolbar.prototype.setup = function() {
       var _ref;
       _ref = new Builder(this.$template, this.availableComponents, this.components).build(), this.$toolbar = _ref[0], this.css = _ref[1];
+      this.$toolbar.addClass("snapeditor_ignore_deactivate");
       this.dataActionHandler = new DataActionHandler(this.$toolbar, this.api);
       return Helpers.insertStyles(this.css);
     };
@@ -5082,7 +5155,8 @@ define('core/toolbar/toolbar.floating',["core/toolbar/toolbar", "core/toolbar/to
     FloatingToolbar.prototype.setup = function() {
       FloatingToolbar.__super__.setup.apply(this, arguments);
       this.$toolbar.addClass("snapeditor_toolbar_floating");
-      return this.displayer = new Displayer(this.$toolbar, this.api.el, this.api);
+      this.displayer = new Displayer(this.$toolbar, this.api.el, this.api);
+      return this.dataActionHandler.activate();
     };
 
     FloatingToolbar.prototype.show = function() {
