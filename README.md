@@ -11,7 +11,7 @@
 
 ### Ruby and RubyGems
 
-Ruby 1.9.3-p0 and RubyGems 1.8.11 are used in this project.
+Ruby 1.9.3-p194 and RubyGems 1.8.23 are used in this project.
 
 To install Ruby and RubyGems, take a look at [rbenv](https://github.com/sstephenson/rbenv) or [rvm](https://rvm.beginrescueend.com/).
 
