@@ -4764,7 +4764,7 @@ define('plugins/autoscroll/autoscroll',["jquery.custom"], function($) {
 });
 
 
-define('config/config.default.snap',["config/config.default", "plugins/snap/snap", "plugins/autoscroll/autoscroll"], function(Defaults, Snap, Autoscroll) {
+define('config/config.default.inline',["config/config.default", "plugins/snap/snap", "plugins/autoscroll/autoscroll"], function(Defaults, Snap, Autoscroll) {
   return {
     build: function() {
       var defaults;
@@ -5177,23 +5177,23 @@ define('core/toolbar/toolbar.floating',["core/toolbar/toolbar", "core/toolbar/to
 var __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-define('core/editor.snap',["core/editor", "config/config.default.snap", "core/toolbar/toolbar.floating"], function(Editor, Defaults, Toolbar) {
-  var SnapEditor;
-  SnapEditor = (function(_super) {
+define('core/editor.inline',["core/editor", "config/config.default.inline", "core/toolbar/toolbar.floating"], function(Editor, Defaults, Toolbar) {
+  var InlineEditor;
+  InlineEditor = (function(_super) {
 
-    __extends(SnapEditor, _super);
+    __extends(InlineEditor, _super);
 
-    function SnapEditor(el, config) {
+    function InlineEditor(el, config) {
       var toolbarComponents;
-      SnapEditor.__super__.constructor.call(this, el, Defaults.build(), config);
+      InlineEditor.__super__.constructor.call(this, el, Defaults.build(), config);
       toolbarComponents = this.plugins.getToolbarComponents();
       this.toolbar = new Toolbar(this.api, this.$templates, toolbarComponents.available, toolbarComponents.config);
     }
 
-    return SnapEditor;
+    return InlineEditor;
 
   })(Editor);
-  return SnapEditor;
+  return InlineEditor;
 });
 
 
@@ -5292,9 +5292,9 @@ define('core/editor.form',["core/editor", "config/config.default.form", "core/fo
 });
 
 
-require(["core/editor.snap", "core/editor.form"], (function(SnapEditor, FormEditor) {
+require(["core/editor.inline", "core/editor.form"], (function(InlineEditor, FormEditor) {
   return window.SnapEditor = {
-    Snap: SnapEditor,
+    Inline: InlineEditor,
     Form: FormEditor
   };
 }), null, true);
