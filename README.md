@@ -30,6 +30,12 @@ The following command will install the necessary prerequisites.
     sudo apt-get install libqt4-dev qt4-qmake -y
     sudo update-alternatives --config qmake
 
+### Markdown
+
+Obviously, this project uses markdown.
+
+    sudo apt-get install markdown
+
 ## Compiling
 
 ### CoffeeScript
