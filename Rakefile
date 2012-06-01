@@ -21,15 +21,23 @@ namespace :prepare do
   end
 
   task :bundle => [:compile, :build] do
+    `markdown documentation/LICENSE.md > documentation/LICENSE.html`
+    `markdown documentation/README.md > documentation/README.html`
     mkdir_p "bundle"
-    mkdir_p "bundle/javascripts"
-    mkdir_p "bundle/stylesheets"
-    mkdir_p "bundle/templates"
-    mkdir_p "bundle/images"
-    cp "build/snapeditor.js", "bundle/javascripts/snapeditor.js"
-    cp "spec/acceptance/assets/stylesheets/snapeditor.css", "bundle/stylesheets"
-    cp "spec/acceptance/assets/templates/snapeditor.html", "bundle/templates"
-    cp "spec/acceptance/assets/images/toolbar.png", "bundle/images"
-    cp "spec/acceptance/assets/images/contextmenu.png", "bundle/images"
+    mkdir_p "bundle/snapeditor"
+    mkdir_p "bundle/snapeditor/javascripts"
+    mkdir_p "bundle/snapeditor/stylesheets"
+    mkdir_p "bundle/snapeditor/templates"
+    mkdir_p "bundle/snapeditor/images"
+    cp "documentation/LICENSE.md", "bundle/snapeditor"
+    cp "documentation/LICENSE.html", "bundle/snapeditor"
+    cp "documentation/README.md", "bundle/snapeditor"
+    cp "documentation/README.html", "bundle/snapeditor"
+    cp "build/snapeditor.js", "bundle/snapeditor/javascripts"
+    cp "spec/acceptance/assets/stylesheets/snapeditor.css", "bundle/snapeditor/stylesheets"
+    cp "spec/acceptance/assets/templates/snapeditor.html", "bundle/snapeditor/templates"
+    cp "spec/acceptance/assets/images/toolbar.png", "bundle/snapeditor/images"
+    cp "spec/acceptance/assets/images/contextmenu.png", "bundle/snapeditor/images"
+    `zip -r bundle/snapeditor bundle/snapeditor/`
   end
 end
