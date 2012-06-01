@@ -6,4 +6,6 @@ require ["core/editor.inline", "core/editor.form"], ((InlineEditor, FormEditor) 
   window.SnapEditor =
     Inline: InlineEditor
     Form: FormEditor
+  if typeof console != "undefined" and typeof console.log != "undefined"
+    console.log("This is a beta release of the SnapEditor. Check it out at http://snapeditor.com.")
 ), null, true
