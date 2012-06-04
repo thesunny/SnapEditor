@@ -1,10 +1,15 @@
 define ["jquery.custom", "core/helpers", "core/api", "core/plugins", "core/keyboard", "core/contexts", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Helpers, API, Plugins, Keyboard, Contexts, ContextMenu, Whitelist) ->
   class Editor
-    # Options:
-    # * path: path to the snapeditor directory
-    # * plugins: an array of editor plugins to add
-    # * toolbar: toolbar config that replaces the default one
+    # el - string id or DOM element
+    # defaults - default config
+    # config - user config
+    #   * path: path to the snapeditor directory
+    #   * plugins: an array of editor plugins to add
+    #   * toolbar: toolbar config that replaces the default one
+    #   * whitelist: object specifying the whitelist
     constructor: (el, @defaults, @config = {}) ->
+      # Transform the string into a CSS id selector.
+      el = "#" + el if typeof el == "string"
       @$el = $(el)
       @whitelist = new Whitelist(@defaults.whitelist)
       @api = new API(this)

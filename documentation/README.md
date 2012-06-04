@@ -12,7 +12,7 @@ Assuming the snapeditor code can be reached at `/snapeditor/javascripts/snapedit
 
 ## Content
 
-The content you want to make editable must be wrapped in a `div` that can be referenced by a CSS selector.
+The content you want to make editable must be wrapped in a `div` with an id.
 
     <div id="editor">
       <p>This inner content is all editable including the p tags, but not the div tag.</p>
@@ -20,9 +20,9 @@ The content you want to make editable must be wrapped in a `div` that can be ref
 
 ## Initialization
 
-To initialize the SnapEditor, create a new SnapEditor.Inline or SnapEditor.Form object with the following arguments.
+To initialize the SnapEditor, create a new SnapEditor.InPlace or SnapEditor.Form object with the following arguments.
 
-* DOM element or CSS selector
+* DOM element or id
 * Options hash
   * path: the URL path to the `snapeditor/` directory
 
@@ -32,8 +32,19 @@ Example.
       // DOM element
       var el = document.getElementById("form_editor")
       var formEditor = new SnapEditor.Form(el, { path: "/snapeditor" });
-      // CSS selector
-      var inlineEditor = new SnapEditor.Inline("#inline_editor", { path: "/snapeditor" });
+      // id
+      var inPlaceEditor = new SnapEditor.InPlace("in_place_editor", { path: "/snapeditor" });
+    </script>
+
+## Getting Content
+
+The SnapEditor objects comes with a public function called getContents() to get the contents of the editor.
+
+This should be used instead of grabbing the innerHTML from the editable element itself because the SnapEditor runs certain checks before returning the content.
+
+    <script type="text/javascript">
+      var inPlaceEditor = new SnapEditor.InPlace("in_place_editor", { path: "/snapeditor" });
+      var contents = inPlaceEditor.getContents()
     </script>
 
 ## Putting it all together
@@ -45,16 +56,16 @@ Full example.
         <div id="form_editor">
           <p>This is a form editor!</p>
         </div>
-        <div id="inline_editor">
-          <p>This is an inline editor!</p>
+        <div id="in_place_editor">
+          <p>This is an in-place editor!</p>
         </div>
         <script type="text/javascript" src="/snapeditor/javascripts/snapeditor.js"></script>
         <script type="text/javascript">
           // DOM element
           var el = document.getElementById("form_editor")
           var formEditor = new SnapEditor.Form(el, { path: "/snapeditor" });
-          // CSS selector
-          var inlineEditor = new SnapEditor.Inline("#inline_editor", { path: "/snapeditor" });
+          // id
+          var inPlaceEditor = new SnapEditor.InPlace("in_place_editor", { path: "/snapeditor" });
         </script>
       </body>
     </html>

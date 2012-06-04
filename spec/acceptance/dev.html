@@ -13,7 +13,7 @@
         width: 800px;
         height: 500px;
       }
-      #inlineable {
+      #in_placeable {
         width: 600px;
       }
     </style>
@@ -107,7 +107,7 @@
       </div>
       just maybe not...
     </div>
-    <div id="inlineable" style="word-wrap: break-word">
+    <div id="in_placeable" style="word-wrap: break-word">
       Make me editable!
       <br/>
       <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
@@ -118,8 +118,8 @@
     <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
     <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-      var form = new SnapEditor.Form("#formable", { path: "/spec/acceptance/assets" });
-      var inline = new SnapEditor.Inline("#inlineable", { path: "/spec/acceptance/assets" });
+      var form = new SnapEditor.Form("formable", { path: "/spec/acceptance/assets" });
+      var inPlace = new SnapEditor.InPlace("in_placeable", { path: "/spec/acceptance/assets" });
     </script>
   </body>
 </html>
