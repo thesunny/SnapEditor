@@ -4,6 +4,6 @@ Copyright (c) 2012
 
 This version of the SnapEditor is a beta release. The code is meant for demonstration purposes only and cannot be modified, reproduced, or distributed.
 
-A temporary license shall be granted to the user and may be revoked at any time, at which the code must be removed from usage.
+A temporary license shall be granted to the user for usage and may be revoked at any time, at which the code must be removed from usage.
 
 For further information about the SnapEditor, please visit [http://snapeditor.com](http://snapeditor.com).
