@@ -3,15 +3,15 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     register: (@api) ->
 
     getUI: (ui) ->
-      p = ui.button(action: "p", description: "Paragraph", shortcut: "Ctrl+0", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -53] })
-      h1 = ui.button(action: "h1", description: "H1", shortcut: "Ctrl+1", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -53] })
-      h2 = ui.button(action: "h2", description: "H2", shortcut: "Ctrl+2", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -53] })
-      h3 = ui.button(action: "h3", description: "H3", shortcut: "Ctrl+3", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-91, -53] })
+      p = ui.button(action: "p", description: "Paragraph", shortcut: "Ctrl+Alt+0", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -53] })
+      h1 = ui.button(action: "h1", description: "H1", shortcut: "Ctrl+Alt+1", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -53] })
+      h2 = ui.button(action: "h2", description: "H2", shortcut: "Ctrl+Alt+2", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -53] })
+      h3 = ui.button(action: "h3", description: "H3", shortcut: "Ctrl+Alt+3", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-91, -53] })
       #alignLeft = ui.button(action: "alignLeft", description: "Align Left", shortcut: "Ctrl+L", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -149] })
       #alignCenter = ui.button(action: "alignCenter", description: "Align Center", shortcut: "Ctrl+E", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -149] })
       #alignRight = ui.button(action: "alignRight", description: "Align Right", shortcut: "Ctrl+R", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -149] })
       unorderedList = ui.button(action: "unorderedList", description: "Bullet List", shortcut: "Ctrl+Shift+8", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -125] })
-      orderedList = ui.button(action: "orderedList", description: "Numbered List", shortcut: "Ctrl+Shift+3", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -125] })
+      orderedList = ui.button(action: "orderedList", description: "Numbered List", shortcut: "Ctrl+Shift+7", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -125] })
       indent = ui.button(action: "indent", description: "Indent", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -125] })
       outdent = ui.button(action: "outdent", description: "Outdent", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-91, -125] })
       return {
@@ -47,15 +47,15 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.0": "p"
-        "ctrl.1": "h1"
-        "ctrl.2": "h2"
-        "ctrl.3": "h3"
+        "ctrl.alt.0": "p"
+        "ctrl.alt.1": "h1"
+        "ctrl.alt.2": "h2"
+        "ctrl.alt.3": "h3"
         #"ctrl.l": "alignLeft"
         #"ctrl.e": "alignCenter"
         #"ctrl.r": "alignRight"
         "ctrl.shift.8": "unorderedList"
-        "ctrl.shift.3": "orderedList"
+        "ctrl.shift.7": "orderedList"
       }
 
     p: =>
