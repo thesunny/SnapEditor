@@ -6,7 +6,7 @@ Place the `snapeditor/` directory somewhere publicly accessible by your applicat
 
 ## Sourcing
 
-Assuming the snapeditor code can be reached at `/snapeditor/javascripts/snapeditor.js`, you must source it before using the SnapEditor.
+Assuming Snapeditor code can be reached at `/snapeditor/javascripts/snapeditor.js`, you must source it before using SnapEditor.
 
     <script type="text/javascript" src="/snapeditor/javascripts/snapeditor.js"></script>
 
@@ -20,7 +20,7 @@ The content you want to make editable must be wrapped in a `div` with an id.
 
 ## Initialization
 
-To initialize the SnapEditor, create a new SnapEditor.InPlace or SnapEditor.Form object with the following arguments.
+To initialize SnapEditor, create a new SnapEditor.InPlace or SnapEditor.Form object with the following arguments.
 
 * DOM element or id
 * Options hash
@@ -40,7 +40,7 @@ Example.
 
 The SnapEditor objects comes with a public function called getContents() to get the contents of the editor.
 
-This should be used instead of grabbing the innerHTML from the editable element itself because the SnapEditor runs certain checks before returning the content.
+This should be used instead of grabbing the innerHTML from the editable element itself because SnapEditor runs certain checks before returning the content.
 
     <script type="text/javascript">
       var inPlaceEditor = new SnapEditor.InPlace("in_place_editor", { path: "/snapeditor" });
