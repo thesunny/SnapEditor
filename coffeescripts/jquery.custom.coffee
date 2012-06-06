@@ -34,6 +34,14 @@ define ["../lib/jquery", "../lib/mustache"], ->
       y: this.height()
     }
 
+  $.fn.getPadding = ->
+    return {
+      top: parseInt(this.css("padding-top"), 10)
+      bottom: parseInt(this.css("padding-bottom"), 10)
+      left: parseInt(this.css("padding-left"), 10)
+      right: parseInt(this.css("padding-right"), 10)
+    }
+
   # Mimics MooTools isVisible.
   $.fn.isVisible = ->
     el = this.get(0)

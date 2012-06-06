@@ -122,7 +122,7 @@ define ["jquery.custom"], ($) ->
     # Returns an objec that contains the snapped and unsnapped styles of all the
     # divs.
     getFxOptions: ->
-      elCoords = @$el.getCoordinates()
+      elCoords = @getElCoordinates()
       documentSize = $(document).getSize()
       portCoords = @getPortCoordinates()
       return {
@@ -132,9 +132,21 @@ define ["jquery.custom"], ($) ->
 
     # Updates the divs in case @$el changed dimensions.
     update: =>
-      elCoord = @$el.getCoordinates()
+      elCoord = @getElCoordinates()
       documentSize = $(document).getSize()
       styles = @getSnappedStyles(elCoord, documentSize)
       div.css(styles[position]) for position, div of @divs
+
+    # Grab the coordinates of the element.
+    getElCoordinates: ->
+      elCoord = @$el.getCoordinates()
+      padding = @$el.getPadding()
+      # NOTE: The top and left coordinates are calculated correctly when there
+      # is padding. However, the other coordinates must be adjusted.
+      elCoord.bottom += padding.top + padding.bottom
+      elCoord.right += padding.left + padding.right
+      elCoord.width += padding.left + padding.right
+      elCoord.height += padding.top + padding.bottom
+      return elCoord
 
   return Snap

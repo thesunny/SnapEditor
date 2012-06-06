@@ -45,6 +45,58 @@ require ["jquery.custom"], ($) ->
         expect(scroll.y).toEqual(500)
         window.scrollTo(0, 0)
 
+    describe "#getPadding", ->
+      $el = null
+      beforeEach ->
+        $el = $("<div/>").appendTo($editable)
+
+      it "returns the correct paddings when no padding is specified", ->
+        padding = $el.getPadding()
+        expect(padding.top).toEqual(0)
+        expect(padding.bottom).toEqual(0)
+        expect(padding.left).toEqual(0)
+        expect(padding.right).toEqual(0)
+
+      it "returns the correct paddings when 1 number is specified", ->
+        $el.css("padding", 10)
+        padding = $el.getPadding()
+        expect(padding.top).toEqual(10)
+        expect(padding.bottom).toEqual(10)
+        expect(padding.left).toEqual(10)
+        expect(padding.right).toEqual(10)
+
+      it "returns the correct paddings when 2 numbers are specified", ->
+        $el.css("padding", "10px 5px")
+        padding = $el.getPadding()
+        expect(padding.top).toEqual(10)
+        expect(padding.bottom).toEqual(10)
+        expect(padding.left).toEqual(5)
+        expect(padding.right).toEqual(5)
+
+      it "returns the correct paddings when 3 numbers are specified", ->
+        $el.css("padding", "10px 5px 12px")
+        padding = $el.getPadding()
+        expect(padding.top).toEqual(10)
+        expect(padding.bottom).toEqual(12)
+        expect(padding.left).toEqual(5)
+        expect(padding.right).toEqual(5)
+
+      it "returns the correct paddings when 4 numbers are specified", ->
+        $el.css("padding", "10px 5px 12px 7px")
+        padding = $el.getPadding()
+        expect(padding.top).toEqual(10)
+        expect(padding.bottom).toEqual(12)
+        expect(padding.left).toEqual(7)
+        expect(padding.right).toEqual(5)
+
+      it "returns the correct paddings when only 1 padding is specified", ->
+        $el.css("padding-left", "10px")
+        padding = $el.getPadding()
+        expect(padding.top).toEqual(0)
+        expect(padding.bottom).toEqual(0)
+        expect(padding.left).toEqual(10)
+        expect(padding.right).toEqual(0)
+
     describe "#merge", ->
       it "merges the other node in", ->
         $el = $("<div>this is <b>my</b> div</div>").appendTo($editable)
