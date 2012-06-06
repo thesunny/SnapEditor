@@ -31,14 +31,14 @@ define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/e
           "BR": "br"
           # Inlines
           "Bold": "b"
-          "Strong": "strong"
           "Italic": "i"
-          "Emphasis": "em"
           "Links": "a[href]"
           "Range Start": "span#RANGE_START"
           "Range End": "span#RANGE_END"
           # Defaults
           "*": "Paragraph"
+          "strong": "Bold"
+          "em": "Italic"
         }
       }
   }
