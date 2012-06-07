@@ -36,8 +36,7 @@ namespace :prepare do
     cp "build/snapeditor.js", "bundle/snapeditor/javascripts"
     cp "spec/acceptance/assets/stylesheets/snapeditor.css", "bundle/snapeditor/stylesheets"
     cp "spec/acceptance/assets/templates/snapeditor.html", "bundle/snapeditor/templates"
-    cp "spec/acceptance/assets/images/toolbar.png", "bundle/snapeditor/images"
-    cp "spec/acceptance/assets/images/contextmenu.png", "bundle/snapeditor/images"
+    cp_r "spec/acceptance/assets/images", "bundle/snapeditor"
     `zip -r bundle/snapeditor bundle/snapeditor/`
   end
 end
