@@ -6,9 +6,9 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       "Inline"
 
     getUI: (ui) ->
-      bold = ui.button(action: "bold", description: "Bold", shortcut: "Ctrl+B", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -101] })
-      italic = ui.button(action: "italic", description: "Italic", shortcut: "Ctrl+I", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -101] })
-      link = ui.button(action: "link", description: "Insert Link", shortcut: "Ctrl+K", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -77] })
+      bold = ui.button(action: "bold", description: "Bold", shortcut: "Ctrl+B", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
+      italic = ui.button(action: "italic", description: "Italic", shortcut: "Ctrl+I", icon: { url: @api.assets.image("text_italic.png"), width: 24, height: 24, offset: [3, 3] })
+      link = ui.button(action: "link", description: "Insert Link", shortcut: "Ctrl+K", icon: { url: @api.assets.image("link.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "inline"
         inline: [bold, italic, link]

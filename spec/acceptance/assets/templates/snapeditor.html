@@ -4,6 +4,9 @@
       <div class="snapeditor_toolbar_content_inner">
         {{#componentGroups}}
           <div class="snapeditor_toolbar_group">{{{html}}}</div>
+          {{^last}}
+            <div class="snapeditor_toolbar_divider"></div>
+          {{/last}}
         {{/componentGroups}}
       </div>
     </div>

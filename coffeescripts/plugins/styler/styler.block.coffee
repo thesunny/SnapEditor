@@ -3,17 +3,17 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     register: (@api) ->
 
     getUI: (ui) ->
-      p = ui.button(action: "p", description: "Paragraph", shortcut: "Ctrl+Alt+0", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -53] })
-      h1 = ui.button(action: "h1", description: "H1", shortcut: "Ctrl+Alt+1", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -53] })
-      h2 = ui.button(action: "h2", description: "H2", shortcut: "Ctrl+Alt+2", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -53] })
-      h3 = ui.button(action: "h3", description: "H3", shortcut: "Ctrl+Alt+3", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-91, -53] })
-      #alignLeft = ui.button(action: "alignLeft", description: "Align Left", shortcut: "Ctrl+L", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -149] })
-      #alignCenter = ui.button(action: "alignCenter", description: "Align Center", shortcut: "Ctrl+E", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -149] })
-      #alignRight = ui.button(action: "alignRight", description: "Align Right", shortcut: "Ctrl+R", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -149] })
-      unorderedList = ui.button(action: "unorderedList", description: "Bullet List", shortcut: "Ctrl+Shift+8", icon: { url: @api.assets.image("toolbar.png"), width: 31, height: 24, offset: [0, -125] })
-      orderedList = ui.button(action: "orderedList", description: "Numbered List", shortcut: "Ctrl+Shift+7", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-31, -125] })
-      indent = ui.button(action: "indent", description: "Indent", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-61, -125] })
-      outdent = ui.button(action: "outdent", description: "Outdent", icon: { url: @api.assets.image("toolbar.png"), width: 30, height: 24, offset: [-91, -125] })
+      p = ui.button(action: "p", description: "Paragraph", shortcut: "Ctrl+Alt+0", icon: { url: @api.assets.image("p.png"), width: 24, height: 24, offset: [3, 3] })
+      h1 = ui.button(action: "h1", description: "H1", shortcut: "Ctrl+Alt+1", icon: { url: @api.assets.image("text_heading_1.png"), width: 24, height: 24, offset: [3, 3] })
+      h2 = ui.button(action: "h2", description: "H2", shortcut: "Ctrl+Alt+2", icon: { url: @api.assets.image("text_heading_2.png"), width: 24, height: 24, offset: [3, 3] })
+      h3 = ui.button(action: "h3", description: "H3", shortcut: "Ctrl+Alt+3", icon: { url: @api.assets.image("text_heading_3.png"), width: 24, height: 24, offset: [3, 3] })
+      #alignLeft = ui.button(action: "alignLeft", description: "Align Left", shortcut: "Ctrl+L", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
+      #alignCenter = ui.button(action: "alignCenter", description: "Align Center", shortcut: "Ctrl+E", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
+      #alignRight = ui.button(action: "alignRight", description: "Align Right", shortcut: "Ctrl+R", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
+      unorderedList = ui.button(action: "unorderedList", description: "Bullet List", shortcut: "Ctrl+Shift+8", icon: { url: @api.assets.image("text_list_bullets.png"), width: 24, height: 24, offset: [3, 3] })
+      orderedList = ui.button(action: "orderedList", description: "Numbered List", shortcut: "Ctrl+Shift+7", icon: { url: @api.assets.image("text_list_numbers.png"), width: 24, height: 24, offset: [3, 3] })
+      indent = ui.button(action: "indent", description: "Indent", icon: { url: @api.assets.image("text_indent.png"), width: 24, height: 24, offset: [3, 3] })
+      outdent = ui.button(action: "outdent", description: "Outdent", icon: { url: @api.assets.image("text_indent_remove.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "block"
         block: [p, h1, h2, h3, unorderedList, orderedList, indent, outdent]
