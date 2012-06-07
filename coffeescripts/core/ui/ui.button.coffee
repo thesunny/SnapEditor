@@ -80,24 +80,18 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       return "" unless @options.icon
       classname = @generateClass("toolbar", @options.action)
       "
-        .#{classname} {
+        .#{classname} input {
           background-image: url(#{@options.icon.url});
           background-repeat: no-repeat;
           background-position: #{@options.icon.offset[0]}px #{@options.icon.offset[1]}px;
+          background-color: transparent;
+          border: 1px solid transparent;
           width: #{@options.icon.width};
           height: #{@options.icon.height};
         }
-        .#{classname} input {
-          background-color: #0066cc;
-          border: none;
-          width: 100%;
-          height: #{@options.icon.height};
-          opacity: 0.0;
-          filter: alpha(opacity=0);
-        }
         .#{classname} input:hover {
-          opacity: 0.2;
-          filter: alpha(opacity=20);
+          background-color: #D0E0F0;
+          border: 1px solid #98A8B8;
         }
       "
 

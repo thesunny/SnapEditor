@@ -41,6 +41,11 @@ require ["core/toolbar/toolbar.builder"], (Builder) ->
         expect(components[2].html).toEqual("htmlhtml")
         expect(css).toEqual("csscsscsscsscsscsscss")
 
+      it "flags the last component", ->
+        builder = new Builder(null, availableComponents, ["component", "component", "|", "components", "|", "combo"])
+        [components, css] = builder.getComponents()
+        expect(components[2].last).toBeTruthy()
+
     describe "#getComponentHtmlAndCss", ->
       builder = null
       beforeEach ->
