@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser"], ($, Browser) ->
+define ["jquery.custom"], ($) ->
   class Formizer
     constructor: (el) ->
       @$el = $(el)
@@ -12,7 +12,7 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       @$content.css(
           height: elCoords.height - toolbarCoords.height
           overflowX: "auto"
-          overflowY: if Browser.isIE then "scroll" else "auto"
+          overflowY: "scroll"
         )
       @$el.empty().append($toolbar.show()).append(@$content.show())
       @$el.addClass("snapeditor_form")
