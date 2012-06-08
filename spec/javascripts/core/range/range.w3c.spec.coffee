@@ -67,7 +67,10 @@ if hasW3CRanges
 
           it "returns false if text is selected", ->
             range = new Range()
-            range.range = Range.getRangeFromElement($start[0])
+            range.range = Range.getBlankRange()
+            range.range.setStart($start[0].childNodes[0], 0)
+            range.range.setEnd($start[0].childNodes[0], 5)
+            range.select()
             expect(range.isImageSelected()).toBeFalsy()
 
           it "returns false if text and image is selected", ->
