@@ -12,6 +12,11 @@ task :build do
   sh "cd build && node r.js -o build.js"
 end
 
+desc "Build snapeditor.js for development"
+task :build_dev do
+  sh "cd build && node r.js -o build_dev.js"
+end
+
 desc "Compile and build snapeditor.js"
 task :compileAndBuild => [:compile, :build]
 
