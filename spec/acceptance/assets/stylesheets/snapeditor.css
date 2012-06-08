@@ -53,6 +53,7 @@
 .snapeditor_toolbar_floating {
   position: relative;
   z-index: 200;
+  width: 375px;
 }
 
 .snapeditor_toolbar_floating .snapeditor_toolbar_frame {

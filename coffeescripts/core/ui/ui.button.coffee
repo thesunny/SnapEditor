@@ -80,6 +80,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       return "" unless @options.icon
       classname = @generateClass("toolbar", @options.action)
       "
+        .#{classname} {
+          line-height: 1;
+        }
         .#{classname} input {
           background-image: url(#{@options.icon.url});
           background-repeat: no-repeat;
