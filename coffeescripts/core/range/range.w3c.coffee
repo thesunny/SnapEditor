@@ -47,7 +47,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       isImageSelected: ->
         div = $("<div/>").append(@range.cloneContents())[0]
         # An image is selected if it is the only content in the div.
-        div.childNodes.length == 1 && div.childNodes[0].tagName.toLowerCase(0) == "img"
+        div.childNodes.length == 1 && div.childNodes[0].tagName && div.childNodes[0].tagName.toLowerCase(0) == "img"
 
       # Returns true if the current range is at the start of the given element.
       # We are at start of element if there are no width-generating characters.
