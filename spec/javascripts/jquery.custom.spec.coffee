@@ -145,11 +145,14 @@ require ["jquery.custom"], ($) ->
         expect($ul.find("li").html()).toEqual("firstlast")
 
     describe "#split", ->
+      $el = null
+      beforeEach ->
+        $el = $("<div><span></span>this is <span>in the</span> first <b>and</b> this is in the <i>second</i></div>").appendTo($editable)
+
       it "splits on the child node", ->
-        $el = $("<div>this is <span>in the</span> first <b>and</b> this is in the <i>second</i></div>").appendTo($editable)
         [$first, $second] = $el.split($el.find("b"))
         expect($editable.find("div").length).toEqual(2)
-        expect(clean($first.html())).toEqual("this is <span>in the</span> first ")
+        expect(clean($first.html())).toEqual("<span></span>this is <span>in the</span> first ")
         expect(clean($second.html())).toEqual("<b>and</b> this is in the <i>second</i>")
 
     describe "#replaceElementWith", ->

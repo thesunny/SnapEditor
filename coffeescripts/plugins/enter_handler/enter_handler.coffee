@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers"], ($, Helpers) ->
+define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   class EnterHandler
     register: (@api) ->
       @api.on("activate.editor", @activate)
@@ -38,7 +38,10 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       else
         @api.keepRange((startEl, endEl) =>
           $span = $('<span id="ENTER_HANDLER"/>').insertBefore(startEl)
-          $(block).split($span)
+          [$first, $second] = $(block).split($span)
+          # Insert a <br/> if $first is empty.
+          if $first[0].childNodes.length == 0 or ($first[0].childNodes.length == 1 and $first[0].firstChild.nodeType == 3 and $first[0].firstChild.nodeValue.match(/^[\n\t ]*$/))
+            $first.html("&nbsp;")
           $span.remove()
         )
 

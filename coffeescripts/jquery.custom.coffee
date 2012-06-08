@@ -114,6 +114,7 @@ define ["../lib/jquery", "../lib/mustache"], ->
     $first = this.clone().html("").insertBefore(this)
     while this[0].childNodes[0] and this[0].childNodes[0] != node[0]
       $first.append(this[0].childNodes[0])
+    $first[0].normalize()
     return [$first, this]
 
   # Replaces the current element with the given el, leaving the children intact.

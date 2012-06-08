@@ -100,3 +100,22 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
           range = new Range($editable[0], window)
           range.paste("<b></b>")
           expect(clean($editable.children()[1].innerHTML)).toEqual("<b></b>er")
+
+      describe "beginning of block", ->
+        beforeEach ->
+          if hasW3CRanges
+            range.range.setEnd($div[0].childNodes[0], 0)
+          else
+            range.range.findText("ent")
+          range.collapse(true).select()
+
+        it "splits the block and places a <br> in the first block", ->
+          enterHandler.handleBlock($div[0])
+          expect(clean($editable.children()[0].innerHTML)).toEqual("&nbsp;")
+          expect(clean($editable.children()[1].innerHTML)).toEqual("enter")
+
+        it "places the caret at the beginning of the second element", ->
+          enterHandler.handleBlock($div[0])
+          range = new Range($editable[0], window)
+          range.paste("<b></b>")
+          expect(clean($editable.children()[1].innerHTML)).toEqual("<b></b>enter")
