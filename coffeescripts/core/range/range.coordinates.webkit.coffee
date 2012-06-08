@@ -12,7 +12,7 @@ define ["jquery.custom"], ($) ->
         # of the span as 0. Hence, the top and bottom coordinates are
         # the same. In order to get the real top and bottom, we insert
         # a zero width no-break space.
-        @paste($('<span id="CURSORPOS">&#65279</span>')[0])
+        @paste($('<span id="CURSORPOS">&#65279;</span>')[0])
         span = $('#CURSORPOS')
         coords = span.getCoordinates()
         span.remove()

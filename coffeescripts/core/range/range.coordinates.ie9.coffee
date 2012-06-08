@@ -15,12 +15,18 @@ define ["jquery.custom"], ($) ->
         # The range's startContainer and startOffset is set to the image.
         coords = $(@range.startContainer.childNodes[@range.startOffset]).getCoordinates()
       else
-        clientRect = @range.getBoundingClientRect()
-        windowScroll = $(window).getScroll()
-        coords =
-          top: clientRect.top + windowScroll.y,
-          bottom: clientRect.bottom + windowScroll.y,
-          left: clientRect.left + windowScroll.x,
-          right: clientRect.right + windowScroll.x
+        if @isCollapsed()
+          @paste($('<span id="CURSORPOS"/>')[0])
+          span = $('#CURSORPOS')
+          coords = span.getCoordinates()
+          span.remove()
+        else
+          clientRect = @range.getBoundingClientRect()
+          windowScroll = $(window).getScroll()
+          coords =
+            top: clientRect.top + windowScroll.y,
+            bottom: clientRect.bottom + windowScroll.y,
+            left: clientRect.left + windowScroll.x,
+            right: clientRect.right + windowScroll.x
       coords
   }
