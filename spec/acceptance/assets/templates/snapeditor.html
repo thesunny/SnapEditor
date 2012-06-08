@@ -1,16 +1,18 @@
 <div id="snapeditor_toolbar_template">
   <div class="snapeditor_toolbar">
-    <div class="snapeditor_toolbar_frame">
-      <div class="snapeditor_toolbar_frame_inner">
-        <div class="snapeditor_toolbar_content_outer">
-          <div class="snapeditor_toolbar_content">
-            <div class="snapeditor_toolbar_content_inner">
-              {{#componentGroups}}
+    <div class="snapeditor_toolbar_frame_outer">
+      <div class="snapeditor_toolbar_frame">
+        <div class="snapeditor_toolbar_frame_inner">
+          <div class="snapeditor_toolbar_content_outer">
+            <div class="snapeditor_toolbar_content">
+              <div class="snapeditor_toolbar_content_inner">
+                {{#componentGroups}}
                 <div class="snapeditor_toolbar_group">{{{html}}}</div>
                 {{^last}}
-                  <div class="snapeditor_toolbar_divider"></div>
+                <div class="snapeditor_toolbar_divider"></div>
                 {{/last}}
-              {{/componentGroups}}
+                {{/componentGroups}}
+              </div>
             </div>
           </div>
         </div>

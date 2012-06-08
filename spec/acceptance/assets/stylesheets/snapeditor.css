@@ -56,6 +56,10 @@
   width: 375px;
 }
 
+.snapeditor_toolbar_floating .snapeditor_toolbar_frame_outer {
+  padding: 2px 0;
+}
+
 .snapeditor_toolbar_floating .snapeditor_toolbar_frame {
   border: 1px solid #b8b8b8;
   -webkit-border-radius: 4px;
