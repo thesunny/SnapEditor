@@ -1,3 +1,19 @@
+# Documentation
+
+## Browser Support
+
+SnapEditor works in the following browsers.
+
+* Firefox
+* Chrome
+* Safari (desktop)
+* Microsoft Internet Explorer 7+
+
+Coming soon.
+
+* Opera
+* Safari for iOS (iPad)
+
 # Installation
 
 Place the `snapeditor/` directory somewhere publicly accessible by your application. For example, in a `public/` directory.
