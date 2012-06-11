@@ -2,7 +2,7 @@
 # functionalities cannot be copied using execCommand. They are prohibited by
 # the browser unless the user allows it through his/her preferences. Therefore,
 # this needs to be manually tested.
-define ["core/helpers"], (Helpers) ->
+define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class Edit
     register: (@api) ->
       @$el = $(@api.el)
