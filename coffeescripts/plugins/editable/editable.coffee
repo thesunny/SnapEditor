@@ -1,7 +1,9 @@
 define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/editable.others", "plugins/editable/editable.ie"], ($, Browser, Helpers, Others, IE) ->
   class Editable
     register: (@api) ->
+      @el = @api.el
       @api.on("click.activate", => @start.apply(this))
+      @api.on("deactivate.editor", @deactivate)
 
     # Turn on editing in the div. This includes preserving the caret position
     # as editing is turned on in all browsers.
@@ -12,7 +14,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/edita
       throw "Editable.start() needs to be overridden with a browser specific implementation"
 
     # turns editing off in the div. Includes removing the focus from the div.
-    deactivate: () ->
+    deactivate: =>
       @el.contentEditable = false
       @el.blur()
       @deactivateBrowser()
