@@ -2,7 +2,7 @@
 # changes. It looks for a "data-action" attribute on the target and triggers
 # that event. This makes it so that there is little wiring code needed and it
 # is easy to change the events and the HTML.
-define ["jquery.custom"], ($) ->
+define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class DataActionHandler
     # $el is the container element.
     # api is the editor API object.
@@ -48,7 +48,7 @@ define ["jquery.custom"], ($) ->
       if @isClick
         target = e.target
         $button = $(target).closest("[data-action]:not(select)")
-        if $button.length > 0
+        if e.which == Helpers.buttons.left and $button.length > 0
           e.preventDefault()
           e.stopPropagation()
           @api.trigger("#{$button.attr("data-action")}", target)

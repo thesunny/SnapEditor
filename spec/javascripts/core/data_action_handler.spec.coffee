@@ -2,7 +2,7 @@
 # check that the events are triggering properly, we need to actually check the
 # results of the handlers. This means that there will be dependencies between
 # functions when testing.
-require ["jquery.custom", "core/data_action_handler"], ($, Handler) ->
+require ["jquery.custom", "core/data_action_handler", "core/helpers"], ($, Handler, Helpers) ->
   describe "DataActionHandler", ->
     $el = handler = null
     beforeEach ->
@@ -60,7 +60,12 @@ require ["jquery.custom", "core/data_action_handler"], ($, Handler) ->
 
       it "triggers the event if the button has a data-action attribute", ->
         handler.isClick = true
-        $("#button_event").trigger("mouseup")
+        handler.click(
+          target: $("#button_event")[0]
+          which: Helpers.buttons.left
+          preventDefault: ->
+          stopPropagation: ->
+        )
         expect(handler.api.trigger).toHaveBeenCalledWith("button", $("#button_event")[0])
 
     describe "#change", ->

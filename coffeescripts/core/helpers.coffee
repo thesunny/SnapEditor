@@ -3,6 +3,12 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     zeroWidthNoBreakSpace: "&#65279;"
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
 
+    buttons: {
+      left: 1
+      middle: 2
+      right: 3
+    }
+
     # This is a hash of the different node types.
     #
     # NOTE: There are more node types, but these are the ones we use.

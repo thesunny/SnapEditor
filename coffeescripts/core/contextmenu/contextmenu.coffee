@@ -29,7 +29,8 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
         addClass("snapeditor_ignore_deactivate").
         css(position: "absolute", zIndex: 300).
         hide().
-        appendTo("body")
+        appendTo("body").
+        on("contextmenu", (e) -> e.preventDefault())
       @dataActionHandler = new DataActionHandler(@$menu, @api)
       @dataActionHandler.activate()
       @builder = new Builder(@$template, @config)
