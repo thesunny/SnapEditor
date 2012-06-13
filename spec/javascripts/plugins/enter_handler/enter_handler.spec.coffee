@@ -104,7 +104,7 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
       describe "beginning of block", ->
         beforeEach ->
           if hasW3CRanges
-            range.range.setEnd($div[0].childNodes[0], 0)
+            range.range.setStart($div[0].childNodes[0], 0)
           else
             range.range.findText("ent")
           range.collapse(true).select()

@@ -36,7 +36,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         $(next).insertAfter(block).html(Helpers.zeroWidthNoBreakSpace)
         @api.selectEndOfElement(next)
       else
-        @api.keepRange((startEl, endEl) =>
+        @api.keepRange((startEl, endEl) ->
           $span = $('<span id="ENTER_HANDLER"/>').insertBefore(startEl)
           [$first, $second] = $(block).split($span)
           # Insert a <br/> if $first is empty.
