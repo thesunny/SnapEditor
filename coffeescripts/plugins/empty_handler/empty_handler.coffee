@@ -19,7 +19,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # After the cleaner has finished, insert the default block if the editor is
     # empty.
     onCleanerFinished: =>
-      @insertDefaultBlock() if @isEmpty()
+      if @isEmpty()
+        $(@api.el).empty()
+        @insertDefaultBlock()
 
     # Returns true if the editor has no text. False otherwise.
     isEmpty: ->
