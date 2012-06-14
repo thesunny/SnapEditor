@@ -1,12 +1,12 @@
-define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/edit/edit", "plugins/inline/inline", "plugins/block/block", "plugins/link/link", "plugins/list/list", "plugins/dent/dent", "plugins/table/table"], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Edit, Inline, Block, Link, List, Dent, Table) ->
+define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/edit/edit", "plugins/inline/inline", "plugins/block/block", "plugins/link/link", "plugins/list/list", "plugins/table/table"], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Edit, Inline, Block, Link, List, Table) ->
   return {
     build: ->
       return {
-        plugins: [new Activate(), new Deactivate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Edit(), new Inline(), new Block(), new Link(), new List(), new Dent(), new Table()]
+        plugins: [new Activate(), new Deactivate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Edit(), new Inline(), new Block(), new Link(), new List(), new Table()]
         toolbar: [
           "Inline", "|"
           "Block", "|"
-          "List", "Dent", "|",
+          "List", "|",
           "Link", "Table"
         ]
         whitelist: {
