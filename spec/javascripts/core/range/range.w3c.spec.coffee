@@ -95,7 +95,7 @@ if hasW3CRanges
         describe "#isStartOfElement", ->
           $text = textnode = null
           beforeEach ->
-            $text = $("<div>\n  \t\n \t\n    text</div>").appendTo($editable)
+            $text = $("<div>\n  \t#{Helpers.zeroWidthNoBreakSpace}\n \t\n    text</div>").appendTo($editable)
             textnode = $text[0].childNodes[0]
 
           it "returns true if range is at the start", ->
@@ -128,7 +128,7 @@ if hasW3CRanges
         describe "#isEndOfElement", ->
           $text = textnode = null
           beforeEach ->
-            $text = $("<div>text \t  \n\t      \n\n\t</div>").appendTo($editable)
+            $text = $("<div>text \t  \n\t      #{Helpers.zeroWidthNoBreakSpace}\n\n\t</div>").appendTo($editable)
             textnode = $text[0].childNodes[0]
 
           it "returns true if range is at the end", ->

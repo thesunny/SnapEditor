@@ -127,4 +127,6 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
 
   $.extend(Helpers, Keyboard)
 
+  Helpers.emptyRegExp = new RegExp("^[\n\t#{Helpers.zeroWidthNoBreakSpaceUnicode} ]*$")
+
   return Helpers

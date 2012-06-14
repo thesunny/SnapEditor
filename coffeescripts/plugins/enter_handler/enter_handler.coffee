@@ -1,8 +1,9 @@
-define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
+define ["jquery.custom", "core/helpers", "core/browser", "plugins/enter_handler/enter_handler.empty_list_item_handler"], ($, Helpers, Browser, EmptyListHandler) ->
   class EnterHandler
     register: (@api) ->
       @api.on("activate.editor", @activate)
       @api.on("deactivate.editor", @deactivate)
+      @emptyListHandler = new EmptyListHandler(@api)
 
     activate: =>
       $(@api.el).on("keydown", @onkeydown)
@@ -32,7 +33,10 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       @api.paste("#{next.outerHTML}#{Helpers.zeroWidthNoBreakSpace}")
 
     handleBlock: (block, next) ->
-      if @api.isEndOfElement(block)
+      isEndOfElement = @api.isEndOfElement(block)
+      if $(block).tagName() == "li" and isEndOfElement and @api.isStartOfElement(block)
+        @emptyListHandler.handle(block)
+      else if isEndOfElement
         $(next).insertAfter(block).html(Helpers.zeroWidthNoBreakSpace)
         @api.selectEndOfElement(next)
       else
