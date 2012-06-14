@@ -71,7 +71,7 @@ define ["core/helpers"], (Helpers) ->
         range = @cloneRange()
         range.setEndPoint("StartToStart", elRange)
         startText = range.htmlText
-        startText.match(/^[\n\t ]*$/)
+        startText.match(Helpers.emptyRegExp)
 
       # Returns true if the current range is at the end of the given element.
       # We are at end of the element if there are no width-generating
@@ -92,7 +92,7 @@ define ["core/helpers"], (Helpers) ->
         range = @cloneRange()
         range.setEndPoint("EndToEnd", elRange)
         endText = range.htmlText
-        endText.match(/^[\n\t ]*$/)
+        endText.match(Helpers.emptyRegExp)
 
       # Get immediate parent element.
       getImmediateParentElement: ->
