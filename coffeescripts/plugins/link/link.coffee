@@ -1,64 +1,24 @@
 define ["jquery.custom", "core/browser"], ($, Browser) ->
-  class InlineStyler
+  class Link
     register: (@api) ->
 
-    getDefaultToolbar: ->
-      "Inline"
-
     getUI: (ui) ->
-      bold = ui.button(action: "bold", description: "Bold", shortcut: "Ctrl+B", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
-      italic = ui.button(action: "italic", description: "Italic", shortcut: "Ctrl+I", icon: { url: @api.assets.image("text_italic.png"), width: 24, height: 24, offset: [3, 3] })
       link = ui.button(action: "link", description: "Insert Link", shortcut: "Ctrl+K", icon: { url: @api.assets.image("link.png"), width: 24, height: 24, offset: [3, 3] })
       return {
-        "toolbar:default": "inline"
-        inline: [bold, italic, link]
-        bold: bold
-        italic: italic
+        "toolbar:default": "link"
+        link: [link]
         link: link
       }
 
     getActions: ->
       return {
-        bold: @bold
-        italic: @italic
         link: @link
       }
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.b": "bold"
-        "ctrl.i": "italic"
         "ctrl.k": "link"
       }
-
-    # Bolds the selected text.
-    #
-    # NOTE: IE uses <strong>. Other browsers use <b>.
-    bold: =>
-      @format("b")
-
-    # Italicizes the selected text.
-    #
-    # NOTE: IE uses <em>. Other browsers use <i>.
-    italic: =>
-      @format("i")
-
-    # Formats the selected text given the tag.
-    format: (tag) ->
-      if @api.isValid()
-        # Gecko defaults to styling with CSS. We want to disable that.
-        # NOTE: This disables styling with CSS for the entire document, not just
-        # for this editor.
-        document.execCommand("styleWithCSS", false, false) if Browser.isGecko
-        switch tag
-          when "b" then @exec("bold")
-          when "i" then @exec("italic")
-          else throw "The inline style for tag #{tag} is unsupported"
-        @update()
-
-    # Calls the document's execCommand with the second argument as false.
-    exec: (command, value = null) ->
-      document.execCommand(command, false, value)
 
     # TODO:
     # NOTE:
@@ -106,4 +66,4 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       @api.clean()
       @api.update()
 
-  return InlineStyler
+  return Link

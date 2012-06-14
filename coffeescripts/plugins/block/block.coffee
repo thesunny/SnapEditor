@@ -1,5 +1,5 @@
 define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
-  class BlockStyler
+  class Block
     register: (@api) ->
 
     getUI: (ui) ->
@@ -10,13 +10,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       #alignLeft = ui.button(action: "alignLeft", description: "Align Left", shortcut: "Ctrl+L", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
       #alignCenter = ui.button(action: "alignCenter", description: "Align Center", shortcut: "Ctrl+E", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
       #alignRight = ui.button(action: "alignRight", description: "Align Right", shortcut: "Ctrl+R", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
-      unorderedList = ui.button(action: "unorderedList", description: "Bullet List", shortcut: "Ctrl+Shift+8", icon: { url: @api.assets.image("text_list_bullets.png"), width: 24, height: 24, offset: [3, 3] })
-      orderedList = ui.button(action: "orderedList", description: "Numbered List", shortcut: "Ctrl+Shift+7", icon: { url: @api.assets.image("text_list_numbers.png"), width: 24, height: 24, offset: [3, 3] })
-      indent = ui.button(action: "indent", description: "Indent", icon: { url: @api.assets.image("text_indent.png"), width: 24, height: 24, offset: [3, 3] })
-      outdent = ui.button(action: "outdent", description: "Outdent", icon: { url: @api.assets.image("text_indent_remove.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "block"
-        block: [p, h1, h2, h3, unorderedList, orderedList, indent, outdent]
+        block: [p, h1, h2, h3]
         p: p
         h1: h1
         h2: h2
@@ -24,10 +20,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         #alignLeft: alignLeft
         #alignCenter: alignCenter
         #alignRight: alignRight
-        unorderedList: unorderedList
-        orderedList: orderedList
-        indent: indent
-        outdent: outdent
       }
 
     getActions: ->
@@ -39,10 +31,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         #alignLeft: @alignLeft
         #alignCenter: @alignCenter
         #alignRight: @alignRight
-        unorderedList: @unorderedList
-        orderedList: @orderedList
-        indent: @indent
-        outdent: @outdent
       }
 
     getKeyboardShortcuts: ->
@@ -54,39 +42,19 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         #"ctrl.l": "alignLeft"
         #"ctrl.e": "alignCenter"
         #"ctrl.r": "alignRight"
-        "ctrl.shift.8": "unorderedList"
-        "ctrl.shift.7": "orderedList"
       }
 
     p: =>
-      if @allowFormatBlock()
-        @formatBlock('p')
-        @update()
+      @update() if @api.formatBlock('p')
 
     h1: =>
-      if @allowFormatBlock()
-        @formatBlock('h1')
-        @update()
+      @update() if @api.formatBlock('h1')
 
     h2: =>
-      if @allowFormatBlock()
-        @formatBlock('h2')
-        @update()
+      @update() if @api.formatBlock('h2')
 
     h3: =>
-      if @allowFormatBlock()
-        @formatBlock('h3')
-        @update()
-
-    formatBlock: (tag) =>
-      # TODO-SH:
-      # In Chrome, formatting a block with a p tag removes any span formatting
-      # like bold and italic. May have to create a special version just for
-      # webkit (Chrome and Safari).
-
-      # ie required the angled brackets around the tag or it fails
-      @exec("formatblock", "<#{tag}>")
-      @update()
+      @update() if @api.formatBlock('h3')
 
     #alignLeft: =>
       #@align("left")
@@ -136,29 +104,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           #console.log(e)
       #@update()
 
-    unorderedList: =>
-      if @allowList()
-        @exec("insertunorderedlist")
-        @update()
-
-    orderedList: =>
-      if @allowList()
-        @exec("insertorderedlist")
-        @update()
-
-    indent: =>
-      if @api.isValid()
-        @exec("indent")
-        @update()
-
-    outdent: =>
-      if @api.isValid()
-        @exec("outdent")
-        @update()
-
-    exec: (cmd, value = null) ->
-      document.execCommand(cmd, false, value)
-
     update: ->
       # In Firefox, when a user clicks on the toolbar to style, the
       # editor loses focus. Instead, the focus is set on the toolbar
@@ -173,16 +118,4 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @api.clean()
       @api.update()
 
-    allowFormatBlock: ->
-      return false unless @api.isValid()
-      allowed = !@api.getParentElement("table, li")
-      alert("Sorry. This action cannot be performed inside a table or list.") unless allowed
-      return allowed
-
-    allowList: ->
-      return false unless @api.isValid()
-      allowed = !@api.getParentElement("table")
-      alert("Sorry. This action cannot be performed inside a table.") unless allowed
-      return allowed
-
-  return BlockStyler
+  return Block

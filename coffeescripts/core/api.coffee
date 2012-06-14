@@ -18,11 +18,12 @@
 # Range Functions:
 # range([el]): returns the current selection if el is not given, else returns the range that represents the el
 # select(el): selects the el
-define ["jquery.custom", "core/api/api.assets", "core/helpers", "core/events", "core/range"], ($, Assets, Helpers, Events, Range) ->
+define ["jquery.custom", "core/api/api.assets", "core/api/api.exec_command", "core/helpers", "core/events", "core/range"], ($, Assets, ExecCommand, Helpers, Events, Range) ->
   class API
     constructor: (@editor) ->
       @el = @editor.$el[0]
       @assets = new Assets(@editor.config.path)
+      @execCommand = new ExecCommand(this)
       @whitelist = @editor.whitelist
       Helpers.delegate(this, "editor",
         "getContents", "activate", "deactivate", "update"
@@ -34,6 +35,10 @@ define ["jquery.custom", "core/api/api.assets", "core/helpers", "core/events", "
         "paste", "surroundContents", "delete"
       )
       Helpers.delegate(this, "blankRange()", "selectEndOfElement")
+      Helpers.delegate(this, "execCommand",
+        "formatBlock", "formatInline", "indent", "outdent",
+        "insertUnorderedList", "insertOrderedList"
+      )
       Helpers.delegate(this, "whitelist", "allowed", "replacement", "next")
 
     # Gets the current selection if el is not given.
