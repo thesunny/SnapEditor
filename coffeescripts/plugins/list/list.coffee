@@ -45,7 +45,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @update() if @api.outdent()
 
     update: ->
-      console.log "UPDATE"
       # In Firefox, when a user clicks on the toolbar to style, the
       # editor loses focus. Instead, the focus is set on the toolbar
       # button (even though unselectable="on"). Whenever the user
