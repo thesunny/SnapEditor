@@ -231,6 +231,19 @@ unless hasW3CRanges
             actualRange.pasteHTML("<span></span>")
             expect(clean($start.html())).toEqual("start<span></span>")
 
+          it "selects the end of the inside of the element when there is content with <br>", ->
+            $start.html("start<br/><br/>break")
+
+            range = new Range()
+            range.el = $editable[0]
+            range.range = Range.getBlankRange()
+            range.selectEndOfElement($start[0])
+
+            actualRange = document.selection.createRange()
+            actualRange.pasteHTML("<span></span>")
+            expect(clean($start.html())).toEqual("start<br><br>break<span></span>")
+            p $editable.html()
+
           it "selects the end of the inside of the cell when there is content", ->
             $table = $('<table><tbody><tr><td id="td">before</td><td>after</td></tr></tbody></table>').appendTo($editable)
             $td = $("#td")
@@ -242,6 +255,18 @@ unless hasW3CRanges
             actualRange = document.selection.createRange()
             actualRange.pasteHTML("<span></span>")
             expect(clean($td.html())).toEqual("before<span></span>")
+
+          it "selects the end of the inside of the cell when there is content with <br>", ->
+            $table = $('<table><tbody><tr><td id="td">before<br/><br/>break</td><td>after</td></tr></tbody></table>').appendTo($editable)
+            $td = $("#td")
+
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.selectEndOfElement($td[0])
+
+            actualRange = document.selection.createRange()
+            actualRange.pasteHTML("<span></span>")
+            expect(clean($td.html())).toEqual("before<br><br>break<span></span>")
 
           it "selects the end of the inside of the cell when there is no content", ->
             $table = $('<table><tbody><tr><td id="td"></td><td>after</td></tr></tbody></table>').appendTo($editable)

@@ -142,14 +142,18 @@ define ["core/helpers"], (Helpers) ->
       #   select: <tr><td>|text|</td><td>more</td></tr>
       #   collapse: <tr><td>text|</td><td>more</td></tr>
       # FIX: We noticed that collapsing to the start always left it inside the
-      # element. Unfortunately, we could no just move the start to where the
+      # element. Unfortunately, we could not just move the start to where the
       # end was as that would have the same effect as collapsing to the end.
       # Instead, we count the number of characters and move the start using the
       # count. This guarantees that the the start will remain inside the
       # element and at the end.
       selectEndOfElement: (el) ->
         @range.moveToElementText(el)
-        @range.moveStart("character", @range.text.length)
+        # When getting text, <br> is replaced with /r/n (2 characters).
+        # However, when moving by character the <br> is counted as a single
+        # character. To get around this problem, we strip any \r before
+        # counting.
+        @range.moveStart("character", @range.text.replace(/\r/g, "").length)
         @range.collapse(true)
         @select()
 
