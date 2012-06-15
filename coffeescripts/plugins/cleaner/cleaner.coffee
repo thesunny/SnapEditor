@@ -3,7 +3,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
     register: (@api) ->
       @$el = $(@api.el)
       @normalizer = new Normalizer(@api)
-      @api.on("activate.editor", => @clean(@api.el.firstChild, @api.el.lastChild))
+      @api.on("activate.editor", => @keepRange(=> @clean(@api.el.firstChild, @api.el.lastChild)))
       @api.on("clean", (e, args...) => @clean.apply(this, args))
       @clean(@api.el.firstChild, @api.el.lastChild)
 
@@ -13,7 +13,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
     # startNode and endNode.
     clean: ->
       switch arguments.length
-        when 0 then @api.keepRange(@cleanup)
+        when 0 then @keepRange(@cleanup)
         when 2 then @cleanup.apply(this, arguments)
         else throw "Wrong number of arguments to Cleaner.clean(). Expecting nothing () or (startNode, endNode)."
       @api.trigger("finished.cleaner")
@@ -48,5 +48,17 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
         topNode = sibling
         sibling = topNode[direction]
       return topNode
+
+    # In IE8 only, while the cleaner is running, the range gets destroyed and
+    # it cannot be regained programatically or by the user. To keep this from
+    # happening, we unselect the current range before cleaning to ensure that
+    # it doesn't get destroyed. API.keepRange() will reset the range anyways so
+    # it's okay. This hack has no effect on the other browsers, hence it is
+    # left in for consistency.
+    keepRange: (fn) =>
+      @api.keepRange(=>
+        @api.unselect()
+        fn()
+      )
 
   return Cleaner
