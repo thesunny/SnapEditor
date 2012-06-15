@@ -56,9 +56,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
     # it's okay. This hack has no effect on the other browsers, hence it is
     # left in for consistency.
     keepRange: (fn) =>
-      @api.keepRange(=>
+      @api.keepRange((startNode, endNode) =>
         @api.unselect()
-        fn()
+        fn(startNode, endNode)
       )
 
   return Cleaner

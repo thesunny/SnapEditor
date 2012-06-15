@@ -1,6 +1,8 @@
 define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
   class List
     register: (@api) ->
+      @api.on("activate.editor", @activate)
+      @api.on("deactivate.editor", @deactivate)
 
     getUI: (ui) ->
       unorderedList = ui.button(action: "unorderedList", description: "Bullet List", shortcut: "Ctrl+Shift+8", icon: { url: @api.assets.image("text_list_bullets.png"), width: 24, height: 24, offset: [3, 3] })
@@ -43,6 +45,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @update() if @api.outdent()
 
     update: ->
+      console.log "UPDATE"
       # In Firefox, when a user clicks on the toolbar to style, the
       # editor loses focus. Instead, the focus is set on the toolbar
       # button (even though unselectable="on"). Whenever the user
@@ -55,5 +58,17 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @api.el.focus() if Browser.isMozilla
       @api.clean()
       @api.update()
+
+    activate: =>
+      $(@api.el).on("keydown", @onkeydown)
+
+    deactivate: =>
+      $(@api.el).off("keydown", @onkeydown)
+
+    onkeydown: (e) =>
+      keys = Helpers.keysOf(e)
+      if (keys == "tab" or keys == "shift.tab") and @api.getParentElement("li")
+        e.preventDefault()
+        if keys == "tab" then @indent() else @outdent()
 
   return List
