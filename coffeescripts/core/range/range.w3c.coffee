@@ -249,6 +249,17 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         $end = $("#RANGE_END")
         @range.setStart($start[0], 0)
         @range.setEnd($end[0], 0)
+        # NOTE: When the spans are added, they split up textnodes. This causes
+        # problems in Webkit. For example, when the range is at the beginning
+        # of a list item and the textnodes were not merged back together,
+        # calling indent/outdent through document.execCommand() would exhibit
+        # crazy behaviour. Hence, we call normalize() on the parents to clean
+        # up the textnodes.
+        # NOTE: normalize() is called before removing the spans because in IE9,
+        # if we call normalize() afterwards, it loses the range. However, if we
+        # call normalize() before, it doesn't change IE9 and it fixes Webkit.
+        $start.parent()[0].normalize()
+        $end.parent()[0].normalize()
         $start.remove()
         $end.remove()
         @select()
