@@ -66,8 +66,10 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
     onkeydown: (e) =>
       keys = Helpers.keysOf(e)
-      if (keys == "tab" or keys == "shift.tab") and @api.getParentElement("li")
-        e.preventDefault()
-        if keys == "tab" then @indent() else @outdent()
+      if (keys == "tab" or keys == "shift.tab") 
+        [startItem, endItem] = @api.getParentElements("li")
+        if startItem and endItem
+          e.preventDefault()
+          if keys == "tab" then @indent() else @outdent()
 
   return List
