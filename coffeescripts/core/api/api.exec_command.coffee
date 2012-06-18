@@ -36,7 +36,7 @@ define ["core/browser"], (Browser) ->
         # Gecko defaults to styling with CSS. We want to disable that.
         # NOTE: This disables styling with CSS for the entire document, not just
         # for this editor.
-        @exec("styleWithCSS") if Browser.isGecko
+        @exec("styleWithCSS", false) if Browser.isGecko
         switch tag
           when "b" then @exec("bold")
           when "i" then @exec("italic")

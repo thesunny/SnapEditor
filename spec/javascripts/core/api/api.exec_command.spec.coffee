@@ -28,7 +28,6 @@
 
       it "italicizes given 'i'", ->
         $div = $("<div>some text</div>").appendTo($editable)
-
         new Range($editable[0], $div[0]).select()
         execCommand.formatInline("i")
         if isIE
@@ -39,5 +38,5 @@
       if isGecko
         it "styles without CSS in Gecko", ->
           spyOn(execCommand, "exec")
-          execCommand.format("b")
-          expect(execCommand.exec).toHaveBeenCalledWith("styleWithCSS", false, null)
+          execCommand.formatInline("b")
+          expect(execCommand.exec.argsForCall[0]).toEqual(["styleWithCSS", false])
