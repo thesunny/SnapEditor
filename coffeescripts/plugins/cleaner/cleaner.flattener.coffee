@@ -1,4 +1,4 @@
-define ["jquery.custom"], ($) ->
+define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class Flattener
     doNotReplace: ["ol", "ul", "li", "table", "tbody", "thead", "tfoot", "tr", "th", "td", "caption"]
 
@@ -43,12 +43,13 @@ define ["jquery.custom"], ($) ->
 
     # Flattens all blocks into new list items.
     # This assumes that all the children in the list item are blocks.
-    # If a list is found, it is not flattened into a list item. Instead it is take out of the list item.
+    # If a list is found, it is not flattened into a list item. Instead it is
+    # taken out of the list item.
     # If a table is found, all the cells are flattened into new list items.
     #
     # NOTE: Use #insertBefore() to preserver order.
     flattenListItem: (node) ->
-      $template = $("<li/>")
+      $template = $(Helpers.getDocument(node).createElement("li"))
       while node.childNodes[0]
         child = node.childNodes[0]
         switch $(child).tagName()
@@ -74,7 +75,7 @@ define ["jquery.custom"], ($) ->
     # Removes all blocks from the cell and places <br>s between them.
     # This assusmes that all the children in the cell are blocks.
     flattenTableCell: (node) ->
-      $template = $("<br/>")
+      $template = $(Helpers.getDocument(node).createElement("br"))
       child = node.childNodes[0]
       while child
         nextSibling = child.nextSibling

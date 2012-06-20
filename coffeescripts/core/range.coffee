@@ -44,11 +44,11 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     #
 
     # Get a brand new range.
-    @getBlankRange: ->
+    @getBlankRange: (win = window) ->
       throw "Range.getBlankRange() needs to be overridden with a browser specific implementation"
 
     # Gets the currently selected range.
-    @getRangeFromSelection: ->
+    @getRangeFromSelection: (win = window) ->
       throw "Range.getRangeFromSelection() needs to be overridden with a browser specific implementation"
 
     # Get a range that surrounds the el.
@@ -64,16 +64,25 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     constructor: (@el, arg) ->
       throw "new Range() is missing argument el" unless @el
       throw "new Range() el is not an element" unless Helpers.isElement(@el)
+      @doc = Helpers.getDocument(@el)
+      @win = Helpers.getWindow(@el)
       switch Helpers.typeOf(arg)
-        when "window" then @range = Range.getRangeFromSelection()
+        when "window" then @range = Range.getRangeFromSelection(@win)
         when "element" then @range = Range.getRangeFromElement(arg)
-        else @range = arg or Range.getBlankRange()
+        else @range = arg or Range.getBlankRange(@win)
 
     #
     # HELPER FUNCTIONS
     #
+
+    # Clone the range.
     clone: ->
       new @constructor(@el, @cloneRange())
+
+    # Shortcut to find the selector in the doc.
+    # NOTE: This returns a jQuery object.
+    find: (selector) ->
+      $(@doc).find(selector)
 
     #
     # QUERY RANGE STATE FUNCTIONS
@@ -160,7 +169,7 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
       return null unless el
       try
         while true
-          if el == @el or el == document.body
+          if el == @el or el == @doc.body
             # If we are at the top el, then we are done. No match.
             el = null
             break

@@ -5,6 +5,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
       $editable = addEditableFixture()
       api = $("<div/>")
       api.el = $editable[0]
+      api.createElement = (name) -> document.createElement(name)
       normalizer = new Normalizer(api)
 
     afterEach ->

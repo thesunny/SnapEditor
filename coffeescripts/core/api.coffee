@@ -22,6 +22,8 @@ define ["jquery.custom", "core/api/api.assets", "core/api/api.exec_command", "co
   class API
     constructor: (@editor) ->
       @el = @editor.$el[0]
+      @doc = Helpers.getDocument(@el)
+      @win = Helpers.getWindow(@el)
       @assets = new Assets(@editor.config.path)
       @execCommand = new ExecCommand(this)
       @whitelist = @editor.whitelist
@@ -41,11 +43,23 @@ define ["jquery.custom", "core/api/api.assets", "core/api/api.exec_command", "co
       )
       Helpers.delegate(this, "whitelist", "allowed", "replacement", "next")
 
+    # Shortcut to the doc's createElement().
+    createElement: (name) ->
+      @doc.createElement(name)
+
+    # Shortcut to find elements in the doc.
+    find: (selector) ->
+      matches = $(@doc).find(selector)
+      switch matches.length
+        when 0 then return null
+        when 1 then return matches[0]
+        else return matches.toArray()
+
     # Gets the current selection if el is not given.
     # Otherwise returns the range that represents the el.
     # If a selection does not exist, use #blankRange().
     range: (el) ->
-      new Range(@el, el or window)
+      new Range(@el, el or @win)
 
     # Get a blank range. This is here in case a selection does not exist.
     # If a selection exists, use #range().
@@ -60,7 +74,7 @@ define ["jquery.custom", "core/api/api.assets", "core/api/api.exec_command", "co
 
     # Gets the default block from the whitelist.
     defaultBlock: ->
-      @whitelist.getDefaults()["*"].getElement()
+      @whitelist.getDefaults()["*"].getElement(@doc)
 
     # Calls the cleaner with the given arguments.
     clean: ->

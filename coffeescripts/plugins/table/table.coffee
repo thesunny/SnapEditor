@@ -51,10 +51,10 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           alert("Sorry. This action cannot be performed inside a table or list.")
         else
           # Build the table.
-          $table = $('<table id="INSERTED_TABLE"></table>')
-          $tbody = $("<tbody/>").appendTo($table)
-          $td = $("<td>&nbsp;</td>")
-          $tr = $("<tr/>")
+          $table = $(@api.createElement("table")).attr("id", "INSERTED_TABLE")
+          $tbody = $(@api.createElement("tbody")).appendTo($table)
+          $td = $(@api.createElement("td")).html("&nbsp")
+          $tr = $(@api.createElement("tr"))
           $tr.append($td.clone()) for i in [1..@options.table[1]]
           $tbody.append($tr.clone()) for i in [1..@options.table[0]]
 
@@ -62,7 +62,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           @api.paste($table[0])
 
           # Set the cursor inside the first td of the table. Then remove the id.
-          $table = $("#INSERTED_TABLE")
+          $table = $(@api.find("#INSERTED_TABLE"))
           @api.selectEndOfElement($table.find("td")[0])
           $table.removeAttr("id")
 
@@ -82,7 +82,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         # this doesn't work in IE because selecting the end of the inserted
         # paragraph places the cursor at the start of the next element.
         if Browser.hasW3CRanges
-          $p = $("<p>#{Helpers.zeroWidthNoBreakSpace}</p>")
+          $p = $(@api.createElement("p")).html(Helpers.zeroWidthNoBreakSpace)
           $table.replaceWith($p)
           @api.selectEndOfElement($p[0])
         else
@@ -98,8 +98,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         $cell = $(cell)
         $tr = $cell.parent("tr")
         $tds = $tr.children()
-        $newTr = $("<tr/>")
-        $newTr.append($("<td>#{Helpers.zeroWidthNoBreakSpace}</td>")) for i in [1..$tds.length]
+        $newTr = $(@api.createElement("tr"))
+        $newTr.append($(@api.createElement("td")).html(Helpers.zeroWidthNoBreakSpace)) for i in [1..$tds.length]
         $tr[if before then "before" else "after"]($newTr)
         # Put the cursor in the first td of the newly added tr.
         @api.selectEndOfElement($newTr.children("td")[0])

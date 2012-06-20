@@ -4,6 +4,9 @@ if hasW3CRanges
       Range = $editable = $start = $end = null
       beforeEach ->
         class Range
+          doc: document
+          win: window
+          find: (selector) -> $(@doc).find(selector)
           getParentElements: null
         Helpers.extend(Range, Module.static)
         Helpers.include(Range, Module.instance)

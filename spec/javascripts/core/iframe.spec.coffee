@@ -1,0 +1,43 @@
+require ["jquery.custom", "core/iframe"], ($, IFrame) ->
+  describe "IFrame", ->
+    $editable = null
+    beforeEach ->
+      $editable = addEditableFixture()
+
+    afterEach ->
+      $editable.remove()
+
+    describe "#constructor", ->
+      it "creates an iframe and returns it", ->
+        iframe = new IFrame()
+        expect($(iframe).tagName()).toEqual("iframe")
+
+      it "sets the class", ->
+        iframe = new IFrame(
+          class: "frame"
+          load: -> expect($(this).hasClass("frame")).toBeTruthy()
+        )
+
+      it "sets the content", ->
+        iframe = new IFrame(
+          contents: "<b>hello</b>"
+          load: -> expect(@el.innerHTML).toEqual("<b>hello</b>")
+        )
+        $(iframe).appendTo($editable)
+
+      it "sets the content class", ->
+        iframe = new IFrame(
+          contentClass: "editable"
+          load: -> expect($(@el).hasClass("editable")).toBeTruthy()
+        )
+        $(iframe).appendTo($editable)
+
+      it "triggers events properly", ->
+        iframe = new IFrame(
+          contents: "<b>hello</b>"
+          load: ->
+            clicked = false
+            $(@el).find("b").on("click", -> clicked = true)
+            $(@doc).find("b").trigger("click")
+            expect(clicked).toBeTruthy()
+        )

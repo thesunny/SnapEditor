@@ -53,6 +53,15 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         node = node.nextSibling
       return nodes
 
+    # Returns the element's document.
+    getDocument: (el) ->
+      el.ownerDocument
+
+    # Returns the element's window.
+    getWindow: (el) ->
+      doc = @getDocument(el)
+      doc.defaultView or doc.parentWindow
+
     # Inserts the given styles into a <style> tag in the <head>.
     insertStyles: (styles) ->
       return if $.trim(styles).length == 0

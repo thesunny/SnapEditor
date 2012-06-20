@@ -16,20 +16,21 @@ define ["core/helpers"], (Helpers) ->
   return {
     static:
       # Get a brand new range.
-      getBlankRange: ->
-        document.body.createTextRange()
+      getBlankRange: (win = window) ->
+        win.document.body.createTextRange()
 
       # Gets the currently selected range.
-      getRangeFromSelection: ->
-        document.selection.createRange()
+      getRangeFromSelection: (win = window) ->
+        win.document.selection.createRange()
 
       # Get a range that surrounds the content of el.
       getRangeFromElement: (el) ->
+        doc = Helpers.getDocument(el)
         if el.nodeName == 'IMG'
-          range = document.body.createControlRange()
+          range = doc.body.createControlRange()
           range.add(el)
         else
-          range = document.body.createTextRange()
+          range = doc.body.createTextRange()
           range.moveToElementText(el)
         range
 
@@ -127,7 +128,7 @@ define ["core/helpers"], (Helpers) ->
 
       # Unselect the range.
       unselect: () ->
-        document.selection.empty()
+        @doc.selection.empty()
 
       # Move selection to the inside of the end of the element.
       #
@@ -172,10 +173,10 @@ define ["core/helpers"], (Helpers) ->
         range.setEndPoint("StartToEnd", @range)
         range.collapse(false)
         range.pasteHTML('<span id="RANGE_END"></span>')
-        fn($("#RANGE_START")[0], $("#RANGE_END")[0])
+        fn(@find("#RANGE_START")[0], @find("#RANGE_END")[0])
         # Refind the start and end in case the function had modified them.
-        $start = $("#RANGE_START")
-        $end = $("#RANGE_END")
+        $start = @find("#RANGE_START")
+        $end = @find("#RANGE_END")
         range.moveToElementText($start[0])
         @range.setEndPoint("StartToStart", range)
         range.moveToElementText($end[0])
@@ -201,7 +202,7 @@ define ["core/helpers"], (Helpers) ->
       # cases, we may need access to that node for W3C only
       # so I have not removed reference-ability in W3C. 
       pasteNode: (node) ->
-        div = document.createElement("div")
+        div = @doc.createElement("div")
         div.appendChild(node)
         @pasteHTML(div.innerHTML)
 

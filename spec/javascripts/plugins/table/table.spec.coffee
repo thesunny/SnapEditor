@@ -16,6 +16,8 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       $after = $("<div>after</div>").appendTo($editable)
       table = new Table()
       table.api =
+        createElement: (name) -> document.createElement(name)
+        find: (selector) -> $(selector)
         range: (el) -> new Range($editable[0], el or window)
         blankRange: -> new Range($editable[0])
         update: ->

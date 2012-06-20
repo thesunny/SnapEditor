@@ -5,6 +5,8 @@
       $editable = addEditableFixture()
       execCommand = new ExecCommand()
       execCommand.api =
+        doc: document
+        win: window
         range: -> new Range($editable[0], window)
         isValid: -> true
       Helpers.delegate(execCommand.api, "range()", "getParentElement")

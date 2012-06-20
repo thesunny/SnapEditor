@@ -4,7 +4,7 @@ define ["core/browser"], (Browser) ->
 
     # Calls document.execCommand().
     exec: (cmd, value = null) ->
-      document.execCommand(cmd, false, value)
+      @api.doc.execCommand(cmd, false, value)
 
     # This differs from #exec() in that it requires a range to perform the
     # execCommand. This will check whether the range is valid before performing

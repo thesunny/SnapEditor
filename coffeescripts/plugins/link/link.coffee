@@ -44,12 +44,12 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
             $(parentLink).attr("href", href)
           # if range is collapsed, then insert a new link
           else if @api.isCollapsed()
-            link = $("<a href=\"#{href}\">#{href}</a>")
-            @api.paste(link[0])
+            $link = $(@api.createElement("a")).attr("href", href).html(href)
+            @api.paste($link[0])
           # if range is not collapsed, then surround contents with the new link
           else
-            link = $("<a href=\"#{href}\"></a>")
-            @api.surroundContents(link[0])
+            $link = $(@api.createElement("a")).attr("href", href)
+            @api.surroundContents($link[0])
           @update()
 
     update: ->
