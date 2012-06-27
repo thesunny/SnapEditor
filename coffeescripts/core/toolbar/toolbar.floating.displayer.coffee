@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles"], ($, Styles) ->
+define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core/browser"], ($, Styles, Browser) ->
   class Displayer
     constructor: (toolbar, el, @api) ->
       @$toolbar = $(toolbar)
@@ -75,12 +75,22 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles"], ($, 
     # Slide the toolbar to the top of the el 
     moveToTop: ->
       @positionedAtTop = true
-      @$toolbar.animate(@styles.top(), duration: 'fast')
+      @animate(@styles.top())
 
     # Slide the toolbar to the bottom of the el 
     moveToBottom: ->
       @positionedAtTop = false
-      @$toolbar.animate(@styles.bottom(), duration: 'fast')
+      @animate(@styles.bottom())
+
+    animate: (styles) ->
+      # jQuery does not handle "position" in animate() very well in IE7/8. It
+      # will sometimes throw an error. Hence, we rip out position and set it
+      # after the animation is done.
+      if Browser.isIE7 or Browser.isIE8
+        position = styles.position
+        delete styles.position
+        completeFn = -> $(this).css("position", position)
+      @$toolbar.animate(styles, duration: 'fast', complete: completeFn)
 
     # In certain scenarios, it is possible for the toolbar to overlap the el at the
     # top. 

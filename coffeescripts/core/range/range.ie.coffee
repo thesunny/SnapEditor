@@ -38,7 +38,11 @@ define ["core/helpers"], (Helpers) ->
       # HELPER FUNCTIONS
       #
       cloneRange: ->
-        @range.duplicate()
+        if @range.parentElement
+          @range.duplicate()
+        else
+          # TODO-iframe
+          @constructor.getRangeFromElement(@range.item(0))
 
       #
       # QUERY RANGE STATE FUNCTIONS
@@ -50,6 +54,7 @@ define ["core/helpers"], (Helpers) ->
 
       # Is an image selected.
       isImageSelected: ->
+        # ControlRanges do not have a parentELement attribute.
         typeof @range.parentElement == "undefined"
 
       # Returns true if the current range is at the start of the given element.
@@ -120,7 +125,7 @@ define ["core/helpers"], (Helpers) ->
 
       # Select the given range or its own range if none given.
       select: (range) ->
-        range or=@range
+        range or= @range
         range.select()
         @range = range
         this
@@ -164,24 +169,35 @@ define ["core/helpers"], (Helpers) ->
       # cannot be removed. If they are, the reselection will fail. Be careful
       # what the given function does.
       keepRange: (fn) ->
-        # Place spans at the start and end of the range.
-        range = @constructor.getBlankRange()
-        range.setEndPoint("StartToStart", @range)
-        range.collapse(true)
-        range.pasteHTML('<span id="RANGE_START"></span>')
-        range.setEndPoint("StartToEnd", @range)
-        range.collapse(false)
-        range.pasteHTML('<span id="RANGE_END"></span>')
-        fn($("#RANGE_START")[0], $("#RANGE_END")[0])
-        # Refind the start and end in case the function had modified them.
-        $start = $("#RANGE_START")
-        $end = $("#RANGE_END")
-        range.moveToElementText($start[0])
-        @range.setEndPoint("StartToStart", range)
-        range.moveToElementText($end[0])
-        @range.setEndPoint("EndToStart", range)
-        $start.remove()
-        $end.remove()
+        isImage = @isImageSelected()
+        if isImage
+          image = @range.item(0)
+          startElement = image
+          endElement = image
+        else
+          # Place spans at the start and end of the range.
+          range = @constructor.getBlankRange()
+          range.setEndPoint("StartToStart", @range)
+          range.collapse(true)
+          range.pasteHTML('<span id="RANGE_START"></span>')
+          range.setEndPoint("StartToEnd", @range)
+          range.collapse(false)
+          range.pasteHTML('<span id="RANGE_END"></span>')
+          startElement = $("#RANGE_START")[0]
+          endElement = $("#RANGE_END")[0]
+        fn(startElement, endElement)
+        if isImage
+          @range = @constructor.getRangeFromElement(image)
+        else
+          # Refind the start and end in case the function had modified them.
+          $start = $("#RANGE_START")
+          $end = $("#RANGE_END")
+          range.moveToElementText($start[0])
+          @range.setEndPoint("StartToStart", range)
+          range.moveToElementText($end[0])
+          @range.setEndPoint("EndToStart", range)
+          $start.remove()
+          $end.remove()
         @select()
 
       #
@@ -266,6 +282,11 @@ define ["core/helpers"], (Helpers) ->
         @select()
         [startElement, endElement] = @getParentElements((el) -> Helpers.isBlock(el))
         deleted = $(startElement).closest("td, th", @el)[0] == $(endElement).closest("td, th", @el)[0]
-        @range.execCommand("delete") if deleted
+        if deleted
+          @range.execCommand("delete")
+          # IE7/8 loses the range after deletion. We have to manually grab it
+          # again from the selection.
+          # TODO-iframe
+          @range = @constructor.getRangeFromSelection()
         return deleted
   }

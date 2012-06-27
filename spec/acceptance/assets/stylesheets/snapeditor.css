@@ -53,7 +53,10 @@
 .snapeditor_toolbar_floating {
   position: relative;
   z-index: 200;
-  width: 375px;
+  /* TODO: Supposed to be 405px but IE renders it differently. Using 415px for
+   * now until the displayer sets the width itself. */
+  /*width: 405px;*/
+  width: 415px;
 }
 
 .snapeditor_toolbar_floating .snapeditor_toolbar_frame_outer {
@@ -86,4 +89,15 @@
 .snapeditor_contextmenu_separator {
   height: 0px;
   border-bottom: 1px solid #808080;
+}
+
+/* DIALOG */
+.snapeditor_dialog {
+  z-index: 200;
+  border: 1px solid #b8b8b8;
+  background-color: #FBFBFB;
+}
+
+.snapeditor_dialog_inner {
+  padding: 20px;
 }

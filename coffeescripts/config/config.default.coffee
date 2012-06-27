@@ -1,13 +1,13 @@
-define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/edit/edit", "plugins/inline/inline", "plugins/block/block", "plugins/link/link", "plugins/list/list", "plugins/table/table"], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Edit, Inline, Block, Link, List, Table) ->
+define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/edit/edit", "plugins/inline/inline", "plugins/block/block", "plugins/link/link", "plugins/list/list", "plugins/table/table", "plugins/image/image", "plugins/image/image.single_uploader"], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Edit, Inline, Block, Link, List, Table, Image, SingleImageUploader) ->
   return {
     build: ->
       return {
-        plugins: [new Activate(), new Deactivate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Edit(), new Inline(), new Block(), new Link(), new List(), new Table()]
+        plugins: [new Activate(), new Deactivate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Edit(), new Inline(), new Block(), new Link(), new List(), new Table(), new Image(), new SingleImageUploader()]
         toolbar: [
           "Inline", "|"
           "Block", "|"
           "List", "|",
-          "Link", "Table"
+          "Link", "Table", "Image"
         ]
         whitelist: {
           # Blocks
@@ -35,6 +35,8 @@ define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/e
           "Links": "a[href]"
           "Range Start": "span#RANGE_START"
           "Range End": "span#RANGE_END"
+          # Images
+          "Image": "img[src, width, height]"
           # Defaults
           "*": "Paragraph"
           "strong": "Bold"
