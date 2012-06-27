@@ -6,7 +6,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # Options:
     # action: the action to trigger
     # description: description for the button
-    # shortcut: keyboard shortcut for the button
+    # shortcut: keyboard shortcut for the button (optional)
     # icon: the icon of the button as an object (optional)
     #   {
     #     url: <url>,     // mandatory
