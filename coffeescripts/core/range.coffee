@@ -180,12 +180,16 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # Finds the start and end parent elements from the range that matches the
     # argument.
     getParentElements: (match) ->
-      startRange = @clone()
-      startRange.collapse(true)
-      startParentElement = startRange.getParentElement(match)
-      endRange = @clone()
-      endRange.collapse(false)
-      endParentElement = endRange.getParentElement(match)
+      if @isImageSelected()
+        # If an image is selected, the start and end parents are the same.
+        startParentElement = endParentElement = @getParentElement(match)
+      else
+        startRange = @clone()
+        startRange.collapse(true)
+        startParentElement = startRange.getParentElement(match)
+        endRange = @clone()
+        endRange.collapse(false)
+        endParentElement = endRange.getParentElement(match)
       return [startParentElement, endParentElement]
 
     #
@@ -230,6 +234,10 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     #
     # NOTE: The browser may normalize the content.
     paste: (arg) ->
+      # If an image is selected, all browsers paste beside the image instead of
+      # replacing the image. Hence, we manually delete the image first and then
+      # paste.
+      @delete() if @isImageSelected()
       switch Helpers.typeOf(arg)
         when "string" then @pasteHTML(arg)
         when "element" then @pasteNode(arg)

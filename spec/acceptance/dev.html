@@ -123,8 +123,22 @@
     <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
     <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-      var form = new SnapEditor.Form("formable", { path: "/spec/acceptance/assets" });
-      var inPlace = new SnapEditor.InPlace("in_placeable", { path: "/spec/acceptance/assets" });
+      var form = new SnapEditor.Form("formable", {
+        path: "/spec/acceptance/assets",
+        image: {
+          url: "/snap_image_api",
+          resource_id: "abc123",
+          client_security_token: "ocijdlwk"
+        }
+      });
+      var inPlace = new SnapEditor.InPlace("in_placeable", {
+        path: "/spec/acceptance/assets",
+        image: {
+          url: "/snap_image_api",
+          resource_id: "abc123",
+          client_security_token: "ocijdlwk"
+        }
+      });
     </script>
   </body>
 </html>

@@ -22,6 +22,7 @@ define ["jquery.custom", "core/api/api.assets", "core/api/api.exec_command", "co
   class API
     constructor: (@editor) ->
       @el = @editor.$el[0]
+      @config = @editor.config
       @assets = new Assets(@editor.config.path)
       @execCommand = new ExecCommand(this)
       @whitelist = @editor.whitelist

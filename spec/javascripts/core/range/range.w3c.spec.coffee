@@ -168,6 +168,15 @@ if hasW3CRanges
             selection.addRange(range.range)
             expect(range.getImmediateParentElement()).toBe($start[0])
 
+          it "returns an image when an image is selected", ->
+            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $img = $editable.find("img")
+            range = new Range()
+            range.range = Range.getRangeFromElement($img[0])
+            selection.removeAllRanges()
+            selection.addRange(range.range)
+            expect(range.getImmediateParentElement()).toBe($img[0])
+
         # TODO: Once it is confirmed that #getStartText is not used, remove this
         # test.
         #describe "#getStartText", ->
