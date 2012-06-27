@@ -16,9 +16,11 @@ require ["jquery.custom", "core/data_action_handler", "core/helpers"], ($, Handl
           <input id="text_event" type="text" data-action="text" />
         </div>
       ').prependTo("body")
-      handler = new Handler($el, $("<div/>"))
+      api = $("<div/>")
+      api.el = $el[0]
+      spyOn(api, "trigger")
+      handler = new Handler($el, api)
       handler.activate()
-      spyOn(handler.api, "trigger")
 
     afterEach ->
       $el.remove()
@@ -43,12 +45,7 @@ require ["jquery.custom", "core/data_action_handler", "core/helpers"], ($, Handl
         $("#button_event").trigger("keypress")
         expect(handler.api.trigger).toHaveBeenCalled()
 
-    describe "#click", ->
-      it "sets isClick to false", ->
-        expect(handler.isClick).toBeUndefined()
-        $("#button_event").trigger("mouseup")
-        expect(handler.isClick).toBeFalsy()
-
+    describe "#mouseup", ->
       it "does not trigger the event if the click did not start on the button", ->
         $("#button_event").trigger("mouseup")
         expect(handler.api.trigger).not.toHaveBeenCalled()
@@ -60,7 +57,7 @@ require ["jquery.custom", "core/data_action_handler", "core/helpers"], ($, Handl
 
       it "triggers the event if the button has a data-action attribute", ->
         handler.isClick = true
-        handler.click(
+        handler.mouseup(
           target: $("#button_event")[0]
           which: Helpers.buttons.left
           preventDefault: ->
