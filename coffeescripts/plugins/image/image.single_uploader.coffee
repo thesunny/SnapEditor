@@ -11,7 +11,6 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       throw "Missing 'image' config" unless @options
       throw "Missing 'url' in image config" unless @options.url
       throw "Missing 'resource_id' in image config" unless @options.resource_id
-      throw "Missing 'client_security_token' in image config" unless @options.client_security_token
 
     getUI: (ui) ->
       image = ui.button(action: "insert_image", description: "Insert Image", shortcut: "Ctrl+G", icon: { url: @api.assets.image("image.png"), width: 24, height: 24, offset: [3, 3] })
@@ -32,9 +31,10 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       }
 
     generateDialog: (ui) ->
-      # TODO: Add resource identifier.
       json = JSON.stringify(
-        # TODO: width and height dependent on size of el
+        # TODO: Currently, grabbing the el's width is off for the form editor
+        # because the el has not been properly formized yet. This is not the
+        # correct place for the dialog anyways so ignore for now.
         action: "generate_image"
         resource_identifier: @options.resource_id
         max_width: $(@api.el).getSize().x
@@ -104,8 +104,8 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
         @showError("Only .png, .gif, .jpg, or .jpeg are allowed")
       else
         @hideError()
-        @$fileField.attr("disabled", true)
         @$form.submit()
+        @$fileField.attr("disabled", true)
 
     handleResponse: (response) =>
       @$fileField.attr("disabled", false)

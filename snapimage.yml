@@ -1,0 +1,7 @@
+primary_storage_server: "local"
+storage_servers:
+  -
+    name: "local"
+    type: "LOCAL"
+    local_root: "/home/wesley/Dropbox/projects/snapeditor/storage"
+    public_url: "//localhost:9292/storage"

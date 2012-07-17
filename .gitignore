@@ -12,3 +12,4 @@ tags
 /vendor/
 /bundle/
 /build/snapeditor.js
+/storage/
