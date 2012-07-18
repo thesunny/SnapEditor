@@ -1,6 +1,6 @@
 GIT
   remote: ../snapimage
-  revision: 839ccd8a23baf5807ad35ce60c31e063740992f6
+  revision: acf49315fad0fac9e0fbad21ed47ca3cce30b1b2
   specs:
     snapimage (0.0.1)
       rack

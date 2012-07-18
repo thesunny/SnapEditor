@@ -75,6 +75,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       @setupDialog()
       # Reset the form.
       @$form[0].reset()
+      @$fileField.attr("disabled", false)
       @dialog.show()
       # In Firefox, if we don't set the focus on the dialog first, the focus on
       # the file input will not work. This does not effect other browsers so it
