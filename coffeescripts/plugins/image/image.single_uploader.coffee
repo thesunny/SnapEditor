@@ -109,8 +109,8 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
         @$fileField.attr("disabled", true)
 
     handleResponse: (response) =>
-      @$fileField.attr("disabled", false)
       if response
+        @$fileField.attr("disabled", false)
         if response.status_code == 200
           @hide()
           @insertImage(response.image_url, response.image_width, response.image_height)
