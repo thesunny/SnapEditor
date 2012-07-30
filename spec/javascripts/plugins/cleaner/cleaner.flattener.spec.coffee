@@ -8,16 +8,6 @@ require ["jquery.custom", "plugins/cleaner/cleaner.flattener"], ($, Flattener) -
     afterEach ->
       $editable.remove()
 
-    describe "#replaceWithChildren", ->
-      it "replaces the parent with the children", ->
-        $div = $("<div>this is <em>some</em> text <p>to replace</p> the parent</div>").appendTo($editable)
-        flattener.replaceWithChildren($div[0])
-        if hasW3CRanges
-          expect(clean($editable.html())).toEqual("this is <em>some</em> text <p>to replace</p> the parent")
-        else
-          # In IE7/8, the space disappears after a block. This should be okay.
-          expect(clean($editable.html())).toEqual("this is <em>some</em> text <p>to replace</p>the parent")
-
     describe "#flattenBlock", ->
       it "replaces the block with its children when the block is not special", ->
         $editable.html("<div>this is some text</div>")
