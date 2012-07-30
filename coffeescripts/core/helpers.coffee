@@ -53,6 +53,12 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         node = node.nextSibling
       return nodes
 
+    # Replace the given node with its children.
+    replaceWithChildren: (node) ->
+      parent = node.parentNode
+      parent.insertBefore(node.childNodes[0], node) while node.childNodes[0]
+      parent.removeChild(node)
+
     # Inserts the given styles into a <style> tag in the <head>.
     insertStyles: (styles) ->
       return if $.trim(styles).length == 0
