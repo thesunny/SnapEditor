@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
+define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirrorInput"], ($, Browser, Helpers, MirrorInput) ->
   class Link
     register: (@api) ->
 
@@ -25,7 +25,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         <div class="error" style="display: none;"></div>
         <form class="link_form">
           <div>URL: <input class="link_href" type="text" /></div>
-          <div class="link_normalized_href"></div>
+          <div class="link_text_container">Link Text: <input class="link_text" type="text" /></div>
           <div>Open in a new window? <input class="link_new_window" type="checkbox" /></div>
           <div>
             <input class="link_submit" type="submit" value="Link" />
@@ -42,11 +42,15 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         @$error = @$dialog.find(".error")
         @$form = @$dialog.find(".link_form").on("submit", @submit)
         @$href = @$dialog.find(".link_href")
+        @$text = @$dialog.find(".link_text")
+        @$textContainer = @$dialog.find(".link_text_container")
         @$newWindow = @$dialog.find(".link_new_window")
         @$remove = @$dialog.find(".link_remove").on("click", @remove)
         @$cancel = @$dialog.find(".link_cancel").on("click", @cancel)
+        @mirrorInput = new MirrorInput(@$href, @$text)
 
     handleDialogHide: =>
+      @mirrorInput.deactivate()
       # TODO: May want to move this to the dialog instead.
       # In Firefox, we have to manually move the focus back to the editor. All
       # other browsers do this automatically.
@@ -60,16 +64,34 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     prepareForm: ->
       @resetForm()
       if @$link.length > 0
-        @$href.attr("value", @$link.attr("href"))
-        @$newWindow.prop("checked", !!@$link.attr("target"))
-        @$remove.show()
+        @prepareUpdateForm()
       else
-        @$remove.hide()
+        @prepareAddForm()
+
+    prepareAddForm: ->
+      if @imageSelected
+        @$textContainer.hide()
+      else
+        @$textContainer.show()
+      @$remove.hide()
+
+    prepareUpdateForm: ->
+      @$href.attr("value", @$link.attr("href"))
+      if @imageSelected
+        @$text.hide()
+      else
+        @$text.show().attr("value", @$link.text())
+      @$newWindow.prop("checked", !!@$link.attr("target"))
+      @$remove.show()
 
     resetForm: ->
       @$href.attr("value", "")
+      @$text.show().attr("value", "")
       @$newWindow.prop("checked", false)
       @hideError()
+
+    isImageSelected: ->
+      @range.isImageSelected() || @$link.length > 0 && @$link.text().length == 0 && @$link.find("img").length > 0
 
     show: =>
       if @api.isValid()
@@ -77,8 +99,10 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         @range = @api.range()
         [startParent, endParent] = @range.getParentElements("a")
         @$link = $(startParent || endParent)
+        @imageSelected = @isImageSelected()
         @setupDialog()
         @prepareForm()
+        @mirrorInput.activate()
         @dialog.show()
         # TODO: Consider sticking this into the dialog when showing.
         # In Firefox, if we don't set the focus on the dialog first, the focus on
@@ -99,9 +123,15 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     submit: (e) =>
       e.preventDefault()
       href = $.trim(@$href.attr("value"))
+      text = $.trim(@$text.attr("value")) unless @imageSelected
       errors = []
-      if href.length == 0
-        @showError("Please provide a URL")
+      errors.push("URL cannot be blank") unless href
+      errors.push("Link Text cannot be blank") if typeof text != "undefined" && !text
+      if errors.length > 0
+        message = "<div>Please fix the following errors:</div><ul>"
+        message += "<li>#{error}</li>" for error in errors
+        message += "</u>"
+        @showError(message)
       else
         @hideError()
         @hide()
@@ -146,10 +176,26 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     link: =>
       # TODO-iframe
       href = @normalize($.trim(@$href.attr("value")))
+      text = $.trim(@$text.attr("value")) unless @imageSelected
       newWindow = @$newWindow.prop("checked")
-      $link = $("<a href=\"#{href}\"></a>")
-      $link.attr("target", "_blank") if newWindow
-      @api.insertLink($link[0])
+      if @$link.length > 0
+        @$link.attr("href", href)
+        @$link.text(text) if text
+        if newWindow
+          @$link.attr("target", "_blank")
+        else
+          @$link.removeAttr("target")
+      else
+        $link = $("<a href=\"#{href}\"></a>")
+        $link.text(text) if text
+        $link.attr("target", "_blank") if newWindow
+        if @api.isCollapsed()
+          @range.paste($link[0])
+        else
+          if @imageSelected
+            @range.surroundContents($link[0])
+          else
+            @range.paste($link[0])
       @update()
 
     update: ->
