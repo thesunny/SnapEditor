@@ -31,14 +31,14 @@ define ["jquery.custom", "core/api/api.assets", "core/api/api.exec_command", "co
       )
       Helpers.delegate(this, "range()",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
-        "getCoordinates", "getParentElement", "getParentElements",
+        "getCoordinates", "getParentElement", "getParentElements", "getText",
         "collapse", "unselect", "keepRange",
         "paste", "surroundContents", "delete"
       )
-      Helpers.delegate(this, "blankRange()", "selectEndOfElement")
+      Helpers.delegate(this, "blankRange()", "selectNodeContents", "selectEndOfElement")
       Helpers.delegate(this, "execCommand",
         "formatBlock", "formatInline", "indent", "outdent",
-        "insertUnorderedList", "insertOrderedList"
+        "insertUnorderedList", "insertOrderedList", "insertLink"
       )
       Helpers.delegate(this, "whitelist", "allowed", "replacement", "next")
 

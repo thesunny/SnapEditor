@@ -119,7 +119,7 @@ define ["../lib/jquery", "../lib/mustache"], ->
 
   # Replaces the current element with the given el, leaving the children intact.
   $.fn.replaceElementWith = (el) ->
-    $el = $(el).append(this[0].childNodes)
+    $el = $(el).empty().append(this[0].childNodes)
     this.replaceWith($el)
 
   # Given the contexts, find all the matching contexts.

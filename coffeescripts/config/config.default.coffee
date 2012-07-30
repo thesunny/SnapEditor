@@ -32,7 +32,7 @@ define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/e
           # Inlines
           "Bold": "b"
           "Italic": "i"
-          "Links": "a[href]"
+          "Links": "a[href, target]"
           "Range Start": "span#RANGE_START"
           "Range End": "span#RANGE_END"
           # Images

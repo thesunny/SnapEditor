@@ -74,6 +74,23 @@ require ["core/helpers"], (Helpers) ->
         expect(nodes[1]).toBe($div[0].childNodes[3])
         expect(nodes[2]).toBe($div[0].childNodes[4])
 
+    describe "#replaceWithChildren", ->
+      $editable = null
+      beforeEach ->
+        $editable = addEditableFixture()
+
+      afterEach ->
+        $editable.remove()
+
+      it "replaces the parent with the children", ->
+        $div = $("<div>this is <em>some</em> text <p>to replace</p> the parent</div>").appendTo($editable)
+        Helpers.replaceWithChildren($div[0])
+        if hasW3CRanges
+          expect(clean($editable.html())).toEqual("this is <em>some</em> text <p>to replace</p> the parent")
+        else
+          # In IE7/8, the space disappears after a block. This should be okay.
+          expect(clean($editable.html())).toEqual("this is <em>some</em> text <p>to replace</p>the parent")
+
     describe "#insertStyle", ->
       it "inserts the styles into the head", ->
         Helpers.insertStyles("test {position: absolute}")

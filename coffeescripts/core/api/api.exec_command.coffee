@@ -1,4 +1,4 @@
-define ["core/browser"], (Browser) ->
+define ["jquery.custom", "core/browser"], ($, Browser) ->
   class ExecCommand
     constructor: (@api) ->
 
@@ -66,6 +66,54 @@ define ["core/browser"], (Browser) ->
       allowed = @allowList()
       @exec("insertorderedlist") if allowed
       return allowed
+
+    # Insert the given link element.
+    # It is possible that several links are created. Therefore, this returns an
+    # array of inserted links. If insertion fails, an empty array is returned.
+    insertLink: (link) ->
+      insertedLinks = []
+      $link = $(link)
+
+      # If the selection starts or ends inside a link, we change the
+      # selection to select the link so that "createLink" modifies the link.
+      [startParent, endParent] = @api.getParentElements("a")
+      @api.selectNodeContents(startParent || endParent) if startParent || endParent
+
+      # When the range is collapsed, the "createLink" execCommand does nothing.
+      # A selection must be made in order for "createLink" to insert a link.
+      # The only browser that inserts a link when the range is collapsed is
+      # Webkit. However, we don't make a special case for Webkit because the
+      # collpased code still works.
+      if @api.isCollapsed()
+        # Save the id in case the link has one.
+        id = $link.attr("id")
+        # Use our own id for inserting and finding.
+        $link.attr("id", "SNAPEDITOR_INSERTED_LINK")
+        $link.html($link.attr("href"))
+        @api.paste($link[0])
+        $insertedLink = $("#SNAPEDITOR_INSERTED_LINK")
+        # Restore or remove the id.
+        if id
+          $insertedLink.attr("id", id)
+        else
+          $insertedLink.removeAttr("id")
+        insertedLinks.push($insertedLink[0])
+      else
+        # "createLink" does not allow you to add any attributes to the link.
+        # This includes ids and classes. In order to find the inserted link, we
+        # use the href. We insert a randomly generated href, look for it, then
+        # modify it using the given link.
+        randomHref = "http://snapeditor.com/#{Math.floor(Math.random() * 99999)}"
+        if @rangeExec("createLink", randomHref)
+          # It is possible for "createLink" to insert multiple links.
+          $a = $(@api.el).find("a[href=\"#{randomHref}\"]")
+          $a.each((index) ->
+            insertedLinks.push($link.clone()[0])
+            $(this).replaceElementWith(insertedLinks[index])
+          )
+      # If links were inserted, select the contents of the first one.
+      @api.selectEndOfElement(insertedLinks[insertedLinks.length - 1]) if insertedLinks.length > 0
+      return insertedLinks
 
     # Returns true if block formatting is allowed. False otherwise.
     allowFormatBlock: ->
