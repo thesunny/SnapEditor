@@ -92,10 +92,20 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
 
       # Get immediate parent element.
       getImmediateParentElement: ->
-        node = @range.commonAncestorContainer
-        while !Helpers.isElement(node)
-          node = node.parentNode
+        if @isImageSelected()
+          # When an image is selected, the commonAncestorContainer is the
+          # container of the image, not the image itself. Hence, we need to
+          # find the image manually.
+          node = @range.startContainer.childNodes[@range.startOffset]
+        else
+          node = @range.commonAncestorContainer
+          while !Helpers.isElement(node)
+            node = node.parentNode
         node
+
+      # Get the text in the range.
+      getText: ->
+        @range.toString()
 
       # TODO: Confirm that this is no longer used. Remove the test if so.
       #getStartText: (match) ->
@@ -153,6 +163,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # Unselects the range.
       unselect: ->
         @win.getSelection().removeAllRanges()
+
+      # Select the contents of the element.
+      selectNodeContents: (el) ->
+        @range.selectNodeContents(el)
+        @select()
 
       # Move selection to the inside of the end of the element.
       #

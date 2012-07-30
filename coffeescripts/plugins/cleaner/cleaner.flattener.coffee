@@ -6,13 +6,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       switch $(node).tagName()
         when "li" then @flattenListItem(node)
         when "td", "th" then @flattenTableCell(node)
-        else @replaceWithChildren(node) if $.inArray($(node).tagName(), @doNotReplace) == -1
-
-    # Replace the given node with its children.
-    replaceWithChildren: (node) ->
-      parent = node.parentNode
-      parent.insertBefore(node.childNodes[0], node) while node.childNodes[0]
-      parent.removeChild(node)
+        else Helpers.replaceWithChildren(node) if $.inArray($(node).tagName(), @doNotReplace) == -1
 
     # Flattens the given block by bubbling up all inline nodes which will be
     # separated by the template.
@@ -29,7 +23,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       switch $block.tagName()
         when "ol", "ul" then selector = "li"
         when "table" then selector = "th, td"
-        else return @replaceWithChildren(block)
+        else return Helpers.replaceWithChildren(block)
       # Find all the elements and place their contents before the parent,
       # separated by the template.
       $els = $block.find(selector)

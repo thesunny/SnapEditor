@@ -151,6 +151,14 @@ require ["core/range"], (Range) ->
         spyOn(range, "getImmediateParentElement").andReturn($start[0])
         expect(range.getParentElement((el) -> throw Range.EDITOR_ESCAPE_ERROR)).toBeNull()
 
+      it "returns the image when an image is selected", ->
+        $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+        $img = $editable.find("img")
+        range = new Range($editable[0], $img[0])
+        range.select()
+        el = range.getParentElement()
+        expect(el).toBe($img[0])
+
     describe "#getParentElements", ->
       beforeEach ->
         range = new Range($editable[0])
@@ -170,6 +178,16 @@ require ["core/range"], (Range) ->
         [startElement, endElement] = range.getParentElements()
         expect(startElement).toBe($start[0])
         expect(endElement).toBe($end[0])
+
+      it "returns the image when an image is selected", ->
+        $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+        $img = $editable.find("img")
+        range = new Range($editable[0], $img[0])
+        range.select()
+        range = new Range($editable[0], window)
+        [startElement, endElement] = range.getParentElements()
+        expect(startElement).toBe($img[0])
+        expect(endElement).toBe($img[0])
 
       it "does not modify the selection", ->
         range = new Range($editable[0], window)
@@ -207,3 +225,10 @@ require ["core/range"], (Range) ->
         spyOn(range, "pasteNode")
         range.paste($el[0])
         expect(range.pasteNode).toHaveBeenCalledWith($el[0])
+
+      it "pastes over an image", ->
+        $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+        range = new Range($editable[0], $editable.find("img")[0])
+        range.select()
+        range.paste("<b></b>")
+        expect(clean($editable.html())).toEqual("<b></b>")

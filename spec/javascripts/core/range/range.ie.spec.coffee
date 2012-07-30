@@ -59,6 +59,22 @@ unless hasW3CRanges
             expect(range.item(0)).toBe($img[0])
 
       describe "instance functions", ->
+        describe "#cloneRange", ->
+          it "clones a textRange", ->
+            range = new Range()
+            range.range = Range.getRangeFromElement($start[0])
+            clone = range.cloneRange()
+            expect(clone.compareEndPoints("StartToStart", range.range)).toEqual(0)
+            expect(clone.compareEndPoints("EndToEnd", range.range)).toEqual(0)
+
+          it "clones a controlRange", ->
+            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $img = $editable.find("img")
+            range = new Range()
+            range.range = Range.getRangeFromElement($img[0])
+            clone = range.cloneRange()
+            expect(clone.item(0)).toBe($img[0])
+
         describe "#isCollapsed", ->
           it "returns whether the range is collapsed", ->
             range = new Range()
@@ -66,6 +82,13 @@ unless hasW3CRanges
             expect(range.isCollapsed()).toBeFalsy()
             range.range.collapse(true)
             expect(range.isCollapsed()).toBeTruthy()
+
+          it "returns false when selecting an image", ->
+            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $img = $editable.find("img")
+            range = new Range()
+            range.range = Range.getRangeFromElement($img[0])
+            expect(range.isCollapsed()).toBeFalsy()
 
         describe "#isImageSelected", ->
           $img = null
@@ -178,6 +201,26 @@ unless hasW3CRanges
             range.range.addElement($img[0])
             expect(range.getImmediateParentElement()).toBe($img[0])
 
+        describe "#getText", ->
+          it "returns the selected text when selecting only text", ->
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.range.findText("start")
+            expect(range.getText()).toEqual("start")
+
+          it "returns the text only when selecting HTML elements too", ->
+            $img = $('<img src="/spec/javascripts/support/assets/images/stub.png" />').insertAfter($start)
+            range = new Range()
+            range.range = Range.getRangeFromElement($editable[0])
+            expect(range.getText()).toEqual("startend")
+
+          it "returns an empty string when an image is selected", ->
+            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $img = $editable.find("img")
+            range = new Range()
+            range.range = Range.getRangeFromElement($img[0])
+            expect(range.getText()).toEqual("")
+
         describe "#select", ->
           it "selects the given range even if it has its own", ->
             givenRange = Range.getRangeFromElement($start[0])
@@ -223,6 +266,42 @@ unless hasW3CRanges
             range.unselect()
             expect(document.selection.createRange().text).toEqual("")
 
+        describe "#selectNodeContents", ->
+          it "selects the contents of an inline element", ->
+            $editable.html("before<b>bold</b>after")
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.selectNodeContents($editable.find("b")[0])
+
+            actualRange = document.selection.createRange()
+            expect(actualRange.parentElement()).toBe($editable.find("b")[0])
+            expect(actualRange.text).toEqual("bold")
+
+          it "selects the contents of a block element", ->
+            $editable.html("before<div>block</div>after")
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.selectNodeContents($editable.find("div")[0])
+
+            actualRange = document.selection.createRange()
+            # IE8 selects the entire block instead of its contents.
+            # IE7 behaves normally.
+            if isIE8
+              expect(actualRange.parentElement()).toBe($editable[0])
+            else
+              expect(actualRange.parentElement()).toBe($editable.find("div")[0])
+            expect(clean(actualRange.text)).toEqual("block")
+
+          it "select the contents of a link", ->
+            $editable.html("before<a>link</a>after")
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.selectNodeContents($editable.find("a")[0])
+
+            actualRange = document.selection.createRange()
+            expect(actualRange.parentElement()).toBe($editable.find("a")[0])
+            expect(actualRange.text).toEqual("link")
+
         describe "#selectEndOfElement", ->
           it "selects the end of the inside of the element when there is content", ->
             range = new Range()
@@ -245,7 +324,6 @@ unless hasW3CRanges
             actualRange = document.selection.createRange()
             actualRange.pasteHTML("<span></span>")
             expect(clean($start.html())).toEqual("start<br><br>break<span></span>")
-            p $editable.html()
 
           it "selects the end of the inside of the cell when there is content", ->
             $table = $('<table><tbody><tr><td id="td">before</td><td>after</td></tr></tbody></table>').appendTo($editable)
@@ -344,6 +422,22 @@ unless hasW3CRanges
             range.delete()
             expect(clean($start.html())).toEqual("st")
 
+          it "keeps the range when selecting an image", ->
+            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" /><div>after</div>')
+            $img = $editable.find("img")
+            $div = $editable.find("div")
+            range = new Range()
+            spyOn(range, "getParentElements").andReturn([$img[0], $img[0]])
+            range.range = Range.getRangeFromElement($img[0])
+            range.select()
+            range.keepRange(->
+              r = new Range()
+              r.range = Range.getRangeFromElement($div[0])
+              r.select()
+            )
+            range.delete()
+            expect(clean($editable.html())).toEqual("<div>after</div>")
+
         describe "#pasteNode", ->
           it "pastes the given element node", ->
             range = new Range()
@@ -359,64 +453,74 @@ unless hasW3CRanges
 
         describe "#pasteHTML", ->
           describe "collapsed", ->
-            it "inserts elements", ->
+            range = null
+            beforeEach ->
               range = new Range()
               range.range = Range.getRangeFromElement($start[0])
               range.range.collapse(true)
+
+            it "inserts elements", ->
               range.pasteHTML("<span><b>bold</b></span><div><ul><li>item</li></ul></div>")
               expect(clean($start.html())).toEqual("<span><b>bold</b></span><div><ul><li>item</li></ul></div>start")
 
             it "inserts text", ->
-              range = new Range()
-              range.range = Range.getRangeFromElement($start[0])
-              range.range.collapse(true)
               range.pasteHTML("test")
               expect(clean($start.html())).toEqual("teststart")
 
             it "puts the selection after the HTML", ->
-              range = new Range()
-              range.range = Range.getRangeFromElement($start[0])
-              range.range.collapse(true)
               range.pasteHTML("<span></span>")
-
               actualRange = document.selection.createRange()
               actualRange.pasteHTML("<b></b>")
               expect(clean($start.html())).toEqual("<span></span><b></b>start")
 
           describe "not collapsed", ->
-            it "inserts elements", ->
+            range = null
+            beforeEach ->
               range = new Range()
               range.range = Range.getBlankRange()
               range.range.findText("start")
+
+            it "inserts elements", ->
               range.pasteHTML("<span></span>")
               expect(clean($start.html())).toEqual("<span></span>")
 
             it "inserts text", ->
-              range = new Range()
-              range.range = Range.getBlankRange()
-              range.range.findText("start")
               range.pasteHTML("test")
               expect(clean($start.html())).toEqual("test")
 
             it "puts the selection after the text", ->
-              range = new Range()
-              range.range = Range.getBlankRange()
-              range.range.findText("start")
               range.pasteHTML("test")
-
               actualRange = document.selection.createRange()
               actualRange.pasteHTML("<b></b>")
               expect(clean($start.html())).toEqual("test<b></b>")
 
             it "puts the selection after the elements", ->
-              range = new Range()
-              range.range = Range.getBlankRange()
-              range.range.findText("start")
               range.pasteHTML("<span>test</span>")
-
               actualRange = document.selection.createRange()
               actualRange.pasteHTML("<b></b>")
               expect(clean($start.html())).toEqual("<span>test<b></b></span>")
+
+          describe "image", ->
+            range = null
+            beforeEach ->
+              $editable.html('before<img src="/spec/javascripts/support/assets/images/stub.png" />after')
+              $img = $editable.find("img")
+              range = new Range()
+              range.range = Range.getRangeFromElement($img[0])
+
+            it "inserts elements", ->
+              range.pasteHTML("<span></span>")
+              expect(clean($editable.html())).toEqual("before<span></span>after")
+
+            it "inserts text", ->
+              range.pasteHTML("test")
+              expect(clean($editable.html())).toEqual("beforetestafter")
+
+            it "puts the selection after the text", ->
+              range.pasteHTML("test")
+              actualRange = document.selection.createRange()
+              actualRange.pasteHTML("<b></b>")
+              expect(clean($editable.html())).toEqual("beforetest<b></b>after")
 
         describe "#surroundContents", ->
           it "inserts the given HTML", ->
@@ -433,6 +537,25 @@ unless hasW3CRanges
             expect(el.tagName).toEqual("SPAN")
             expect(el.innerHTML).toEqual("start")
 
+          it "inserts the given HTML when an image is selected", ->
+            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $img = $editable.find("img")
+            range = new Range()
+            spyOn(range, "pasteNode")
+            range.range = Range.getRangeFromElement($img[0])
+            range.surroundContents($("<span/>")[0])
+
+            expect(range.pasteNode).toHaveBeenCalled()
+            # Check the first argument to the first call to #pasteNode.
+            # We're expecting the argument to be the node "<span>start</span>".
+            el = range.pasteNode.argsForCall[0][0]
+            expect(el.tagName).toEqual("SPAN")
+            if isIE7
+              # IE7 changes the path to a full URL.
+              expect(clean(el.innerHTML)).toMatch('<img src=(.*)/spec/javascripts/support/assets/images/stub.png>')
+            else
+              expect(clean(el.innerHTML)).toEqual('<img src=/spec/javascripts/support/assets/images/stub.png>')
+
         describe "#delete", ->
           $table = $tds = $after = range = null
           beforeEach ->
@@ -443,6 +566,15 @@ unless hasW3CRanges
             range.el = $editable[0]
             range.range = Range.getBlankRange()
             spyOn(range, "getParentElements")
+
+          it "deletes an image", ->
+            $editable.html('before<img src="/spec/javascripts/support/assets/images/stub.png" />after')
+            $img = $editable.find("img")
+            range.getParentElements.andReturn([$img[0], $img[0]])
+            range.range = Range.getRangeFromElement($editable.find("img")[0])
+            range.select()
+            range.delete()
+            expect(clean($editable.html())).toEqual("beforeafter")
 
           it "deletes the contents of the range when not selecting from a table cell", ->
             range.getParentElements.andReturn([$start[0], $start[0]])
@@ -520,8 +652,30 @@ unless hasW3CRanges
             range.range.setEndPoint("EndToEnd", endRange)
             range.select()
             range.delete()
+            range = Range.getRangeFromSelection()
             range.pasteHTML("<b></b>")
             expect(clean($editable.find("div").html())).toEqual("star<b></b>d")
+
+          it "keeps the range after deleting an image", ->
+            $editable.html('before<img src="/spec/javascripts/support/assets/images/stub.png" />after')
+            $img = $editable.find("img")
+            range.getParentElements.andReturn([$img[0], $img[0]])
+            range.range = Range.getRangeFromElement($editable.find("img")[0])
+            range.select()
+            range.delete()
+            range = Range.getRangeFromSelection()
+            range.pasteHTML("<b></b>")
+            expect(clean($editable.html())).toEqual("before<b></b>after")
+
+          it "keeps the range valid after deleting", ->
+            $editable.html('before<img src="/spec/javascripts/support/assets/images/stub.png" />after')
+            $img = $editable.find("img")
+            range.getParentElements.andReturn([$img[0], $img[0]])
+            range.range = Range.getRangeFromElement($editable.find("img")[0])
+            range.select()
+            range.delete()
+            range.pasteHTML("<b></b>")
+            expect(clean($editable.html())).toEqual("before<b></b>after")
 
           it "returns true if something was deleted", ->
             range.getParentElements.andReturn([$start[0], $start[0]])

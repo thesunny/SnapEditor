@@ -58,7 +58,7 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
     # Hide if the target is not the contextmenu.
     tryHide: (e) =>
       $target = $(e.target)
-      @hide() unless $target.attr("id") == @id or $target.parent("##{@id}").length > 0
+      @hide() if $target.closest("##{@id}").length == 0
 
     # Build the menu based on the current context.
     buildMenu: (target) ->

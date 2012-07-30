@@ -1,4 +1,4 @@
- require ["plugins/link/link", "core/range", "core/helpers"], (Link, Range, Helpers) ->
+ require ["jquery.custom", "plugins/link/link", "core/range", "core/helpers"], ($, Link, Range, Helpers) ->
   describe "Link", ->
     $editable = link = null
     beforeEach ->
@@ -10,82 +10,66 @@
         clean: ->
         range: -> new Range($editable[0], window)
         isValid: -> true
-      Helpers.delegate(link.api, "range()", "isCollapsed", "getParentElement", "paste", "surroundContents")
+      Helpers.delegate(link.api, "range()", "isCollapsed", "getParentElement", "paste", "surroundContents", "isImageSelected")
 
     afterEach ->
       $editable.remove()
 
-    describe "#link", ->
-      api = null
-      beforeEach ->
-        spyOn(window, "prompt").andReturn("http://snapeditor.com")
+    #describe "test", ->
+      #$div = log = null
+      #beforeEach ->
+        #$div = $("<div>text</div>").appendTo($editable)
+        #log = (type, url) ->
+          #p type
 
-      it "does not do anything if nothing is entered", ->
-        window.prompt.andReturn(null)
-        spyOn(link, "update")
-        link.link()
-        expect(link.update).not.toHaveBeenCalled()
+          #$a = $("<a id='LINK' href='#{url}'>link</a>")
+          #$a.appendTo($editable)
+          #$a = $("#LINK")
+          #p "DOM insert: #{$a.attr("href")}"
+          #$a.remove()
 
-      it "changes the href if a link is selected", ->
-        $a = $('<a href="http://example.com">some text</a>').appendTo($editable)
-        range = new Range($editable[0])
-        if hasW3CRanges
-          range.range.setStart($a[0].childNodes[0], 5)
-        else
-          range.range.findText("text")
-          range.collapse(true)
-        range.select()
+          #$a = $("<a id='LINK' href='#{url}'>link</a>")
+          #range = new Range($editable[0])
+          #range.selectEndOfElement($div[0])
+          #range.paste($a[0])
+          #$a = $("#LINK")
+          #p "Range paste: #{$a.attr("href")}"
+          #$a.remove()
 
-        spyOn(link, "update")
-        link.link()
-        expect($a.attr("href")).toEqual("http://snapeditor.com")
+          #$a = $('<a id="LINK">link</a>')
+          #$a.appendTo($editable)
+          #$a.attr("href", url)
+          #$a = $("#LINK")
+          #p "DOM modify: #{$a.attr("href")}"
+          #$a.remove()
 
-      it "adds a link if the range is collapsed", ->
-        $div = $("<div>some text</div>").appendTo($editable)
+      #it "full URL", ->
+        #log("URL", "http://snapeditor.com")
+        #log("URL NO PROTOCOL", "//snapeditor.com")
+        #log("URL JUST DOMAIN", "snapeditor.com")
 
-        range = new Range($editable[0])
-        if hasW3CRanges
-          range.range.setStart($div[0].childNodes[0], 5)
-        else
-          range.range.findText("text")
-        range.collapse(true)
-        range.select()
+      #it "root path", ->
+        #log("ROOT PATH", "/abc")
 
-        spyOn(link, "update")
-        link.link()
-        if isIE7
-          expect(clean($div.html())).toEqual('some <a href=http://snapeditor.com/>http://snapeditor.com</a>text')
-        else
-          expect(clean($div.html())).toEqual('some <a href=http://snapeditor.com>http://snapeditor.com</a>text')
+      #it "relative path", ->
+        #log("RELATIVE PATH", "123")
+        #log("RELATIVE PATH IMAGE", "image.png")
 
-      it "surrounds the content with a link", ->
-        $div = $("<div>some text</div>").appendTo($editable)
-        $span = $div.find("span")
-        range = new Range($editable[0])
-        if hasW3CRanges
-          range.range.setStart($div[0].childNodes[0], 5)
-          range.range.setEnd($div[0].childNodes[0], 9)
-        else
-          range.range.findText("text")
-        range.select()
+    describe "#normalize", ->
+      it "normalizes an email", ->
+        expect(link.normalize("wesley@snapeditor.com")).toEqual("mailto:wesley@snapeditor.com")
 
-        spyOn(link, "update")
-        link.link()
-        if isIE7
-          expect(clean($div.html())).toEqual('some <a href=http://snapeditor.com/>text</a>')
-        else
-          expect(clean($div.html())).toEqual('some <a href=http://snapeditor.com>text</a>')
+      it "normalizes a full URL", ->
+        expect(link.normalize("http://snapeditor.com")).toEqual("http://snapeditor.com")
 
-      it "updates the api", ->
-        $a = $('<a href="http://example.com">some text</a>').appendTo($editable)
-        range = new Range($editable[0])
-        if hasW3CRanges
-          range.range.setStart($a[0].childNodes[0], 5)
-        else
-          range.range.findText("text")
-          range.collapse(true)
-        range.select()
+      it "normalizes a URL without a protocol", ->
+        expect(link.normalize("//snapeditor.com")).toEqual("http://snapeditor.com")
 
-        spyOn(link, "update")
-        link.link()
-        expect(link.update).toHaveBeenCalled()
+      it "normalizes an absolute path", ->
+        expect(link.normalize("/abc")).toEqual("/abc")
+
+      it "normalizes a relative path", ->
+        expect(link.normalize("abc")).toEqual("http://abc")
+
+      it "normalizes a domain", ->
+        expect(link.normalize("snapeditor.com")).toEqual("http://snapeditor.com")

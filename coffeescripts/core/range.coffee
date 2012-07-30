@@ -20,11 +20,13 @@
 # getCoordinates(): gets the coordinates of the range
 # getParentElement() : gets parent element of the range
 # getParentElements() : gets the start and end parent elements of the range
+# getText(): gets the text in the range
 #
 # These functions manipulate the range.
 # collapse(start): collapse range to start or end (returns this)
 # select([range]): selects the given range or itself
 # unselect(): unselects the range
+# selectNodeContents(el): selects the contents of the el
 # selectEndOfElement(el): selects the inside of the end of el
 #
 # These functions modify the content.
@@ -158,6 +160,7 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # The match can be a function or a CSS pattern like "a[name=mainlink]". If
     # you want to escape the lookup early, throw Range.EDITOR_ESCAPE_ERROR in
     # the function.
+    # Returns the matched parent element or null.
     getParentElement: (match) ->
       switch Helpers.typeOf(match)
         when "function" then matchFn = match
@@ -189,13 +192,21 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # Finds the start and end parent elements from the range that matches the
     # argument.
     getParentElements: (match) ->
-      startRange = @clone()
-      startRange.collapse(true)
-      startParentElement = startRange.getParentElement(match)
-      endRange = @clone()
-      endRange.collapse(false)
-      endParentElement = endRange.getParentElement(match)
+      if @isImageSelected()
+        # If an image is selected, the start and end parents are the same.
+        startParentElement = endParentElement = @getParentElement(match)
+      else
+        startRange = @clone()
+        startRange.collapse(true)
+        startParentElement = startRange.getParentElement(match)
+        endRange = @clone()
+        endRange.collapse(false)
+        endParentElement = endRange.getParentElement(match)
       return [startParentElement, endParentElement]
+
+    # Get the text selected by the range.
+    getText: ->
+      throw "#getText() needs to be overridden with a browser specific implementation"
 
     #
     # MANIPULATE RANGE FUNCTIONS
@@ -214,6 +225,10 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # Unselects the range.
     unselect: ->
       throw "#unselect() needs to be overridden with a browser specific implementation"
+
+    # Select the contents of the element.
+    selectNodeContents: (el) ->
+      throw "#selectNodeContents() needs to be overridden with a browser specific implementation"
 
     # Move selection to the inside of the end of the element.
     selectEndOfElement: (el) ->
@@ -239,6 +254,10 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     #
     # NOTE: The browser may normalize the content.
     paste: (arg) ->
+      # If an image is selected, all browsers paste beside the image instead of
+      # replacing the image. Hence, we manually delete the image first and then
+      # paste.
+      @delete() if @isImageSelected()
       switch Helpers.typeOf(arg)
         when "string" then @pasteHTML(arg)
         when "element" then @pasteNode(arg)

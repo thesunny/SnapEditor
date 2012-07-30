@@ -63,6 +63,13 @@ if hasW3CRanges
             range.range.collapse(true)
             expect(range.isCollapsed()).toBeTruthy()
 
+          it "returns false when selecting an image", ->
+            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $img = $editable.find("img")
+            range = new Range()
+            range.range = Range.getRangeFromElement($img[0])
+            expect(range.isCollapsed()).toBeFalsy()
+
         describe "#isImageSelected", ->
           $img = null
           beforeEach ->
@@ -171,6 +178,35 @@ if hasW3CRanges
             selection.addRange(range.range)
             expect(range.getImmediateParentElement()).toBe($start[0])
 
+          it "returns an image when an image is selected", ->
+            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $img = $editable.find("img")
+            range = new Range()
+            range.range = Range.getRangeFromElement($img[0])
+            selection.removeAllRanges()
+            selection.addRange(range.range)
+            expect(range.getImmediateParentElement()).toBe($img[0])
+
+        describe "#getText", ->
+          it "returns the selected text when selecting only text", ->
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.range.selectNodeContents($start[0])
+            expect(range.getText()).toEqual("start")
+
+          it "returns the text only when selecting HTML elements too", ->
+            $img = $('<img src="/spec/javascripts/support/assets/images/stub.png" />').insertAfter($start)
+            range = new Range()
+            range.range = Range.getRangeFromElement($editable[0])
+            expect(range.getText()).toEqual("startend")
+
+          it "returns an empty string when an image is selected", ->
+            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $img = $editable.find("img")
+            range = new Range()
+            range.range = Range.getRangeFromElement($img[0])
+            expect(range.getText()).toEqual("")
+
         # TODO: Once it is confirmed that #getStartText is not used, remove this
         # test.
         #describe "#getStartText", ->
@@ -237,6 +273,37 @@ if hasW3CRanges
             expect(selection.rangeCount).toEqual(1)
             range.unselect()
             expect(selection.rangeCount).toEqual(0)
+
+        describe "#selectNodeContents", ->
+          it "selects the contents of an inline element", ->
+            $editable.html("before<b>bold</b>after")
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.selectNodeContents($editable.find("b")[0])
+
+            actualRange = selection.getRangeAt(0)
+            actualRange.deleteContents()
+            expect(clean($editable.html())).toEqual("before<b></b>after")
+
+          it "selects the contents of a block element", ->
+            $editable.html("before<div>block</div>after")
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.selectNodeContents($editable.find("div")[0])
+
+            actualRange = selection.getRangeAt(0)
+            actualRange.deleteContents()
+            expect(clean($editable.html())).toEqual("before<div></div>after")
+
+          it "select the contents of a link", ->
+            $editable.html("before<a>link</a>after")
+            range = new Range()
+            range.range = Range.getBlankRange()
+            range.selectNodeContents($editable.find("a")[0])
+
+            actualRange = selection.getRangeAt(0)
+            actualRange.deleteContents()
+            expect(clean($editable.html())).toEqual("before<a></a>after")
 
         describe "#selectEndOfElement", ->
           it "selects the end of the inside of the element when there is content", ->

@@ -1,3 +1,8 @@
+require "rubygems"
+require "bundler/setup"
+require "json"
+require "snapimage"
+
 base_dir = File.dirname(File.expand_path(__FILE__))
 # Don't cache. This is helpful because IE tends to cache all asynchronously
 # loaded files. Since RequireJS is all about asynchronously loading files, the
@@ -15,4 +20,7 @@ app = Proc.new do |env|
   response[1].merge!(no_cache)
   response
 end
+
+use SnapImage::Middleware, config: "snapimage.yml", path: "/snapimage_api"
+use SnapImage::Middleware, config: "snapimage_secure.yml", path: "/snapimage_api_secure"
 run app

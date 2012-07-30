@@ -39,7 +39,11 @@ define ["core/helpers"], (Helpers) ->
       # HELPER FUNCTIONS
       #
       cloneRange: ->
-        @range.duplicate()
+        if @isImageSelected()
+          # TODO-iframe
+          @constructor.getRangeFromElement(@range.item(0))
+        else
+          @range.duplicate()
 
       #
       # QUERY RANGE STATE FUNCTIONS
@@ -47,10 +51,11 @@ define ["core/helpers"], (Helpers) ->
 
       # Is the selection a caret.
       isCollapsed: ->
-        @range.text.length == 0
+        !@isImageSelected() && @range.text.length == 0
 
       # Is an image selected.
       isImageSelected: ->
+        # ControlRanges do not have a parentELement attribute.
         typeof @range.parentElement == "undefined"
 
       # Returns true if the current range is at the start of the given element.
@@ -98,7 +103,12 @@ define ["core/helpers"], (Helpers) ->
       # Get immediate parent element.
       getImmediateParentElement: ->
         # Only textranges have parentElement. Controlranges do not.
-        (@range.parentElement and @range.parentElement()) or @range.item(0)
+        (@isImageSelected() and @range.item(0)) or @range.parentElement()
+
+      # Get the text in the range.
+      getText: ->
+        # IE adds '\n' and '\r' between elements. We clean this up.
+        (@range.text or "").replace(/[\n\r]/g, "")
 
       # TODO: Confirm that this is no longer used. Remove the test if so.
       # Returns an object representing the area between the current range
@@ -121,7 +131,7 @@ define ["core/helpers"], (Helpers) ->
 
       # Select the given range or its own range if none given.
       select: (range) ->
-        range or=@range
+        range or= @range
         range.select()
         @range = range
         this
@@ -129,6 +139,13 @@ define ["core/helpers"], (Helpers) ->
       # Unselect the range.
       unselect: () ->
         @doc.selection.empty()
+
+      # Select the contents of the element.
+      # NOTE: IE8 cannot select the contents when the element is a block. It
+      # selects the entire block. IE7 is fine.
+      selectNodeContents: (el) ->
+        @range.moveToElementText(el)
+        @select()
 
       # Move selection to the inside of the end of the element.
       #
@@ -165,24 +182,49 @@ define ["core/helpers"], (Helpers) ->
       # cannot be removed. If they are, the reselection will fail. Be careful
       # what the given function does.
       keepRange: (fn) ->
-        # Place spans at the start and end of the range.
-        range = @constructor.getBlankRange()
-        range.setEndPoint("StartToStart", @range)
-        range.collapse(true)
-        range.pasteHTML('<span id="RANGE_START"></span>')
-        range.setEndPoint("StartToEnd", @range)
-        range.collapse(false)
-        range.pasteHTML('<span id="RANGE_END"></span>')
-        fn(@find("#RANGE_START")[0], @find("#RANGE_END")[0])
+        isImage = @isImageSelected()
+        if isImage
+          image = @range.item(0)
+          startElement = image
+          endElement = image
+        else
+          # Place spans at the start and end of the range.
+          range = @constructor.getBlankRange()
+          range.setEndPoint("StartToStart", @range)
+          range.collapse(true)
+          range.pasteHTML('<span id="RANGE_START"></span>')
+          range.setEndPoint("StartToEnd", @range)
+          range.collapse(false)
+          range.pasteHTML('<span id="RANGE_END"></span>')
+          startElement = @find("#RANGE_START")[0]
+          endElement = @find("#RANGE_END")[0]
+        fn(startElement, endElement)
         # Refind the start and end in case the function had modified them.
-        $start = @find("#RANGE_START")
-        $end = @find("#RANGE_END")
-        range.moveToElementText($start[0])
-        @range.setEndPoint("StartToStart", range)
-        range.moveToElementText($end[0])
-        @range.setEndPoint("EndToStart", range)
-        $start.remove()
-        $end.remove()
+        if isImage
+          @range = @constructor.getRangeFromElement(image)
+        else
+          $start = @find("#RANGE_START")
+          $end = @find("#RANGE_END")
+          range.moveToElementText($start[0])
+          @range.setEndPoint("StartToStart", range)
+          range.moveToElementText($end[0])
+          @range.setEndPoint("EndToStart", range)
+          $start.remove()
+          $end.remove()
+        @select()
+
+      #
+      # MODIFY RANGE CONTENT FUNCTIONS
+      #
+
+      # Paste the given node and set the selection to after the node.
+      #   text|
+      #   <div>element</div>|
+      #
+      # NOTE: In W3C, we manually need to move the caret. In IE, the pasteHTML
+      # method automatically moves the caret to after the end of the pasted
+      # node.
+      #
         @select()
 
       #
@@ -255,11 +297,19 @@ define ["core/helpers"], (Helpers) ->
         # automatically, the range must be selected first. There is no harm in
         # leaving this in for other versions.
         @select()
+        # If an image is selected, we have a controlRange. Remove the image and
+        # refind the range.
+        if @isImageSelected()
+          $(@range.item(0)).remove()
+          @range = @constructor.getRangeFromSelection()
         @range.pasteHTML(html)
 
       # Surround range with element and place the selection after the element.
       surroundContents: (el) ->
-        el.innerHTML = @range.htmlText
+        if @isImageSelected()
+          el.innerHTML = @range.item(0).outerHTML
+        else
+          el.innerHTML = @range.htmlText
         @pasteNode(el)
 
       # Delete the contents of the range.
@@ -267,6 +317,11 @@ define ["core/helpers"], (Helpers) ->
         @select()
         [startElement, endElement] = @getParentElements((el) -> Helpers.isBlock(el))
         deleted = $(startElement).closest("td, th", @el)[0] == $(endElement).closest("td, th", @el)[0]
-        @range.execCommand("delete") if deleted
+        if deleted
+          @range.execCommand("delete")
+          # IE7/8 loses the range after deletion. We have to manually grab it
+          # again from the selection.
+          # TODO-iframe
+          @range = @constructor.getRangeFromSelection()
         return deleted
   }
