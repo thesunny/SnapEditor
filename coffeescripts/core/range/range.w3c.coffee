@@ -103,6 +103,10 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
             node = node.parentNode
         node
 
+      # Get the text in the range.
+      getText: ->
+        @range.toString()
+
       # TODO: Confirm that this is no longer used. Remove the test if so.
       #getStartText: (match) ->
         #parent = @getParentElement(match)
@@ -159,6 +163,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # Unselects the range.
       unselect: ->
         window.getSelection().removeAllRanges()
+
+      # Select the contents of the element.
+      selectNodeContents: (el) ->
+        @range.selectNodeContents(el)
+        @select()
 
       # Move selection to the inside of the end of the element.
       #

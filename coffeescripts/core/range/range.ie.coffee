@@ -38,11 +38,11 @@ define ["core/helpers"], (Helpers) ->
       # HELPER FUNCTIONS
       #
       cloneRange: ->
-        if @range.parentElement
-          @range.duplicate()
-        else
+        if @isImageSelected()
           # TODO-iframe
           @constructor.getRangeFromElement(@range.item(0))
+        else
+          @range.duplicate()
 
       #
       # QUERY RANGE STATE FUNCTIONS
@@ -50,7 +50,7 @@ define ["core/helpers"], (Helpers) ->
 
       # Is the selection a caret.
       isCollapsed: ->
-        @range.text.length == 0
+        !@isImageSelected() && @range.text.length == 0
 
       # Is an image selected.
       isImageSelected: ->
@@ -102,7 +102,12 @@ define ["core/helpers"], (Helpers) ->
       # Get immediate parent element.
       getImmediateParentElement: ->
         # Only textranges have parentElement. Controlranges do not.
-        (@range.parentElement and @range.parentElement()) or @range.item(0)
+        (@isImageSelected() and @range.item(0)) or @range.parentElement()
+
+      # Get the text in the range.
+      getText: ->
+        # IE adds '\n' and '\r' between elements. We clean this up.
+        (@range.text or "").replace(/[\n\r]/g, "")
 
       # TODO: Confirm that this is no longer used. Remove the test if so.
       # Returns an object representing the area between the current range
@@ -133,6 +138,13 @@ define ["core/helpers"], (Helpers) ->
       # Unselect the range.
       unselect: () ->
         document.selection.empty()
+
+      # Select the contents of the element.
+      # NOTE: IE8 cannot select the contents when the element is a block. It
+      # selects the entire block. IE7 is fine.
+      selectNodeContents: (el) ->
+        @range.moveToElementText(el)
+        @select()
 
       # Move selection to the inside of the end of the element.
       #
@@ -270,11 +282,19 @@ define ["core/helpers"], (Helpers) ->
         # automatically, the range must be selected first. There is no harm in
         # leaving this in for other versions.
         @select()
+        # If an image is selected, we have a controlRange. Remove the image and
+        # refind the range.
+        if @isImageSelected()
+          $(@range.item(0)).remove()
+          @range = @constructor.getRangeFromSelection()
         @range.pasteHTML(html)
 
       # Surround range with element and place the selection after the element.
       surroundContents: (el) ->
-        el.innerHTML = @range.htmlText
+        if @isImageSelected()
+          el.innerHTML = @range.item(0).outerHTML
+        else
+          el.innerHTML = @range.htmlText
         @pasteNode(el)
 
       # Delete the contents of the range.

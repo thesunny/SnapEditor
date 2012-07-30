@@ -51,7 +51,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       iframeName = "insert_image_iframe_#{Math.floor(Math.random() * 99999)}"
       @dialog = ui.dialog("""
         <div class="error" style="display: none;"></div>
-          <form class="insert_image_form" action="#{@options.url}" method="post" enctype="multipart/form-data" encoding="multipart/form-data" target="#{iframeName}" accept-charset="utf-8">
+        <form class="insert_image_form" action="#{@options.url}" method="post" enctype="multipart/form-data" encoding="multipart/form-data" target="#{iframeName}" accept-charset="utf-8">
           <input class="insert_image_json" type="hidden" name="json" value='#{json}' />
           <input class="insert_image_file" type="file" name="file" accept="image/*" />
         </form>
@@ -62,9 +62,9 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       unless @$dialog
         @dialog.on("hide.dialog", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
+        @$error = @$dialog.find(".error")
         @$form = @$dialog.find(".insert_image_form")
         @$fileField = @$dialog.find(".insert_image_file").on("change", @submit)
-        @$error = @$dialog.find(".error")
         @$iframe = @$dialog.find(".insert_image_iframe")
         handleResponse = @handleResponse
         @$iframe.load(-> handleResponse(this.contentWindow.response))
@@ -77,6 +77,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       @$form[0].reset()
       @$fileField.attr("disabled", false)
       @dialog.show()
+      # TODO: Consider sticking this into the dialog when showing.
       # In Firefox, if we don't set the focus on the dialog first, the focus on
       # the file input will not work. This does not effect other browsers so it
       # has been left in.
