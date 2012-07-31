@@ -40,7 +40,6 @@ define ["core/helpers"], (Helpers) ->
       #
       cloneRange: ->
         if @isImageSelected()
-          # TODO-iframe
           @constructor.getRangeFromElement(@range.item(0))
         else
           @range.duplicate()
@@ -321,7 +320,6 @@ define ["core/helpers"], (Helpers) ->
           @range.execCommand("delete")
           # IE7/8 loses the range after deletion. We have to manually grab it
           # again from the selection.
-          # TODO-iframe
-          @range = @constructor.getRangeFromSelection()
+          @range = @constructor.getRangeFromSelection(@win)
         return deleted
   }

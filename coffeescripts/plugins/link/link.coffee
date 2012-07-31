@@ -174,7 +174,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
     #
     # TODO: In opera, preventDefault doesn't work so it keeps popping up a dialog.
     link: =>
-      # TODO-iframe
       href = @normalize($.trim(@$href.attr("value")))
       text = $.trim(@$text.attr("value")) unless @imageSelected
       newWindow = @$newWindow.prop("checked")
@@ -186,7 +185,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
         else
           @$link.removeAttr("target")
       else
-        $link = $("<a href=\"#{href}\"></a>")
+        $link = $(@api.createElement("a"))
+        $link.attr("href", href)
         $link.text(text) if text
         $link.attr("target", "_blank") if newWindow
         if @api.isCollapsed()

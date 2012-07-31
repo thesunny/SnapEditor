@@ -91,7 +91,7 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
         $link.attr("id", "SNAPEDITOR_INSERTED_LINK")
         $link.html($link.attr("href"))
         @api.paste($link[0])
-        $insertedLink = $("#SNAPEDITOR_INSERTED_LINK")
+        $insertedLink = $(@api.find("#SNAPEDITOR_INSERTED_LINK"))
         # Restore or remove the id.
         if id
           $insertedLink.attr("id", id)
@@ -106,7 +106,7 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
         randomHref = "http://snapeditor.com/#{Math.floor(Math.random() * 99999)}"
         if @rangeExec("createLink", randomHref)
           # It is possible for "createLink" to insert multiple links.
-          $a = $(@api.el).find("a[href=\"#{randomHref}\"]")
+          $a = $(@api.find("a[href=\"#{randomHref}\"]"))
           $a.each((index) ->
             insertedLinks.push($link.clone()[0])
             $(this).replaceElementWith(insertedLinks[index])

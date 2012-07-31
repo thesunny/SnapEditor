@@ -67,8 +67,6 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
       parent = node.parentNode
       parent.insertBefore(node.childNodes[0], node) while node.childNodes[0]
       parent.removeChild(node)
-      doc = @getDocument(el)
-      doc.defaultView or doc.parentWindow
 
     # Inserts the given styles into a <style> tag in the <head>.
     insertStyles: (styles) ->

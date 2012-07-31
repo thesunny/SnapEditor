@@ -119,11 +119,10 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
           @showError(response.message)
 
     insertImage: (url, width, height) ->
-      # TODO-iframe
-      $img = $("<img/>")
+      $img = $(@api.createElement("img"))
       $img.attr(id: "SNAPEDITOR_INSERTED_IMAGE", src: url, width: width, height: height)
       @range.paste($img[0])
-      $img = $("#SNAPEDITOR_INSERTED_IMAGE").removeAttr("id")
+      $img = $(@api.find("#SNAPEDITOR_INSERTED_IMAGE")).removeAttr("id")
       @api.select($img[0])
       @update()
 
