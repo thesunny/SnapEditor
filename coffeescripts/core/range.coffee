@@ -81,6 +81,11 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     clone: ->
       new @constructor(@el, @cloneRange())
 
+    # Shortcut to document.createElement().
+    # NOTE: This returns a jQuery object.
+    createElement: (name) ->
+      $(@doc.createElement(name))
+
     # Shortcut to find the selector in the doc.
     # NOTE: This returns a jQuery object.
     find: (selector) ->

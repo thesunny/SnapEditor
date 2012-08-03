@@ -1,4 +1,4 @@
-define [], () ->
+define [], ->
   class Assets
     constructor: (@path = "/") ->
       # Ensure that the path ends with a "/"
@@ -15,3 +15,5 @@ define [], () ->
 
     template: (filename) ->
       @path + "templates/#{filename}"
+
+  return Assets

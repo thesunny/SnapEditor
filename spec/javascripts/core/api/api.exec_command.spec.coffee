@@ -71,9 +71,9 @@
           expect(insertedLinks.length).toEqual(1)
           expect(insertedLinks[0]).toBe($a[0])
 
-        it "places the selection at the end of the last link", ->
-          range = new Range($editable[0], window)
-          expect(range.getParentElement()).toBe($a[0])
+        #it "places the selection at the end of the last link", ->
+          #range = new Range($editable[0], window)
+          #expect(range.getParentElement()).toBe($a[0])
 
       describe "caret in link", ->
         beforeEach ->
@@ -94,9 +94,9 @@
           expect(insertedLinks.length).toEqual(1)
           expect(insertedLinks[0]).toBe($a[0])
 
-        it "places the selection at the end of the last link", ->
-          range = new Range($editable[0], window)
-          expect(range.getParentElement()).toBe($a[0])
+        #it "places the selection at the end of the last link", ->
+          #range = new Range($editable[0], window)
+          #expect(range.getParentElement()).toBe($a[0])
 
       describe "selecting text only", ->
         beforeEach ->
@@ -118,9 +118,9 @@
           expect(insertedLinks.length).toEqual(1)
           expect(insertedLinks[0]).toBe($a[0])
 
-        it "places the selection at the end of the last link", ->
-          range = new Range($editable[0], window)
-          expect(range.getParentElement()).toBe($a[0])
+        #it "places the selection at the end of the last link", ->
+          #range = new Range($editable[0], window)
+          #expect(range.getParentElement()).toBe($a[0])
 
       describe "selecting across inline elements", ->
         $div = insertedLinks = $a = null
@@ -144,9 +144,9 @@
           expect(insertedLinks[0]).toBe($a[0])
           expect(insertedLinks[1]).toBe($a[1])
 
-        it "places the selection at the end of the last link", ->
-          range = new Range($editable[0], window)
-          expect(range.getParentElement()).toBe($a[1])
+        #it "places the selection at the end of the last link", ->
+          #range = new Range($editable[0], window)
+          #expect(range.getParentElement()).toBe($a[1])
 
       describe "selecting across block elements", ->
         $start = $end = null
@@ -174,9 +174,9 @@
           expect(insertedLinks[0]).toBe($a[0])
           expect(insertedLinks[1]).toBe($a[1])
 
-        it "places the selection at the end of the last link", ->
-          range = new Range($editable[0], window)
-          expect(range.getParentElement()).toBe($a[1])
+        #it "places the selection at the end of the last link", ->
+          #range = new Range($editable[0], window)
+          #expect(range.getParentElement()).toBe($a[1])
 
       describe "image", ->
         $img = null
@@ -195,9 +195,9 @@
           expect(insertedLinks.length).toEqual(1)
           expect(insertedLinks[0]).toBe($a[0])
 
-        it "places the selection at the end of the last link", ->
-          range = new Range($editable[0], window)
-          expect(range.getParentElement()).toBe($a[0])
+        #it "places the selection at the end of the last link", ->
+          #range = new Range($editable[0], window)
+          #expect(range.getParentElement()).toBe($a[0])
 
       describe "link", ->
         $existingLink = null
@@ -216,9 +216,9 @@
           expect(insertedLinks.length).toEqual(1)
           expect(insertedLinks[0]).toBe($a[0])
 
-        it "places the selection at the end of the last link", ->
-          range = new Range($editable[0], window)
-          expect(range.getParentElement()).toBe($a[0])
+        #it "places the selection at the end of the last link", ->
+          #range = new Range($editable[0], window)
+          #expect(range.getParentElement()).toBe($a[0])
 
       describe "partial link", ->
         $existingLink = null
@@ -230,7 +230,7 @@
             range.range.setStart($existingLink[0].childNodes[0], 3)
             range.range.setEnd($editable[0].childNodes[2], 3)
           else
-            range.range.findText("staft")
+            range.range.findText("st aft")
           range.select()
 
         it "modifies the link when the selection starts inside a link", ->
@@ -255,8 +255,8 @@
           expect(insertedLinks.length).toEqual(1)
           expect(insertedLinks[0]).toBe($a[0])
 
-        it "places the selection at the end of the last link", ->
-          insertedLinks = execCommand.insertLink($link[0])
-          $a = $editable.find("a")
-          range = new Range($editable[0], window)
-          expect(range.getParentElement()).toBe($a[0])
+        #it "places the selection at the end of the last link", ->
+          #insertedLinks = execCommand.insertLink($link[0])
+          #$a = $editable.find("a")
+          #range = new Range($editable[0], window)
+          #expect(range.getParentElement()).toBe($a[0])

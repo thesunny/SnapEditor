@@ -10,12 +10,12 @@ define ["jquery.custom"], ($) ->
     activate: =>
       # mousedown and mouseup are tracked to ensure that the entire click
       # sequence is on an element that triggers the deactivation.
-      $(document).on("mousedown", @setDeactivate)
-      $(document).on("mouseup", @tryDeactivate)
+      @api.onDocument("mousedown", @setDeactivate)
+      @api.onDocument("mouseup", @tryDeactivate)
 
     deactivate: =>
-      $(document).off("mousedown", @setDeactivate)
-      $(document).off("onmouseup", @tryDeactivate)
+      @api.offDocument("mousedown", @setDeactivate)
+      @api.offDocument("onmouseup", @tryDeactivate)
 
     setDeactivate: (e) =>
       unless @isIgnore(e.target)

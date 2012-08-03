@@ -9,6 +9,10 @@ define ["jquery.custom"], ($) ->
       options.load or= ->
 
       $iframe = $("<iframe/>").on("load", ->
+        # In Firefox, if we don't remove the "load" event, it continuously
+        # triggers the event causing an infinite loop. This is left in for
+        # other browsers as there is no harm.
+        $(this).off("load")
         @win = @contentWindow
         # NOTE: We use doc because IE doesn't like using document.
         @doc = @win.document

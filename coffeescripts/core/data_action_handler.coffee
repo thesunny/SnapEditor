@@ -2,7 +2,7 @@
 # changes. It looks for a "data-action" attribute on the target and triggers
 # that event. This makes it so that there is little wiring code needed and it
 # is easy to change the events and the HTML.
-define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
+define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Helpers, Browser, Events) ->
   class DataActionHandler
     # $el is the container element.
     # api is the editor API object.
@@ -86,10 +86,11 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         # presses the toolbar button. This can result in alternating
         # behaviour. For example, if I click on the list button. When
         # I start typing, it will toggle lists on and off.
-        # This cannot be called for IE because it will cause the window to scroll
-        # and jump. Hence this is only for Firefox.
+        # This cannot be called for IE because it will cause the window to
+        # scroll and jump. Hence this is only for Firefox.
         @api.el.focus() if Browser.isGecko
         @api.trigger("#{@getDataActionEl(e.target).attr("data-action")}", e.target)
+        @trigger("click")
 
     # When a select is changed or a keypress occurs in the el, it triggers the
     # event specified by the 'data-action' attribute of the target. The target's
@@ -97,5 +98,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     change: (e) =>
       $target = $(e.target)
       @api.trigger("#{$target.attr("data-action")}", $target.val()) if $target.attr("data-action")
+
+  Helpers.include(DataActionHandler, Events)
 
   return DataActionHandler

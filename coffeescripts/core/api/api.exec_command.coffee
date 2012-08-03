@@ -111,7 +111,8 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
             insertedLinks.push($link.clone()[0])
             $(this).replaceElementWith(insertedLinks[index])
           )
-      # If links were inserted, select the contents of the first one.
+      # TODO: Not sure where to place the selection yet. Figure this out.
+      # If links were inserted, places the selection at the end of the last link.
       @api.selectEndOfElement(insertedLinks[insertedLinks.length - 1]) if insertedLinks.length > 0
       return insertedLinks
 

@@ -1,3 +1,6 @@
+# NOTE: These tests only work in Webkit because the iframe loads immediately.
+# In the other browsers, the load is delayed and falls out of the runtime of
+# the tests.
 require ["jquery.custom", "core/iframe"], ($, IFrame) ->
   describe "IFrame", ->
     $editable = null
@@ -17,6 +20,7 @@ require ["jquery.custom", "core/iframe"], ($, IFrame) ->
           class: "frame"
           load: -> expect($(this).hasClass("frame")).toBeTruthy()
         )
+        $(iframe).appendTo($editable)
 
       it "sets the content", ->
         iframe = new IFrame(
@@ -41,3 +45,4 @@ require ["jquery.custom", "core/iframe"], ($, IFrame) ->
             $(@doc).find("b").trigger("click")
             expect(clicked).toBeTruthy()
         )
+        $(iframe).appendTo($editable)

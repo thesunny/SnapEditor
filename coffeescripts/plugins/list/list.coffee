@@ -45,6 +45,11 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @update() if @api.outdent()
 
     update: ->
+      # In Webkit, after the toolbar is clicked, the focus hops to the parent
+      # window. We need to refocus it back into the iframe. Focusing breaks IE
+      # and kills the range so the focus is only for Webkit. It does not affect
+      # Firefox.
+      @api.win.focus() if Browser.isWebkit
       @api.clean()
       @api.update()
 

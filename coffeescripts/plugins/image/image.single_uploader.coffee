@@ -12,9 +12,8 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       throw "Missing 'url' in image config" unless @options.url
       throw "Missing 'resource_id' in image config" unless @options.resource_id
 
-    getUI: (ui) ->
-      image = ui.button(action: "insert_image", description: "Insert Image", shortcut: "Ctrl+G", icon: { url: @api.assets.image("image.png"), width: 24, height: 24, offset: [3, 3] })
-      @generateDialog(ui)
+    getUI: (@ui) ->
+      image = @ui.button(action: "insert_image", description: "Insert Image", shortcut: "Ctrl+G", icon: { url: @api.assets.image("image.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "image"
         image: image
@@ -59,7 +58,12 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       """)
 
     setupDialog: ->
-      unless @$dialog
+      unless @dialog
+        # Generate the dialog here after show(). In IE, when the iframe is not
+        # shown yet, it reports the size of @api.el to be 0. Generating the
+        # dialog here guarantees that the iframe is already shown and that
+        # getting the size will return the correct value.
+        @generateDialog(@ui)
         @dialog.on("hide.dialog", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
         @$error = @$dialog.find(".error")
@@ -139,6 +143,11 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       @update()
 
     update: ->
+      # In Webkit, after the toolbar is clicked, the focus hops to the parent
+      # window. We need to refocus it back into the iframe. Focusing breaks IE
+      # and kills the range so the focus is only for Webkit. It does not affect
+      # Firefox.
+      @api.win.focus() if Browser.isWebkit
       @api.clean()
       @api.update()
 

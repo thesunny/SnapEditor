@@ -1,6 +1,6 @@
 define ["jquery.custom", "core/helpers", "core/events"], ($, Helpers, Events) ->
   class Dialog
-    constructor: (template, @html, @classname = "") ->
+    constructor: (@api, template, @html, @classname = "") ->
       @$template = $(template)
 
     getEl: ->
@@ -17,13 +17,13 @@ define ["jquery.custom", "core/helpers", "core/events"], ($, Helpers, Events) ->
 
     show: =>
       $(@getEl()).css(@getStyles()).show()
-      $(document).on("click", @tryMouseHide)
-      $(document).on("keyup", @tryKeyHide)
+      @api.onDocument("click", @tryMouseHide)
+      @api.onDocument("keyup", @tryKeyHide)
 
     hide: =>
       $(@getEl()).hide()
-      $(document).off("click", @tryMouseHide)
-      $(document).off("keyup", @tryKeyHide)
+      @api.offDocument("click", @tryMouseHide)
+      @api.offDocument("keyup", @tryKeyHide)
       @trigger("hide.dialog")
 
     tryMouseHide: (e) =>

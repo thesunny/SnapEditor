@@ -246,8 +246,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # what the given function does.
       keepRange: (fn) ->
         # Place spans at the start and end of the range.
-        $start = $('<span id="RANGE_START"></span>')
-        $end = $('<span id="RANGE_END"></span>')
+        $start = @createElement("span").attr("id", "RANGE_START")
+        $end = @createElement("span").attr("id", "RANGE_END")
         # NOTE: Add the end span first because the insertion of the node is a
         # little weird when the selection is collapsed. If you add the start
         # span first, the end span will end up before the start span. By doing

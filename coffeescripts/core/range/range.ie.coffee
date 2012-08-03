@@ -188,7 +188,7 @@ define ["core/helpers"], (Helpers) ->
           endElement = image
         else
           # Place spans at the start and end of the range.
-          range = @constructor.getBlankRange()
+          range = @constructor.getBlankRange(@win)
           range.setEndPoint("StartToStart", @range)
           range.collapse(true)
           range.pasteHTML('<span id="RANGE_START"></span>')
@@ -210,20 +210,6 @@ define ["core/helpers"], (Helpers) ->
           @range.setEndPoint("EndToStart", range)
           $start.remove()
           $end.remove()
-        @select()
-
-      #
-      # MODIFY RANGE CONTENT FUNCTIONS
-      #
-
-      # Paste the given node and set the selection to after the node.
-      #   text|
-      #   <div>element</div>|
-      #
-      # NOTE: In W3C, we manually need to move the caret. In IE, the pasteHTML
-      # method automatically moves the caret to after the end of the pasted
-      # node.
-      #
         @select()
 
       #
@@ -300,7 +286,7 @@ define ["core/helpers"], (Helpers) ->
         # refind the range.
         if @isImageSelected()
           $(@range.item(0)).remove()
-          @range = @constructor.getRangeFromSelection()
+          @range = @constructor.getRangeFromSelection(@win)
         @range.pasteHTML(html)
 
       # Surround range with element and place the selection after the element.

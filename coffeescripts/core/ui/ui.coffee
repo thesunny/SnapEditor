@@ -11,7 +11,7 @@ define ["jquery.custom", "core/ui/ui.button", "core/ui/ui.gap", "core/ui/ui.dial
     # * snapeditor_toolbar_gap_template
     # * snapeditor_contextmenu_button_template
     # * snapeditor_dialog_template
-    constructor: (templates) ->
+    constructor: (@api, templates) ->
       @$templates = $(templates)
       @setupTemplates()
 
@@ -62,6 +62,6 @@ define ["jquery.custom", "core/ui/ui.button", "core/ui/ui.gap", "core/ui/ui.dial
 
     # el will be placed inside the dialog.
     dialog: (html, classname = "") ->
-      new Dialog(@$dialogTemplate, html, classname)
+      new Dialog(@api, @$dialogTemplate, html, classname)
 
   return UI

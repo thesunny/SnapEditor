@@ -18,19 +18,20 @@
 # Range Functions:
 # range([el]): returns the current selection if el is not given, else returns the range that represents the el
 # select(el): selects the el
-define ["jquery.custom", "core/api/api.assets", "core/api/api.exec_command", "core/helpers", "core/events", "core/range"], ($, Assets, ExecCommand, Helpers, Events, Range) ->
+define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/events", "core/range"], ($, ExecCommand, Helpers, Events, Range) ->
   class API
     constructor: (@editor) ->
       @el = @editor.$el[0]
       @doc = Helpers.getDocument(@el)
       @win = Helpers.getWindow(@el)
       @config = @editor.config
-      @assets = new Assets(@editor.config.path)
+      @assets = @editor.assets
       @execCommand = new ExecCommand(this)
       @whitelist = @editor.whitelist
       Helpers.delegate(this, "editor",
         "getContents", "activate", "deactivate", "update"
       )
+      Helpers.delegate(this, "assets", "file", "image", "stylesheet", "template")
       Helpers.delegate(this, "range()",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getCoordinates", "getParentElement", "getParentElements", "getText",
@@ -55,6 +56,50 @@ define ["jquery.custom", "core/api/api.assets", "core/api/api.exec_command", "co
         when 0 then return null
         when 1 then return matches[0]
         else return matches.toArray()
+
+    # Attaches the given event handlers to the given events on all documents on
+    # the page.
+    #
+    # Arguments:
+    # * event, event handler
+    # * map
+    onDocument: ->
+      args = arguments
+      $(document).on.apply($(document), args)
+      $("iframe").each(->
+        doc = this.contentWindow.document
+        $(doc).on.apply($(doc), args)
+      )
+
+    # Detaches events from all documents on the page.
+    # Given an event handler, detaches only the given event handler.
+    # Given only an event, detaches all event handlers for the given event.
+    #
+    # Arguments:
+    # * event, event handler
+    # * event
+    # * map
+    offDocument: ->
+      args = arguments
+      $(document).off.apply($(document), args)
+      $("iframe").each(->
+        doc = this.contentWindow.document
+        $(doc).off.apply($(doc), args)
+      )
+
+    # Given the coordinates, translates them to mouse coordinates relative to
+    # the parent window.
+    getMouseCoordinates: (coords) ->
+      return coords if @doc == document
+      iframeScroll = $(@win).getScroll()
+      iframeViewportCoords =
+        x: coords.x - iframeScroll.x
+        y: coords.y - iframeScroll.y
+      iframeCoords = $(@editor.iframe).getCoordinates()
+      return {
+        x: iframeCoords.left + iframeViewportCoords.x
+        y: iframeCoords.top + iframeViewportCoords.y
+      }
 
     # Gets the current selection if el is not given.
     # Otherwise returns the range that represents the el.
