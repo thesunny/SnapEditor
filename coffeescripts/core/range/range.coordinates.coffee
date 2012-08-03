@@ -12,5 +12,5 @@ define ["core/browser", "core/range/range.coordinates.ie7", "core/range/range.co
   else if Browser.isGecko
     Coordinates = GeckoCoordinates
   else
-    throw "Your browser is not currently supported."
+    Coordinates = null
   return Coordinates
