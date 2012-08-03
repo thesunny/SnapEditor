@@ -19,7 +19,7 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
       tag = $el.tagName()
       replacement = @getDefaults()[tag] or null
       replacement = @getReplacementFromWhitelistByTag(tag) unless replacement
-      return replacement and replacement.getElement(el)
+      return replacement and replacement.getElement(Helpers.getDocument(el), el)
 
     # Finds the element that should be after the given el.
     next: (el) ->
@@ -27,7 +27,7 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
       throw "The whitelist is missing a '*' default" unless next
       match = @match(el)
       next = match.next if match and match.next
-      return next.getElement()
+      return next.getElement(Helpers.getDocument(el))
 
     # Finds the object that matches the given el or else returns null.
     match: (el) ->

@@ -1,11 +1,19 @@
-# When checking an element's HTML, we use #toLowerCase()
-# because IE returns the HTML tags as uppercase.
+# NOTE: When checking an element's HTML, we use #toLowerCase() because IE
+# returns the HTML tags as uppercase.
+# NOTE: Unlike Range.W3C and Webkit, it is not easy to rerun the tests using an
+# iframe. IE exhibits the same behaviour as Firefox where the iframe does not
+# load immediately. This slight delay throws the iframe loading outside the
+# scope of the test. For more information, go to the comments in the "iframe
+# document" test.
 unless hasW3CRanges
   require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
     describe "Range.IE", ->
       Range = $editable = $start = $end = null
       beforeEach ->
         class Range
+          doc: document
+          win: window
+          find: (selector) -> $(@doc).find(selector)
           getParentElements: ->
         Helpers.extend(Range, Module.static)
         Helpers.include(Range, Module.instance)

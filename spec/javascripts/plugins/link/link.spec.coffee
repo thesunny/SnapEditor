@@ -5,6 +5,7 @@
       $editable = addEditableFixture()
       link = new Link()
       link.api =
+        createElement: (name) -> document.createElement(name)
         update: ->
         clean: ->
         range: -> new Range($editable[0], window)

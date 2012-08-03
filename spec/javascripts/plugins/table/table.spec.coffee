@@ -16,11 +16,12 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       $after = $("<div>after</div>").appendTo($editable)
       table = new Table()
       table.api =
+        createElement: (name) -> document.createElement(name)
+        find: (selector) -> $(selector)
         range: (el) -> new Range($editable[0], el or window)
         blankRange: -> new Range($editable[0])
-        update: ->
         isValid: -> true
-        clean: ->
+      spyOn(table, "update")
       Helpers.delegate(table.api, "range()", "getParentElement", "paste")
       Helpers.delegate(table.api, "blankRange()", "selectEndOfElement")
 
@@ -41,7 +42,6 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
 
       it "inserts a table where the selection is", ->
         placeSelection()
-        spyOn(table, "update")
         table.insertTable()
         expect($before.find("table").length).toEqual(1)
         # NOTE: IE adds newlines before blocks. Remove them.
@@ -49,19 +49,16 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
 
       it "inserts a table with no id", ->
         placeSelection()
-        spyOn(table, "update")
         table.insertTable()
         expect($before.find("table").attr("id")).toBeUndefined()
 
       it "inserts a table with the correct format", ->
         placeSelection()
-        spyOn(table, "update")
         table.insertTable()
         expect($before.find("table").attr("id")).toBeUndefined()
 
       it "places the selection at the end of the first <td>", ->
         placeSelection()
-        spyOn(table, "update")
         table.insertTable()
         range = new Range($editable[0], window)
         range.paste("<b></b>")
@@ -69,7 +66,6 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
 
       it "updates the api", ->
         placeSelection()
-        spyOn(table, "update")
         table.insertTable()
         expect(table.update).toHaveBeenCalled()
 
@@ -108,7 +104,6 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
           expect(clean($after.html())).toEqual("<b></b>after")
 
       it "updates the api", ->
-        spyOn(table, "update")
         placeSelection()
         table.deleteTable()
         expect(table.update).toHaveBeenCalled()
@@ -165,7 +160,6 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       it "updates the api", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".first").find("th")[0])
-        spyOn(table, "update")
         table.addRow(true)
         expect(table.update).toHaveBeenCalled()
 
@@ -204,7 +198,6 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       it "updates the api", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".first").find("th")[0])
-        spyOn(table, "update")
         table.deleteRow()
         expect(table.update).toHaveBeenCalled()
 
@@ -304,7 +297,6 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       it "updates the api", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[0])
-        spyOn(table, "update")
         table.addCol(true)
         expect(table.update).toHaveBeenCalled()
 
@@ -353,7 +345,6 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       it "updates the api", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[0])
-        spyOn(table, "update")
         table.deleteCol()
         expect(table.update).toHaveBeenCalled()
 

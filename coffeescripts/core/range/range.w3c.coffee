@@ -9,22 +9,22 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   return {
     static:
       # Get a brand new range.
-      getBlankRange: ->
-        document.createRange()
+      getBlankRange: (win = window) ->
+        win.document.createRange()
 
       # Gets the currently selected range.
-      getRangeFromSelection: ->
+      getRangeFromSelection: (win = window) ->
         # NOTE: The cloneRange is in response to some funky chicken where in
         # Firefox, manipulating the range object retrieved from a selection
         # object actually manipulates the selection! This became evident in the
         # EnterHandler where manipulating the range but still letting the
         # default enter handler to operate resulted in weird results like
         # duplicate fragments and stuff.
-        window.getSelection().getRangeAt(0).cloneRange()
+        win.getSelection().getRangeAt(0).cloneRange()
 
       # Get a range that surrounds the el.
       getRangeFromElement: (el) ->
-        range = @getBlankRange()
+        range = @getBlankRange(Helpers.getWindow(el))
         range.selectNode(el)
         range
 
@@ -154,7 +154,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # Select the given range or its own range if none given.
       select: (range) ->
         range or= @range
-        sel = window.getSelection()
+        sel = @win.getSelection()
         sel.removeAllRanges()
         sel.addRange(range)
         @range = range
@@ -162,7 +162,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
 
       # Unselects the range.
       unselect: ->
-        window.getSelection().removeAllRanges()
+        @win.getSelection().removeAllRanges()
 
       # Select the contents of the element.
       selectNodeContents: (el) ->
@@ -246,8 +246,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # what the given function does.
       keepRange: (fn) ->
         # Place spans at the start and end of the range.
-        $start = $('<span id="RANGE_START"></span>')
-        $end = $('<span id="RANGE_END"></span>')
+        $start = @createElement("span").attr("id", "RANGE_START")
+        $end = @createElement("span").attr("id", "RANGE_END")
         # NOTE: Add the end span first because the insertion of the node is a
         # little weird when the selection is collapsed. If you add the start
         # span first, the end span will end up before the start span. By doing
@@ -260,8 +260,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         start.insertNode($start[0])
         fn($start[0], $end[0])
         # Refind the start and end in case the function had modified them.
-        $start = $("#RANGE_START")
-        $end = $("#RANGE_END")
+        $start = @find("#RANGE_START")
+        $end = @find("#RANGE_END")
         @range.setStart($start[0], 0)
         @range.setEnd($end[0], 0)
         # NOTE: When the spans are added, they split up textnodes. This causes
@@ -319,12 +319,13 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # #selectAfterElement for details.
       pasteHTML: (html) ->
         @select()
-        div = document.createElement("div")
+        div = @doc.createElement("div")
         div.innerHTML = html
         last = div.lastChild
         while(div.childNodes.length > 0 and node = div.childNodes[div.childNodes.length-1])
           @range.insertNode(node)
         @selectAfterElement(last)
+        # TODO: Remove this once we know the above code works.
         #fragment = document.createDocumentFragment()
         #fragment.appendChild($("<p/>").append(html)[0])
         #@range.insertNode(fragment)

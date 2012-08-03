@@ -53,6 +53,15 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         node = node.nextSibling
       return nodes
 
+    # Returns the element's document.
+    getDocument: (el) ->
+      el.ownerDocument
+
+    # Returns the element's window.
+    getWindow: (el) ->
+      doc = @getDocument(el)
+      doc.defaultView or doc.parentWindow
+
     # Replace the given node with its children.
     replaceWithChildren: (node) ->
       parent = node.parentNode

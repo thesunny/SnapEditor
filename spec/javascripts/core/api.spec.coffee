@@ -10,6 +10,7 @@ require ["core/api", "core/range"], (API, Range) ->
         config: path: "/"
         contents: null
         activate: null
+        assets: {}
         whitelist: {}
       )
 

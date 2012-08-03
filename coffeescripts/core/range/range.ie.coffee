@@ -16,20 +16,21 @@ define ["core/helpers"], (Helpers) ->
   return {
     static:
       # Get a brand new range.
-      getBlankRange: ->
-        document.body.createTextRange()
+      getBlankRange: (win = window) ->
+        win.document.body.createTextRange()
 
       # Gets the currently selected range.
-      getRangeFromSelection: ->
-        document.selection.createRange()
+      getRangeFromSelection: (win = window) ->
+        win.document.selection.createRange()
 
       # Get a range that surrounds the content of el.
       getRangeFromElement: (el) ->
+        doc = Helpers.getDocument(el)
         if el.nodeName == 'IMG'
-          range = document.body.createControlRange()
+          range = doc.body.createControlRange()
           range.add(el)
         else
-          range = document.body.createTextRange()
+          range = doc.body.createTextRange()
           range.moveToElementText(el)
         range
 
@@ -39,7 +40,6 @@ define ["core/helpers"], (Helpers) ->
       #
       cloneRange: ->
         if @isImageSelected()
-          # TODO-iframe
           @constructor.getRangeFromElement(@range.item(0))
         else
           @range.duplicate()
@@ -137,7 +137,7 @@ define ["core/helpers"], (Helpers) ->
 
       # Unselect the range.
       unselect: () ->
-        document.selection.empty()
+        @doc.selection.empty()
 
       # Select the contents of the element.
       # NOTE: IE8 cannot select the contents when the element is a block. It
@@ -188,22 +188,22 @@ define ["core/helpers"], (Helpers) ->
           endElement = image
         else
           # Place spans at the start and end of the range.
-          range = @constructor.getBlankRange()
+          range = @constructor.getBlankRange(@win)
           range.setEndPoint("StartToStart", @range)
           range.collapse(true)
           range.pasteHTML('<span id="RANGE_START"></span>')
           range.setEndPoint("StartToEnd", @range)
           range.collapse(false)
           range.pasteHTML('<span id="RANGE_END"></span>')
-          startElement = $("#RANGE_START")[0]
-          endElement = $("#RANGE_END")[0]
+          startElement = @find("#RANGE_START")[0]
+          endElement = @find("#RANGE_END")[0]
         fn(startElement, endElement)
+        # Refind the start and end in case the function had modified them.
         if isImage
           @range = @constructor.getRangeFromElement(image)
         else
-          # Refind the start and end in case the function had modified them.
-          $start = $("#RANGE_START")
-          $end = $("#RANGE_END")
+          $start = @find("#RANGE_START")
+          $end = @find("#RANGE_END")
           range.moveToElementText($start[0])
           @range.setEndPoint("StartToStart", range)
           range.moveToElementText($end[0])
@@ -229,7 +229,7 @@ define ["core/helpers"], (Helpers) ->
       # cases, we may need access to that node for W3C only
       # so I have not removed reference-ability in W3C. 
       pasteNode: (node) ->
-        div = document.createElement("div")
+        div = @doc.createElement("div")
         div.appendChild(node)
         @pasteHTML(div.innerHTML)
 
@@ -286,7 +286,7 @@ define ["core/helpers"], (Helpers) ->
         # refind the range.
         if @isImageSelected()
           $(@range.item(0)).remove()
-          @range = @constructor.getRangeFromSelection()
+          @range = @constructor.getRangeFromSelection(@win)
         @range.pasteHTML(html)
 
       # Surround range with element and place the selection after the element.
@@ -306,7 +306,6 @@ define ["core/helpers"], (Helpers) ->
           @range.execCommand("delete")
           # IE7/8 loses the range after deletion. We have to manually grab it
           # again from the selection.
-          # TODO-iframe
-          @range = @constructor.getRangeFromSelection()
+          @range = @constructor.getRangeFromSelection(@win)
         return deleted
   }

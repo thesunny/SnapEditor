@@ -8,5 +8,5 @@ define [], ->
       #
       # NOTE: This disables object resizing for the entire document, not just
       # for this editor.
-      document.execCommand("enableObjectResizing", false, false)
+      @api.doc.execCommand("enableObjectResizing", false, false)
   }

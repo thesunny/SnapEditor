@@ -8,19 +8,19 @@ require ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObjec
     describe "#getElement", ->
       it "builds an element with the given tag and no classes and attributes", ->
         obj = new WhitelistObject("p", null, [], [])
-        $el = $(obj.getElement($("<div/>")[0]))
+        $el = $(obj.getElement(document, $("<div/>")[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("class")).toBeUndefined()
 
       it "builds an element with the given tag and classes and no attributes", ->
         obj = new WhitelistObject("p", null, ["normal", "highlighted"], [])
-        $el = $(obj.getElement($("<div/>")[0]))
+        $el = $(obj.getElement(document, $("<div/>")[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("class")).toEqual("highlighted normal")
 
       it "builds an element with the given tag and attributes and no classes", ->
         obj = new WhitelistObject("p", null, [], ["width"])
-        $el = $(obj.getElement($('<div width="100px" height="200px"/>')[0]))
+        $el = $(obj.getElement(document, $('<div width="100px" height="200px"/>')[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("width")).toEqual("100px")
         expect($el.attr("height")).toBeUndefined()

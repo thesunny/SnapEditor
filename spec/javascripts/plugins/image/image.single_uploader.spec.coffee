@@ -4,7 +4,10 @@ require ["jquery.custom", "plugins/image/image.single_uploader", "core/helpers",
     beforeEach ->
       $editable = addEditableFixture()
       uploader = new Uploader()
-      uploader.api = select: (el) -> (new Range($editable[0], el)).select()
+      uploader.api =
+        createElement: (name) -> document.createElement(name)
+        find: (selector) -> $(document).find(selector)
+        select: (el) -> (new Range($editable[0], el)).select()
 
     afterEach ->
       $editable.remove()

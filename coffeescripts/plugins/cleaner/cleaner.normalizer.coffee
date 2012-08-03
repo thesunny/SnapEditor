@@ -111,7 +111,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
         if $parent[0] == @api.el or $.inArray($parent.tagName(), @doNotUseAsTemplate) != -1
           $block = $(@api.defaultBlock())
         else
-          $block = $("<#{$parent.tagName()}/>")
+          $block = $(@api.createElement($parent.tagName()))
           $block.attr("class", $parent.attr("class"))
         $block.append(inlineNodes)
         # Place the block in the proper position unless it consists of all

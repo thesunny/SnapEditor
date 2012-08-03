@@ -52,7 +52,8 @@ define ["../lib/jquery", "../lib/mustache"], ->
     return fn.call(this) if this.isVisible()
     parent = this.parent()
     toMeasure = []
-    while !parent.isVisible() && parent[0] != document.body
+    body = this[0].ownerDocument.body
+    while !parent.isVisible() && parent[0] != body
       toMeasure.push(parent.expose())
       parent = parent.parent()
     restore = this.expose()

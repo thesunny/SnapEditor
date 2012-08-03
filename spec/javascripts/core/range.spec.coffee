@@ -22,15 +22,28 @@ require ["core/range"], (Range) ->
         expect(-> range.getCoordinates()).not.toThrow()
 
     describe "#constructor", ->
-      it "sets the el with the given el", ->
-        range = new Range($editable[0])
-        expect(range.el).toBe($editable[0])
-
       it "throws an error when no el is given", ->
         expect(-> range = new Range()).toThrow()
 
       it "throws an error when el is not an element", ->
         expect(-> range = new Range($editable)).toThrow()
+
+      it "sets the el with the given el", ->
+        range = new Range($editable[0])
+        expect(range.el).toBe($editable[0])
+
+      it "sets the document", ->
+        range = new Range($editable[0])
+        expect(range.doc).toBe(document)
+
+      it "sets the window", ->
+        range = new Range($editable[0])
+        # NOTE: In IE7/8, Jasmine toBe() craps out when checking window.
+        if hasW3CRanges
+          expect(range.win).toBe(window)
+        else
+          expect(range.win).toBeDefined()
+          expect(range.win).not.toBeNull()
 
       it "sets the range to the current selection when the window is given", ->
         spyOn(Range, "getRangeFromSelection").andReturn("range")
@@ -45,7 +58,7 @@ require ["core/range"], (Range) ->
         expect(range.range).toEqual("range")
 
       it "sets the range to the given range", ->
-        givenRange = Range.getBlankRange($editable[0])
+        givenRange = Range.getBlankRange()
         range = new Range($editable[0], givenRange)
         expect(range.range).toBe(givenRange)
 

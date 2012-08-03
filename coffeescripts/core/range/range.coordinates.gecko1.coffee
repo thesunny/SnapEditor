@@ -60,7 +60,7 @@ define ["jquery.custom"], ($) ->
         # Without content in the span, Firefox calculates the height of the span
         # as 0. Hence, the top and bottom coordinates are the same. In order to
         # get the real top and bottom, we insert a zero width no-break space.
-        document.execCommand('inserthtml', false, '<span id="CURSORPOS">&#65279</span>')
+        @document.execCommand('inserthtml', false, '<span id="CURSORPOS">&#65279</span>')
       else
         # Without content in the span, Firefox calculates the height of the span
         # as 0. Hence, the top and bottom coordinates are the same. In order to
@@ -76,7 +76,7 @@ define ["jquery.custom"], ($) ->
       # If we were originally moving backwards, we need to make sure the
       # direction of the reselected range is also backwards.
       if backwards
-        selection = window.getSelection()
+        selection = @win.getSelection()
         selection.collapseToEnd()
         selection.extend(@range.startContainer, @range.endContainer)
 
@@ -86,6 +86,6 @@ define ["jquery.custom"], ($) ->
     isMovingBackwards: ->
       # If the anchor of the selection does not match the start of the range,
       # then the selection was made moving backwards.
-      selection = window.getSelection()
+      selection = @win.getSelection()
       selection.anchorNode != @range.startContainer or selection.anchorOffset != @range.startOffset
    }

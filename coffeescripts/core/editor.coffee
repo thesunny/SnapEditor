@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers", "core/api", "core/plugins", "core/keyboard", "core/contexts", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Helpers, API, Plugins, Keyboard, Contexts, ContextMenu, Whitelist) ->
+define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugins", "core/keyboard", "core/contexts", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Helpers, Assets, API, Plugins, Keyboard, Contexts, ContextMenu, Whitelist) ->
   class Editor
     # el - string id or DOM element
     # defaults - default config
@@ -11,6 +11,7 @@ define ["jquery.custom", "core/helpers", "core/api", "core/plugins", "core/keybo
       # Transform the string into a CSS id selector.
       el = "#" + el if typeof el == "string"
       @$el = $(el)
+      @assets = new Assets(@config.path)
       @whitelist = new Whitelist(@defaults.whitelist)
       @api = new API(this)
       @loadAssets()

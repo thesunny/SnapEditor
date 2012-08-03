@@ -19,7 +19,7 @@ define ["jquery.custom"], ($) ->
       else
         # This part is the same as IE's textRange.
         clientRect = @range.getBoundingClientRect()
-        windowScroll = $(window).getScroll()
+        windowScroll = $(@win).getScroll()
         coords =
           top: clientRect.top + windowScroll.y,
           bottom: clientRect.bottom + windowScroll.y,

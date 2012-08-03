@@ -6,7 +6,9 @@ unless isIE
     beforeEach ->
       $el = $("<div/>").prependTo("body")
       class Editable
-        api: { el: $el[0] }
+        api:
+          el: $el[0]
+          doc: document
 
     afterEach ->
       $el.remove()

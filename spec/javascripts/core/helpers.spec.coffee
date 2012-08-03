@@ -1,5 +1,12 @@
-require ["core/helpers"], (Helpers) ->
+require ["core/helpers", "core/iframe"], (Helpers, IFrame) ->
   describe "helpers", ->
+    $editable = null
+    beforeEach ->
+      $editable = addEditableFixture()
+
+    afterEach ->
+      $editable.remove()
+
     describe "#isElement", ->
       it "returns true for an element", ->
         el = document.createElement("div")
@@ -17,13 +24,6 @@ require ["core/helpers"], (Helpers) ->
         expect(Helpers.isTextnode(el)).toBeFalsy()
 
     describe "#isBlock", ->
-      $editable = null
-      beforeEach ->
-        $editable = addEditableFixture()
-
-      afterEach ->
-        $editable.remove()
-
       it "returns false if a textnode is given", ->
         text = document.createTextNode("test")
         $editable[0].appendChild(text)
@@ -73,6 +73,28 @@ require ["core/helpers"], (Helpers) ->
         expect(nodes[0]).toBe($div[0].childNodes[2])
         expect(nodes[1]).toBe($div[0].childNodes[3])
         expect(nodes[2]).toBe($div[0].childNodes[4])
+
+    describe "#getDocument", ->
+      it "returns this document when the element is in this document", ->
+        expect(Helpers.getDocument($editable[0])).toBe(document)
+
+      it "returns the iframe's document when the element is in the iframe", ->
+        iframe = new IFrame(
+          contents: "<b>hello</b>"
+          load: ->
+            b = $(@el).find("b")
+            expect(Helpers.getDocument(b[0])).toBe(@doc)
+        )
+        $(iframe).appendTo($editable)
+
+    describe "#getWindow", ->
+      it "returns this window when the element is in this document", ->
+        # NOTE: In IE7/8, Jasmine toBe() craps out when checking window.
+        if hasW3CRanges
+          expect(Helpers.getWindow($editable[0])).toBe(window)
+        else
+          expect(Helpers.getWindow($editable[0])).toBeDefined()
+          expect(Helpers.getWindow($editable[0])).not.toBeNull()
 
     describe "#replaceWithChildren", ->
       $editable = null

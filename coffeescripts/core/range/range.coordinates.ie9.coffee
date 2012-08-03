@@ -30,7 +30,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
           span.remove()
         else
           clientRect = @range.getBoundingClientRect()
-          windowScroll = $(window).getScroll()
+          windowScroll = $(@win).getScroll()
           coords =
             top: clientRect.top + windowScroll.y,
             bottom: clientRect.bottom + windowScroll.y,

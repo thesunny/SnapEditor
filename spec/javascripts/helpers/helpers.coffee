@@ -32,8 +32,8 @@ require ["jquery.custom"], ($) ->
     else
       alert(a) for a in arguments
 
-  window.addEditableFixture = ->
-    $('<div id="editable" contenteditable="true"></div>').prependTo("body")
+  window.addEditableFixture = (doc = document) ->
+    $(doc.createElement("div")).attr(id: "editable", contenteditable: true).prependTo(doc.body)
 
   # Lowercase the string.
   # Remove ", \n, \r, and zero width no break space.

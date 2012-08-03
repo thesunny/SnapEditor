@@ -14,7 +14,7 @@ define ["jquery.custom", "core/ui/ui"], ($, UI) ->
       @normalizeKeyboardShortcuts()
 
     getUI: ->
-      @ui or= new UI(@templates)
+      @ui or= new UI(@api, @templates)
 
     # Registers the plugin and adds any UI components, actions, and keyboard
     # shortcuts.

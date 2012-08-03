@@ -32,7 +32,7 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
         appendTo("body").
         on("contextmenu", (e) -> e.preventDefault())
       @dataActionHandler = new DataActionHandler(@$menu, @api)
-      @dataActionHandler.activate()
+      @dataActionHandler.on("click", @hide)
       @builder = new Builder(@$template, @config)
 
     activate: =>
@@ -46,14 +46,13 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
       @buildMenu(e.target)
       if @$menu.children().length > 0
         e.preventDefault()
-        @$menu.css(@getStyles(e.pageX, e.pageY)).show()
-        $(document).on("click", @tryHide)
-        $(document).on("keydown", @hide)
+        coords = @api.getMouseCoordinates(x: e.pageX, y: e.pageY)
+        @$menu.css(@getStyles(coords.x, coords.y)).show()
+        @api.onDocument(click: @tryHide, keydown: @hide)
 
     hide: =>
       @$menu.hide() if @$menu
-      $(document).off("click", @tryHide)
-      $(document).off("keydown", @hide)
+      @api.offDocument(click: @tryHide, keydown: @hide)
 
     # Hide if the target is not the contextmenu.
     tryHide: (e) =>

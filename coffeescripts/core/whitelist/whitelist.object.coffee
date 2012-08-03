@@ -12,8 +12,8 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       @attrs[attr] = true for attr in attrs
 
     # If a template is given, the allowed attributes are copied.
-    getElement: (templateEl) ->
-      $el = $("<#{@tag}>")
+    getElement: (doc, templateEl) ->
+      $el = $(doc.createElement(@tag))
       # Add the classes if there are any.
       $el.attr("class", @classes) if @classes.length > 0
       # Copy the allowed attributes over from the template.
