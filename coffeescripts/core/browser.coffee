@@ -11,12 +11,15 @@ define ["jquery.custom"], ($) ->
 
   hasW3CRanges = !!window.getSelection
 
+  isSupported = isIE7 || isIE8 || isIE9 || isGecko || isWebkit
+
   return Browser =
-    isIE: isIE,
-    isIE7: isIE7,
-    isIE8: isIE8,
-    isIE9: isIE9,
-    isGecko: isGecko,
-    isGecko1: isGecko1,
-    isWebkit: isWebkit,
+    isIE: isIE
+    isIE7: isIE7
+    isIE8: isIE8
+    isIE9: isIE9
+    isGecko: isGecko
+    isGecko1: isGecko1
+    isWebkit: isWebkit
     hasW3CRanges: hasW3CRanges
+    isSupported: isSupported

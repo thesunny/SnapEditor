@@ -8,6 +8,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
     #   * toolbar: toolbar config that replaces the default one
     #   * whitelist: object specifying the whitelist
     constructor: (el, @defaults, @config = {}) ->
+      @unsupported = false
       # Transform the string into a CSS id selector.
       el = "#" + el if typeof el == "string"
       @$el = $(el)
