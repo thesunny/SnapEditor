@@ -13,9 +13,16 @@ define ["jquery.custom"], ($) ->
         # the same. In order to get the real top and bottom, we insert
         # a zero width no-break space.
         @paste($('<span id="CURSORPOS">&#65279;</span>')[0])
-        span = $('#CURSORPOS')
-        coords = span.getCoordinates()
-        span.remove()
+        $span = $('#CURSORPOS')
+        coords = $span.getCoordinates()
+        # NOTE: When the spans are added, they split up textnodes. This causes
+        # problems in Webkit. For example, when the range is at the beginning
+        # of a list item and the textnodes were not merged back together,
+        # calling indent/outdent through document.execCommand() would exhibit
+        # crazy behaviour. Hence, we call normalize() on the parents to clean
+        # up the textnodes.
+        $span.parent()[0].normalize()
+        $span.remove()
         # NOTE: In Safari only (not in Chrome), the selection gets lost after
         # the paste.Hence we need to reselec it. There is no harm in leaving it
         # in for Chrome.
