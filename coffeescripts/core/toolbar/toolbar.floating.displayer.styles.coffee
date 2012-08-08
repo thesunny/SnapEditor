@@ -4,7 +4,7 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
     # floater is the thing to be floated around.
     constructor: (el, floater) ->
       @$el = $(el)
-      @$floater = $(floater)
+      @$floater = $(floater).css("position", "absolute")
 
     # Returns the styles needed to place the floater at the top of the el.
     top: ->
