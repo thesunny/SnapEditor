@@ -1,6 +1,7 @@
 define ["../lib/jquery", "../lib/mustache"], ->
   $ = jQuery
-  $.noConflict()
+  # Remove both window.$ and window.jQuery.
+  $.noConflict(true)
 
   # Shortcut for tagName.
   $.fn.tagName = ->
