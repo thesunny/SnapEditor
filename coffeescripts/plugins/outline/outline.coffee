@@ -8,17 +8,27 @@ define ["jquery.custom"], ($) ->
 
     show: =>
       @setupOutlines()
-      styles = @getStyles()
-      @outlines.top.css(styles.top).show()
-      @outlines.bottom.css(styles.bottom).show()
-      @outlines.left.css(styles.left).show()
-      @outlines.right.css(styles.right).show()
+      @update()
+      @outlines.top.show()
+      @outlines.bottom.show()
+      @outlines.left.show()
+      @outlines.right.show()
+      $(window).on("resize", @update)
 
     hide: =>
       @outlines.top.hide()
       @outlines.bottom.hide()
       @outlines.left.hide()
       @outlines.right.hide()
+      $(window).off("resize", @update)
+
+    update: =>
+      console.log "UPDATE"
+      styles = @getStyles()
+      @outlines.top.css(styles.top)
+      @outlines.bottom.css(styles.bottom)
+      @outlines.left.css(styles.left)
+      @outlines.right.css(styles.right)
 
     setupOutlines: ->
       unless @outlines
