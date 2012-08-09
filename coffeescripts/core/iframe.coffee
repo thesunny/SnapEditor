@@ -17,7 +17,7 @@ define ["jquery.custom"], ($) ->
         # NOTE: We use doc because IE doesn't like using document.
         @doc = @win.document
         @doc.open()
-        @doc.write("<html><head>")
+        @doc.write("<!DOCTYPE html><html><head>")
 
         # Load stylesheets if any.
         for stylesheet in options.stylesheets
