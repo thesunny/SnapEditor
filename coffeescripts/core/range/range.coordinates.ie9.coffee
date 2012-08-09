@@ -24,10 +24,24 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         coords = $(img).getCoordinates()
       else
         if @isCollapsed()
+          # In IE9, after adding the span and grabbing the coordinates, we
+          # remove the span. Unfortunately, the act of removing the span causes
+          # a "re-focus" where the removed span is scrolled into view. This
+          # causes problems because you can't scroll away from where the caret
+          # is since it always "re-focuses" back to the caret. My guess as to
+          # what's happening is that when we remove the span, the range gets
+          # messed up and IE9 attempts to fix it and in doing so, "re-focuses"
+          # the browser to that location. To fix this problem, we save the
+          # range and unselect it after the span is inserted. Therefore, when
+          # we remove the span, there is no range set. We reselect the range
+          # afterwards.
+          range = @range
           @paste($('<span id="CURSORPOS"/>')[0])
-          span = $('#CURSORPOS')
-          coords = span.getCoordinates()
-          span.remove()
+          @unselect()
+          $span = $('#CURSORPOS')
+          coords = $span.getCoordinates()
+          $span.remove()
+          @select(range)
         else
           clientRect = @range.getBoundingClientRect()
           windowScroll = $(@win).getScroll()
