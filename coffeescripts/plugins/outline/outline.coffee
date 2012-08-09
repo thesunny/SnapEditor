@@ -2,9 +2,16 @@ define ["jquery.custom"], ($) ->
   class Outline
     register: (@api) ->
       @$el = $(@api.el)
-      @api.on("deactivate.editor", @show)
-      @api.on("activate.editor", @hide)
-      @show()
+      @api.on("deactivate.editor", @activate)
+      @api.on("activate.editor", @deactivate)
+      @activate()
+
+    activate: =>
+      @$el.on(mouseover: @show, mouseout: @hide)
+
+    deactivate: =>
+      @hide()
+      @$el.off(mouseover: @show, mouseout: @hide)
 
     show: =>
       @setupOutlines()
@@ -23,7 +30,6 @@ define ["jquery.custom"], ($) ->
       $(window).off("resize", @update)
 
     update: =>
-      console.log "UPDATE"
       styles = @getStyles()
       @outlines.top.css(styles.top)
       @outlines.bottom.css(styles.bottom)
