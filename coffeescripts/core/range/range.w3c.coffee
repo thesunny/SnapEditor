@@ -5,7 +5,7 @@
 # NOTE: IE9+ supports W3C ranges. Therefore, it uses this code. For IE7/8,
 # please take a look at range.ie.coffee.
 
-define ["jquery.custom", "core/helpers"], ($, Helpers) ->
+define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
   return {
     static:
       # Get a brand new range.
@@ -199,7 +199,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         @range.collapse(false)
         @select()
         # TODO: Figure out why this is here. Then add tests if applicable.
-        @el.focus()
+        # This breaks IE9 as the focus scrolls the page so that the caret is
+        # at the bottom of the page.
+        @el.focus() unless Browser.isIE9
 
       # Place the selection after the element.
       #
