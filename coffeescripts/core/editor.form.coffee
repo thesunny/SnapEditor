@@ -35,6 +35,7 @@ define ["jquery.custom", "core/editor", "config/config.default.form", "core/asse
       toolbarComponents = @plugins.getToolbarComponents()
       @toolbar = new Toolbar(@api, @$templates, toolbarComponents.available, toolbarComponents.config)
       @formize(@toolbar.$toolbar)
+      @$el.blur(@updateTextarea)
 
     formize: (toolbar) ->
       $toolbar = $(toolbar)
@@ -52,5 +53,11 @@ define ["jquery.custom", "core/editor", "config/config.default.form", "core/asse
       # Swap.
       @$textarea.hide()
       @$container.show()
+
+    updateTextarea: =>
+      newContents = @getContents()
+      unless @oldContents == newContents
+        @$textarea.val(newContents)
+        @oldContents = newContents
 
   return FormEditor
