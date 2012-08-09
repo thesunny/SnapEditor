@@ -21,10 +21,12 @@ desc "Compile and build snapeditor.js"
 task :compileAndBuild => [:compile, :build]
 
 namespace :prepare do
+  desc "Prepares snapeditor.js for testing"
   task :test => [:compile, :build] do
     cp "build/snapeditor.js", "spec/acceptance/assets/javascripts"
   end
 
+  desc "Prepare the bundle for uploading"
   task :bundle => [:compile, :build] do
     `markdown documentation/LICENSE.md > documentation/LICENSE.html`
     `markdown documentation/README.md > documentation/README.html`
