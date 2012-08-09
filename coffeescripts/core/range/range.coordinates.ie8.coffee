@@ -38,7 +38,7 @@ define ["jquery.custom"], ($) ->
     getEdgeCoordinates: (start) ->
       bookmark = @range.getBookmark()
       @range.collapse(start)
-      @range.paste('<span id="CURSORPOS"></span>')
+      @range.pasteHTML('<span id="CURSORPOS"></span>')
       span = $('#CURSORPOS')
       coords = span.getCoordinates()
       span.remove()
