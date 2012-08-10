@@ -21,19 +21,34 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       }
 
     generateDialog: (ui) ->
-      @dialog = ui.dialog("""
-        <div class="error" style="display: none;"></div>
-        <form class="link_form">
-          <div>URL: <input class="link_href" type="text" /></div>
-          <div class="link_text_container">Link Text: <input class="link_text" type="text" /></div>
-          <div>Open in a new window? <input class="link_new_window" type="checkbox" /></div>
-          <div>
-            <input class="link_submit" type="submit" value="Link" />
-            <input class="link_remove" type="button" value="Remove" />
-            <a class="link_cancel" href="#">Cancel</a>
-          </div>
-        </form>
-      """)
+      @dialog = ui.dialog("Insert Link",
+        """
+          <div class="error" style="display: none;"></div>
+          <form class="link_form">
+            <div class="field_container">
+              <label class="label_left">URL:</label>
+              <input class="link_href" type="text" />
+            </div>
+            <div class="field_container link_text_container">
+              <label class="label_left">Caption:</label>
+              <input class="link_text" type="text" />
+            </div>
+            <div class="field_container">
+              <label class="label_left"></label>
+              <label class="link_new_window_text">
+                <input class="link_new_window" type="checkbox" />
+                Open link in new window
+              </label>
+            </div>
+            <div class="buttons">
+              <label class="label_left"></label>
+              <input class="link_submit" type="submit" value="Create Link" />
+              <input class="link_remove" type="button" value="Remove" />
+              <input class="link_cancel" type="button" value="Cancel" />
+            </div>
+          </form>
+        """
+      )
 
     setupDialog: ->
       unless @$dialog
@@ -45,6 +60,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
         @$text = @$dialog.find(".link_text")
         @$textContainer = @$dialog.find(".link_text_container")
         @$newWindow = @$dialog.find(".link_new_window")
+        @$submit = @$dialog.find(".link_submit")
         @$remove = @$dialog.find(".link_remove").on("click", @remove)
         @$cancel = @$dialog.find(".link_cancel").on("click", @cancel)
         @mirrorInput = new MirrorInput(@$href, @$text)
@@ -70,18 +86,24 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
 
     prepareAddForm: ->
       if @imageSelected
+        @dialog.setTitle("Insert Image Link")
         @$textContainer.hide()
       else
+        @dialog.setTitle("Insert Link")
         @$textContainer.show()
+      @$submit.attr("value", "Create Link")
       @$remove.hide()
 
     prepareUpdateForm: ->
       @$href.attr("value", @$link.attr("href"))
       if @imageSelected
+        @dialog.setTitle("Edit Image Link")
         @$text.hide()
       else
+        @dialog.setTitle("Edit Link")
         @$text.show().attr("value", @$link.text())
       @$newWindow.prop("checked", !!@$link.attr("target"))
+      @$submit.attr("value", "Update Link")
       @$remove.show()
 
     resetForm: ->
@@ -126,7 +148,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       text = $.trim(@$text.attr("value")) unless @imageSelected
       errors = []
       errors.push("URL cannot be blank") unless href
-      errors.push("Link Text cannot be blank") if typeof text != "undefined" && !text
+      errors.push("Caption cannot be blank") if typeof text != "undefined" && !text
       if errors.length > 0
         message = "<div>Please fix the following errors:</div><ul>"
         message += "<li>#{error}</li>" for error in errors

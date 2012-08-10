@@ -48,14 +48,19 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       # accept-charset - for Firefox as it gives a warning without it
       # target - for submitting the form through the iframe
       iframeName = "insert_image_iframe_#{Math.floor(Math.random() * 99999)}"
-      @dialog = ui.dialog("""
-        <div class="error" style="display: none;"></div>
-        <form class="insert_image_form" action="#{@options.url}" method="post" enctype="multipart/form-data" encoding="multipart/form-data" target="#{iframeName}" accept-charset="utf-8">
-          <input class="insert_image_json" type="hidden" name="json" value='#{json}' />
-          <input class="insert_image_file" type="file" name="file" accept="image/*" />
-        </form>
-        <iframe class="insert_image_iframe" name="#{iframeName}" style="display: none;"></iframe>
-      """)
+      @dialog = ui.dialog("Upload New Image",
+        """
+          <div class="error" style="display: none;"></div>
+          <form class="insert_image_form" action="#{@options.url}" method="post" enctype="multipart/form-data" encoding="multipart/form-data" target="#{iframeName}" accept-charset="utf-8">
+            <input class="insert_image_json" type="hidden" name="json" value='#{json}' />
+            <div class="insert_image_text">Select image to upload:</div>
+            <div class="field_container">
+              <input class="insert_image_file" type="file" name="file" accept="image/*" />
+            </div>
+          </form>
+          <iframe class="insert_image_iframe" name="#{iframeName}" style="display: none;"></iframe>
+        """
+      )
 
     setupDialog: ->
       unless @dialog

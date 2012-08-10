@@ -61,7 +61,7 @@ define ["jquery.custom", "core/ui/ui.button", "core/ui/ui.gap", "core/ui/ui.dial
       new Gap(@$tbGapTemplate)
 
     # el will be placed inside the dialog.
-    dialog: (html, classname = "") ->
-      new Dialog(@api, @$dialogTemplate, html, classname)
+    dialog: (title, html, classname = "") ->
+      new Dialog(@api, @$dialogTemplate, title, html, classname)
 
   return UI

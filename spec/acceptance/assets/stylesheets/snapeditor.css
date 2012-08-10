@@ -92,8 +92,62 @@
   z-index: 200;
   border: 1px solid #b8b8b8;
   background-color: #FBFBFB;
+  font-color: #333333;
+  font-size: 14px;
 }
 
-.snapeditor_dialog_inner {
+.snapeditor_dialog_title_container {
+  background: #F0F0F0;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F5F5F5', endColorstr='#E6E6E6');
+  background: -webkit-gradient(linear, left top, left bottom, from(#F5F5F5), to(#E6E6E6));
+  background: -moz-linear-gradient(top, #F5F5F5, #E6E6E6);
+  border-bottom: 1px solid #b8b8b8;
+}
+
+.snapeditor_dialog_title {
+  font-weight: bold;
+  padding: 3px 5px;
+}
+
+.snapeditor_dialog_content {
   padding: 20px;
+}
+
+.snapeditor_dialog .error {
+  color: #b94a48;
+  background-color: #f2dede;
+  border: 1px solid #eed3d7;
+  padding: 8px 15px;
+  margin-bottom: 20px;
+}
+
+/* LINK DIALOG */
+/* TODO: This should be moved inside the plugin */
+.snapeditor_dialog .link_form .field_container {
+  margin-bottom: 3px;
+}
+
+.snapeditor_dialog .link_form .buttons {
+  margin-top: 15px;
+}
+
+.snapeditor_dialog .link_form .label_left {
+  display: inline-block;
+  text-align: right;
+  margin-right: 5px;
+  width: 5em;
+}
+
+.snapeditor_dialog .link_form input[type="text"] {
+  width: 225px;
+}
+
+.snapeditor_dialog .link_form .link_new_window_text {
+  font-size: 90%;
+}
+
+/* IMAGE DIALOG */
+/* TODO: This should be moved inside the plugin */
+.snapeditor_dialog .insert_image_form .insert_image_text {
+  margin-bottom: 10px;
 }
