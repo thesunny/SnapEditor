@@ -91,6 +91,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       else
         @dialog.setTitle("Insert Link")
         @$textContainer.show()
+        @$text.attr("value", @range.getText())
       @$submit.attr("value", "Create Link")
       @$remove.hide()
 
@@ -101,7 +102,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
         @$text.hide()
       else
         @dialog.setTitle("Edit Link")
-        @$text.show().attr("value", @$link.text())
+        @$textContainer.show()
+        @$text.attr("value", @$link.text())
       @$newWindow.prop("checked", !!@$link.attr("target"))
       @$submit.attr("value", "Update Link")
       @$remove.show()
@@ -119,7 +121,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       if @api.isValid()
         # Save the range.
         @range = @api.range()
-        [startParent, endParent] = @range.getParentElements("a")
+        [startParent, endParent] = @api.getParentElements("a")
         @$link = $(startParent || endParent)
         @imageSelected = @isImageSelected()
         @setupDialog()
@@ -217,6 +219,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
           if @imageSelected
             @range.surroundContents($link[0])
           else
+            @range.delete()
             @range.paste($link[0])
       @update()
 
