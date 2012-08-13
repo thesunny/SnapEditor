@@ -43,8 +43,8 @@
   width: 100%;
 }
 
-.snapeditor_form_content {
-  border: 1px solid #DDDDDD;
+.snapeditor_form_iframe_container {
+  border: 1px solid #dddddd;
   border-top: none;
 }
 

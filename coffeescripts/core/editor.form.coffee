@@ -6,9 +6,7 @@ define ["jquery.custom", "core/editor", "config/config.default.form", "core/asse
       @$textarea = $(textarea)
       throw "SnapEditor.Form expects a textarea." unless @$textarea.tagName() == "textarea"
       @$container = $('<div class="snapeditor_form"/>').hide().insertAfter(@$textarea)
-      @$iframeContainer = $('<div class="snapeditor_form_iframe_container"/>').
-        css(border: "1px solid #ddd").
-        appendTo(@$container)
+      @$iframeContainer = $('<div class="snapeditor_form_iframe_container"/>').appendTo(@$container)
       self = this
       # This is here because assets aren't initialized until we call the super
       # constructor. However, we can't call the super constructor before the
