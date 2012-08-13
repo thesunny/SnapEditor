@@ -73,8 +73,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       # In Webkit, the focus is set back to the editor for typing, but the
       # keyboard shortcuts don't work unless we manually move the focus back to
       # the editor.
-      # This does not effect IEs so it is left in for consistency.
-      @api.el.focus()
+      # This affects IE as it makes the page jump to where the cursor is.
+      @api.el.focus() unless Browser.isIE
       @range.select()
 
     prepareForm: ->
