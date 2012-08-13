@@ -14,14 +14,17 @@ h1, h2, h3 {
 
 h1 {
   font-size: 200%;
+  margin: 1.5em 0 0.75em;
 }
 
 h2 {
   font-size: 150%;
+  margin: 1.25em 0 0.75em;
 }
 
 h3 {
   font-size: 125%;
+  margin: 1em 0 0.75em;
 }
 
 p {
@@ -40,7 +43,7 @@ ol ol ol { list-style-type: lower-roman; }
 ol ol ol ol { list-style-type: decimal; }
 li { display: list-item; }
 
-table { font-size: 100%; border-spacing: 2px; border-collapse: collapse; width: 100%; margin-bottom: 15px; }
+table { font-size: 100%; border-spacing: 2px; border-collapse: collapse; width: 100%; margin-bottom: 1em; }
 thead, tbody, tfoot { vertical-align: middle; }
 td, th, tr { vertical-align: inherit; }
 table, th, td { border: 1px solid #5c5c5c; }
