@@ -52,7 +52,6 @@ define ["jquery.custom"], ($) ->
       # @doc.execCommand() or the undo will not work.
       @range.execCommand("createLink", false, randomHref)
       $a = $(@find("a[href=\"#{randomHref}\"]"))
-      console.log $a.length
       coords = $a.getCoordinates()
       # It is required that we use @doc.execCommand() here because
       # @range.execCommand() does not undo the createLink.
