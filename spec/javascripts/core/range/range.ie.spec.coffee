@@ -159,6 +159,17 @@ unless hasW3CRanges
             range.range.collapse(true)
             expect(range.isStartOfElement($text[0])).toBeFalsy()
 
+          it "returns false if an image is before", ->
+            $text.html('<img src="/spec/javascripts/support/assets/images/stub.png" />text')
+            textnode = $text[0].childNodes[1]
+
+            range = new Range()
+            range.range = Range.getBlankRange()
+            # Place the selection at the beginning of "|text".
+            range.range.findText("text")
+            range.range.collapse(true)
+            expect(range.isStartOfElement($text[0])).toBeFalsy()
+
         describe "#isEndOfElement", ->
           $text = textnode = null
           beforeEach ->
@@ -183,6 +194,17 @@ unless hasW3CRanges
 
           it "returns false if &nbsp; is after", ->
             $text.html("text&nbsp;")
+            textnode = $text[0].childNodes[0]
+
+            range = new Range()
+            range.range = Range.getBlankRange()
+            # Place the selection at the end of "text|".
+            range.range.findText("text")
+            range.range.collapse(false)
+            expect(range.isEndOfElement($text[0])).toBeFalsy()
+
+          it "returns false if an image is after", ->
+            $text.html('text<img src="/spec/javascripts/support/assets/images/stub.png" />')
             textnode = $text[0].childNodes[0]
 
             range = new Range()

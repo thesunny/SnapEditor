@@ -34,11 +34,16 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     handleBlock: (block, next) ->
       isEndOfElement = @api.isEndOfElement(block)
       if $(block).tagName() == "li" and isEndOfElement and @api.isStartOfElement(block)
+        # Empty list item, so outdent.
         @api.outdent()
       else if isEndOfElement
+        # Hitting enter at the end of an element. Add the next block and
+        # place the selection in it.
         $(next).insertAfter(block).html(Helpers.zeroWidthNoBreakSpace)
         @api.selectEndOfElement(next)
       else
+        # In the middle of a block. Split the block and place the selection in
+        # the second block.
         @api.keepRange((startEl, endEl) ->
           $span = $('<span id="ENTER_HANDLER"/>').insertBefore(startEl)
           [$first, $second] = $(block).split($span)
