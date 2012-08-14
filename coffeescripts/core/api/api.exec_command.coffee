@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser"], ($, Browser) ->
+define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "core/helpers"], ($, Gecko, Browser, Helpers) ->
   class ExecCommand
     constructor: (@api) ->
 
@@ -129,5 +129,7 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       allowed = !@api.getParentElement("table")
       alert("Sorry. This action cannot be performed inside a table.") unless allowed
       return allowed
+
+  Helpers.include(ExecCommand, Gecko) if Browser.isGecko
 
   return ExecCommand
