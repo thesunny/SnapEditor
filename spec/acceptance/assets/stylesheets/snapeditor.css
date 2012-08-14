@@ -87,6 +87,10 @@
   border-bottom: 1px solid #808080;
 }
 
+.snapeditor_contextmenu_description, .snapeditor_contextmenu_shortcut {
+  cursor: default;
+}
+
 /* DIALOG */
 .snapeditor_dialog {
   z-index: 200;
