@@ -64,6 +64,14 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
         @$remove = @$dialog.find(".link_remove").on("click", @remove)
         @$cancel = @$dialog.find(".link_cancel").on("click", @cancel)
         @mirrorInput = new MirrorInput(@$href, @$text)
+        # Only in IE8, if the form is not present on page load, it does not
+        # know how to submit the form when hitting enter. IE8 scans the page
+        # on load for any submit buttons and attaches the enter-to-submit at
+        # that time. This is a known bug.
+        if Browser.isIE8
+          @$href.keydown(@handleEnter)
+          @$text.keydown(@handleEnter)
+          @$newWindow.keydown(@handleEnter)
 
     handleDialogHide: =>
       @mirrorInput.deactivate()
@@ -144,6 +152,12 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
     hideError: ->
       @$error.hide().empty()
 
+    handleEnter: (e) =>
+      if Helpers.keysOf(e) == "enter"
+        @$form.submit()
+        # Need to return false to prevent IE8 from beeping.
+        return false
+
     submit: (e) =>
       e.preventDefault()
       href = $.trim(@$href.attr("value"))
@@ -154,7 +168,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       if errors.length > 0
         message = "<div>Please fix the following errors:</div><ul>"
         message += "<li>#{error}</li>" for error in errors
-        message += "</u>"
+        message += "</ul>"
         @showError(message)
       else
         @hideError()
