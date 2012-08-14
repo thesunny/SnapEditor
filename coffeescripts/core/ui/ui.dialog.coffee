@@ -23,12 +23,22 @@ define ["jquery.custom", "core/helpers", "core/events"], ($, Helpers, Events) ->
 
     show: =>
       $(@getEl()).css(@getStyles()).show()
-      @api.onDocument("click", @tryMouseHide)
+      # Uses mousedown because the toolbar uses mouseup to show the dialog. If
+      # mouseup was used to hide, the following would happen:
+      # 1. Toolbar button triggers mouseup
+      # 2. Show dialog
+      # 3. Add mouseup listener to hide
+      # 4. Propagation of mouseup to document
+      # 5. Hide dialog
+      # Therefore, the dialog will never show! Using mousedown avoids this
+      # problem as mousedown has already propagated before mouseup is even
+      # fired.
+      @api.onDocument("mousedown", @tryMouseHide)
       @api.onDocument("keyup", @tryKeyHide)
 
     hide: =>
       $(@getEl()).hide()
-      @api.offDocument("click", @tryMouseHide)
+      @api.offDocument("mousedown", @tryMouseHide)
       @api.offDocument("keyup", @tryKeyHide)
       @trigger("hide.dialog")
 

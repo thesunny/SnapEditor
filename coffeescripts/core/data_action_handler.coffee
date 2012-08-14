@@ -20,7 +20,6 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
       # Mousedown is tracked because we want to handle the click only if it
       # started and ended within the el.
       @$el.on("mousedown", @setClick)
-      @$el.on("click", @click)
       # Uses a mouseup event instead of a mousedown because certain buttons
       # can unsnap the editor. If it was mousedown, the editor would finish
       # unsnapping and turn on the mouseup event. The mouseup event would
@@ -55,30 +54,11 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
         @getDataActionEl(e.target).length > 0
 
     # When anything is clicked in the el, except a <select> which is handled by
-    # the change function, it prevents the default click action and stops
-    # propagation.
-    # It also sets isClick back to false as this marks the end of the mouse
-    # sequence.
-    click: (e) =>
-      if @shouldTrigger(e)
-        e.preventDefault()
-        e.stopPropagation()
-      @isClick = false
-      # Purposely added true here because the line above sets @isClick to false.
-      # Since CoffeeScript returns the last statement, if the line above was the
-      # last statement of this function, it would return false. However,
-      # returning false from an event handler stops propagation. This is not
-      # what we want. Hence, the true below.
-      return true
-
-    # When anything is clicked in the el, except a <select> which is handled by
     # the change function, it looks for a "data-action" attribute on the element
     # or its ancestors and uses that to trigger the event. The target is passed
     # along through the event.
     mouseup: (e) =>
       if @shouldTrigger(e)
-        e.preventDefault()
-        e.stopPropagation()
         # In Firefox, when a user clicks on the toolbar to style, the
         # editor loses focus. Instead, the focus is set on the toolbar
         # button (even though unselectable="on"). Whenever the user
@@ -91,6 +71,13 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
         @api.el.focus() if Browser.isGecko
         @api.trigger("#{@getDataActionEl(e.target).attr("data-action")}", e.target)
         @trigger("click")
+      @isClick = false
+      # Purposely added true here because the line above sets @isClick to false.
+      # Since CoffeeScript returns the last statement, if the line above was the
+      # last statement of this function, it would return false. However,
+      # returning false from an event handler stops propagation. This is not
+      # what we want. Hence, the true below.
+      return true
 
     # When a select is changed or a keypress occurs in the el, it triggers the
     # event specified by the 'data-action' attribute of the target. The target's
