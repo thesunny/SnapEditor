@@ -57,6 +57,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       return @title if @title
       @title = @options.description
       @title += " (#{@options.shortcut})" if @options.shortcut
+      return @title
 
     # Generates the HTML for the toolbar.
     htmlForToolbar: ->
