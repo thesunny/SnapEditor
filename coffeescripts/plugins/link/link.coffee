@@ -177,6 +177,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
 
     remove: =>
       Helpers.replaceWithChildren(@$link[0]) if @$link.length > 0
+      @hide()
 
     cancel: (e) =>
       e.preventDefault()

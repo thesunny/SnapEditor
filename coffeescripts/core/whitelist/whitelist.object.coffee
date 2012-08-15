@@ -44,7 +44,9 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
         # IE7 loads the attributes array with both user and browser defined
         # attributes. Luckily, there is a specified field which will be false
         # for browser defined attributes which we can skip.
-        continue if attr.name == "id" or attr.name == "class" or (Browser.isIE7 and !attr.specified)
+        # IE8 does not load all browser defined attributes. Just some. For
+        # example, <a> has a "shape" attribute. We use the same technique.
+        continue if attr.name == "id" or attr.name == "class" or ((Browser.isIE7 or Browser.isIE8) and !attr.specified)
         return false unless @attrs[attr.name]
       return true
 
