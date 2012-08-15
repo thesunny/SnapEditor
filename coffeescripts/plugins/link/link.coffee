@@ -163,7 +163,12 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       href = $.trim(@$href.attr("value"))
       text = $.trim(@$text.attr("value")) unless @imageSelected
       errors = []
+      # TODO: Validation could be beefed up. However, this is good enough for
+      # now. Instead of having a full URL validation check, we just check for
+      # spaces because a space in the URL screws up Firefox. We may want to
+      # revisit this someday if there is demand for better validation.
       errors.push("URL cannot be blank") unless href
+      errors.push("URL is invalid") if !!href.match(/\s+/)
       errors.push("Caption cannot be blank") if typeof text != "undefined" && !text
       if errors.length > 0
         message = "<div>Please fix the following errors:</div><ul>"
