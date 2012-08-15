@@ -23,7 +23,13 @@
 
 <div id="snapeditor_toolbar_button_template">
   <div class="snapeditor_toolbar_button {{class}}">
-    <input type="button" title="{{title}}" data-action="{{action}}" />
+    <!--
+      The space in {{title }} is required for IE7/8. If the space is
+      absent, IE7/8 removes the "" thinking it doesn't need it since {{title}}
+      would be a single word. Unfortunately, when we replace {{title}} with
+      multiple words, the "" are not reinserted and cause incorrect HTML.
+    -->
+    <input type="button" title="{{title }}" data-action="{{action}}" />
   </div>
 </div>
 
