@@ -76,13 +76,15 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
     handleDialogHide: =>
       @mirrorInput.deactivate()
       # TODO: May want to move this to the dialog instead.
-      # In Firefox, we have to manually move the focus back to the editor. All
-      # other browsers do this automatically.
-      # In Webkit, the focus is set back to the editor for typing, but the
-      # keyboard shortcuts don't work unless we manually move the focus back to
-      # the editor.
+      # In Webkit and Firefox, we have to manually move the focus back to the
+      # editor.
+      # @api.win.focus() must be used in Webkit because @api.el.focus() makes
+      # the page jump.
+      # @api.el.focus() must be used in Firefox because @api.win.focus() does
+      # nothing.
       # This affects IE as it makes the page jump to where the cursor is.
-      @api.el.focus() unless Browser.isIE
+      @api.win.focus() if Browser.isWebkit
+      @api.el.focus() if Browser.isGecko
       @range.select()
 
     prepareForm: ->
@@ -138,9 +140,14 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
         @dialog.show()
         # TODO: Consider sticking this into the dialog when showing.
         # In Firefox, if we don't set the focus on the dialog first, the focus on
-        # the input will not work. This does not effect other browsers so it has
-        # been left in.
-        @$dialog[0].focus()
+        # the input will not work.
+        # In Webkit, if we don't set the focus on the window first, the second
+        # time the dialog is shown, the focus on the input will not work.
+        # We use window.focus() instead of @$dialog[0].focus() because
+        # focusing on the dialog does not fix Webkit. Focusing on the window
+        # fixes Firefox.
+        # This does not affect IE.
+        window.focus()
         @$href[0].focus()
 
     hide: =>
