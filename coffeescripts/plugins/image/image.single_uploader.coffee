@@ -145,7 +145,6 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       # This does not effect IEs so it is left in for consistency.
       @api.el.focus()
       @range.select()
-      @update()
 
     update: ->
       # In Webkit, after the toolbar is clicked, the focus hops to the parent
