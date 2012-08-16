@@ -68,7 +68,11 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
         # know how to submit the form when hitting enter. IE8 scans the page
         # on load for any submit buttons and attaches the enter-to-submit at
         # that time. This is a known bug.
-        if Browser.isIE8
+        # Firefox does not "absorb" the enter when hitting enter in an input
+        # field. After hitting enter from an input field, it submits the form,
+        # adds the link, then adds a newline in the editor. To prevent this
+        # from happening, we handle the enter key in the inputs directly.
+        if Browser.isIE8 or Browser.isGecko
           @$href.keydown(@handleEnter)
           @$text.keydown(@handleEnter)
           @$newWindow.keydown(@handleEnter)
