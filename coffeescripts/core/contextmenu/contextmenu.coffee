@@ -48,11 +48,11 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
         e.preventDefault()
         coords = @api.getMouseCoordinates(x: e.pageX, y: e.pageY)
         @$menu.css(@getStyles(coords.x, coords.y)).show()
-        @api.onDocument(click: @tryHide, keydown: @hide)
+        @api.onDocument(mousedown: @tryHide, keydown: @hide)
 
     hide: =>
       @$menu.hide() if @$menu
-      @api.offDocument(click: @tryHide, keydown: @hide)
+      @api.offDocument(mousedown: @tryHide, keydown: @hide)
 
     # Hide if the target is not the contextmenu.
     tryHide: (e) =>
