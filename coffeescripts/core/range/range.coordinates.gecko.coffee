@@ -12,10 +12,10 @@ define ["jquery.custom"], ($) ->
         # of the span as 0. Hence, the top and bottom coordinates are
         # the same. In order to get the real top and bottom, we insert
         # a zero width no-break space.
-        @pasteNode($('<span id="CURSORPOS">&#65279</span>')[0])
-        span = $('#CURSORPOS')
-        coords = span.getCoordinates()
-        span.remove()
+        @pasteNode(@createElement("span").attr("id", "CURSORPOS").html("&#65279;")[0])
+        $span = @find('#CURSORPOS')
+        coords = $span.getCoordinates()
+        $span.remove()
       else
         # This part is the same as IE's textRange.
         clientRect = @range.getBoundingClientRect()

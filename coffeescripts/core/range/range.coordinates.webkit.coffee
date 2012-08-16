@@ -12,8 +12,8 @@ define ["jquery.custom"], ($) ->
         # of the span as 0. Hence, the top and bottom coordinates are
         # the same. In order to get the real top and bottom, we insert
         # a zero width no-break space.
-        @paste($('<span id="CURSORPOS">&#65279;</span>')[0])
-        $span = $('#CURSORPOS')
+        @paste($(@createElement("span")).attr("id", "CURSORPOS").html("&#65279;")[0])
+        $span = @find('#CURSORPOS')
         coords = $span.getCoordinates()
         # NOTE: When the spans are added, they split up textnodes. This causes
         # problems in Webkit. For example, when the range is at the beginning

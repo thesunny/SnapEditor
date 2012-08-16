@@ -18,8 +18,8 @@ define ["jquery.custom"], ($) ->
 
     autoscroll: =>
       cursor = @api.getCoordinates()
-      scroll = $(window).getScroll()
-      winSize = $(window).getSize()
+      scroll = $(@api.win).getScroll()
+      winSize = $(@api.win).getSize()
       # The logic here is a little hard to follow but basically, if the scroll
       # is lower than the top line, then we scroll to the top line and if the
       # scroll is higher than the bottom line, then we scroll to the bottom
@@ -27,8 +27,8 @@ define ["jquery.custom"], ($) ->
       topLine = cursor.top - @options.topMargin
       bottomLine = cursor.bottom + @options.bottomMargin - winSize.y
       if topLine < scroll.y
-        window.scrollTo(scroll.x, topLine)
+        @api.win.scrollTo(scroll.x, topLine)
       else if bottomLine > scroll.y
-        window.scrollTo(scroll.x, bottomLine)
+        @api.win.scrollTo(scroll.x, bottomLine)
 
   return Autoscroll

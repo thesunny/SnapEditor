@@ -3,7 +3,9 @@ require ["jquery.custom", "plugins/autoscroll/autoscroll"], ($, Autoscroll) ->
     describe "#autoscroll", ->
       api = autoscroll = null
       beforeEach ->
-        api = getCoordinates: null
+        api =
+          win: window
+          getCoordinates: null
         autoscroll = new Autoscroll()
         autoscroll.api = api
 
