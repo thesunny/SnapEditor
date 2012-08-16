@@ -15,6 +15,7 @@ require ["core/toolbar/toolbar.builder"], (Builder) ->
         $templates = null
         $.ajax(url: "spec/javascripts/support/assets/templates/snapeditor.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
         builder = new Builder(
+          {},
           $templates.find("#snapeditor_toolbar_template")[0],
           availableComponents,
           ["component", "components", "|", "combo"]
@@ -33,7 +34,7 @@ require ["core/toolbar/toolbar.builder"], (Builder) ->
 
     describe "#getComponents", ->
       it "returns an object containing all the components", ->
-        builder = new Builder(null, availableComponents, ["component", "component", "|", "components", "|", "combo"])
+        builder = new Builder({}, null, availableComponents, ["component", "component", "|", "components", "|", "combo"])
         [components, css] = builder.getComponents()
         expect(components.length).toEqual(3)
         expect(components[0].html).toEqual("htmlhtml")
@@ -42,14 +43,14 @@ require ["core/toolbar/toolbar.builder"], (Builder) ->
         expect(css).toEqual("csscsscsscsscsscsscss")
 
       it "flags the last component", ->
-        builder = new Builder(null, availableComponents, ["component", "component", "|", "components", "|", "combo"])
+        builder = new Builder({}, null, availableComponents, ["component", "component", "|", "components", "|", "combo"])
         [components, css] = builder.getComponents()
         expect(components[2].last).toBeTruthy()
 
     describe "#getComponentHtmlAndCss", ->
       builder = null
       beforeEach ->
-        builder = new Builder(null, availableComponents, null)
+        builder = new Builder({}, null, availableComponents, null)
 
       it "throws an error when the component is not available", ->
         builder.availableComponents = {}

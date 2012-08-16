@@ -19,9 +19,9 @@
 #     "Left, "Center", "Right", "|",
 #     "Image", "Link", "Table", "|"
 #   ]
-define ["jquery.custom", "core/helpers"], ($, Helpers) ->
+define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
   class ToolbarBuilder
-    constructor: (template, @availableComponents, @components) ->
+    constructor: (@api, template, @availableComponents, @components) ->
       @$template = $(template)
 
     # Builds the toolbar with the given component groups.
@@ -29,8 +29,24 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     build: ->
       [components, css] = @getComponents()
       $toolbar = $(@$template.mustache(componentGroups: components))
-      $toolbar.find("[data-action]").each(->$(this).attr("unselectable", "on"))
+      if Browser.isIE
+        $toolbar.attr("unselectable", "on")
+        $toolbar.find("*").each(-> $(this).attr("unselectable", "on"))
+      else if Browser.isGecko
+        $toolbar.css("-moz-user-select", "none")
+      else if Browser.isWebkit
+        # Webkit has a -webkit-user-select style, but it doesn't behave like
+        # Firefox. Instead, we listen to the mousedown and if it didn't come
+        # from a button, we save the range. When the click occurs, we reselect
+        # the range.
+        $toolbar.on(mousedown: @handleMouseDown, click: @handleClick)
       return [$toolbar, css]
+
+    handleMouseDown: (e) =>
+      @savedRange = @api.range() unless $(e.target).attr("data-action")
+
+    handleClick: (e) =>
+      @savedRange.select() unless $(e.target).attr("data-action")
 
     # Returns an array of component groups.
     # e.g.

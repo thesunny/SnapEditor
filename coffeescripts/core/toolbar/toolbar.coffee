@@ -51,7 +51,7 @@ define ["jquery.custom", "core/helpers", "core/data_action_handler", "core/toolb
 
     # Sets up the toolbar.
     setup: ->
-      [@$toolbar, @css] = new Builder(@$template, @availableComponents, @components).build()
+      [@$toolbar, @css] = new Builder(@api, @$template, @availableComponents, @components).build()
       # Ensure the toolbar does not deactivate the editor.
       @$toolbar.addClass("snapeditor_ignore_deactivate")
       @dataActionHandler = new DataActionHandler(@$toolbar, @api)
