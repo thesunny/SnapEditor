@@ -13,12 +13,12 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
 
     setup: ->
       @styles = new Styles(@$el, @$toolbar)
-      $(window).on("scroll resize", @update)
-      @$el.on("mouseup keyup", @updateAndCheckCursor)
+      $(window).on("scroll resize", @updateWithoutCursorCheck)
+      @$el.on("mouseup keyup", @updateWithCursorCheck)
 
     teardown: ->
-      $(window).off("scroll resize", @update)
-      @$el.off("mouseup keyup", @updateAndCheckCursor)
+      $(window).off("scroll resize", @updateWithoutCursorCheck)
+      @$el.off("mouseup keyup", @updateWithCursorCheck)
 
     # Shows the toolbar.
     show: =>
@@ -26,7 +26,7 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
         @setup()
         @$toolbar.show()
         @shown = true
-        @updateAndCheckCursor()
+        @updateWithCursorCheck()
 
     # Hides the toolbar.
     hide: =>
@@ -36,10 +36,10 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
         @teardown()
 
     # Places the toolbar in the proper position.
-    # First, it repositions the toolbar in its current orientation to account for
-    # editor height changes or scrolling. Then, it checks to see if it needs to
-    # move the orientation to the top or bottom of the el depending on whether
-    # or not it will cover the cursor.
+    # First, it repositions the toolbar in its current orientation to account
+    # for editor height changes or scrolling. Then, it checks to see if it
+    # needs to move the orientation to the top or bottom of the el depending
+    # on whether or not it will cover the cursor.
     update: (checkCursor) =>
       if @shown
         if @positionedAtTop
@@ -49,7 +49,10 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
           @positionAtBottom()
           @moveToTop() if checkCursor and !@isCursorInOverlapSpace()
 
-    updateAndCheckCursor: =>
+    updateWithoutCursorCheck: =>
+      @update(false)
+
+    updateWithCursorCheck: =>
       @update(true)
 
     elCoords: ->

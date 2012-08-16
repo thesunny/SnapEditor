@@ -8,24 +8,45 @@ define ["jquery.custom"], ($) ->
     #
     # IE's textRange has getBoundingClientRect() which returns a ClientRect.
     # This ClientRect has information about the coordinates of the currently
-    # selected range. Unfortunately, IE8 breaks this and returns very odd
-    # coordinates and is not reliable. Instead, we revert back to inserting
-    # spans and getting the coordinates.
+    # selected range. Unfortunately, IE8 breaks this in certain cases and
+    # returns very odd coordinates and is not reliable. The odd cases return 0
+    # for everything:
+    # 1. collapsed at the end of an element
+    # 2. collapsed right before an image
+    # Note that if you have a selection, then it's okay if the selection
+    # starts/ends on an odd case.
+    # We capture the odd cases by seeing if the top and bottom are equal. We
+    # insert a span, grab the span's coordinates, and then remove the span.
+    # We're lucky because the span method makes the page jump in all cases
+    # except for when it's at the end of an element. Perfect for case #1.
+    # Unfortunately, this still makes case #2 jump. However, the coordinates
+    # are correct now. Inserting spans for case #2 also introduces a second
+    # problem where we can't use the keyboard down arrow to cursor past an
+    # image.
+    # The jumping for case #2 is okay because we don't get coordinates unless
+    # the cursor is already in view. This may change later and we will have to
+    # figure this out.
+    # As for the cursoring past an image, we are okay with leaving that for
+    # now.
     #
     # IE's controlRange contains a list of items. A controlRange is usually
     # created when an image is selected. The first item in the list will be
     # the image that is selected. We grab that item and find its coordinates.
     getCoordinates: ->
       if @range.getBoundingClientRect
-        if @isCollapsed()
-          # If it's collapsed, we can optimize by only getting the start.
-          coords = @getEdgeCoordinates(true)
-        else
+        coords = @range.getBoundingClientRect()
+        if coords.top == coords.bottom
           startCoords = @getEdgeCoordinates(true)
           endCoords = @getEdgeCoordinates(false)
           coords =
             top: startCoords.top,
             bottom: endCoords.bottom
+        else
+          scroll = $(@win).getScroll()
+          coords.top += scroll.y
+          coords.bottom += scroll.y
+          coords.left += scroll.x
+          coords.right += scroll.x
       else
         coords = $(@range.item(0)).getCoordinates()
       coords
@@ -40,22 +61,23 @@ define ["jquery.custom"], ($) ->
     # reselect the range. Whenever IE8 selects a range, the focus is moved to
     # wherever the cursor is, even if it is supposed to be off the screen.
     # This causes problems when scrolling where the page always bounces to
-    # where the cursor is. To avoid this problem, we use execCommand() to
-    # create a link and find it. We then get the coordinates from the link and
-    # remove the link using execCommand("undo"). This does not reselect the
-    # range and IE8 no longer bounces.
+    # where the cursor is. There does not seem to be a workaround. Things
+    # tried:
+    # - unselecting the range (but you need to reselect anyways)
+    # - normalize after removing
+    # - @range.execCommand("createLink") then @doc.execCommand("undo")
+    #
+    # NOTE: The only time it doesn't make the page jump is when we're
+    # collapsed at the end of an element. We don't even need to be at the end
+    # of a top level block. The end of any element will do.
     getEdgeCoordinates: (start) ->
       bookmark = @range.getBookmark()
       @range.collapse(start)
-      randomHref = "http://snapeditor.com/#{Math.floor(Math.random() * 99999)}"
-      # It is required that we use @range.execCommand() instead of
-      # @doc.execCommand() or the undo will not work.
-      @range.execCommand("createLink", false, randomHref)
-      $a = $(@find("a[href=\"#{randomHref}\"]"))
-      coords = $a.getCoordinates()
-      # It is required that we use @doc.execCommand() here because
-      # @range.execCommand() does not undo the createLink.
-      @doc.execCommand("undo")
+      @range.pasteHTML('<span id="CURSORPOS"></span>')
+      $span = @find("#CURSORPOS")
+      coords = $span.getCoordinates()
+      $parent = $span.parent()
+      $span.remove()
       @range.moveToBookmark(bookmark)
       coords
   }
