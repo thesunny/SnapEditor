@@ -32,6 +32,15 @@ define ["jquery.custom"], ($) ->
         # Set the el.
         @el = $(@doc).find("div")[0]
 
+        # Add needed functions.
+        @createElement = (name) => @doc.createElement(name)
+        @find = (selector) ->
+          matches = $(@doc).find(selector)
+          switch matches.length
+            when 0 then return null
+            when 1 then return matches[0]
+            else return matches.toArray()
+
         # Call the load function binding it to the iframe.
         options.load.apply(this)
       )
