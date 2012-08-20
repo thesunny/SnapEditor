@@ -61,10 +61,9 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/b
           #file_queue_limit: 2
 
           button_placeholder: @$placeHolder[0]
-          #button_image_url: ""
-          button_width: 60
-          button_height: 20
-          button_text: "Select Images"
+          button_image_url: @api.assets.image("select_images_sprite.png")
+          button_width: 105
+          button_height: 28
 
           #swfupload_loaded_handler: -> console.log "LOADED"
           #file_dialog_start_handler: -> console.log "DIALOG START"
