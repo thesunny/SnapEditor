@@ -16,4 +16,7 @@ define [], ->
     template: (filename) ->
       @path + "templates/#{filename}"
 
+    flash: (filename) ->
+      @path + "flash/#{filename}"
+
   return Assets
