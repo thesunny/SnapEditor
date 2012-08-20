@@ -92,10 +92,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/b
       else
         # Finished uploading.
         @hide()
-        if @uploadedImages.length > 0
-          $lastImage = @uploadedImages[@uploadedImages.length - 1]
-          @api.select($lastImage[0])
-          @update()
+        @update() if @uploadedImages.length > 0
 
     show: =>
       # Save the range.
