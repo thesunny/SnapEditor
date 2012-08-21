@@ -55,8 +55,12 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
 
     getContents: ->
       # Clean the content before returning it.
-      @api.clean(@api.el.firstChild, @api.el.lastChild)
+      @api.clean(@$el[0].firstChild, @$el[0].lastChild)
       regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
       @$el.html().replace(regexp, "")
+
+    setContents: (html) ->
+      @$el.html(html)
+      @api.clean(@$el[0].firstChild, @$el[0].lastChild)
 
   return Editor

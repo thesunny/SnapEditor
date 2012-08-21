@@ -29,7 +29,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       @execCommand = new ExecCommand(this)
       @whitelist = @editor.whitelist
       Helpers.delegate(this, "editor",
-        "getContents", "activate", "deactivate", "update"
+        "getContents", "setContents", "activate", "deactivate", "update"
       )
       Helpers.delegate(this, "assets", "file", "image", "stylesheet", "template")
       Helpers.delegate(this, "range()",
