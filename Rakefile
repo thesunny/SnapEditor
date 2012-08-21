@@ -36,14 +36,16 @@ namespace :prepare do
     mkdir_p "bundle/snapeditor/stylesheets"
     mkdir_p "bundle/snapeditor/templates"
     mkdir_p "bundle/snapeditor/images"
+    mkdir_p "bundle/snapeditor/flash"
     cp "documentation/LICENSE.md", "bundle/snapeditor"
     cp "documentation/LICENSE.html", "bundle/snapeditor"
     cp "documentation/README.md", "bundle/snapeditor"
     cp "documentation/README.html", "bundle/snapeditor"
     cp "build/snapeditor.js", "bundle/snapeditor/javascripts"
-    cp "spec/acceptance/assets/stylesheets/snapeditor.css", "bundle/snapeditor/stylesheets"
-    cp "spec/acceptance/assets/templates/snapeditor.html", "bundle/snapeditor/templates"
+    cp_r "spec/acceptance/assets/stylesheets", "bundle/snapeditor"
+    cp_r "spec/acceptance/assets/templates", "bundle/snapeditor"
     cp_r "spec/acceptance/assets/images", "bundle/snapeditor"
+    cp_r "spec/acceptance/assets/flash", "bundle/snapeditor"
     `zip -r bundle/snapeditor bundle/snapeditor/`
   end
 end
