@@ -96,6 +96,8 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     #
 
     isValid: ->
+      # Invalid if there is no range.
+      return false unless @range
       parent = @getParentElement()
       return true unless parent
       return $(parent).parentsUntil(@el, "body").length == 0

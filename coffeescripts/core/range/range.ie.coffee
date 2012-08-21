@@ -21,7 +21,29 @@ define ["core/helpers"], (Helpers) ->
 
       # Gets the currently selected range.
       getRangeFromSelection: (win = window) ->
-        win.document.selection.createRange()
+        try
+          # In IE, there is no way to tell if a selection is available. We
+          # have to let the code fail and catch it.
+          # In IE7, win.document.selection.createRange() throws an error, but
+          # the error cannot be caught.
+          # In IE8, win.document.selection.createRange() gives a blank range.
+          # However, in both IE7/8, when there is no selection, the typeDetail
+          # property throws an error that is catchable. We use that instead.
+          win.document.selection.typeDetail
+          # In an iframe, typeDetail does not throw an error. Instead it flows
+          # through to createRange(). It actually creates a range, but it's
+          # not valid. It is actually a range in the parent page, not the
+          # iframe. It's parent element is the body of the parent page, not
+          # the iframe. Therefore, we check the parent element to see if it's
+          # window is the same as the given win. If it's not, then we have an
+          # invalid range and return null.
+          range = win.document.selection.createRange()
+          if Helpers.getWindow(range.parentElement()) != win
+            return null
+          else
+            return range
+        catch error
+          return null
 
       # Get a range that surrounds the content of el.
       getRangeFromElement: (el) ->

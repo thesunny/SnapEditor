@@ -20,6 +20,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @keyboard = new Keyboard(@api, @plugins.getKeyboardShortcuts(), "keydown")
       @contexts = new Contexts(@api, @plugins.getContexts())
       @contextmenu = new ContextMenu(@api, @$templates, @plugins.getContextMenuButtons())
+      @api.trigger("ready.plugins")
 
     loadAssets: ->
       @loadTemplates()

@@ -49,6 +49,9 @@ unless hasW3CRanges
             actualRange.pasteHTML("<span/>")
             expect(clean($start.html())).toEqual("<span></span>start")
 
+          it "returns null when there is no selected range", ->
+            expect(Range.getRangeFromSelection()).toBeNull()
+
         describe ".getRangeFromElement", ->
           it "returns a TextRange encompassing the contents of the element when it is not an image", ->
             range = Range.getRangeFromElement($start[0])

@@ -5,7 +5,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
       @normalizer = new Normalizer(@api)
       @api.on("activate.editor", => @keepRange(=> @clean(@api.el.firstChild, @api.el.lastChild)))
       @api.on("clean", (e, args...) => @clean.apply(this, args))
-      @clean(@api.el.firstChild, @api.el.lastChild)
+      @api.on("ready.plugins", => @clean(@api.el.firstChild, @api.el.lastChild))
 
     # Given a range, it saves the range, performs the clean up, then
     # repositions the range.

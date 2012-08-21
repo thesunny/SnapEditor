@@ -69,6 +69,14 @@ require ["core/range"], (Range) ->
         expect(range.range).toEqual("range")
 
     describe "#isValid", ->
+      it "returns false when there is no range", ->
+        if hasW3CRanges
+          window.getSelection().removeAllRanges()
+        else
+          document.selection.empty()
+        range = new Range($editable[0], window)
+        expect(range.isValid()).toBeFalsy()
+
       it "returns true when the parent is inside the editable element", ->
         range = new Range($editable[0])
         if hasW3CRanges

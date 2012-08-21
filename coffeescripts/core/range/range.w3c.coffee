@@ -20,7 +20,11 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         # EnterHandler where manipulating the range but still letting the
         # default enter handler to operate resulted in weird results like
         # duplicate fragments and stuff.
-        win.getSelection().getRangeAt(0).cloneRange()
+        selection = win.getSelection()
+        if !selection || selection.rangeCount == 0
+          return null
+        else
+          return selection.getRangeAt(0).cloneRange()
 
       # Get a range that surrounds the el.
       getRangeFromElement: (el) ->

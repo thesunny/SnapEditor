@@ -50,6 +50,10 @@ if hasW3CRanges
               actualRange.insertNode($("<span/>")[0])
               expect($start.html()).toEqual("<span></span>start")
 
+            it "returns null when there is no selected range", ->
+              window.getSelection().removeAllRanges()
+              expect(Range.getRangeFromSelection(win)).toBeNull()
+
           describe ".getRangeFromElement", ->
             it "returns a range encompassing the element", ->
               range = Range.getRangeFromElement($start[0])

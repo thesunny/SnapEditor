@@ -38,6 +38,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     insertDefaultBlock: ->
       block = $(@api.defaultBlock()).html(Helpers.zeroWidthNoBreakSpace)[0]
       @api.el.appendChild(block)
-      @api.selectEndOfElement(block)
+      @api.selectEndOfElement(block) if @api.isValid()
 
   return EmptyHandler
