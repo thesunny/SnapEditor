@@ -258,7 +258,7 @@
 
       var secureForm = new SnapEditor.Form("secure_form", {
         path: "/spec/acceptance/assets",
-        image: {
+        image_server: {
           url: secureUrl,
           resource_id: secureResourceId,
           client_security_token: clientSecurityToken
@@ -266,7 +266,7 @@
       });
       var secureInPlace = new SnapEditor.InPlace("secure_in_place", {
         path: "/spec/acceptance/assets",
-        image: {
+        image_server: {
           url: secureUrl,
           resource_id: secureResourceId,
           client_security_token: clientSecurityToken
@@ -274,14 +274,14 @@
       });
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
-        image: {
+        image_server: {
           url: insecureUrl,
           resource_id: insecureResourceId
         }
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
-        image: {
+        image_server: {
           url: insecureUrl,
           resource_id: insecureResourceId
         }

@@ -4,7 +4,7 @@
 define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/browser", "core/helpers"], (J, $, SWFUpload, Browser, Helpers) ->
   class Uploader
     register: (@api) ->
-      @options = @api.config["image"]
+      @options = @api.config["image_server"]
       @checkOptions()
 
     checkOptions: ->
