@@ -8,7 +8,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/b
       @checkOptions()
 
     checkOptions: ->
-      throw "Missing 'image' config" unless @options
+      throw "Missing 'image_server' config" unless @options
       throw "Missing 'url' in image config" unless @options.url
       throw "Missing 'resource_id' in image config" unless @options.resource_id
 
