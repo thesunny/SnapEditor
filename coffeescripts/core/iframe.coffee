@@ -17,14 +17,14 @@ define ["jquery.custom"], ($) ->
         # NOTE: We use doc because IE doesn't like using document.
         @doc = @win.document
         @doc.open()
-        @doc.write("<!DOCTYPE html><html><head>")
+        @doc.write("<!DOCTYPE html><html style=\"height: 100%; padding: 0; overflow-y: scroll;\"><head>")
 
         # Load stylesheets if any.
         for stylesheet in options.stylesheets
           @doc.write("<link href=\"#{stylesheet}\" rel=\"stylesheet\" type=\"text/css\" />")
 
         # Write the contents.
-        @doc.write("</head><body><div class=\"#{options.contentClass}\">#{options.contents}</body></html>")
+        @doc.write("</head><body style=\"height: 100%;\"><div class=\"#{options.contentClass}\" style=\"height: 100%;\">#{options.contents}</body></html>")
 
         # Close writing.
         @doc.close()
