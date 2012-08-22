@@ -24,8 +24,6 @@ define ["jquery.custom", "core/editor", "config/config.default.form", "core/asse
       $(@iframe).attr("frameborder", 0).css(
         border: "none"
         width: "100%"
-        overflowX: "auto"
-        overflowY: "scroll"
       ).appendTo(@$iframeContainer)
 
     finishConstructor: (el, config) =>
