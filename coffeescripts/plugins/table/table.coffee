@@ -10,7 +10,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @api.on("deactivate.editor", @deactivate)
 
     getUI: (ui) ->
-      insertTable = ui.button(action: "insertTable", description: "Insert Table", shortcut: "Ctrl+Shift+T", icon: { url: @api.assets.image("table.png"), width: 24, height: 24, offset: [3, 3] })
+      insertTable = ui.button(action: "insertTable", description: "Insert Table", icon: { url: @api.assets.image("table.png"), width: 24, height: 24, offset: [3, 3] })
       addRowAbove = ui.button(action: "addRowAbove", description: "Add Row Above", shortcut: "Ctrl+Shift+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [0, -16] })
       addRowBelow = ui.button(action: "addRowBelow", description: "Add Row Below", shortcut: "Ctrl+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-16, -16] })
       deleteRow = ui.button(action: "deleteRow", description: "Delete Row", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-32, -16] })
@@ -38,7 +38,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.shift.t": "table"
         "ctrl.shift.enter": "addRowAbove"
         "ctrl.enter": "addRowBelow"
         "ctrl.shift.m": "addColLeft"
