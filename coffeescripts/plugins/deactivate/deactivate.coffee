@@ -24,7 +24,7 @@ define ["jquery.custom"], ($) ->
     tryDeactivate: (e) =>
       if @isDeactivate and !@isIgnore(e.target)
         @isDeactivate = false
-        @api.deactivate()
+        @api.tryDeactivate()
 
     isIgnore: (el) ->
       $(el).closest(".#{@classname}").length > 0

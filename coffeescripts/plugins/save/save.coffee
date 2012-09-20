@@ -1,0 +1,116 @@
+define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
+  class Save
+    register: (@api) ->
+      @checkOptions()
+      @api.on("ready.editor", @activate)
+      @api.on("tryDeactivate.editor", @cancel)
+      @api.on("deactivate.editor", @deactivate)
+      @api.disableImmediateDeactivate()
+
+    checkOptions: ->
+      throw "Missing 'onSave' callback config" unless @api.config['onSave']
+
+    getUI: (ui) ->
+      save = ui.button(action: "save", description: "Save", shortcut: "Ctrl+S", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
+      cancel = ui.button(action: "cancel", description: "Cancel", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
+      @generateDialog(ui)
+
+      return {
+        "toolbar:default": "savecancel",
+        savecancel: [save, cancel],
+        save: save
+        cancel: cancel
+      }
+
+    getActions: ->
+      return {
+        save: @save
+        cancel: @cancel
+      }
+
+    getKeyboardShortcuts: ->
+      return {
+        "ctrl.s": "save"
+        # TODO: In Chrome, when an element is contenteditable, the esc keydown
+        # event does not get triggered. However, the esc keyup event does
+        # trigger. Unfortunately, the target is the body and not the element
+        # itself. Removing the shortcut until a solution can be found.
+        #"esc": "cancel"
+      }
+
+    generateDialog: (ui) ->
+      @saveDialog = ui.dialog("Save/Cancel",
+        """
+          <div class="message">Are you sure you want to exit the editor?</div>
+          <div class="buttons">
+            <button class="save">Save Changes & Exit</button>
+            <button class="cancel">Cancel</button>
+          </div>
+          <div class="discard_message">
+            Or, <a class="discard" href="javascript:void(null);">discard changes</a>
+          </div>
+        """
+      )
+      @$saveDialog = $(@saveDialog.getEl())
+      @$save = @$saveDialog.find(".save").on("click", @save)
+      @$cancel = @$saveDialog.find(".cancel").on("click", @resume)
+      @$discard = @$saveDialog.find(".discard").on("click", @discard)
+
+      @errorDialog = ui.dialog("Save/Cancel Error",
+        """
+          <div class="error"></div>
+          <button class="okay">OK</button>
+        """
+      )
+      @$errorDialog = $(@errorDialog.getEl())
+      @$error = @$errorDialog.find(".error")
+      @$okay = @$errorDialog.find(".okay").on("click", @errorDialog.hide)
+
+    activate: =>
+      @setOriginalHTML()
+
+    deactivate: =>
+      @unsetOriginalHTML()
+
+    setOriginalHTML: =>
+      @originalHTML = @api.getContents()
+
+    unsetOriginalHTML: =>
+      @originalHTML = null
+
+    showErrorDialog: (message) ->
+      @$error.text(message)
+      @errorDialog.show()
+
+    save: =>
+      result = @api.save()
+      if typeof result == "string"
+        @showErrorDialog(result)
+      else
+        @api.deactivate()
+      @saveDialog.hide()
+
+    cancel: =>
+      if @api.getContents() != @originalHTML
+        @saveDialog.show()
+      else
+        @api.deactivate()
+
+    resume: =>
+      @saveDialog.hide()
+      # In Webkit and Firefox, we have to manually move the focus back to the
+      # editor.
+      # @api.win.focus() must be used in Webkit because @api.el.focus() makes
+      # the page jump.
+      # @api.el.focus() must be used in Firefox because @api.win.focus() does
+      # nothing.
+      # This affects IE as it makes the page jump to where the cursor is.
+      @api.win.focus() if Browser.isWebkit
+      @api.el.focus() if Browser.isGecko
+
+    discard: =>
+      @saveDialog.hide()
+      @api.setContents(@originalHTML)
+      @api.deactivate()
+
+  return Save

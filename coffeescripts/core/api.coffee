@@ -29,7 +29,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       @execCommand = new ExecCommand(this)
       @whitelist = @editor.whitelist
       Helpers.delegate(this, "editor",
-        "getContents", "setContents", "activate", "deactivate", "update"
+        "getContents", "setContents", "activate", "tryDeactivate", "deactivate", "update", "save"
       )
       Helpers.delegate(this, "assets", "file", "image", "stylesheet", "template")
       Helpers.delegate(this, "range()",
@@ -44,6 +44,11 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
         "insertUnorderedList", "insertOrderedList", "insertLink"
       )
       Helpers.delegate(this, "whitelist", "allowed", "replacement", "next")
+
+      # The default is to deactivate immediately. However, to accommodate
+      # plugins such as the Save plugin, this can be disabled and handled in a
+      # customized way. Use #disableImmediateDeactivate.
+      @on("tryDeactivate.editor", @deactivate)
 
     # Shortcut to the doc's createElement().
     createElement: (name) ->
@@ -100,6 +105,9 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
         x: iframeCoords.left + iframeViewportCoords.x
         y: iframeCoords.top + iframeViewportCoords.y
       }
+
+    disableImmediateDeactivate: ->
+      @off("tryDeactivate", @deactivate)
 
     # Gets the current selection if el is not given.
     # Otherwise returns the range that represents the el.
