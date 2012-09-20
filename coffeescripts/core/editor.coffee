@@ -7,6 +7,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
     #   * plugins: an array of editor plugins to add
     #   * toolbar: toolbar config that replaces the default one
     #   * whitelist: object specifying the whitelist
+    #   * onSave: callback for saving (return true or error message)
     constructor: (el, @defaults, @config = {}) ->
       @unsupported = false
       # Transform the string into a CSS id selector.
@@ -45,8 +46,10 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
 
     activate: ->
       @api.trigger("activate.editor")
-      # TODO: Is this needed?
       @api.trigger("ready.editor")
+
+    tryDeactivate: ->
+      @api.trigger("tryDeactivate.editor")
 
     deactivate: ->
       @api.trigger("deactivate.editor")
@@ -63,5 +66,10 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
     setContents: (html) ->
       @$el.html(html)
       @api.clean(@$el[0].firstChild, @$el[0].lastChild)
+
+    save: ->
+      saved = "No save callback defined."
+      saved = @config.onSave(@getContents()) if @config.onSave
+      return saved
 
   return Editor

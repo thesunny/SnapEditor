@@ -270,6 +270,10 @@
           url: secureUrl,
           resource_id: secureResourceId,
           client_security_token: clientSecurityToken
+        },
+        onSave: function (html) {
+          console.log(html);
+          return true;
         }
       });
       var insecureForm = new SnapEditor.Form("insecure_form", {
@@ -284,6 +288,10 @@
         image_server: {
           url: insecureUrl,
           resource_id: insecureResourceId
+        },
+        onSave: function (html) {
+          console.log(html);
+          return "OMG! ERROR!";
         }
       });
 
