@@ -70,7 +70,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           css += componentCSS
       # Store the last group if there are components in it.
       groups.push(html: html) unless html.length == 0
-      groups[groups.length-1].last = true
+      groups[groups.length-1].last = true if groups.length > 0
       return [groups, css]
 
     # Return the HTML and CSS strings that correspond to the component.
