@@ -3,8 +3,8 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
     register: (@api) ->
 
     getUI: (ui) ->
-      bold = ui.button(action: "bold", description: "Bold", shortcut: "Ctrl+B", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
-      italic = ui.button(action: "italic", description: "Italic", shortcut: "Ctrl+I", icon: { url: @api.assets.image("text_italic.png"), width: 24, height: 24, offset: [3, 3] })
+      bold = ui.button(action: "bold", description: @api.lang.bold, shortcut: "Ctrl+B", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
+      italic = ui.button(action: "italic", description: @api.lang.italic, shortcut: "Ctrl+I", icon: { url: @api.assets.image("text_italic.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "inline"
         inline: [bold, italic]

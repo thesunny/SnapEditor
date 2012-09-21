@@ -26,6 +26,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       @win = Helpers.getWindow(@el)
       @config = @editor.config
       @assets = @editor.assets
+      @lang = @editor.lang
       @execCommand = new ExecCommand(this)
       @whitelist = @editor.whitelist
       Helpers.delegate(this, "editor",

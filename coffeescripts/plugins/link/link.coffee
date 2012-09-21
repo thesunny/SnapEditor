@@ -3,7 +3,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
     register: (@api) ->
 
     getUI: (ui) ->
-      link = ui.button(action: "link", description: "Insert Link", shortcut: "Ctrl+K", icon: { url: @api.assets.image("link.png"), width: 24, height: 24, offset: [3, 3] })
+      link = ui.button(action: "link", description: @api.lang.link, shortcut: "Ctrl+K", icon: { url: @api.assets.image("link.png"), width: 24, height: 24, offset: [3, 3] })
       @generateDialog(ui)
       return {
         "toolbar:default": "link"
@@ -21,30 +21,30 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       }
 
     generateDialog: (ui) ->
-      @dialog = ui.dialog("Insert Link",
+      @dialog = ui.dialog(@api.lang.linkInsertTitle,
         """
           <div class="error" style="display: none;"></div>
           <form class="link_form">
             <div class="field_container">
-              <label class="label_left">URL:</label>
+              <label class="label_left">#{@api.lang.linkUrl}</label>
               <input class="link_href" type="text" />
             </div>
             <div class="field_container link_text_container">
-              <label class="label_left">Caption:</label>
+              <label class="label_left">#{@api.lang.linkCaption}</label>
               <input class="link_text" type="text" />
             </div>
             <div class="field_container">
               <label class="label_left"></label>
               <label class="link_new_window_text">
                 <input class="link_new_window" type="checkbox" />
-                Open link in new window
+                #{@api.lang.linkNewWindow}
               </label>
             </div>
             <div class="buttons">
               <label class="label_left"></label>
-              <input class="link_submit" type="submit" value="Create Link" />
-              <input class="link_remove" type="button" value="Remove" />
-              <input class="link_cancel" type="button" value="Cancel" />
+              <input class="link_submit" type="submit" value="#{@api.lang.linkCreate}" />
+              <input class="link_remove" type="button" value="#{@api.lang.linkRemove}" />
+              <input class="link_cancel" type="button" value="#{@api.lang.formCancel}" />
             </div>
           </form>
         """
@@ -100,26 +100,26 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
 
     prepareAddForm: ->
       if @imageSelected
-        @dialog.setTitle("Insert Image Link")
+        @dialog.setTitle(@api.lang.linkImageInsertTitle)
         @$textContainer.hide()
       else
-        @dialog.setTitle("Insert Link")
+        @dialog.setTitle(@api.lang.linkInsertTitle)
         @$textContainer.show()
         @$text.attr("value", @range.getText())
-      @$submit.attr("value", "Create Link")
+      @$submit.attr("value", @api.lang.linkCreate)
       @$remove.hide()
 
     prepareUpdateForm: ->
       @$href.attr("value", @$link.attr("href"))
       if @imageSelected
-        @dialog.setTitle("Edit Image Link")
+        @dialog.setTitle(@api.lang.linkImageEditTitle)
         @$text.hide()
       else
-        @dialog.setTitle("Edit Link")
+        @dialog.setTitle(@api.lang.linkEditTitle)
         @$textContainer.show()
         @$text.attr("value", @$link.text())
       @$newWindow.prop("checked", !!@$link.attr("target"))
-      @$submit.attr("value", "Update Link")
+      @$submit.attr("value", @api.lang.linkUpdate)
       @$remove.show()
 
     resetForm: ->
@@ -178,11 +178,11 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       # now. Instead of having a full URL validation check, we just check for
       # spaces because a space in the URL screws up Firefox. We may want to
       # revisit this someday if there is demand for better validation.
-      errors.push("URL cannot be blank") unless href
-      errors.push("URL is invalid") if !!href.match(/\s+/)
-      errors.push("Caption cannot be blank") if typeof text != "undefined" && !text
+      errors.push(@api.lang.linkURLBlankError) unless href
+      errors.push(@api.lang.linkURLInvalidError) if !!href.match(/\s+/)
+      errors.push(@api.lang.linkCaptionBlankError) if typeof text != "undefined" && !text
       if errors.length > 0
-        message = "<div>Please fix the following errors:</div><ul>"
+        message = "<div>#{@api.lang.formErrorMessage}</div><ul>"
         message += "<li>#{error}</li>" for error in errors
         message += "</ul>"
         @showError(message)

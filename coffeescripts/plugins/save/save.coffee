@@ -11,8 +11,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       throw "Missing 'onSave' callback config" unless @api.config['onSave']
 
     getUI: (ui) ->
-      save = ui.button(action: "save", description: "Save", shortcut: "Ctrl+S", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
-      cancel = ui.button(action: "cancel", description: "Cancel", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
+      save = ui.button(action: "save", description: @api.lang.save, shortcut: "Ctrl+S", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
+      cancel = ui.button(action: "cancel", description: @api.lang.cancel, icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
       @generateDialog(ui)
 
       return {
@@ -41,13 +41,13 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     generateDialog: (ui) ->
       @saveDialog = ui.dialog("Save/Cancel",
         """
-          <div class="message">Are you sure you want to exit the editor?</div>
+          <div class="message">#{@api.lang.saveExitMessage}</div>
           <div class="buttons">
-            <button class="save">Save Changes & Exit</button>
-            <button class="cancel">Cancel</button>
+            <button class="save">#{@api.lang.saveSaveButton}</button>
+            <button class="cancel">#{@api.lang.formCancel}</button>
           </div>
           <div class="discard_message">
-            Or, <a class="discard" href="javascript:void(null);">discard changes</a>
+            #{@api.lang.saveOr} <a class="discard" href="javascript:void(null);">#{@api.lang.saveDiscardChanges}</a>
           </div>
         """
       )
@@ -56,10 +56,10 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @$cancel = @$saveDialog.find(".cancel").on("click", @resume)
       @$discard = @$saveDialog.find(".discard").on("click", @discard)
 
-      @errorDialog = ui.dialog("Save/Cancel Error",
+      @errorDialog = ui.dialog(@api.lang.saveErrorTitle,
         """
           <div class="error"></div>
-          <button class="okay">OK</button>
+          <button class="okay">#{@api.lang.formOk}</button>
         """
       )
       @$errorDialog = $(@errorDialog.getEl())
@@ -119,7 +119,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @api.deactivate()
 
     leavePage: (e) =>
-      return "You have unsaved edits." if @isEdited()
+      return @api.lang.saveLeavePageMessage if @isEdited()
       # Force an empty return because IE requires an empty return in order to
       # not show a dialog. If you return true or null, a dialog still shows.
       # An empty return does not affect other browsers.

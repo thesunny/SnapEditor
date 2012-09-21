@@ -3,10 +3,10 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     register: (@api) ->
 
     getUI: (ui) ->
-      p = ui.button(action: "p", description: "Paragraph", shortcut: "Ctrl+Alt+0", icon: { url: @api.assets.image("p.png"), width: 24, height: 24, offset: [3, 3] })
-      h1 = ui.button(action: "h1", description: "H1", shortcut: "Ctrl+Alt+1", icon: { url: @api.assets.image("text_heading_1.png"), width: 24, height: 24, offset: [3, 3] })
-      h2 = ui.button(action: "h2", description: "H2", shortcut: "Ctrl+Alt+2", icon: { url: @api.assets.image("text_heading_2.png"), width: 24, height: 24, offset: [3, 3] })
-      h3 = ui.button(action: "h3", description: "H3", shortcut: "Ctrl+Alt+3", icon: { url: @api.assets.image("text_heading_3.png"), width: 24, height: 24, offset: [3, 3] })
+      p = ui.button(action: "p", description: @api.lang.paragraph, shortcut: "Ctrl+Alt+0", icon: { url: @api.assets.image("p.png"), width: 24, height: 24, offset: [3, 3] })
+      h1 = ui.button(action: "h1", description: @api.lang.h1, shortcut: "Ctrl+Alt+1", icon: { url: @api.assets.image("text_heading_1.png"), width: 24, height: 24, offset: [3, 3] })
+      h2 = ui.button(action: "h2", description: @api.lang.h2, shortcut: "Ctrl+Alt+2", icon: { url: @api.assets.image("text_heading_2.png"), width: 24, height: 24, offset: [3, 3] })
+      h3 = ui.button(action: "h3", description: @api.lang.h3, shortcut: "Ctrl+Alt+3", icon: { url: @api.assets.image("text_heading_3.png"), width: 24, height: 24, offset: [3, 3] })
       #alignLeft = ui.button(action: "alignLeft", description: "Align Left", shortcut: "Ctrl+L", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
       #alignCenter = ui.button(action: "alignCenter", description: "Align Center", shortcut: "Ctrl+E", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
       #alignRight = ui.button(action: "alignRight", description: "Align Right", shortcut: "Ctrl+R", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
