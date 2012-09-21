@@ -68,9 +68,11 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
     activate: =>
       @setOriginalHTML()
+      $(window).on("beforeunload", @leavePage)
 
     deactivate: =>
       @unsetOriginalHTML()
+      $(window).off("beforeunload", @leavePage)
 
     setOriginalHTML: =>
       @originalHTML = @api.getContents()
@@ -82,6 +84,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @$error.text(message)
       @errorDialog.show()
 
+    isEdited: ->
+      @api.getContents() != @originalHTML
+
     save: =>
       result = @api.save()
       if typeof result == "string"
@@ -91,7 +96,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @saveDialog.hide()
 
     cancel: =>
-      if @api.getContents() != @originalHTML
+      if @isEdited()
         @saveDialog.show()
       else
         @api.deactivate()
@@ -112,5 +117,12 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @saveDialog.hide()
       @api.setContents(@originalHTML)
       @api.deactivate()
+
+    leavePage: (e) =>
+      return "You have unsaved edits." if @isEdited()
+      # Force an empty return because IE requires an empty return in order to
+      # not show a dialog. If you return true or null, a dialog still shows.
+      # An empty return does not affect other browsers.
+      return
 
   return Save
