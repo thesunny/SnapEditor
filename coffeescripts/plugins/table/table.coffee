@@ -10,14 +10,14 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @api.on("deactivate.editor", @deactivate)
 
     getUI: (ui) ->
-      insertTable = ui.button(action: "insertTable", description: "Insert Table", icon: { url: @api.assets.image("table.png"), width: 24, height: 24, offset: [3, 3] })
-      addRowAbove = ui.button(action: "addRowAbove", description: "Add Row Above", shortcut: "Ctrl+Shift+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [0, -16] })
-      addRowBelow = ui.button(action: "addRowBelow", description: "Add Row Below", shortcut: "Ctrl+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-16, -16] })
-      deleteRow = ui.button(action: "deleteRow", description: "Delete Row", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-32, -16] })
-      addColLeft = ui.button(action: "addColLeft", description: "Add Column Left", shortcut: "Ctrl+Shift+M", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-48, -16] })
-      addColRight = ui.button(action: "addColRight", description: "Add Column Right", shortcut: "Ctrl+M", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-64, -16] })
-      deleteCol = ui.button(action: "deleteCol", description: "Delete Column", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-80, -16] })
-      deleteTable = ui.button(action: "deleteTable", description: "Delete Table", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-96, -16] })
+      insertTable = ui.button(action: "insertTable", description: @api.lang.table, icon: { url: @api.assets.image("table.png"), width: 24, height: 24, offset: [3, 3] })
+      addRowAbove = ui.button(action: "addRowAbove", description: @api.lang.tableAddRowAbove, shortcut: "Ctrl+Shift+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [0, -16] })
+      addRowBelow = ui.button(action: "addRowBelow", description: @api.lang.tableAddRowBelow, shortcut: "Ctrl+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-16, -16] })
+      deleteRow = ui.button(action: "deleteRow", description: @api.lang.tableDeleteRow, icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-32, -16] })
+      addColLeft = ui.button(action: "addColLeft", description: @api.lang.tableAddColumnLeft, shortcut: "Ctrl+Shift+M", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-48, -16] })
+      addColRight = ui.button(action: "addColRight", description: @api.lang.tableAddColumnRight, shortcut: "Ctrl+M", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-64, -16] })
+      deleteCol = ui.button(action: "deleteCol", description: @api.lang.tableDeleteColumn, icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-80, -16] })
+      deleteTable = ui.button(action: "deleteTable", description: @api.lang.tableDelete, icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-96, -16] })
       return {
         "toolbar:default": "table"
         table: insertTable

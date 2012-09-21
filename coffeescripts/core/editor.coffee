@@ -7,6 +7,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
     #   * plugins: an array of editor plugins to add
     #   * toolbar: toolbar config that replaces the default one
     #   * whitelist: object specifying the whitelist
+    #   * lang: language (default: "en")
     #   * onSave: callback for saving (return true or error message)
     constructor: (el, @defaults, @config = {}) ->
       @unsupported = false
@@ -15,8 +16,8 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @$el = $(el)
       @assets = new Assets(@config.path)
       @whitelist = new Whitelist(@defaults.whitelist)
-      @api = new API(this)
       @loadAssets()
+      @api = new API(this)
       @plugins = new Plugins(@api, @$templates, @defaults.plugins, @config.plugins, @defaults.toolbar, @config.toolbar)
       @keyboard = new Keyboard(@api, @plugins.getKeyboardShortcuts(), "keydown")
       @contexts = new Contexts(@api, @plugins.getContexts())
@@ -24,12 +25,20 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @api.trigger("ready.plugins")
 
     loadAssets: ->
+      @loadLang()
       @loadTemplates()
       @loadCSS()
 
+    loadLang: ->
+      $.ajax(
+        url: @assets.lang(@config.lang || @defaults.lang),
+        async: false,
+        success: (json) => @lang = json
+      )
+
     loadTemplates: ->
       $.ajax(
-        url: @api.assets.template("snapeditor.html")
+        url: @assets.template("snapeditor.html")
         async: false,
         success: (html) => @$templates = $("<div/>").html(html)
       )
@@ -39,7 +48,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       # the onload is not reliable. This hack loads the CSS through AJAX
       # synchronously and dumps the styles into a <style> tag.
       $.ajax(
-        url: @api.assets.stylesheet("snapeditor.css")
+        url: @assets.stylesheet("snapeditor.css")
         async: false,
         success: (css) -> Helpers.insertStyles(css)
       )

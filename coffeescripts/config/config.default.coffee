@@ -42,5 +42,6 @@ define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/e
           "strong": "Bold"
           "em": "Italic"
         }
+        lang: "en"
       }
   }

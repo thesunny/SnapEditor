@@ -19,4 +19,7 @@ define [], ->
     flash: (filename) ->
       @path + "flash/#{filename}"
 
+    lang: (lang) ->
+      @path + "lang/#{lang}.json"
+
   return Assets

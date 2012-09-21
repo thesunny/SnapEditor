@@ -13,7 +13,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/b
       throw "Missing 'resource_id' in image config" unless @options.resource_id
 
     getUI: (@ui) ->
-      image = @ui.button(action: "insert_image", description: "Insert Image", shortcut: "Ctrl+G", icon: { url: @api.assets.image("image.png"), width: 24, height: 24, offset: [3, 3] })
+      image = @ui.button(action: "insert_image", description: @api.lang.image, shortcut: "Ctrl+G", icon: { url: @api.assets.image("image.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "image"
         image: image
@@ -35,7 +35,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/b
         # shown yet, it reports the size of @api.el to be 0. Generating the
         # dialog here guarantees that the iframe is already shown and that
         # getting the size will return the correct value.
-        @dialog = @ui.dialog("Upload New Image", "<span></span>")
+        @dialog = @ui.dialog(@api.lang.imageUploadTitle, "<span></span>")
         @dialog.on("hide.dialog", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
         @$placeHolder = @$dialog.find("span")

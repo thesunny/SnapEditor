@@ -6,5 +6,6 @@ define ["config/config.default", "plugins/snap/snap", "plugins/outline/outline",
         plugins: defaults.plugins.concat([new Snap(), new Outline(), new Save()])
         toolbar: defaults.toolbar.concat(["|", "SaveCancel"])
         whitelist: defaults.whitelist
+        lang: defaults.lang
       }
   }

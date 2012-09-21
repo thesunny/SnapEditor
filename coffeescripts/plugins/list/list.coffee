@@ -5,10 +5,10 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       @api.on("deactivate.editor", @deactivate)
 
     getUI: (ui) ->
-      unorderedList = ui.button(action: "unorderedList", description: "Bullet List", shortcut: "Ctrl+Shift+8", icon: { url: @api.assets.image("text_list_bullets.png"), width: 24, height: 24, offset: [3, 3] })
-      orderedList = ui.button(action: "orderedList", description: "Numbered List", shortcut: "Ctrl+Shift+7", icon: { url: @api.assets.image("text_list_numbers.png"), width: 24, height: 24, offset: [3, 3] })
-      indent = ui.button(action: "indent", description: "Indent", shortcut: "Tab", icon: { url: @api.assets.image("text_indent.png"), width: 24, height: 24, offset: [3, 3] })
-      outdent = ui.button(action: "outdent", description: "Outdent", shortcut: "Shift+Tab", icon: { url: @api.assets.image("text_indent_remove.png"), width: 24, height: 24, offset: [3, 3] })
+      unorderedList = ui.button(action: "unorderedList", description: @api.lang.bulletedList, shortcut: "Ctrl+Shift+8", icon: { url: @api.assets.image("text_list_bullets.png"), width: 24, height: 24, offset: [3, 3] })
+      orderedList = ui.button(action: "orderedList", description: @api.lang.numberedList, shortcut: "Ctrl+Shift+7", icon: { url: @api.assets.image("text_list_numbers.png"), width: 24, height: 24, offset: [3, 3] })
+      indent = ui.button(action: "indent", description: @api.lang.indent, shortcut: "Tab", icon: { url: @api.assets.image("text_indent.png"), width: 24, height: 24, offset: [3, 3] })
+      outdent = ui.button(action: "outdent", description: @api.lang.outdent, shortcut: "Shift+Tab", icon: { url: @api.assets.image("text_indent_remove.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "list"
         list: [unorderedList, orderedList, indent, outdent]
