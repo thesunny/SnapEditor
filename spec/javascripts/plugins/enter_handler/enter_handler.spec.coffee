@@ -6,9 +6,9 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
       enterHandler = new EnterHandler()
       enterHandler.api = $("<div/>")
       enterHandler.api.el = $editable[0]
-      enterHandler.api.range = (el) -> new Range($editable[0], el or window)
+      enterHandler.api.getRange = (el) -> new Range($editable[0], el or window)
       enterHandler.next = null
-      Helpers.delegate(enterHandler.api, "range()", "getParentElement", "paste", "isEndOfElement", "keepRange", "selectEndOfElement")
+      Helpers.delegate(enterHandler.api, "getRange()", "getParentElement", "paste", "isEndOfElement", "keepRange", "selectEndOfElement")
 
     afterEach ->
       $editable.remove()

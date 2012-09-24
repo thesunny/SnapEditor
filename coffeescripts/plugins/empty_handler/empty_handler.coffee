@@ -36,7 +36,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # Insert the default block into the editor and place the selection at the
     # end of the block.
     insertDefaultBlock: ->
-      block = $(@api.defaultBlock()).html(Helpers.zeroWidthNoBreakSpace)[0]
+      block = $(@api.getDefaultBlock()).html(Helpers.zeroWidthNoBreakSpace)[0]
       @api.el.appendChild(block)
       @api.selectEndOfElement(block) if @api.isValid()
 

@@ -7,17 +7,17 @@ require ["jquery.custom", "plugins/empty_handler/empty_handler", "core/helpers",
       handler = new Handler()
       handler.api = 
         el: $editable[0]
-        defaultBlock: -> $("<p/>")
-        blankRange: -> new Range($editable[0])
+        getDefaultBlock: -> $("<p/>")
+        getBlankRange: -> new Range($editable[0])
         isValid: -> true
-      Helpers.delegate(handler.api, "blankRange()", "selectEndOfElement")
+      Helpers.delegate(handler.api, "getBlankRange()", "selectEndOfElement")
 
     afterEach ->
       $editable.remove()
 
     describe "#deleteAll", ->
       beforeEach ->
-        handler.api.defaultBlock = -> $("<p/>")
+        handler.api.getDefaultBlock = -> $("<p/>")
 
       it "removes all content and replaces it with the default block", ->
         handler.deleteAll()

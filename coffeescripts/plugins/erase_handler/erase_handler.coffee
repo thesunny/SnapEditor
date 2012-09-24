@@ -45,7 +45,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       @api.clean() if key == 'delete' or key == 'backspace'
 
     handleCursor: (e) ->
-      range = @api.range()
+      range = @api.getRange()
       parentEl = range.getParentElement((el) -> Helpers.isBlock(el))
 
       # Attempt to find the two nodes to merge.

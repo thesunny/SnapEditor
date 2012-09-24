@@ -9,11 +9,11 @@
         win: window
         el: $editable[0]
         find: (selector) -> $(@doc).find(selector)
-        range: -> new Range($editable[0], window)
-        blankRange: -> new Range($editable[0])
+        getRange: -> new Range($editable[0], window)
+        getBlankRange: -> new Range($editable[0])
         isValid: -> true
-      Helpers.delegate(execCommand.api, "range()", "getParentElement", "getParentElements", "isCollapsed", "unselect", "paste")
-      Helpers.delegate(execCommand.api, "blankRange()", "select", "selectNodeContents", "selectEndOfElement")
+      Helpers.delegate(execCommand.api, "getRange()", "getParentElement", "getParentElements", "isCollapsed", "unselect", "paste")
+      Helpers.delegate(execCommand.api, "getBlankRange()", "select", "selectNodeContents", "selectEndOfElement")
 
     afterEach ->
       $editable.remove()

@@ -134,7 +134,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
     show: =>
       if @api.isValid()
         # Save the range.
-        @range = @api.range()
+        @range = @api.getRange()
         [startParent, endParent] = @api.getParentElements("a")
         @$link = $(startParent || endParent)
         @imageSelected = @isImageSelected()

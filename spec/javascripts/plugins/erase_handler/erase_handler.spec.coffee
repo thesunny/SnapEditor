@@ -9,9 +9,9 @@ if isWebkit
         handler = new Handler()
         handler.api =
           el: $editable[0]
-          range: (el) -> new Range($editable[0], el or window)
-          select: (el) -> @range(el).select()
-        Helpers.delegate(handler.api, "range()", "delete", "keepRange", "collapse")
+          getRange: (el) -> new Range($editable[0], el or window)
+          select: (el) -> @getRange(el).select()
+        Helpers.delegate(handler.api, "getRange()", "delete", "keepRange", "collapse")
 
       afterEach ->
         $editable.remove()

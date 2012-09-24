@@ -80,7 +80,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
 
     show: =>
       # Save the range.
-      @range = @api.range()
+      @range = @api.getRange()
       @setupDialog()
       # Reset the form.
       @$form[0].reset()

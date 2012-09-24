@@ -10,8 +10,8 @@
         execCommand = new ExecCommand()
         execCommand.api =
           createElement: (tag) -> document.createElement(tag)
-          range: -> new Range($editable[0], window)
-        Helpers.delegate(execCommand.api, "range()", "getParentElements")
+          getRange: -> new Range($editable[0], window)
+        Helpers.delegate(execCommand.api, "getRange()", "getParentElements")
 
       afterEach ->
         $editable.remove()

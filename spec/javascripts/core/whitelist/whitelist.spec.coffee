@@ -1,17 +1,17 @@
 require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
   describe "Whitelist", ->
-    describe "#allowed", ->
+    describe "#isAllowed", ->
       whitelist = null
       beforeEach ->
         whitelist = new Whitelist(Title: "h1.title > p")
 
       it "returns true when the element is allowed", ->
-        expect(whitelist.allowed($('<h1 class="title"></h1>')[0])).toBeTruthy()
+        expect(whitelist.isAllowed($('<h1 class="title"></h1>')[0])).toBeTruthy()
 
       it "returns false when the element is not allowed", ->
-        expect(whitelist.allowed($('<h1 class="almost"></h1>')[0])).toBeFalsy()
+        expect(whitelist.isAllowed($('<h1 class="almost"></h1>')[0])).toBeFalsy()
 
-    describe "#replacement", ->
+    describe "#getReplacement", ->
       $editable = whitelist = null
       beforeEach ->
         $editable = addEditableFixture()
@@ -27,19 +27,19 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         $editable.remove()
 
       it "returns the default for the tag when it exists", ->
-        $replacement = $(whitelist.replacement($('<h2 class="subtitle"></h2>')[0]))
+        $replacement = $(whitelist.getReplacement($('<h2 class="subtitle"></h2>')[0]))
         expect($replacement.tagName()).toEqual("h2")
         expect($replacement.attr("class")).toBeUndefined()
 
       it "returns the first object in the whitelist by tag when the default does not exist", ->
-        $replacement = $(whitelist.replacement($('<h1 class="subtitle"></h1>')[0]))
+        $replacement = $(whitelist.getReplacement($('<h1 class="subtitle"></h1>')[0]))
         expect($replacement.tagName()).toEqual("h1")
         expect($replacement.attr("class")).toEqual("title")
 
       it "returns null when there is no replacement for the tag", ->
-        expect(whitelist.replacement($("<span/>").appendTo($editable)[0])).toBeNull()
+        expect(whitelist.getReplacement($("<span/>").appendTo($editable)[0])).toBeNull()
 
-    describe "#next", ->
+    describe "#getNext", ->
       whitelist = null
       beforeEach ->
         whitelist = new Whitelist(
@@ -50,12 +50,12 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         )
 
       it "returns the object when it exists", ->
-        $next = $(whitelist.next($('<h1 class="title"></h1>')[0]))
+        $next = $(whitelist.getNext($('<h1 class="title"></h1>')[0]))
         expect($next.tagName()).toEqual("p")
         expect($next.attr("class")).toBeUndefined()
 
       it "returns the default when none exists", ->
-        $next = $(whitelist.next($('<h1 class="subtitle"></h1>')[0]))
+        $next = $(whitelist.getNext($('<h1 class="subtitle"></h1>')[0]))
         expect($next.tagName()).toEqual("div")
         expect($next.attr("class")).toEqual("normal")
 

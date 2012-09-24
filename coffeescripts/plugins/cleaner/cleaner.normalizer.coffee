@@ -66,7 +66,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
               # and no replacement was found for the block, we cannot just
               # flatten the outer block as this would cause dangling inline
               # nodes. Hence, we replace the outer block with the default block.
-              $(node).replaceElementWith(@api.defaultBlock())
+              $(node).replaceElementWith(@api.getDefaultBlock())
             else if innerBlockFound or !replacement
               # If inner blocks were found or there is no replacement, flatten
               # the outer element.
@@ -109,7 +109,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
         $parent = $(inlineNodes[0].parentNode)
         # Create the wrapper block.
         if $parent[0] == @api.el or $.inArray($parent.tagName(), @doNotUseAsTemplate) != -1
-          $block = $(@api.defaultBlock())
+          $block = $(@api.getDefaultBlock())
         else
           $block = $(@api.createElement($parent.tagName()))
           $block.attr("class", $parent.attr("class"))
@@ -126,9 +126,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
     # Otherwise, return null.
     checkWhitelist: (node) ->
       return node unless Helpers.isElement(node)
-      return node if @api.allowed(node)
+      return node if @api.isAllowed(node)
       return null if @blacklisted(node)
-      replacement = @api.replacement(node)
+      replacement = @api.getReplacement(node)
       $(node).replaceElementWith(replacement) if replacement
       return replacement
 

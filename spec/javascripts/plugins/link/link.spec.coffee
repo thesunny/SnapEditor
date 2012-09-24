@@ -8,9 +8,9 @@
         createElement: (name) -> document.createElement(name)
         update: ->
         clean: ->
-        range: -> new Range($editable[0], window)
+        getRange: -> new Range($editable[0], window)
         isValid: -> true
-      Helpers.delegate(link.api, "range()", "isCollapsed", "getParentElement", "paste", "surroundContents", "isImageSelected")
+      Helpers.delegate(link.api, "getRange()", "isCollapsed", "getParentElement", "paste", "surroundContents", "isImageSelected")
 
     afterEach ->
       $editable.remove()

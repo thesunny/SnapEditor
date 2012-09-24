@@ -11,9 +11,9 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler.empty_list_item_h
       ")
       $ul = $editable.find("ul")
       api =
-        blankRange: -> new Range($editable[0])
+        getBlankRange: -> new Range($editable[0])
         next: -> $("<p/>")
-      Helpers.delegate(api, "blankRange()", "selectEndOfElement")
+      Helpers.delegate(api, "getBlankRange()", "selectEndOfElement")
       handler = new Handler(api)
 
     afterEach ->

@@ -95,7 +95,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/b
 
     show: =>
       # Save the range.
-      @range = @api.range()
+      @range = @api.getRange()
       @uploadedImages = []
       @setupDialog()
       @dialog.show()

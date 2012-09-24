@@ -18,7 +18,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     handleEnterKey: ->
       if @api.delete()
         parent = @api.getParentElement()
-        next = @api.next(parent)
+        next = @api.getNext(parent)
         if $(next).tagName() == "br"
           @handleBR(next)
         else

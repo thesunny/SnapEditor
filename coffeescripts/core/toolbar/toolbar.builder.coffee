@@ -43,7 +43,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       return [$toolbar, css]
 
     handleMouseDown: (e) =>
-      @savedRange = @api.range() unless $(e.target).attr("data-action")
+      @savedRange = @api.getRange() unless $(e.target).attr("data-action")
 
     handleClick: (e) =>
       @savedRange.select() unless $(e.target).attr("data-action")

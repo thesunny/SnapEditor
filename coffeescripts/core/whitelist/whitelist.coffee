@@ -9,12 +9,12 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
       Helpers.delegate(this, "generator", "getDefaults", "getWhitelistByLabel", "getWhitelistByTag")
 
     # Returns true if the el is whitelisted. False otherwise.
-    allowed: (el) ->
+    isAllowed: (el) ->
       return !!@match(el)
 
     # Finds the element that should replace the given el.
     # Returns null if the element is inline and does not have a replacement.
-    replacement: (el) ->
+    getReplacement: (el) ->
       $el = $(el)
       tag = $el.tagName()
       replacement = @getDefaults()[tag] or null
@@ -22,7 +22,7 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
       return replacement and replacement.getElement(Helpers.getDocument(el), el)
 
     # Finds the element that should be after the given el.
-    next: (el) ->
+    getNext: (el) ->
       next = @getDefaults()["*"]
       throw "The whitelist is missing a '*' default" unless next
       match = @match(el)

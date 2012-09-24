@@ -13,8 +13,8 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
 
     describe "#blockify", ->
       beforeEach ->
-        normalizer.api.defaultBlock = null
-        spyOn(normalizer.api, "defaultBlock").andReturn($('<p class="normal highlight"></p>')[0])
+        normalizer.api.getDefaultBlock = null
+        spyOn(normalizer.api, "getDefaultBlock").andReturn($('<p class="normal highlight"></p>')[0])
 
       it "does nothing when no inline nodes are given", ->
         $editable.html("<div>block</div>")
@@ -47,31 +47,31 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
 
     describe "#checkWhitelist", ->
       beforeEach ->
-        normalizer.api.allowed = null
-        normalizer.api.replacement = null
+        normalizer.api.isAllowed = null
+        normalizer.api.getReplacement = null
         normalizer.blacklisted = -> false
 
       it "returns the textnode", ->
-        spyOn(normalizer.api, "allowed").andReturn(true)
+        spyOn(normalizer.api, "isAllowed").andReturn(true)
         text = document.createTextNode("test")
         node = normalizer.checkWhitelist(text)
         expect(node).toBe(text)
 
       it "returns the whitelisted element", ->
-        spyOn(normalizer.api, "allowed").andReturn(true)
+        spyOn(normalizer.api, "isAllowed").andReturn(true)
         $el = $("<p/>")
         node = normalizer.checkWhitelist($el[0])
         expect(node).toBe(node)
 
       it "returns null if the element is blacklisted", ->
-        spyOn(normalizer.api, "allowed").andReturn(false)
+        spyOn(normalizer.api, "isAllowed").andReturn(false)
         normalizer.blacklisted = -> true
         $el = $("<p/>")
         expect(normalizer.checkWhitelist($el[0])).toBeNull()
 
       it "replaces the element with the whitelisted element and returns the replacement", ->
-        spyOn(normalizer.api, "allowed").andReturn(false)
-        spyOn(normalizer.api, "replacement").andReturn($('<div class="highlighted normal"></div>')[0])
+        spyOn(normalizer.api, "isAllowed").andReturn(false)
+        spyOn(normalizer.api, "getReplacement").andReturn($('<div class="highlighted normal"></div>')[0])
         $el = $("<p>this is <b>some</b> inline <i>text</i></p>").appendTo($editable)
         $node = $(normalizer.checkWhitelist($el[0]))
         expect($node.tagName()).toEqual("div")
@@ -80,8 +80,8 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         expect(clean($node.html())).toEqual("this is <b>some</b> inline <i>text</i>")
 
       it "returns null when no replacement can be found", ->
-        spyOn(normalizer.api, "allowed").andReturn(false)
-        spyOn(normalizer.api, "replacement").andReturn(null)
+        spyOn(normalizer.api, "isAllowed").andReturn(false)
+        spyOn(normalizer.api, "getReplacement").andReturn(null)
         $el = $("<span>this is <b>some</b> inline <i>text</i></span>").appendTo($editable)
         expect(normalizer.checkWhitelist($el[0])).toBeNull()
 
@@ -105,7 +105,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
     describe "#normalize", ->
       $b = $i = null
       beforeEach ->
-        normalizer.api.defaultBlock = -> $("<p/>")[0]
+        normalizer.api.getDefaultBlock = -> $("<p/>")[0]
         spyOn(normalizer, "checkWhitelist").andCallFake((node) -> node)
         $editable.html("these are some <b>inline</b> nodes that <i>should</i> be wrapped")
         $b = $editable.find("b")
@@ -148,8 +148,8 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
           expect(clean($editable.html())).toEqual("<div><div>this is <b>some</b> text with another </div><div>block <em>and</em> even </div><p>another one</p><div>inside that</div><div>in it plus </div><div>another just in case</div></div>")
 
       it "checks the whitelist and uses the replacement", ->
-        normalizer.api.allowed = (node) -> !Helpers.isElement(node)
-        normalizer.api.replacement = -> $('<p class="normal"/>')[0]
+        normalizer.api.isAllowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.getReplacement = -> $('<p class="normal"/>')[0]
         normalizer.checkWhitelist.andCallThrough()
 
         $div = $("<div>this is some text with another <p>block</p> in it</div>").appendTo($editable)
@@ -161,9 +161,9 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
           expect(clean($editable.html())).toEqual('<div><div>this is some text with another </div><p class=normal>block</p><div>in it</div></div>')
 
       it "replaces the non-whitelisted block with the default block when all children are inline", ->
-        normalizer.api.allowed = (node) -> !Helpers.isElement(node)
-        normalizer.api.replacement = -> null
-        normalizer.api.defaultBlock = -> $("<p/>")
+        normalizer.api.isAllowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.getReplacement = -> null
+        normalizer.api.getDefaultBlock = -> $("<p/>")
         normalizer.checkWhitelist.andCallThrough()
 
         $div = $("<div><div>this is some inline text</div></div>").appendTo($editable)
@@ -171,8 +171,8 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         expect(clean($div.html())).toEqual("<p>this is some inline text</p>")
 
       it "flattens the non-whitelisted block when it has no children", ->
-        normalizer.api.allowed = (node) -> !Helpers.isElement(node)
-        normalizer.api.replacement = -> null
+        normalizer.api.isAllowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.getReplacement = -> null
         normalizer.checkWhitelist.andCallThrough()
 
         $div = $("<div><div></div></div>").appendTo($editable)
@@ -180,8 +180,8 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         expect(clean($div.html())).toEqual("")
 
       it "checks the whitelist and replaces the node with its children when there is no replacement", ->
-        normalizer.api.allowed = (node) -> !Helpers.isElement(node)
-        normalizer.api.replacement = -> null
+        normalizer.api.isAllowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.getReplacement = -> null
         normalizer.checkWhitelist.andCallThrough()
 
         $div = $("<div>this is <b>some <i>inline</i> text</b> with more text</div>").appendTo($editable)

@@ -18,7 +18,7 @@ define ["jquery.custom"], ($) ->
         # NOTE: In IE, we need to save the range prior to turning on
         # contentEditable and then selecting it after contentEditable. This
         # allows the selection to keep after the editor has been turned on.
-        #range = @api.range() unless isImage
+        #range = @api.getRange() unless isImage
 
         @click()
 

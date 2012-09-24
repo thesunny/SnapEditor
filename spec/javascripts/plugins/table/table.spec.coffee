@@ -18,12 +18,12 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       table.api =
         createElement: (name) -> document.createElement(name)
         find: (selector) -> $(selector)
-        range: (el) -> new Range($editable[0], el or window)
-        blankRange: -> new Range($editable[0])
+        getRange: (el) -> new Range($editable[0], el or window)
+        getBlankRange: -> new Range($editable[0])
         isValid: -> true
       spyOn(table, "update")
-      Helpers.delegate(table.api, "range()", "getParentElement", "paste")
-      Helpers.delegate(table.api, "blankRange()", "selectEndOfElement")
+      Helpers.delegate(table.api, "getRange()", "getParentElement", "paste")
+      Helpers.delegate(table.api, "getBlankRange()", "selectEndOfElement")
 
     afterEach ->
       $editable.remove()

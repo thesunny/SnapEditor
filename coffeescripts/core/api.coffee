@@ -33,18 +33,18 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
         "getContents", "setContents", "activate", "tryDeactivate", "deactivate", "update", "save"
       )
       Helpers.delegate(this, "assets", "file", "image", "stylesheet", "template")
-      Helpers.delegate(this, "range()",
+      Helpers.delegate(this, "getRange()",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getCoordinates", "getParentElement", "getParentElements", "getText",
         "collapse", "unselect", "keepRange",
         "paste", "surroundContents", "delete"
       )
-      Helpers.delegate(this, "blankRange()", "selectNodeContents", "selectEndOfElement")
+      Helpers.delegate(this, "getBlankRange()", "selectNodeContents", "selectEndOfElement")
       Helpers.delegate(this, "execCommand",
         "formatBlock", "formatInline", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertLink"
       )
-      Helpers.delegate(this, "whitelist", "allowed", "replacement", "next")
+      Helpers.delegate(this, "whitelist", "isAllowed", "getReplacement", "getNext")
 
       # The default is to deactivate immediately. However, to accommodate
       # plugins such as the Save plugin, this can be disabled and handled in a
@@ -112,23 +112,23 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
 
     # Gets the current selection if el is not given.
     # Otherwise returns the range that represents the el.
-    # If a selection does not exist, use #blankRange().
-    range: (el) ->
+    # If a selection does not exist, use #getBlankRange().
+    getRange: (el) ->
       new Range(@el, el or @win)
 
     # Get a blank range. This is here in case a selection does not exist.
-    # If a selection exists, use #range().
-    blankRange: ->
+    # If a selection exists, use #getRange().
+    getBlankRange: ->
       new Range(@el)
 
     # Select the given el. If no el is given, selects the current selection.
     # NOTE: This is not directly delegated to the Range object because it is
     # slightly different. This takes a given element and selects it.
     select: (el) ->
-      @range(el).select()
+      @getRange(el).select()
 
     # Gets the default block from the whitelist.
-    defaultBlock: ->
+    getDefaultBlock: ->
       @whitelist.getDefaults()["*"].getElement(@doc)
 
     # Calls the cleaner with the given arguments.
