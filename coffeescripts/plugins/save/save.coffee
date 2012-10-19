@@ -11,8 +11,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       throw "Missing 'onSave' callback config" unless @api.config['onSave']
 
     getUI: (ui) ->
-      save = ui.button(action: "save", description: @api.lang.save, shortcut: "Ctrl+S", icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
-      cancel = ui.button(action: "cancel", description: @api.lang.cancel, icon: { url: @api.assets.image("text_bold.png"), width: 24, height: 24, offset: [3, 3] })
+      save = ui.button(action: "save", description: @api.lang.save, shortcut: "Ctrl+S", icon: { url: @api.assets.image("disk.png"), width: 24, height: 24, offset: [3, 3] })
+      cancel = ui.button(action: "cancel", description: @api.lang.cancel, icon: { url: @api.assets.image("cross.png"), width: 24, height: 24, offset: [3, 3] })
       @generateDialog(ui)
 
       return {
