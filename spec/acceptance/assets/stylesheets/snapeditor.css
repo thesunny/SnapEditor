@@ -156,3 +156,49 @@
 .snapeditor_dialog .insert_image_form .insert_image_text {
   margin-bottom: 10px;
 }
+
+/* SAVE DIALOG */
+/* TODO: This should be moved inside the plugin */
+.save_dialog .buttons {
+  margin-bottom: 15px;
+}
+
+.save_dialog .save {
+  background: #83c312;
+  background: -webkit-gradient(linear, left top, left bottom, from(#9bc03a), to(#649d00));
+  background: -moz-linear-gradient(top , #9bc03a, #649d00);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#9bc03a', endColorstr='#649d00');
+  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px 5px 5px 5px;
+  color: #ffffff;
+  cursor: pointer;
+  outline: none;
+  padding: 0.50em 1em;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.save_dialog .cancel {
+  background: #dddddd;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#cdcdcd));
+  background: -moz-linear-gradient(top , #ededed, #cdcdcd);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#cdcdcd');
+  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px 5px 5px 5px;
+  color: #666666;
+  cursor: pointer;
+  outline: none;
+  padding: 0.50em 1em;
+  text-decoration: none;
+}
+
+.save_dialog .discard_message {
+  text-align: right;
+}
+
+.save_dialog .discard_message a {
+  text-decoration: none;
+  color: #46a7b0;
+}
