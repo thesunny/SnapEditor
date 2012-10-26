@@ -126,6 +126,40 @@
   margin-bottom: 20px;
 }
 
+.snapeditor_dialog .button {
+  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px 5px 5px 5px;
+  cursor: pointer;
+  outline: none;
+  padding: 0.50em 1em;
+  text-decoration: none;
+}
+
+.snapeditor_dialog .submit {
+  background: #83c312;
+  background: -webkit-gradient(linear, left top, left bottom, from(#9bc03a), to(#649d00));
+  background: -moz-linear-gradient(top , #9bc03a, #649d00);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#9bc03a', endColorstr='#649d00');
+  color: #ffffff;
+}
+
+.snapeditor_dialog .delete {
+  background: #cd1313;
+  background: -webkit-gradient(linear, left top, left bottom, from(#d73e3e), to(#ba0000));
+  background: -moz-linear-gradient(top , #9bc03a, #649d00);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#9bc03a', endColorstr='#649d00');
+  color: #ffffff;
+}
+
+.snapeditor_dialog .cancel {
+  background: #dddddd;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#cdcdcd));
+  background: -moz-linear-gradient(top , #ededed, #cdcdcd);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#cdcdcd');
+  color: #666666;
+}
+
 /* LINK DIALOG */
 /* TODO: This should be moved inside the plugin */
 .snapeditor_dialog .link_form .field_container {
@@ -164,34 +198,7 @@
 }
 
 .save_dialog .save {
-  background: #83c312;
-  background: -webkit-gradient(linear, left top, left bottom, from(#9bc03a), to(#649d00));
-  background: -moz-linear-gradient(top , #9bc03a, #649d00);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#9bc03a', endColorstr='#649d00');
-  border: none;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 5px 5px 5px 5px;
-  color: #ffffff;
-  cursor: pointer;
-  outline: none;
-  padding: 0.50em 1em;
-  text-decoration: none;
   margin-right: 10px;
-}
-
-.save_dialog .cancel {
-  background: #dddddd;
-  background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#cdcdcd));
-  background: -moz-linear-gradient(top , #ededed, #cdcdcd);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#cdcdcd');
-  border: none;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 5px 5px 5px 5px;
-  color: #666666;
-  cursor: pointer;
-  outline: none;
-  padding: 0.50em 1em;
-  text-decoration: none;
 }
 
 .save_dialog .discard_message {

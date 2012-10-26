@@ -44,8 +44,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           <div class="save_dialog">
             <div class="message">#{@api.lang.saveExitMessage}</div>
             <div class="buttons">
-              <button class="save">#{@api.lang.saveSaveButton}</button>
-              <button class="cancel">#{@api.lang.formCancel}</button>
+              <button class="save submit button">#{@api.lang.saveSaveButton}</button>
+              <button class="cancel button">#{@api.lang.formCancel}</button>
             </div>
             <div class="discard_message">
               #{@api.lang.saveOr} <a class="discard" href="javascript:void(null);">#{@api.lang.saveDiscardChanges}</a>

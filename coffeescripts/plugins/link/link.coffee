@@ -42,9 +42,9 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
             </div>
             <div class="buttons">
               <label class="label_left"></label>
-              <input class="link_submit" type="submit" value="#{@api.lang.linkCreate}" />
-              <input class="link_remove" type="button" value="#{@api.lang.linkRemove}" />
-              <input class="link_cancel" type="button" value="#{@api.lang.formCancel}" />
+              <input class="link_submit submit button" type="submit" value="#{@api.lang.linkCreate}" />
+              <input class="link_remove delete button" type="button" value="#{@api.lang.linkRemove}" />
+              <input class="link_cancel cancel button" type="button" value="#{@api.lang.formCancel}" />
             </div>
           </form>
         """
