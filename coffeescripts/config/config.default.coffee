@@ -1,13 +1,69 @@
-define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/editable/editable", "plugins/cleaner/cleaner", "plugins/erase_handler/erase_handler", "plugins/enter_handler/enter_handler", "plugins/empty_handler/empty_handler", "plugins/autoscroll/autoscroll", "plugins/edit/edit", "plugins/inline/inline", "plugins/block/block", "plugins/link/link", "plugins/list/list", "plugins/table/table", "plugins/image/image", "plugins/image/image.uploader"], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Edit, Inline, Block, Link, List, Table, Image, ImageUploader) ->
+define [
+  "plugins/activate/activate"
+  "plugins/deactivate/deactivate"
+  "plugins/editable/editable"
+  "plugins/cleaner/cleaner"
+  "plugins/erase_handler/erase_handler"
+  "plugins/enter_handler/enter_handler"
+  "plugins/empty_handler/empty_handler"
+  "plugins/autoscroll/autoscroll"
+  "plugins/edit/edit"
+  "plugins/inline/inline"
+  "plugins/block/block"
+  "plugins/link/link"
+  "plugins/list/list"
+  "plugins/table/table"
+  #"plugins/image/image"
+  #"plugins/image/image.uploader"
+], (
+  Activate
+  Deactivate
+  Editable
+  Cleaner
+  EraseHandler
+  EnterHandler
+  EmptyHandler
+  Autoscroll
+  Edit
+  Inline
+  Block
+  Link
+  List
+  Table
+  #Image
+  #ImageUploader
+) ->
   return {
     build: ->
       return {
-        plugins: [new Activate(), new Deactivate(), new Editable(), new Cleaner(), new EraseHandler(), new EnterHandler(), new EmptyHandler(), new Autoscroll(), new Edit(), new Inline(), new Block(), new Link(), new List(), new Table(), new Image(), new ImageUploader()]
+        plugins: [
+          new Activate()
+          new Deactivate()
+          new Editable()
+          new Cleaner()
+          new EraseHandler()
+          new EnterHandler()
+          new EmptyHandler()
+          new Autoscroll()
+          new Edit()
+          new Inline()
+          new Block()
+          new Link()
+          new List()
+          new Table()
+          #new Image()
+          #new ImageUploader()
+        ]
         toolbar: [
-          "Inline", "|"
-          "Block", "|"
-          "List", "|",
-          "Link", "Table", "Image"
+          "Inline"
+          "|"
+          "Block"
+          "|"
+          "List"
+          "|"
+          "Link"
+          "Table"
+          #"Image"
         ]
         whitelist: {
           # Blocks
@@ -36,7 +92,7 @@ define ["plugins/activate/activate", "plugins/deactivate/deactivate", "plugins/e
           "Range Start": "span#RANGE_START"
           "Range End": "span#RANGE_END"
           # Images
-          "Image": "img[src, width, height]"
+          #"Image": "img[src, width, height]"
           # Defaults
           "*": "Paragraph"
           "strong": "Bold"
