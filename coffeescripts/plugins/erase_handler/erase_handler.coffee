@@ -36,6 +36,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         if @api.isCollapsed()
           @handleCursor(e)
         else
+          e.preventDefault()
           @api.delete()
 
     onkeyup: (e) =>
