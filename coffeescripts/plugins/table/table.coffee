@@ -57,11 +57,94 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           $tr.append($td.clone()) for i in [1..@options.table[1]]
           $tbody.append($tr.clone()) for i in [1..@options.table[0]]
 
+          # Handle the special case when inserting at the end of the editable
+          # area.
+          isEndOfEditableArea = @api.isEndOfElement(@api.el)
+
           # Add the table.
           @api.paste($table[0])
 
-          # Set the cursor inside the first td of the table. Then remove the id.
+          # Find the table.
           $table = $(@api.find("#INSERTED_TABLE"))
+          # If the table is being inserted at the end of the editable area,
+          # insert the default block afterwards. This fixes several problems:
+          # 1. When there is nothing after the table, it is possible to
+          #    navigate to the outside of the end of the table and end up at
+          #    the top level of the editable area without being in a block.
+          #    This causes problems because you can now add text which is not
+          #    contained in a block. The editor depends on there being top
+          #    level blocks. It is fairly easy to get into this situation by
+          #    using the down/right arrows, using ctrl + end, or clicking to
+          #    the right side of the table.
+          # 2. When there is nothing after the table, certain browsers do not
+          #    allow you to navigate to the outside of the end of the table.
+          #    This becomes a problem when you want to add more stuff after the
+          #    table. There is no way to do this.
+          # At the moment, this seems to be the best way to handle these issues.
+          # Unfortunately, we can still get into the above situations if the
+          # user decides to remove the <p> after the table. Fortunately, not
+          # all browsers die:
+          # - Firefox, IE9/7 work fine after removal of the <p> as long as the
+          #   below mitigation technique is used.
+          # - IE8 does not allow (1) if there is nothing after the table.
+          #   However, it gets into (2). There is no fix for (2) yet.
+          # - Webkit will die from (1).
+          # To mitigate (1), the enter handler runs the autocleaner when the
+          # range does not have a parent. However, there is still an issue
+          # which is discussed below in (b). Note that this does not solve the
+          # entire problem. The enter handler is still half broken and the
+          # erase handler is broken. When in (1), the erase handler throws an
+          # error. However, the editor still continues to work.
+          # Other methods included:
+          # a. To fix (1), we could prevent the situation from occurring by
+          #    never allowing the user to be at the top level. However, this
+          #    proved difficult because the cases were hard to catch. We were
+          #    able to catch the down/right arrows because we knew when we were
+          #    leaving the table. However, ctrl + end and clicking required to
+          #    know the surrounds of the selection which is difficult.
+          # b. To fix (1), we could rely on the autocleaner, which actually
+          #    works. Unfortunately, there were two problems. The first being
+          #    when to trigger the autocleaner. This is believed to be fairly
+          #    simple to solve. The second was that the autocleaner would add
+          #    an empty <p> after the table. Unfortunately, because there is
+          #    no text in the <p> the cursor jumps before the <p> and after the
+          #    table which leaves us back at the top level and an extra <p>.
+          #    After investigating whether we can add a zero-width-no-breakspace
+          #    it was determined that it would be too hacky and ad hoc. The
+          #    problem is that the autocleaner uses #keepRange which adds two
+          #    spans to keep track of the range. The cleaner sees two spans at
+          #    the top level so it wraps it in the default block. #keepRange
+          #    then sets the range to the spans and removes them.
+          #    Unfortunately, because there is no text, the range jumps to
+          #    before the <p> and after the table. Both the autocleaner and
+          #    #keepRange are doing their job. We would need to add an edge
+          #    case to either piece which would need to be aware of its context
+          #    which is difficult.
+          # c. To fix (1), we could patch up the pieces that are breaking after
+          #    the fact that the top level situation has already occurred. This
+          #    would be the flip solution to the preventative measures outlined
+          #    above. We would let the situation happen and then attempt to
+          #    mitigate the problems. There are two pieces that break when
+          #    there is text at the top level: the enter handler and the erase
+          #    handler. Working through the enter handler caused problems. We
+          #    were able to rely partly on the autocleaner. When there was
+          #    text, the autocleaner worked perfectly. Unfortunately, if there
+          #    was no text and you just hit enter, we run into the autocleaner
+          #    issue above. Again, to fix this issue, we would need to know the
+          #    context of the range and its surroundings which is difficult.
+          # d. To fix (2), we could listen to the down/right arrows. For the
+          #    down arrow, if we are in the last row, we would add the default
+          #    block after the table and place the range inside. For the right
+          #    arrow, if we are in the last row and last column, we would add
+          #    the default block after the table and place the range inside.
+          #    The right arrow may be possible to implement, but unfortunately,
+          #    the down arrow seems difficult. The issue is when the text spans
+          #    several lines in a cell. We only want to override the browser's
+          #    default down behaviour when we're on the last line of the cell.
+          if isEndOfEditableArea
+            $block = $(@api.getDefaultBlock()).html(Helpers.zeroWidthNoBreakSpace)
+            $block.insertAfter($table)
+          # Set the cursor inside the first td of the table. Then remove the id.
           @api.selectEndOfElement($table.find("td")[0])
           $table.removeAttr("id")
 
@@ -203,7 +286,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
     onkeydown: (e) =>
       keys = Helpers.keysOf(e)
-      if (keys == "tab" or keys == "shift.tab")
+      if keys == "tab" or keys == "shift.tab"
         cell = @getCell()
         if cell
           e.preventDefault()

@@ -32,7 +32,7 @@
 # These functions modify the content.
 # paste(arg): pastes the given node or html
 # surroundContents(el): surrounds the range with the given el
-# delete: delete the contents of the range
+# delete(): delete the contents of the range
 #
 # Range Intro from QuirksMode:
 # http://www.quirksmode.org/dom/range_intro.html

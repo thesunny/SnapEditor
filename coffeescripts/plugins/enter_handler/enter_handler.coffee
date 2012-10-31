@@ -17,13 +17,28 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
 
     handleEnterKey: ->
       if @api.delete()
-        parent = @api.getParentElement()
+        parent = @getParentElement()
         next = @api.getNext(parent)
         if $(next).tagName() == "br"
           @handleBR(next)
         else
           @handleBlock(parent, next)
         @api.clean()
+
+    getParentElement: ->
+      parent = @api.getParentElement()
+      # If no parent is found, the text is at the top level. This is not
+      # correct and so we have to perform a clean. After the clean, the parent
+      # should exist.
+      # This can occur right after a table that is at the end of the editable
+      # area. The cursor can be placed after the table but before the end of
+      # the editable area by using the down/right arrow keys are by simply
+      # clicking the area to the right of the table. Text that is entered is at
+      # the top level.
+      unless parent
+        @api.clean()
+        parent = @api.getParentElement()
+      parent
 
     handleBR: (next) ->
       # When there is no text after the <br>, the caret cannot be placed

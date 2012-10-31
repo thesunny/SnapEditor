@@ -11,7 +11,8 @@ define [], ->
       space: 32,
       backspace: 8,
       tab: 9,
-      delete: 46
+      delete: 46,
+      end: 35
 
     # Returns the string representation of the key pressed. Taken from MooTools.
     keyOf: (event) ->

@@ -16,13 +16,15 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       $after = $("<div>after</div>").appendTo($editable)
       table = new Table()
       table.api =
+        el: $editable[0]
         createElement: (name) -> document.createElement(name)
         find: (selector) -> $(selector)
         getRange: (el) -> new Range($editable[0], el or window)
         getBlankRange: -> new Range($editable[0])
         isValid: -> true
+        getDefaultBlock: -> @createElement("p")
       spyOn(table, "update")
-      Helpers.delegate(table.api, "getRange()", "getParentElement", "paste")
+      Helpers.delegate(table.api, "getRange()", "getParentElement", "paste", "isEndOfElement")
       Helpers.delegate(table.api, "getBlankRange()", "selectEndOfElement")
 
     afterEach ->
@@ -63,6 +65,30 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range = new Range($editable[0], window)
         range.paste("<b></b>")
         expect(clean($before.find("td").html())).toEqual("&nbsp;<b></b>")
+
+      it "does not insert the default block after the table when the table is not at the end of the editable area", ->
+        $editable.html("test")
+        range = new Range($editable[0])
+        if hasW3CRanges
+          range.range.setStart($editable[0].childNodes[0], 3)
+        else
+          range.range.findText("tes")
+          range.collapse(true)
+        range.select()
+        table.insertTable()
+        expect($editable.find("p").length).toEqual(0)
+
+      it "inserts the default block after the table when the table is at the end of the editable area", ->
+        $editable.html("test")
+        range = new Range($editable[0])
+        if hasW3CRanges
+          range.range.setStart($editable[0].childNodes[0], 4)
+        else
+          range.range.findText("test")
+          range.collapse(true)
+        range.select()
+        table.insertTable()
+        expect($editable.find("p").length).toEqual(1)
 
       it "updates the api", ->
         placeSelection()
