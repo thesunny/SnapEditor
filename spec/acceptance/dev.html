@@ -252,7 +252,9 @@
       var secureResourceId = "secure/123";
       var insecureResourceId = "insecure/123";
       var secureUrl = "/snapimage_api_secure";
-      var insecureUrl = "/snapimage_api";
+      //var insecureUrl = "/snapimage_api";
+      //var insecureUrl = "http://" + window.location.hostname + ":54321/snapimage_api";
+      var insecureUrl = "http://images.snapeditor.com/snapimage_api";
       var clientSecurityToken = CryptoJS.SHA1("client:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
       var serverSecurityToken = CryptoJS.SHA1("server:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
 

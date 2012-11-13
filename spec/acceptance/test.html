@@ -252,13 +252,15 @@
       var secureResourceId = "secure/123";
       var insecureResourceId = "insecure/123";
       var secureUrl = "/snapimage_api_secure";
-      var insecureUrl = "/snapimage_api";
+      //var insecureUrl = "/snapimage_api";
+      //var insecureUrl = "http://" + window.location.hostname + ":54321/snapimage_api";
+      var insecureUrl = "http://images.snapeditor.com/snapimage_api";
       var clientSecurityToken = CryptoJS.SHA1("client:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
       var serverSecurityToken = CryptoJS.SHA1("server:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
 
       var secureForm = new SnapEditor.Form("secure_form", {
         path: "/spec/acceptance/assets",
-        image: {
+        image_server: {
           url: secureUrl,
           resource_id: secureResourceId,
           client_security_token: clientSecurityToken
@@ -266,24 +268,32 @@
       });
       var secureInPlace = new SnapEditor.InPlace("secure_in_place", {
         path: "/spec/acceptance/assets",
-        image: {
+        image_server: {
           url: secureUrl,
           resource_id: secureResourceId,
           client_security_token: clientSecurityToken
+        },
+        onSave: function (html) {
+          console.log(html);
+          return true;
         }
       });
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
-        image: {
+        image_server: {
           url: insecureUrl,
           resource_id: insecureResourceId
         }
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
-        image: {
+        image_server: {
           url: insecureUrl,
           resource_id: insecureResourceId
+        },
+        onSave: function (html) {
+          console.log(html);
+          return "OMG! ERROR!";
         }
       });
 
@@ -361,7 +371,5 @@
         });
       });
     </script>
-  </body>
-</html>
   </body>
 </html>
