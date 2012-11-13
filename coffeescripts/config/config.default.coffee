@@ -15,21 +15,7 @@ define [
   "plugins/table/table"
   #"plugins/image/image"
   #"plugins/image/image.uploader"
-], (
-  Activate
-  Deactivate
-  Editable
-  Cleaner
-  EraseHandler
-  EnterHandler
-  EmptyHandler
-  Autoscroll
-  Edit
-  Inline
-  Block
-  Link
-  List
-  Table
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Edit, Inline, Block, Link, List, Table
   #Image
   #ImageUploader
 ) ->
