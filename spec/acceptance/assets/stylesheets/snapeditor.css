@@ -93,7 +93,7 @@
 
 /* DIALOG */
 .snapeditor_dialog {
-  z-index: 200;
+  z-index: 210;
   border: 1px solid #b8b8b8;
   background-color: #FBFBFB;
   font-color: #333333;
@@ -147,8 +147,8 @@
 .snapeditor_dialog .delete {
   background: #cd1313;
   background: -webkit-gradient(linear, left top, left bottom, from(#d73e3e), to(#ba0000));
-  background: -moz-linear-gradient(top , #9bc03a, #649d00);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#9bc03a', endColorstr='#649d00');
+  background: -moz-linear-gradient(top , #d73e3e, #ba0000);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d73e3e', endColorstr='#ba0000');
   color: #ffffff;
 }
 
@@ -194,6 +194,7 @@
 /* SAVE DIALOG */
 /* TODO: This should be moved inside the plugin */
 .save_dialog .buttons {
+  margin-top: 20px;
   margin-bottom: 15px;
 }
 
