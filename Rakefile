@@ -31,18 +31,18 @@ namespace :prepare do
     `markdown documentation/LICENSE.md > documentation/LICENSE.html`
     `markdown documentation/README.md > documentation/README.html`
     mkdir_p "bundle"
-    mkdir_p "bundle/snapeditor"
-    mkdir_p "bundle/snapeditor/javascripts"
-    cp "documentation/LICENSE.md", "bundle/snapeditor"
-    cp "documentation/LICENSE.html", "bundle/snapeditor"
-    cp "documentation/README.md", "bundle/snapeditor"
-    cp "documentation/README.html", "bundle/snapeditor"
-    cp "build/snapeditor.js", "bundle/snapeditor/javascripts"
-    cp_r "spec/acceptance/assets/stylesheets", "bundle/snapeditor/."
-    cp_r "spec/acceptance/assets/templates", "bundle/snapeditor/."
-    cp_r "spec/acceptance/assets/images", "bundle/snapeditor/."
-    cp_r "spec/acceptance/assets/lang", "bundle/snapeditor/."
-    #cp_r "spec/acceptance/assets/flash", "bundle/snapeditor"
-    `zip -r bundle/snapeditor bundle/snapeditor/`
+    mkdir_p "bundle/snapeditor-beta"
+    mkdir_p "bundle/snapeditor-beta/javascripts"
+    cp "documentation/LICENSE.md", "bundle/snapeditor-beta"
+    cp "documentation/LICENSE.html", "bundle/snapeditor-beta"
+    cp "documentation/README.md", "bundle/snapeditor-beta"
+    cp "documentation/README.html", "bundle/snapeditor-beta"
+    cp "build/snapeditor.js", "bundle/snapeditor-beta/javascripts"
+    cp_r "spec/acceptance/assets/stylesheets", "bundle/snapeditor-beta/."
+    cp_r "spec/acceptance/assets/templates", "bundle/snapeditor-beta/."
+    cp_r "spec/acceptance/assets/images", "bundle/snapeditor-beta/."
+    cp_r "spec/acceptance/assets/lang", "bundle/snapeditor-beta/."
+    cp_r "spec/acceptance/assets/flash", "bundle/snapeditor-beta"
+    `zip -r bundle/snapeditor-beta bundle/snapeditor-beta/`
   end
 end
