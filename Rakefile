@@ -43,6 +43,8 @@ namespace :prepare do
     cp_r "spec/acceptance/assets/images", "bundle/snapeditor/."
     cp_r "spec/acceptance/assets/lang", "bundle/snapeditor/."
     #cp_r "spec/acceptance/assets/flash", "bundle/snapeditor"
+    # zip usage: zip [options] <zip name without .zip> <directory to zip>
+    #   -r: recursive (include subdirectories and files)
     `cd bundle && rm -f snapeditor.zip && zip -r snapeditor snapeditor/`
   end
 end
