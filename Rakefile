@@ -31,6 +31,7 @@ namespace :prepare do
     `markdown documentation/LICENSE.md > documentation/LICENSE.html`
     `markdown documentation/README.md > documentation/README.html`
     mkdir_p "bundle"
+    rm_rf "bundle/snapeditor-beta"
     mkdir_p "bundle/snapeditor-beta"
     mkdir_p "bundle/snapeditor-beta/javascripts"
     cp "documentation/LICENSE.md", "bundle/snapeditor-beta"
