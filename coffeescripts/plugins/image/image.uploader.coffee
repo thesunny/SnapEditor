@@ -5,7 +5,6 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
   class Uploader
     register: (@api) ->
       @options = @api.config["image_server"]
-      @checkOptions()
 
     checkOptions: ->
       throw "Missing 'image_server' config" unless @options
@@ -83,6 +82,9 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
       @update()
 
     show: =>
+      # Checking of options was moved down here for now because we don't want
+      # it checking the options unless it is actually used.
+      @checkOptions()
       # Save the range.
       @range = @api.getRange()
       @uploadedImages = []
