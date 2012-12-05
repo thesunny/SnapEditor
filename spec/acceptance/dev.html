@@ -9,8 +9,10 @@
         border: 1px solid gray;
       }
 
+      /*
       .secure { float: right; }
       .insecure { float: left; }
+      */
       .form {
         width: 590px;
         height: 500px;
@@ -226,6 +228,7 @@
         </div>
         just maybe not...
       </textarea>
+      <input type="button" value="submit" />
       <div id="insecure_in_place" class="in_place">
         Make me editable!
         <br/>
@@ -282,11 +285,9 @@
       */
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
-        image_server: {
-          uploadUrl: insecureUploadUrl,
-          publicUrl: insecurePublicUrl,
-          directory: insecureDirectory
-        }
+        toolbar: [
+          "Bold", "Italic", "|"
+        ]
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",

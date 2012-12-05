@@ -46,6 +46,9 @@ define ["jquery.custom", "core/editor", "config/config.default.form", "core/asse
       @$container.prepend($toolbar.show())
       # Setup the iframe.
       $(@iframe).css(height: textareaCoords.height - toolbarCoords.height)
+      # Set the height of the iframe container because if we don't do this, it
+      # sticks out a few pixels.
+      @$iframeContainer.css(height: textareaCoords.height - toolbarCoords.height)
       # Swap.
       @$textarea.hide()
       @$container.show()
