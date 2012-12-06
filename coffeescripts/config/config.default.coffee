@@ -56,6 +56,9 @@ define [
           "Heading 1": "h1 > Paragraph"
           "Heading 2": "h2 > Paragraph"
           "Heading 3": "h3 > Paragraph"
+          "Heading 4": "h4 > Paragraph"
+          "Heading 5": "h5 > Paragraph"
+          "Heading 6": "h6 > Paragraph"
           # Lists
           "Unordered List": "ul"
           "Ordered List": "ol"
