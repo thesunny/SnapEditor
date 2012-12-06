@@ -15,8 +15,8 @@ define ["jquery.custom", "core/editor", "config/config.default.form", "core/asse
       @iframe = new IFrame(
         class: "snapeditor_form_iframe"
         contents: @$textarea.attr("value")
-        contentClass: "snapeditor_form_content"
-        stylesheets: [assets.stylesheet("cssreset-min.css"), assets.stylesheet("snapeditor_iframe.css")]
+        contentClass: config.contentClass || "snapeditor_form_content"
+        stylesheets: config.stylesheets || [assets.stylesheet("cssreset-min.css"), assets.stylesheet("snapeditor_iframe.css")]
         load: -> self.finishConstructor.call(self, this.el, config)
       )
       # The frameborder must be set before the iframe is inserted. If it is
