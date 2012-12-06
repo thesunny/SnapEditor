@@ -4,10 +4,10 @@
 define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/browser", "core/helpers"], (J, $, SnapImage, Browser, Helpers) ->
   class Uploader
     register: (@api) ->
-      @options = @api.config["image_server"]
+      @options = @api.config["imageServer"]
 
     checkOptions: ->
-      throw "Missing 'image_server' config" unless @options
+      throw "Missing 'imageServer' config" unless @options
       throw "Missing 'uploadUrl' in image config" unless @options.uploadUrl
       throw "Missing 'publicUrl' in image config" unless @options.publicUrl
       throw "Missing 'directory' in image config" unless @options.directory
