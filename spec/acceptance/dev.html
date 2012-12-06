@@ -285,13 +285,15 @@
       */
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
+        stylesheets: [],
+        contentClass: "myClass",
         toolbar: [
           "Bold", "Italic", "|"
         ]
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
-        image_server: {
+        imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
