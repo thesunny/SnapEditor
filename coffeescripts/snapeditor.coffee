@@ -7,6 +7,6 @@ require ["core/browser", "core/editor.in_place", "core/editor.form", "core/edito
     version: "1.1.0"
     InPlace: if Browser.isSupported then InPlaceEditor else UnsupportedEditor
     Form: if Browser.isSupported then FormEditor else UnsupportedEditor
-  if typeof console != "undefined" and typeof console.log != "undefined"
-    console.log("This is a beta release of the SnapEditor. Check it out at http://snapeditor.com.")
+  #if typeof console != "undefined" and typeof console.log != "undefined"
+    #console.log("This is a beta release of the SnapEditor. Check it out at http://snapeditor.com.")
 ), null, true
