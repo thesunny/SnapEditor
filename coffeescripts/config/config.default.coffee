@@ -13,12 +13,9 @@ define [
   "plugins/link/link"
   "plugins/list/list"
   "plugins/table/table"
-  #"plugins/image/image"
-  #"plugins/image/image.uploader"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Edit, Inline, Block, Link, List, Table
-  #Image
-  #ImageUploader
-) ->
+  "plugins/image/image"
+  "plugins/image/image.uploader"
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Edit, Inline, Block, Link, List, Table, Image, ImageUploader) ->
   return {
     build: ->
       return {
@@ -37,8 +34,8 @@ define [
           new Link()
           new List()
           new Table()
-          #new Image()
-          #new ImageUploader()
+          new Image()
+          new ImageUploader()
         ]
         toolbar: [
           "Inline"
@@ -49,7 +46,7 @@ define [
           "|"
           "Link"
           "Table"
-          #"Image"
+          "Image"
         ]
         whitelist: {
           # Blocks
@@ -59,6 +56,9 @@ define [
           "Heading 1": "h1 > Paragraph"
           "Heading 2": "h2 > Paragraph"
           "Heading 3": "h3 > Paragraph"
+          "Heading 4": "h4 > Paragraph"
+          "Heading 5": "h5 > Paragraph"
+          "Heading 6": "h6 > Paragraph"
           # Lists
           "Unordered List": "ul"
           "Ordered List": "ol"
@@ -78,7 +78,7 @@ define [
           "Range Start": "span#RANGE_START"
           "Range End": "span#RANGE_END"
           # Images
-          #"Image": "img[src, width, height]"
+          "Image": "img[src, width, height]"
           # Defaults
           "*": "Paragraph"
           "strong": "Bold"

@@ -22,5 +22,5 @@ app = Proc.new do |env|
 end
 
 use SnapImage::Middleware, config: "snapimage.yml", path: "/snapimage_api"
-use SnapImage::Middleware, config: "snapimage_secure.yml", path: "/snapimage_api_secure"
+#use SnapImage::Middleware, config: "snapimage_secure.yml", path: "/snapimage_api_secure"
 run app

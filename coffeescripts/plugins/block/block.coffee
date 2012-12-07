@@ -7,6 +7,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       h1 = ui.button(action: "h1", description: @api.lang.h1, shortcut: "Ctrl+Alt+1", icon: { url: @api.assets.image("text_heading_1.png"), width: 24, height: 24, offset: [3, 3] })
       h2 = ui.button(action: "h2", description: @api.lang.h2, shortcut: "Ctrl+Alt+2", icon: { url: @api.assets.image("text_heading_2.png"), width: 24, height: 24, offset: [3, 3] })
       h3 = ui.button(action: "h3", description: @api.lang.h3, shortcut: "Ctrl+Alt+3", icon: { url: @api.assets.image("text_heading_3.png"), width: 24, height: 24, offset: [3, 3] })
+      h4 = ui.button(action: "h4", description: @api.lang.h4, shortcut: "Ctrl+Alt+4", icon: { url: @api.assets.image("text_heading_4.png"), width: 24, height: 24, offset: [3, 3] })
+      h5 = ui.button(action: "h5", description: @api.lang.h5, shortcut: "Ctrl+Alt+5", icon: { url: @api.assets.image("text_heading_5.png"), width: 24, height: 24, offset: [3, 3] })
+      h6 = ui.button(action: "h6", description: @api.lang.h6, shortcut: "Ctrl+Alt+6", icon: { url: @api.assets.image("text_heading_6.png"), width: 24, height: 24, offset: [3, 3] })
       #alignLeft = ui.button(action: "alignLeft", description: "Align Left", shortcut: "Ctrl+L", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
       #alignCenter = ui.button(action: "alignCenter", description: "Align Center", shortcut: "Ctrl+E", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
       #alignRight = ui.button(action: "alignRight", description: "Align Right", shortcut: "Ctrl+R", icon: { url: @api.assets.image("toolbar.png"), width: 24, height: 24, offset: [3, 3] })
@@ -17,6 +20,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         h1: h1
         h2: h2
         h3: h3
+        h4: h4
+        h5: h5
+        h6: h6
         #alignLeft: alignLeft
         #alignCenter: alignCenter
         #alignRight: alignRight
@@ -28,6 +34,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         h1: @h1
         h2: @h2
         h3: @h3
+        h4: @h4
+        h5: @h5
+        h6: @h6
         #alignLeft: @alignLeft
         #alignCenter: @alignCenter
         #alignRight: @alignRight
@@ -39,6 +48,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         "ctrl.alt.1": "h1"
         "ctrl.alt.2": "h2"
         "ctrl.alt.3": "h3"
+        "ctrl.alt.4": "h4"
+        "ctrl.alt.5": "h5"
+        "ctrl.alt.6": "h6"
         #"ctrl.l": "alignLeft"
         #"ctrl.e": "alignCenter"
         #"ctrl.r": "alignRight"
@@ -55,6 +67,15 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
     h3: =>
       @update() if @api.formatBlock('h3')
+
+    h4: =>
+      @update() if @api.formatBlock('h4')
+
+    h5: =>
+      @update() if @api.formatBlock('h5')
+
+    h6: =>
+      @update() if @api.formatBlock('h6')
 
     #alignLeft: =>
       #@align("left")

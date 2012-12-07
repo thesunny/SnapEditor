@@ -1,16 +1,16 @@
 # json2 is needed for IE7. IE7 does not implement JSON natively.
 # NOTE: json2 does not follow AMD. The J is needed to swallow up the undefined
 # given by json2.
-define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/browser", "core/helpers"], (J, $, SWFUpload, Browser, Helpers) ->
+define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/browser", "core/helpers"], (J, $, SnapImage, Browser, Helpers) ->
   class Uploader
     register: (@api) ->
-      @options = @api.config["image_server"]
-      @checkOptions()
+      @options = @api.config["imageServer"]
 
     checkOptions: ->
-      throw "Missing 'image_server' config" unless @options
-      throw "Missing 'url' in image config" unless @options.url
-      throw "Missing 'resource_id' in image config" unless @options.resource_id
+      throw "Missing 'imageServer' config" unless @options
+      throw "Missing 'uploadUrl' in image config" unless @options.uploadUrl
+      throw "Missing 'publicUrl' in image config" unless @options.publicUrl
+      throw "Missing 'directory' in image config" unless @options.directory
 
     getUI: (@ui) ->
       image = @ui.button(action: "insert_image", description: @api.lang.image, shortcut: "Ctrl+G", icon: { url: @api.assets.image("image.png"), width: 24, height: 24, offset: [3, 3] })
@@ -35,65 +35,56 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/b
         # shown yet, it reports the size of @api.el to be 0. Generating the
         # dialog here guarantees that the iframe is already shown and that
         # getting the size will return the correct value.
-        @dialog = @ui.dialog(@api.lang.imageUploadTitle, "<span></span>")
+        placeholderId = "image_upload_button_#{Math.floor(Math.random()*99999)}"
+        @dialog = @ui.dialog(@api.lang.imageUploadTitle, "<span id=\"#{placeholderId}\"></span>")
         @dialog.on("hide.dialog", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
-        @$placeHolder = @$dialog.find("span")
-        json = JSON.stringify(
+        @snapImage = new SnapImage(
+          flashUrl: @api.assets.flash("SnapImage.swf")
+          uploadUrl: @options.uploadUrl
+          # uploadName: "file"
+          uploadParams: directory: @options.directory
+          # resizeParams: {}
+          # fileTypes: "*.jpg;*.jpeg;*.gif;*.png"
+          # fileTypesDescription: "Images"
+
+          # fileSizeLimit: 10485760 # 10MB
           # TODO: Currently, grabbing the el's width is off for the form editor
           # because the el has not been properly formized yet. This is not the
           # correct place for the dialog anyways so ignore for now.
-          action: "generate_image"
-          resource_identifier: @options.resource_id
-          max_width: $(@api.el).getSize().x
-          client_security_token: @options.client_security_token
-        )
-        @swfupload = new SWFUpload(
-          upload_url: @options.url
-          flash_url: @api.assets.flash("swfupload.swf")
-          file_post_name: "file"
-          post_params: json: json
+          maxImageWidth: $(@api.el).getSize().x
+          # maxImageHeight: 2096
 
-          file_types: "*.png;*.jpg;*.jpeg;*.gif"
-          file_types_description: "Image Files"
-          #file_size_limit: 1024 # I'm guessing this is in bytes. Will need to double-check
-          #file_upload_limit: 10
-          #file_queue_limit: 2
+          buttonPlaceholderId: placeholderId
+          buttonImageUrl: @api.assets.image("select_images.png")
+          buttonWidth: 105
+          buttonHeight: 28
+          buttonText: @api.lang.image
+          buttonTextStyle: "color: #FFFFFF; font-size: 12px; text-align: center;"
+          buttonTextPaddingTop: 6
+          # buttonTextPaddingLeft: 12
 
-          button_placeholder: @$placeHolder[0]
-          button_image_url: @api.assets.image("select_images_sprite.png")
-          button_width: 105
-          button_height: 28
-
-          #swfupload_loaded_handler: -> console.log "LOADED"
-          #file_dialog_start_handler: -> console.log "DIALOG START"
-          #file_queued_handler: -> console.log "QUEUED"
-          #file_queue_error_handler: -> console.log "QUEUE ERROR"
-          file_dialog_complete_handler: @fileDialogCompleteHandler
-          #upload_start_handler: -> console.log "UPLOAD START"
-          #upload_progress_handler: -> console.log "UPLOAD PROGRESS"
-          #upload_error_handler: -> console.log "UPLOAD ERROR"
-          upload_success_handler: @uploadSuccessHandler
-          upload_complete_handler: @uploadCompleteHandler
+          filenameGenerator: @filenameGenerator
+          onUploadSuccess: @uploadSuccessHandler
+          onUploadsComplete: @uploadsCompleteHandler
+          debug: true
         )
 
-    fileDialogCompleteHandler: =>
-      # Start uploading the first file in the queue.
-      @swfupload.startUpload()
+    filenameGenerator: (args) ->
+      base = Math.random().toString(36).substr(2, 16)
+      "#{base}-#{args.width}x#{args.height}.#{args.ext}"
 
-    uploadSuccessHandler: (file, data, response) =>
-      @handleResponse(JSON.parse(data))
+    uploadSuccessHandler: (serverData, imageData) =>
+      @handleResponse(JSON.parse(serverData), imageData)
 
-    uploadCompleteHandler: =>
-      if @swfupload.getStats().files_queued > 0
-        # Start uploading the next file in the queue if available.
-        @swfupload.startUpload()
-      else
-        # Finished uploading.
-        @hide()
-        @update() if @uploadedImages.length > 0
+    uploadsCompleteHandler: =>
+      @hide()
+      @update()
 
     show: =>
+      # Checking of options was moved down here for now because we don't want
+      # it checking the options unless it is actually used.
+      @checkOptions()
       # Save the range.
       @range = @api.getRange()
       @uploadedImages = []
@@ -120,9 +111,9 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/swfupload", "core/b
       @range.select()
 
     # TODO: Handle errors
-    handleResponse: (response) =>
-      if response.status_code == 200
-        @insertImage(response.image_url, response.image_width, response.image_height)
+    handleResponse: (serverData, imageData) =>
+      if serverData.status_code == 200
+        @insertImage("#{@options.publicUrl}/#{@options.directory}/#{imageData.filename}", imageData.width, imageData.height)
 
     insertImage: (url, width, height) ->
       $img = $(@api.createElement("img"))

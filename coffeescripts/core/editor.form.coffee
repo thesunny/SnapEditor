@@ -15,8 +15,8 @@ define ["jquery.custom", "core/editor", "config/config.default.form", "core/asse
       @iframe = new IFrame(
         class: "snapeditor_form_iframe"
         contents: @$textarea.attr("value")
-        contentClass: "snapeditor_form_content"
-        stylesheets: [assets.stylesheet("cssreset-min.css"), assets.stylesheet("snapeditor_iframe.css")]
+        contentClass: config.contentClass || "snapeditor_form_content"
+        stylesheets: $.makeArray(config.stylesheets || [assets.stylesheet("cssreset-min.css"), assets.stylesheet("snapeditor_iframe.css")])
         load: -> self.finishConstructor.call(self, this.el, config)
       )
       # The frameborder must be set before the iframe is inserted. If it is
@@ -46,6 +46,9 @@ define ["jquery.custom", "core/editor", "config/config.default.form", "core/asse
       @$container.prepend($toolbar.show())
       # Setup the iframe.
       $(@iframe).css(height: textareaCoords.height - toolbarCoords.height)
+      # Set the height of the iframe container because if we don't do this, it
+      # sticks out a few pixels.
+      @$iframeContainer.css(height: textareaCoords.height - toolbarCoords.height)
       # Swap.
       @$textarea.hide()
       @$container.show()
