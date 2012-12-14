@@ -31,6 +31,8 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
 
     setupDialog: ->
       unless @dialog
+        @options.uploadParams ||= {}
+        @options.uploadParams.directory = @options.directory
         # Generate the dialog here after show(). In IE, when the iframe is not
         # shown yet, it reports the size of @api.el to be 0. Generating the
         # dialog here guarantees that the iframe is already shown and that
@@ -43,12 +45,12 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
           flashUrl: @api.assets.flash("SnapImage.swf")
           uploadUrl: @options.uploadUrl
           # uploadName: "file"
-          uploadParams: directory: @options.directory
+          uploadParams: @options.uploadParams
           # resizeParams: {}
           # fileTypes: "*.jpg;*.jpeg;*.gif;*.png"
           # fileTypesDescription: "Images"
 
-          # fileSizeLimit: 10485760 # 10MB
+          fileSizeLimit: @options.fileSizeLimit || 10485760 # 10MB
           # TODO: Currently, grabbing the el's width is off for the form editor
           # because the el has not been properly formized yet. This is not the
           # correct place for the dialog anyways so ignore for now.
@@ -67,7 +69,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
           filenameGenerator: @filenameGenerator
           onUploadSuccess: @uploadSuccessHandler
           onUploadsComplete: @uploadsCompleteHandler
-          debug: true
+          # debug: true
         )
 
     filenameGenerator: (args) ->
