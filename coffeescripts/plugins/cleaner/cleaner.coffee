@@ -2,7 +2,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
   class Cleaner
     register: (@api) ->
       @$el = $(@api.el)
-      @normalizer = new Normalizer(@api, @api.cleaner.ignore)
+      @normalizer = new Normalizer(@api, @api.config.cleaner.ignore)
       @api.on("activate.editor", => @keepRange(=> @clean(@api.el.firstChild, @api.el.lastChild)))
       @api.on("clean", (e, args...) => @clean.apply(this, args))
       @api.on("ready.plugins", => @clean(@api.el.firstChild, @api.el.lastChild))
