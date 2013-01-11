@@ -7,14 +7,11 @@ define [
   return {
     build: ->
       defaults = Defaults.build()
-      return {
-        plugins: defaults.plugins.concat([
-          new Snap()
-          new Outline()
-          new Save()
-        ])
-        toolbar: defaults.toolbar.concat(["|", "SaveCancel"])
-        whitelist: defaults.whitelist
-        lang: defaults.lang
-      }
+      defaults.plugins = defaults.plugins.concat([
+        new Snap()
+        new Outline()
+        new Save()
+      ])
+      defaults.toolbar = defaults.toolbar.concat(["|", "SaveCancel"])
+      return defaults
   }
