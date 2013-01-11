@@ -1,4 +1,7 @@
-define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugins", "core/keyboard", "core/contexts", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Helpers, Assets, API, Plugins, Keyboard, Contexts, ContextMenu, Whitelist) ->
+define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugins", "core/keyboard", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Helpers, Assets, API, Plugins, Keyboard, ContextMenu, Whitelist) ->
+# NOTE: Removed from the list above. May need it later.
+# "core/contexts"
+# Contexts
   class Editor
     # el - string id or DOM element
     # defaults - default config
@@ -14,15 +17,22 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       # Transform the string into a CSS id selector.
       el = "#" + el if typeof el == "string"
       @$el = $(el)
+      @prepareConfig()
       @assets = new Assets(@config.path)
-      @whitelist = new Whitelist(@defaults.whitelist)
+      @whitelist = new Whitelist(@config.cleaner.whitelist)
       @loadAssets()
       @api = new API(this)
       @plugins = new Plugins(@api, @$templates, @defaults.plugins, @config.plugins, @defaults.toolbar, @config.toolbar)
       @keyboard = new Keyboard(@api, @plugins.getKeyboardShortcuts(), "keydown")
-      @contexts = new Contexts(@api, @plugins.getContexts())
+      #@contexts = new Contexts(@api, @plugins.getContexts())
       @contextmenu = new ContextMenu(@api, @$templates, @plugins.getContextMenuButtons())
       @api.trigger("ready.plugins")
+
+    prepareConfig: ->
+      @config.cleaner or= {}
+      @config.cleaner.whitelist or = @defaults.cleaner.whitelist
+      @config.cleaner.ignore or= @defaults.cleaner.ignore
+      @config.lang or= @defaults.lang
 
     loadAssets: ->
       @loadLang()
@@ -31,7 +41,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
 
     loadLang: ->
       $.ajax(
-        url: @assets.lang(@config.lang || @defaults.lang),
+        url: @assets.lang(@config.lang),
         async: false,
         success: (json) => @lang = json
       )

@@ -2,14 +2,18 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
   class Normalizer
     doNotUseAsTemplate: ["ol", "ul", "li", "table", "tbody", "thead", "tfoot", "tr", "th", "td", "caption", "colgroup", "col"]
 
-    constructor: (@api) ->
-      @flattener = new Flattener()
+    # Arguments:
+    # * api - SnapEditor API
+    # * ignore - an array of classnames to ignore
+    constructor: (@api, @ignore) ->
+      @flattener = new Flattener(@ignore)
 
     # Normalizes all the nodes between and including startNode and endNode.
     # Assumes startNode and endNode have the same parent.
     # All elements will be checked against the whitelist and replaced if needed.
     # All contiguous inline top nodes will be wrapped in a block.
     # All top blocks will be flattened.
+    # All ignored elements will not be replaced and the insides left alone.
     normalize: (startNode, endNode) ->
       # Gather the nodes before normalizing as the start and end nodes may be
       # removed/replaced.
@@ -32,7 +36,8 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
     # If all the nodes are inline nodes, this does nothing.
     # If there are any blocks, it wraps all inline nodes in a block.
     # It then goes and normalizes those blocks. If there are any nested blocks,
-    # it flattens them.
+    # it flattens them. The exception are elements to ignore. These are
+    # not replaced and their insides are not normalized.
     # Returns true if there are any blocks. False otherwise.
     normalizeNodes: (startNode, endNode) ->
       blockFound = false
@@ -46,10 +51,15 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
           stop = node == endNode
           nextSibling = node.nextSibling
 
-          # Handle whitelisting of the node first.
-          replacement = @checkWhitelist(node)
-          # If the node has been replaced, use the replacement.
-          node = replacement if replacement
+          # If the node is to be ignored, don't replace it or normalize the inside.
+          isIgnore = Helpers.hasClass(node, @ignore)
+
+          # Don't replace the node if it is to be ignored.
+          unless isIgnore
+            # Handle whitelisting of the node first.
+            replacement = @checkWhitelist(node)
+            # If the node has been replaced, use the replacement.
+            node = replacement if replacement
 
           isBlock = Helpers.isBlock(node)
           if isBlock
@@ -58,38 +68,40 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
             @blockify(inlineNodes, node)
             inlineNodes = []
 
-          if Helpers.isElement(node)
-            # Normalize the children first.
-            innerBlockFound = @normalizeNodes(node.firstChild, node.lastChild)
-            if isBlock and !innerBlockFound and !replacement and node.firstChild
-              # If there are children and all the children are inline nodes
-              # and no replacement was found for the block, we cannot just
-              # flatten the outer block as this would cause dangling inline
-              # nodes. Hence, we replace the outer block with the default block.
-              $(node).replaceElementWith(@api.getDefaultBlock())
-            else if innerBlockFound or !replacement
-              # If inner blocks were found or there is no replacement, flatten
-              # the outer element.
+          # Don't normalize the inside if node is to be ignored.
+          unless isIgnore
+            if Helpers.isElement(node)
+              # Normalize the children first.
+              innerBlockFound = @normalizeNodes(node.firstChild, node.lastChild)
+              if isBlock and !innerBlockFound and !replacement and node.firstChild
+                # If there are children and all the children are inline nodes
+                # and no replacement was found for the block, we cannot just
+                # flatten the outer block as this would cause dangling inline
+                # nodes. Hence, we replace the outer block with the default block.
+                $(node).replaceElementWith(@api.getDefaultBlock())
+              else if innerBlockFound or !replacement
+                # If inner blocks were found or there is no replacement, flatten
+                # the outer element.
 
-              # The first and last children may have changed after the call to
-              # @normalizeNodes. Hence, we grab them here instead of earlier in
-              # the loop.
-              # We need to grab them before the node is flattened or we'll lose
-              # the children.
-              firstChild = node.firstChild
-              lastChild = node.lastChild
-              @flattener.flatten(node)
-              # If the node was inline, take all of its children and add them to
-              # the inline nodes.
-              unless isBlock
-                inlineNodes = inlineNodes.concat(Helpers.nodesFrom(firstChild, lastChild))
-            else if !isBlock
-              # If the node is inline, no blocks were found, and a replacement
-              # was found, add the node to the inline nodes.
+                # The first and last children may have changed after the call to
+                # @normalizeNodes. Hence, we grab them here instead of earlier in
+                # the loop.
+                # We need to grab them before the node is flattened or we'll lose
+                # the children.
+                firstChild = node.firstChild
+                lastChild = node.lastChild
+                @flattener.flatten(node)
+                # If the node was inline, take all of its children and add them to
+                # the inline nodes.
+                unless isBlock
+                  inlineNodes = inlineNodes.concat(Helpers.nodesFrom(firstChild, lastChild))
+              else if !isBlock
+                # If the node is inline, no blocks were found, and a replacement
+                # was found, add the node to the inline nodes.
+                inlineNodes.push(node)
+            else
+              # If the node is a textnode, add it to the inline nodes.
               inlineNodes.push(node)
-          else
-            # If the node is a textnode, add it to the inline nodes.
-            inlineNodes.push(node)
 
           # If we are at the endNode break out of the loop.
           break if stop

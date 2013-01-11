@@ -48,42 +48,43 @@ define [
           "Table"
           "Image"
         ]
-        whitelist: {
-          # Blocks
-          "Paragraph": "p > Paragraph"
-          "Div": "div > Div"
-          # Headings
-          "Heading 1": "h1 > Paragraph"
-          "Heading 2": "h2 > Paragraph"
-          "Heading 3": "h3 > Paragraph"
-          "Heading 4": "h4 > Paragraph"
-          "Heading 5": "h5 > Paragraph"
-          "Heading 6": "h6 > Paragraph"
-          # Lists
-          "Unordered List": "ul"
-          "Ordered List": "ol"
-          "List Item": "li > List Item"
-          # Tables
-          "Table": "table"
-          "Table Body": "tbody"
-          "Table Row": "tr"
-          "Table Header": "th > BR"
-          "Table Cell": "td > BR"
-          # BR
-          "BR": "br"
-          # Inlines
-          "Bold": "b"
-          "Italic": "i"
-          "Links": "a[href, target]"
-          "Range Start": "span#RANGE_START"
-          "Range End": "span#RANGE_END"
-          # Images
-          "Image": "img[src, width, height]"
-          # Defaults
-          "*": "Paragraph"
-          "strong": "Bold"
-          "em": "Italic"
-        }
+        cleaner:
+          whitelist:
+            # Blocks
+            "Paragraph": "p > Paragraph"
+            "Div": "div > Div"
+            # Headings
+            "Heading 1": "h1 > Paragraph"
+            "Heading 2": "h2 > Paragraph"
+            "Heading 3": "h3 > Paragraph"
+            "Heading 4": "h4 > Paragraph"
+            "Heading 5": "h5 > Paragraph"
+            "Heading 6": "h6 > Paragraph"
+            # Lists
+            "Unordered List": "ul"
+            "Ordered List": "ol"
+            "List Item": "li > List Item"
+            # Tables
+            "Table": "table"
+            "Table Body": "tbody"
+            "Table Row": "tr"
+            "Table Header": "th > BR"
+            "Table Cell": "td > BR"
+            # BR
+            "BR": "br"
+            # Inlines
+            "Bold": "b"
+            "Italic": "i"
+            "Links": "a[href, target]"
+            "Range Start": "span#RANGE_START"
+            "Range End": "span#RANGE_END"
+            # Images
+            "Image": "img[src, width, height]"
+            # Defaults
+            "*": "Paragraph"
+            "strong": "Bold"
+            "em": "Italic"
+          ignore: []
         lang: "en"
       }
   }

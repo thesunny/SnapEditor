@@ -6,7 +6,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
       api = $("<div/>")
       api.el = $editable[0]
       api.createElement = (name) -> document.createElement(name)
-      normalizer = new Normalizer(api)
+      normalizer = new Normalizer(api, ["ignore", "ignore2"])
 
     afterEach ->
       $editable.remove()
@@ -196,3 +196,8 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         else
           # In IE7/8, the space disappears after a block. This should be okay.
           expect(clean($editable.html())).toEqual("<div>this is <div><b>some</b> text with another </div><p>block</p>in it</div>")
+
+      it "does not touch classes that should be ignored", ->
+        $div = $('<div>before text<div class="ignore"><div>this should be ignored</div></div>middle text<p class="ignore2">this should also be ignored</p>more text</div>').appendTo($editable)
+        expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
+        expect(clean($editable.html())).toEqual("<div><div>before text</div><div class=ignore><div>this should be ignored</div></div><div>middle text</div><p class=ignore2>this should also be ignored</p><div>more text</div></div>")

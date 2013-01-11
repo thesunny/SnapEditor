@@ -1,5 +1,9 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class Flattener
+    # Arguments:
+    # * ignore - an array of classnames to ignore
+    constructor: (@ignore) ->
+
     doNotReplace: ["ol", "ul", "li", "table", "tbody", "thead", "tfoot", "tr", "th", "td", "caption"]
 
     flatten: (node) ->
@@ -51,31 +55,49 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
             # Rip the list out of the list item.
             $(child).insertBefore(node)
           when "table"
-            # Create list items per cell.
-            $cells = $(child).find("th, td")
-            for cell in $cells
+            if Helpers.hasClass(child, @ignore)
+              # If the table is to be ignored, just move the entire table.
+              # Don't flatten.
               $li = $template.clone()
-              $li.html(cell.innerHTML)
+              $li.append(child)
               $li.insertBefore(node)
-            $(child).remove()
+            else
+              # Create list items per cell.
+              $cells = $(child).find("th, td")
+              for cell in $cells
+                $li = $template.clone()
+                $li.html(cell.innerHTML)
+                $li.insertBefore(node)
+              $(child).remove()
           else
-            # Create list items per block.
+            # Create a list item out of the block.
             $li = $template.clone()
-            $li.html(child.innerHTML)
+            if Helpers.hasClass(child, @ignore)
+              # If the child is to be ignored, just move the entire child.
+              $li.append(child)
+            else
+              # Just move the insides of the child.
+              $li.html(child.innerHTML)
+              $(child).remove()
             $li.insertBefore(node)
-            $(child).remove()
       $(node).remove()
 
     # Removes all blocks from the cell and places <br>s between them.
     # This assusmes that all the children in the cell are blocks.
+    # Ignored elements are left alone.
     flattenTableCell: (node) ->
       $template = $(Helpers.getDocument(node).createElement("br"))
       child = node.childNodes[0]
       while child
         nextSibling = child.nextSibling
-        @flattenBlock(child, $template)
-        # Insert a <br> if there is a next sibling.
-        $template.clone().insertBefore(nextSibling) if nextSibling
+        if Helpers.hasClass(child, @ignore)
+          # If the child is to be ignored, remove the previous <br> and skip
+          # flattening it.
+          $(child.previousSibling).remove() if child.previousSibling
+        else
+          @flattenBlock(child, $template)
+          # Insert a <br> if there is a next sibling.
+          $template.clone().insertBefore(nextSibling) if nextSibling
         child = nextSibling
 
   return Flattener

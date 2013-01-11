@@ -6,9 +6,12 @@ require ["core/editor", "core/helpers"], (Editor, Helpers) ->
       defaults =
         plugins: []
         toolbar: []
-        whitelist:
-          "P": "p"
-          "*": "P"
+        cleaner:
+          whitelist:
+            "P": "p"
+            "*": "P"
+          ignore: []
+        lang: "en",
       config = path: "spec/javascripts/support/assets"
       editor = new Editor($editable[0], defaults, config)
 

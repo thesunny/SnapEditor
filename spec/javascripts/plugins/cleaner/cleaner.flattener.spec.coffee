@@ -3,7 +3,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.flattener"], ($, Flattener) -
     $editable = flattener = null
     beforeEach ->
       $editable = addEditableFixture()
-      flattener = new Flattener()
+      flattener = new Flattener(["ignore", "ignore2"])
 
     afterEach ->
       $editable.remove()
@@ -64,6 +64,22 @@ require ["jquery.custom", "plugins/cleaner/cleaner.flattener"], ($, Flattener) -
         expect($lis[2].innerHTML).toEqual("2.1")
         expect($lis[3].innerHTML).toEqual("2.2")
 
+      it "takes a table to be ignored and moves the entire table as a whole", ->
+        $editable.html('<ul><li><table class="ignore"><tbody><tr><th>1.1</th><th>1.2</th></tr><tr><td>2.1</td><td>2.2</td></tr></tbody></table></li></ul>')
+        flattener.flattenListItem($editable.find("li")[0])
+        $lis = $editable.find("li")
+        expect($lis.length).toEqual(1)
+        expect(clean($lis.first().html())).toEqual("<table class=ignore><tbody><tr><th>1.1</th><th>1.2</th></tr><tr><td>2.1</td><td>2.2</td></tr></tbody></table>")
+
+      it "moves ignored elements as a whole", ->
+        $editable.html('<ul><li><p>before</p><div class="ignore2"><p>ignore</p><p>this</p></div><div>after</div></li></ul>')
+        flattener.flattenListItem($editable.find("li")[0])
+        $lis = $editable.find("li")
+        expect($lis.length).toEqual(3)
+        expect($lis[0].innerHTML).toEqual("before")
+        expect(clean($lis[1].innerHTML)).toEqual("<div class=ignore2><p>ignore</p><p>this</p></div>")
+        expect($lis[2].innerHTML).toEqual("after")
+
     describe "#flattenTableCell", ->
       it "removes all blocks and places <br>s between them", ->
         $editable.html("<table><tbody><tr><td><p>this is a block</p><div>and another</div></td></tr></tbody></table>")
@@ -91,3 +107,13 @@ require ["jquery.custom", "plugins/cleaner/cleaner.flattener"], ($, Flattener) -
         expect(children[0].nodeValue).toEqual("1")
         expect($(children[1]).tagName()).toEqual("br")
         expect(children[2].nodeValue).toEqual("2")
+
+      it "does nothing to elements that should be ignored in the middle of the cell", ->
+        $editable.html('<table><tbody><tr><td><p>text</p><div class="ignore"><p>ignore this</p></div><p>something</p><p>else</p><p class="ignore2">ignored</p><div>more text</div></td></tr></tbody></table>')
+        flattener.flattenTableCell($editable.find("td")[0])
+        expect(clean($editable.find("td").html())).toEqual("text<div class=ignore><p>ignore this</p></div>something<br>else<p class=ignore2>ignored</p>more text")
+
+      it "does nothing to elements that should be ignored at the start and end of the cell", ->
+        $editable.html('<table><tbody><tr><td><div class="ignore"><p>ignore this</p></div><p>text</p><p>something</p><p class="ignore2">ignored</p></td></tr></tbody></table>')
+        flattener.flattenTableCell($editable.find("td")[0])
+        expect(clean($editable.find("td").html())).toEqual("<div class=ignore><p>ignore this</p></div>text<br>something<p class=ignore2>ignored</p>")
