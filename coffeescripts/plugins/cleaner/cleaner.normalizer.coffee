@@ -2,6 +2,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
   class Normalizer
     doNotUseAsTemplate: ["ol", "ul", "li", "table", "tbody", "thead", "tfoot", "tr", "th", "td", "caption", "colgroup", "col"]
 
+    # Arguments:
+    # * api - SnapEditor API
+    # * ignore - an array of classnames to ignore
     constructor: (@api, @ignore) ->
       @flattener = new Flattener(@ignore)
 
@@ -10,6 +13,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
     # All elements will be checked against the whitelist and replaced if needed.
     # All contiguous inline top nodes will be wrapped in a block.
     # All top blocks will be flattened.
+    # All ignored elements will not be replaced and the insides left alone.
     normalize: (startNode, endNode) ->
       # Gather the nodes before normalizing as the start and end nodes may be
       # removed/replaced.
@@ -32,7 +36,8 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
     # If all the nodes are inline nodes, this does nothing.
     # If there are any blocks, it wraps all inline nodes in a block.
     # It then goes and normalizes those blocks. If there are any nested blocks,
-    # it flattens them.
+    # it flattens them. The exception are elements to ignore. These are
+    # not replaced and their insides are not normalized.
     # Returns true if there are any blocks. False otherwise.
     normalizeNodes: (startNode, endNode) ->
       blockFound = false
