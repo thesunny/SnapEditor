@@ -7,6 +7,7 @@ define [
   "plugins/enter_handler/enter_handler"
   "plugins/empty_handler/empty_handler"
   "plugins/autoscroll/autoscroll"
+  "plugins/atomic/atomic"
   "plugins/edit/edit"
   "plugins/inline/inline"
   "plugins/block/block"
@@ -15,7 +16,7 @@ define [
   "plugins/table/table"
   "plugins/image/image"
   "plugins/image/image.uploader"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Edit, Inline, Block, Link, List, Table, Image, ImageUploader) ->
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, Link, List, Table, Image, ImageUploader) ->
   return {
     build: ->
       return {
@@ -28,6 +29,7 @@ define [
           new EnterHandler()
           new EmptyHandler()
           new Autoscroll()
+          new Atomic()
           new Edit()
           new Inline()
           new Block()
@@ -86,5 +88,7 @@ define [
             "em": "Italic"
           ignore: []
         lang: "en"
+        atomic:
+          classname: "atomic"
       }
   }

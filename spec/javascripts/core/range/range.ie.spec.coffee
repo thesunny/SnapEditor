@@ -8,18 +8,21 @@
 unless hasW3CRanges
   require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
     describe "Range.IE", ->
-      Range = $editable = $start = $end = null
+      Range = $editable = $start = $end = doc = win = null
       beforeEach ->
+        $editable = addEditableFixture()
+        $start = $('<div id="start">start</div>').appendTo($editable)
+        $end = $('<div id="end">end</div>').appendTo($editable)
+        doc = Helpers.getDocument($editable[0])
+        win = Helpers.getWindow($editable[0])
         class Range
-          doc: document
-          win: window
+          doc: doc
+          win: win
+          createElement: (name) -> $(@doc.createElement(name))
           find: (selector) -> $(@doc).find(selector)
           getParentElements: ->
         Helpers.extend(Range, Module.static)
         Helpers.include(Range, Module.instance)
-        $editable = addEditableFixture()
-        $start = $('<div id="start">start</div>').appendTo($editable)
-        $end = $('<div id="end">end</div>').appendTo($editable)
         # IE8 requires the focus to be on $editable in order
         # for ranges to work properly.
         $editable.focus()
@@ -42,7 +45,7 @@ unless hasW3CRanges
             expectedRange.collapse(true)
             expectedRange.select()
 
-            actualRange = Range.getRangeFromSelection()
+            actualRange = Range.getRangeFromSelection(win)
             expect(actualRange.text.length).toEqual(0)
 
             # Insert a span and ensure it is in the correct place.
@@ -50,7 +53,7 @@ unless hasW3CRanges
             expect(clean($start.html())).toEqual("<span></span>start")
 
           it "returns null when there is no selected range", ->
-            expect(Range.getRangeFromSelection()).toBeNull()
+            expect(Range.getRangeFromSelection(win)).toBeNull()
 
         describe ".getRangeFromElement", ->
           it "returns a TextRange encompassing the contents of the element when it is not an image", ->
@@ -65,6 +68,16 @@ unless hasW3CRanges
             expect(range.text).toBeUndefined()
             expect(range.length).toEqual(1)
             expect(range.item(0)).toBe($img[0])
+
+        describe ".getParentElement", ->
+          it "returns the parent from a TextRange", ->
+            range = Range.getRangeFromElement($start[0])
+            expect(Range.getParentElement(range)).toEqual($start[0])
+
+          it "returns the parent from a ControlRange", ->
+            $img = $('<img />').appendTo($editable)
+            range = Range.getRangeFromElement($img[0])
+            expect(Range.getParentElement(range)).toEqual($img[0])
 
       describe "instance functions", ->
         describe "#cloneRange", ->
@@ -126,7 +139,7 @@ unless hasW3CRanges
             range = new Range()
             range.range = Range.getRangeFromElement($img[0])
             range.select()
-            range.range = Range.getRangeFromSelection()
+            range.range = Range.getRangeFromSelection(win)
             expect(range.isImageSelected()).toBeTruthy()
 
         describe "#isStartOfElement", ->
@@ -422,7 +435,7 @@ unless hasW3CRanges
             range.range.collapse(true)
             range.select()
             range.keepRange(->)
-            range.range = Range.getRangeFromSelection()
+            range.range = Range.getRangeFromSelection(win)
             range.pasteHTML("<b></b>")
             expect(clean($start.html())).toEqual("s<b></b>tart")
 
@@ -467,6 +480,112 @@ unless hasW3CRanges
             )
             range.delete()
             expect(clean($editable.html())).toEqual("<div>after</div>")
+
+        describe "#moveBoundary", ->
+          it "throws an error when the boundaries is not valid", ->
+            range = new Range()
+            range.range = Range.getRangeFromElement($start[0])
+            expect(-> range.moveBoundary("test", $start[0])).toThrow()
+
+          describe "element", ->
+            beforeEach ->
+              $veryEnd = $("<div>very end</div>").appendTo($editable)
+
+            it "sets the start to the start of the element", ->
+              range = new Range()
+              range.range = Range.getRangeFromElement($end[0])
+              range.moveBoundary("StartToStart", $start[0])
+              range.range.collapse(true)
+              range.select()
+              range = new Range()
+              range.range = Range.getRangeFromSelection(win)
+              range.pasteHTML("a")
+              expect($start.html()).toEqual("astart")
+
+            it "sets the start to the end of the element", ->
+              range = new Range()
+              range.range = Range.getRangeFromElement($end[0])
+              range.moveBoundary("StartToEnd", $start[0])
+              range.range.collapse(true)
+              range.select()
+              range = new Range()
+              range.range = Range.getRangeFromSelection(win)
+              range.pasteHTML("a")
+              expect($start.html()).toEqual("starta")
+
+            it "sets the end to the start of the element", ->
+              range = new Range()
+              range.range = Range.getRangeFromElement($start[0])
+              range.moveBoundary("EndToStart", $end[0])
+              range.range.collapse(false)
+              range.select()
+              range = new Range()
+              range.range = Range.getRangeFromSelection(win)
+              range.pasteHTML("a")
+              expect($end.html()).toEqual("aend")
+
+            it "sets the end to the end of the element", ->
+              range = new Range()
+              range.range = Range.getRangeFromElement($start[0])
+              range.moveBoundary("EndToEnd", $end[0])
+              range.range.collapse(false)
+              range.select()
+              range = new Range()
+              range.range = Range.getRangeFromSelection(win)
+              range.pasteHTML("a")
+              expect($end.html()).toEqual("enda")
+
+          describe "textnode", ->
+            startText = middleSpan = endText = null
+            beforeEach ->
+              $editable.html("start<span>middle</span>end")
+              startText = $editable[0].childNodes[0]
+              middleSpan = $editable[0].childNodes[1]
+              endText = $editable[0].childNodes[2]
+
+            it "sets the start to the start of the textnode", ->
+              range = new Range()
+              range.range = Range.getRangeFromElement(middleSpan)
+              range.moveBoundary("StartToStart", startText)
+              range.range.collapse(true)
+              range.select()
+              range = new Range()
+              range.range = Range.getRangeFromSelection(win)
+              range.pasteHTML("a")
+              expect(clean($editable.html())).toEqual("astart<span>middle</span>end")
+
+            it "sets the start to the end of the textnode", ->
+              range = new Range()
+              range.range = Range.getRangeFromElement(middleSpan)
+              range.moveBoundary("StartToEnd", startText)
+              range.range.collapse(true)
+              range.select()
+              range = new Range()
+              range.range = Range.getRangeFromSelection(win)
+              range.pasteHTML("a")
+              expect(clean($editable.html())).toEqual("starta<span>middle</span>end")
+
+            it "sets the end to the start of the textnode", ->
+              range = new Range()
+              range.range = Range.getRangeFromElement(middleSpan)
+              range.moveBoundary("EndToStart", endText)
+              range.range.collapse(false)
+              range.select()
+              range = new Range()
+              range.range = Range.getRangeFromSelection(win)
+              range.pasteHTML("a")
+              expect(clean($editable.html())).toEqual("start<span>middle</span>aend")
+
+            it "sets the end to the end of the textnode", ->
+              range = new Range()
+              range.range = Range.getRangeFromElement(middleSpan)
+              range.moveBoundary("EndToEnd", endText)
+              range.range.collapse(false)
+              range.select()
+              range = new Range()
+              range.range = Range.getRangeFromSelection(win)
+              range.pasteHTML("a")
+              expect(clean($editable.html())).toEqual("start<span>middle</span>enda")
 
         describe "#pasteNode", ->
           it "pastes the given element node", ->
@@ -682,7 +801,7 @@ unless hasW3CRanges
             range.range.setEndPoint("EndToEnd", endRange)
             range.select()
             range.delete()
-            range = Range.getRangeFromSelection()
+            range = Range.getRangeFromSelection(win)
             range.pasteHTML("<b></b>")
             expect(clean($editable.find("div").html())).toEqual("star<b></b>d")
 
@@ -693,7 +812,7 @@ unless hasW3CRanges
             range.range = Range.getRangeFromElement($editable.find("img")[0])
             range.select()
             range.delete()
-            range = Range.getRangeFromSelection()
+            range = Range.getRangeFromSelection(win)
             range.pasteHTML("<b></b>")
             expect(clean($editable.html())).toEqual("before<b></b>after")
 

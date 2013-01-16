@@ -2,17 +2,20 @@ define [], ->
   return {
     # Keyboard key mappings taken from MooTools.
     keys:
-      enter: 13,
-      up: 38,
-      down: 40,
-      left: 37,
-      right: 39,
-      esc: 27,
-      space: 32,
-      backspace: 8,
-      tab: 9,
-      delete: 46,
+      enter: 13
+      up: 38
+      down: 40
+      left: 37
+      right: 39
+      esc: 27
+      space: 32
+      backspace: 8
+      tab: 9
+      delete: 46
+      home: 36
       end: 35
+      pageup: 33
+      pagedown: 34
 
     # Returns the string representation of the key pressed. Taken from MooTools.
     keyOf: (event) ->

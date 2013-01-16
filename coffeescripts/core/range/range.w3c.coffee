@@ -298,6 +298,64 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         # sure it is okay to add for Webkit too.
         #@el.focus()
 
+      # Moves one of the range's boundary to the start/end of the el.
+      # Arguments:
+      # * boundaries - "StartToStart", "StartToEnd", "EndToStart", "EndToEnd"
+      # * el - element to move to
+      #
+      # The first boundary refers to the range's boundary. The second boundary
+      # refers to the el's boundary. Capitalization is normalized.
+      #
+      # HACK:
+      # Webkit has a peculiar edge case. When moving to the beginning of a
+      # textnode, if there is a previous sibling, the boundary will move to
+      # the end of the sibling instead of staying at the beginning of the
+      # textnode.
+      # Note that this does not occur in other browsers and moving to the end
+      # of a textnode is fine. Also, if there is no previous sibling, the
+      # boundary remains in the correct place.
+      # To fix this problem, we ensure that the textnode begins and ends with
+      # a zero width no-break space. We then move the cursor between the zero
+      # width no-break space and the textnode. This way, it ensures that we
+      # are never at the edge of a textnode and this problem goes away.
+      # The solution does not single out Webkit to maintain consistency across
+      # the browers. It also adds a zero width no-break space at the end for
+      # consistency even though the end does not exhibit this behaviour.
+      moveBoundary: (boundaries, node) ->
+        origBoundaries = boundaries
+        boundaries = boundaries.toLowerCase()
+        nodeRange = @constructor.getBlankRange()
+        if Helpers.isTextnode(node)
+          startRegexp = new RegExp("^#{Helpers.zeroWidthNoBreakSpaceUnicode}")
+          endRegexp = new RegExp("#{Helpers.zeroWidthNoBreakSpaceUnicode}$")
+          node.nodeValue = Helpers.zeroWidthNoBreakSpaceUnicode + node.nodeValue unless startRegexp.test(node.nodeValue)
+          node.nodeValue += Helpers.zeroWidthNoBreakSpaceUnicode unless endRegexp.test(node.nodeValue)
+        nodeRange.selectNodeContents(node)
+        switch boundaries
+          when "starttostart"
+            fn = "setStart"
+            container = nodeRange.startContainer
+            offset = nodeRange.startOffset
+            offset += 1 if Helpers.isTextnode(container)
+          when "starttoend"
+            fn = "setStart"
+            container = nodeRange.endContainer
+            offset = nodeRange.endOffset
+            offset -= 1 if Helpers.isTextnode(container)
+          when "endtostart"
+            fn = "setEnd"
+            container = nodeRange.startContainer
+            offset = nodeRange.startOffset
+            offset += 1 if Helpers.isTextnode(container)
+          when "endtoend"
+            fn = "setEnd"
+            container = nodeRange.endContainer
+            offset = nodeRange.endOffset
+            offset -= 1 if Helpers.isTextnode(container)
+          else
+            throw "The given boundaries (#{origBoundaries}) must be one of [StartToStart, StartToEnd, EndToStart, EndToEnd]"
+        @range[fn](container, offset)
+
       #
       # MODIFY RANGE CONTENT FUNCTIONS
       #

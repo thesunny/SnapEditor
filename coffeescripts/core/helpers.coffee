@@ -22,11 +22,11 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
 
     # Check if an object is an element.
     isElement: (object) ->
-      object.nodeName and object.nodeType == @nodeType.ELEMENT
+      object and object.nodeName and object.nodeType == @nodeType.ELEMENT
 
     # Check if an object is a textnode.
     isTextnode: (object) ->
-      object.nodeName and object.nodeType == @nodeType.TEXT
+      object and object.nodeName and object.nodeType == @nodeType.TEXT
 
     # Check if an object is a block.
     isBlock: (object, inDOM = true) ->
@@ -65,6 +65,29 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         break if node == endNode
         node = node.nextSibling
       return nodes
+
+    # Returns the previous/next sibling by walking up the DOM until a sibling
+    # is found. Returns null if no sibling is found.
+    # Arguments:
+    # which - previous/next
+    # node - node to start looking
+    # stopEl - stop at this el (default: body)
+    # isSibling - function to check whether the found sibling is considered a
+    # sibling
+    getSibling: (which, node, stopEl, isSibling) ->
+      stopEl or= $(@getDocument(node)).find("body")[0]
+      isSibling or= (node) -> node
+      sibling = null
+      current = node
+      # Walk up the DOM looking for the previous/next sibling until the stopEl
+      # is hit or a sibling is found.
+      while current != stopEl and !sibling
+        sibling = current["#{which}Sibling"]
+        # Look for a sibling that is considered a sibling.
+        while sibling and !isSibling(sibling)
+          sibling = sibling["#{which}Sibling"]
+        current = current.parentNode
+      sibling
 
     # Returns the element's document.
     getDocument: (el) ->

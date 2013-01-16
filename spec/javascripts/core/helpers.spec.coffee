@@ -95,6 +95,39 @@ require ["core/helpers", "core/iframe.snapeditor"], (Helpers, IFrame) ->
         expect(nodes[1]).toBe($div[0].childNodes[3])
         expect(nodes[2]).toBe($div[0].childNodes[4])
 
+    describe "#getSibling", ->
+      describe "previous", ->
+        it "returns null when there are no siblings", ->
+          $editable.html("<div><p><span>span</span>inside</p>after</div>")
+          $span = $editable.find("span")
+          expect(Helpers.getSibling("previous", $span[0], $editable[0])).toBeNull()
+
+        it "returns the sibling when it finds one", ->
+          $editable.html("<div>sibling<p><span>span</span>inside</p>after</div>")
+          $span = $editable.find("span")
+          sibling = Helpers.getSibling("previous", $span[0], $editable[0])
+          expect(sibling).not.toBeNull()
+          expect(sibling).toBe($editable[0].firstChild.firstChild)
+
+      describe "next", ->
+        it "returns null when there are no siblings", ->
+          $editable.html("<div>before<p>inside<span>span</span></p></div>")
+          $span = $editable.find("span")
+          expect(Helpers.getSibling("next", $span[0], $editable[0])).toBeNull()
+
+        it "returns the sibling when it finds one", ->
+          $editable.html("<div>before<p>inside<span>span</span></p>after</div>")
+          $span = $editable.find("span")
+          sibling = Helpers.getSibling("next", $span[0], $editable[0])
+          expect(sibling).not.toBeNull()
+          expect(sibling).toBe($editable[0].firstChild.lastChild)
+
+        it "returns null when the siblings don't match the checker", ->
+          $editable.html("<div>before<p>inside<span>span</span></p>after</div>")
+          $span = $editable.find("span")
+          sibling = Helpers.getSibling("next", $span[0], $editable[0], (node) -> false)
+          expect(sibling).toBeNull()
+
     describe "#getDocument", ->
       it "returns this document when the element is in this document", ->
         expect(Helpers.getDocument($editable[0])).toBe(document)

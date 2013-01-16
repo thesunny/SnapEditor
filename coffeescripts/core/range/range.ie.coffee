@@ -38,10 +38,10 @@ define ["core/helpers"], (Helpers) ->
           # window is the same as the given win. If it's not, then we have an
           # invalid range and return null.
           range = win.document.selection.createRange()
-          if Helpers.getWindow(range.parentElement()) != win
-            return null
-          else
+          if Helpers.getWindow(@getParentElement(range)) == win
             return range
+          else
+            return null
         catch error
           return null
 
@@ -55,6 +55,14 @@ define ["core/helpers"], (Helpers) ->
           range = doc.body.createTextRange()
           range.moveToElementText(el)
         range
+
+      getParentElement: (range) ->
+        if range.parentElement
+          # TextRange
+          range.parentElement()
+        else
+          # ControlRange
+          range.item(0)
 
     instance:
       #
@@ -77,7 +85,7 @@ define ["core/helpers"], (Helpers) ->
       # Is an image selected.
       isImageSelected: ->
         # ControlRanges do not have a parentELement attribute.
-        typeof @range.parentElement == "undefined"
+        @range and typeof @range.parentElement == "undefined"
 
       # Returns true if the current range is at the start of the given element.
       # We are at start of element if there are no width-generating characters.
@@ -187,6 +195,28 @@ define ["core/helpers"], (Helpers) ->
       # count. This guarantees that the the start will remain inside the
       # element and at the end.
       selectEndOfElement: (el) ->
+        @moveToEndOfElement(el)
+        @select()
+
+      # Move range to the inside of the end of the element.
+      #
+      # NOTE: There used to be the following problem.
+      # When selecting the element and collapsing to the end, the range falls
+      # outside of the element.
+      #   select: <div>|text</div>|
+      #   collapse: <div>text</div>|
+      # The range does not end up at the end of the inside of the element.
+      # However, if it is a table cell, it does fall at the end of the inside
+      # of the cell.
+      #   select: <tr><td>|text|</td><td>more</td></tr>
+      #   collapse: <tr><td>text|</td><td>more</td></tr>
+      # FIX: We noticed that collapsing to the start always left it inside the
+      # element. Unfortunately, we could not just move the start to where the
+      # end was as that would have the same effect as collapsing to the end.
+      # Instead, we count the number of characters and move the start using the
+      # count. This guarantees that the the start will remain inside the
+      # element and at the end.
+      moveToEndOfElement: (el) ->
         @range.moveToElementText(el)
         # When getting text, <br> is replaced with /r/n (2 characters).
         # However, when moving by character the <br> is counted as a single
@@ -194,7 +224,6 @@ define ["core/helpers"], (Helpers) ->
         # counting.
         @range.moveStart("character", @range.text.replace(/\r/g, "").length)
         @range.collapse(true)
-        @select()
 
       # Saves the range, executes the given fn, then reselects the range.
       # The function is given the start and end spans as arguments.
@@ -233,6 +262,77 @@ define ["core/helpers"], (Helpers) ->
           $start.remove()
           $end.remove()
         @select()
+
+      boundariesMap:
+        starttostart: "StartToStart"
+        starttoend: "StartToEnd"
+        endtostart: "EndToStart"
+        endtoend: "EndToEnd"
+
+      # Moves one of the range's boundary to the start/end of the el.
+      # Arguments:
+      # * boundaries - "StartToStart", "StartToEnd", "EndToStart", "EndToEnd"
+      # * el - element to move to
+      #
+      # The first boundary refers to the range's boundary. The second boundary
+      # refers to the el's boundary. Capitalization is normalized.
+      moveBoundary: (boundaries, node) ->
+        origBoundaries = boundaries
+        boundaries = boundaries.toLowerCase()
+        ieBoundaries = @boundariesMap[boundaries]
+        throw "The given boundaries (#{origBoundaries}) must be one of [StartToStart, StartToEnd, EndToStart, EndToEnd]" unless ieBoundaries
+        el = node
+        isTextnode = Helpers.isTextnode(node)
+        # If the node is a textnode, we add a <span> to the start/end and use
+        # that to create our range.
+        if isTextnode
+          parent = node.parentNode
+          el = @createElement("span")[0]
+          # Add the zero width no break space so we have some text to select.
+          el.innerHTML = Helpers.zeroWidthNoBreakSpace
+          switch ieBoundaries
+            when "StartToStart", "EndToStart"
+              parent.insertBefore(el, node)
+            when "StartToEnd", "EndToEnd"
+              parent.insertBefore(el, node.nextSibling)
+        elRange = new @constructor(@el)
+        switch ieBoundaries
+          when "StartToStart", "EndToStart"
+            if isTextnode
+              # Unfortunately, when we set EndToStart and remove the <span>
+              # afterwards, the range jumps to the previous text. This causes
+              # problems when the text is inside another element.
+              # Example:
+              #   Scenario.
+              #     before<span>|middle|</span>after
+              #     range = <span>
+              #     node = after
+              #   After adding our <span> marker and moving the boundary.
+              #     before<span>|middle</span><span>|&#65279;</span>after
+              #   After removing our span marker.
+              #     before<span>|middle|</span>after
+              #   This is clearly wrong. The end should be after the <span>.
+              #
+              #   To fix this, we note that the marker <span> will be removed
+              #   anyways. Hence, selecting the beginning of the marker or the
+              #   end doesn't matter, except that selecting the end keeps the
+              #   range in the proper place after removal.
+              #   After adding our <span> marker and moving the boundary.
+              #     before<span>|middle</span><span>&#65279;|</span>after
+              #   After removing our span marker.
+              #     before<span>|middle</span>|after
+              #   This is now correct.
+              elRange.range = @constructor.getBlankRange()
+              elRange.selectEndOfElement(el)
+            else
+              elRange.range = @constructor.getRangeFromElement(el)
+          when "StartToEnd", "EndToEnd"
+            elRange.range = @constructor.getBlankRange()
+            elRange.moveToEndOfElement(el)
+        @range.setEndPoint(ieBoundaries, elRange.range)
+        if isTextnode
+          parent = node.parentNode
+          parent.removeChild(el)
 
       #
       # MODIFY RANGE CONTENT FUNCTIONS

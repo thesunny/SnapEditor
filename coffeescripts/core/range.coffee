@@ -28,6 +28,8 @@
 # unselect(): unselects the range
 # selectNodeContents(el): selects the contents of the el
 # selectEndOfElement(el): selects the inside of the end of el
+# keepRange(fn): saves the range, calls the function, reinstates the range
+# moveBoundary(boundaries, el): moves a boundary to the start/end of the el
 #
 # These functions modify the content.
 # paste(arg): pastes the given node or html
@@ -249,6 +251,16 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # what the given function does.
     keepRange: (fn) ->
       throw "#keepRange() needs to be overridden with a browser specific implementation"
+
+    # Moves one of the range's boundary to the start/end of the el.
+    # Arguments:
+    # * boundaries - "starttostart", "starttoend", "endtostart", "endtoend"
+    # * el - element to move to
+    #
+    # The first boundary refers to the range's boundary. The second boundary
+    # refers to the el's boundary. Capitalization is normalized.
+    moveBoundary: (boundaries, el) ->
+      throw "#moveBoundary() needs to be overridden with a browser specific implementation"
 
     #
     # MODIFY RANGE CONTENT FUNCTIONS

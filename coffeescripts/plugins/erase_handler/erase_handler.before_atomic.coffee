@@ -1,12 +1,3 @@
-# TODO: The atomic plugin requires the ability to override the delete in
-# certain scenarios. However, because there is no events infrastructure in
-# place, we have to add the atomic plugin deletion code here, which is not the
-# correct place. However, this is the only way it will work. This is a hack
-# for now. When the events infrastructure is in place, we should move the
-# atomic deletion code back to the atomic plugin. The original file before the
-# atomic deletion code was added can be found at
-# erase_handler.before_atomic.coffee.
-#
 # Handles the annoying spans that Safari adds when it merges lines together
 # after deleting content through the delete or backspace button.
 #
@@ -27,8 +18,9 @@
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   class EraseHandler
     register: (@api) ->
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      if Browser.isWebkit
+        @api.on("activate.editor", @activate)
+        @api.on("deactivate.editor", @deactivate)
 
     activate: =>
       $(@api.el).on("keydown", @onkeydown)
@@ -41,15 +33,11 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     onkeydown: (e) =>
       key = Helpers.keyOf(e)
       if key == 'delete' or key == 'backspace'
-        # Handle the deletion of the atomic element. If no atomic element was
-        # deleted, continue with the normal flow of the erase handler.
-        unless @deleteAtomicElement(e, key)
-          if Browser.isWebkit
-            if @api.isCollapsed()
-              @handleCursor(e)
-            else
-              e.preventDefault()
-              @api.delete()
+        if @api.isCollapsed()
+          @handleCursor(e)
+        else
+          e.preventDefault()
+          @api.delete()
 
     onkeyup: (e) =>
       # Cleaning is done on keyup in case the browser's default was allowed to
@@ -77,30 +65,4 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         e.preventDefault()
         @api.keepRange(-> $(aNode).merge(bNode))
 
-    deleteAtomicElement: (e, key) ->
-      deleted = false
-      # Nothing to do if a selection is found.
-      return deleted unless @api.isCollapsed()
-      # Delete the atomic element if needed. Note that startEl == endEl
-      # because the range is collapsed.
-      api = @api
-      @api.keepRange((startEl, endEl) ->
-        if key == "delete"
-          el = endEl
-          which = "next"
-        else
-          el = startEl
-          which = "previous"
-        # Grab the previous/next sibling.
-        # If we find a sibling that is a textnode with no content, skip it.
-        sibling = Helpers.getSibling(which, el, api.el, (node) ->
-          return node unless Helpers.isTextnode(node)
-          !node.nodeValue.match(Helpers.emptyRegExp)
-        )
-        # If the sibling exists and is an atomic element, delete it.
-        if sibling and Helpers.isElement(sibling) and $(sibling).hasClass(api.config.atomic.classname)
-            e.preventDefault()
-            $(sibling).remove()
-            deleted = true
-      )
-      deleted
+  return EraseHandler

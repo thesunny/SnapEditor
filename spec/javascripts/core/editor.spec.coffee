@@ -12,6 +12,8 @@ require ["core/editor", "core/helpers"], (Editor, Helpers) ->
             "*": "P"
           ignore: []
         lang: "en",
+        atomic:
+          classname: "atomic"
       config = path: "spec/javascripts/support/assets"
       editor = new Editor($editable[0], defaults, config)
 

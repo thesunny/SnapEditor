@@ -36,7 +36,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       Helpers.delegate(this, "getRange()",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getCoordinates", "getParentElement", "getParentElements", "getText",
-        "collapse", "unselect", "keepRange",
+        "collapse", "unselect", "keepRange", "moveBoundary",
         "paste", "surroundContents", "delete"
       )
       Helpers.delegate(this, "getBlankRange()", "selectNodeContents", "selectEndOfElement")
@@ -54,6 +54,10 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
     # Shortcut to the doc's createElement().
     createElement: (name) ->
       @doc.createElement(name)
+
+    # Shortcut to the doc's createTextNode().
+    createTextNode: (text) ->
+      @doc.createTextNode(text)
 
     # Shortcut to find elements in the doc.
     find: (selector) ->
