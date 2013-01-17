@@ -46,7 +46,7 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
       @buildMenu(e.target)
       if @$menu.children().length > 0
         e.preventDefault()
-        coords = @api.getMouseCoordinates(x: e.pageX, y: e.pageY)
+        coords = @api.getCoordinatesRelativeToOuter(x: e.pageX, y: e.pageY)
         @$menu.css(@getStyles(coords.x, coords.y)).show()
         @api.onDocument(mousedown: @tryHide, keydown: @hide)
 

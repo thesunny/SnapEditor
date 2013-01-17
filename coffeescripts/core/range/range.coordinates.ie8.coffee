@@ -32,6 +32,11 @@ define ["jquery.custom"], ($) ->
     # IE's controlRange contains a list of items. A controlRange is usually
     # created when an image is selected. The first item in the list will be
     # the image that is selected. We grab that item and find its coordinates.
+    #
+    # The left and right coordinates returned are not always the left and
+    # right of the bounding rectangle. In the case where spans must be
+    # inserted, the left is the left of the start span and the right is the
+    # right of the end span.
     getCoordinates: ->
       if @range.getBoundingClientRect
         coords = @range.getBoundingClientRect()
@@ -39,8 +44,10 @@ define ["jquery.custom"], ($) ->
           startCoords = @getEdgeCoordinates(true)
           endCoords = @getEdgeCoordinates(false)
           coords =
-            top: startCoords.top,
+            top: startCoords.top
             bottom: endCoords.bottom
+            left: startCoords.left
+            right: endCoords.right
         else
           scroll = $(@win).getScroll()
           coords.top += scroll.y

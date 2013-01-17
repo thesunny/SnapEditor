@@ -1,4 +1,4 @@
-define ["jquery.custom"], ($) ->
+define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   return {
     # Webkit's range has #getBoundingClientRect() which returns a ClientRect.
     # This is similar to IE's range except it doesn't return the correct
@@ -12,7 +12,7 @@ define ["jquery.custom"], ($) ->
         # of the span as 0. Hence, the top and bottom coordinates are
         # the same. In order to get the real top and bottom, we insert
         # a zero width no-break space.
-        @pasteNode(@createElement("span").attr("id", "CURSORPOS").html("&#65279;")[0])
+        @pasteNode(@createElement("span").attr("id", "CURSORPOS").html(Helpers.zeroWidthNoBreakSpace)[0])
         $span = @find('#CURSORPOS')
         coords = $span.getCoordinates()
         $span.remove()
@@ -21,9 +21,9 @@ define ["jquery.custom"], ($) ->
         clientRect = @range.getBoundingClientRect()
         windowScroll = $(@win).getScroll()
         coords =
-          top: clientRect.top + windowScroll.y,
-          bottom: clientRect.bottom + windowScroll.y,
-          left: clientRect.left + windowScroll.x,
+          top: clientRect.top + windowScroll.y
+          bottom: clientRect.bottom + windowScroll.y
+          left: clientRect.left + windowScroll.x
           right: clientRect.right + windowScroll.x
       coords
   }

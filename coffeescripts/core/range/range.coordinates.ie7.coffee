@@ -16,9 +16,9 @@ define ["jquery.custom"], ($) ->
         clientRect = @range.getBoundingClientRect()
         windowScroll = $(@win).getScroll()
         coords =
-          top: clientRect.top + windowScroll.y,
-          bottom: clientRect.bottom + windowScroll.y,
-          left: clientRect.left + windowScroll.x,
+          top: clientRect.top + windowScroll.y
+          bottom: clientRect.bottom + windowScroll.y
+          left: clientRect.left + windowScroll.x
           right: clientRect.right + windowScroll.x
       else
         coords = $(@range.item(0)).getCoordinates()

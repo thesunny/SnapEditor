@@ -1,4 +1,4 @@
-define ["jquery.custom"], ($) ->
+define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   return {
     # Gecko unfortunately does not provide getBoundingClientRect() until Gecko
     # 2.0 (Firefox 4+). In order to figure out the coordinates, we insert
@@ -32,8 +32,8 @@ define ["jquery.custom"], ($) ->
     # same height as the image and so the top and bottom coordinates may be
     # off.
     #
-    # The left and right coordinates are not properly calculated and should
-    # not be used.
+    # The left and right coordinates do not represent the bounding rectangle.
+    # It is the left and right coordinates of the inserted span.
     getCoordinates: ->
       backwards = @isMovingBackwards()
       savedRange = @range.cloneRange()
@@ -60,12 +60,12 @@ define ["jquery.custom"], ($) ->
         # Without content in the span, Firefox calculates the height of the span
         # as 0. Hence, the top and bottom coordinates are the same. In order to
         # get the real top and bottom, we insert a zero width no-break space.
-        @document.execCommand('inserthtml', false, '<span id="CURSORPOS">&#65279</span>')
+        @document.execCommand('inserthtml', false, "<span id=\"CURSORPOS\">#{Helpers.zeroWidthNoBreakSpace}</span>")
       else
         # Without content in the span, Firefox calculates the height of the span
         # as 0. Hence, the top and bottom coordinates are the same. In order to
         # get the real top and bottom, we insert a zero width no-break space.
-        @pasteNode($('<span id="CURSORPOS">&#65279</span>')[0])
+        @pasteNode($("<span id=\"CURSORPOS\">#{Helpers.zeroWidthNoBreakSpace}</span>")[0])
       $span = $('#CURSORPOS')
       coords = $span.getCoordinates()
       $span.remove()

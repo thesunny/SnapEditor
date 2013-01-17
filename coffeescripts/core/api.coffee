@@ -35,7 +35,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       Helpers.delegate(this, "assets", "file", "image", "stylesheet", "template")
       Helpers.delegate(this, "getRange()",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
-        "getCoordinates", "getParentElement", "getParentElements", "getText",
+        "getParentElement", "getParentElements", "getText",
         "collapse", "unselect", "keepRange", "moveBoundary",
         "paste", "surroundContents", "delete"
       )
@@ -50,6 +50,10 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       # plugins such as the Save plugin, this can be disabled and handled in a
       # customized way. Use #disableImmediateDeactivate.
       @on("tryDeactivate.editor", @deactivate)
+
+    #
+    # DOM SHORTCUTS
+    #
 
     # Shortcut to the doc's createElement().
     createElement: (name) ->
@@ -66,6 +70,10 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
         when 0 then return null
         when 1 then return matches[0]
         else return matches.toArray()
+
+    #
+    # EVENTS
+    #
 
     # Attaches the given event handlers to the given events on all documents on
     # the page.
@@ -97,22 +105,12 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
         $(doc).off.apply($(doc), args)
       )
 
-    # Given the coordinates, translates them to mouse coordinates relative to
-    # the parent window.
-    getMouseCoordinates: (coords) ->
-      return coords if @doc == document
-      iframeScroll = $(@win).getScroll()
-      iframeViewportCoords =
-        x: coords.x - iframeScroll.x
-        y: coords.y - iframeScroll.y
-      iframeCoords = $(@editor.iframe).getCoordinates()
-      return {
-        x: iframeCoords.left + iframeViewportCoords.x
-        y: iframeCoords.top + iframeViewportCoords.y
-      }
-
     disableImmediateDeactivate: ->
       @off("tryDeactivate", @deactivate)
+
+    #
+    # RANGE
+    #
 
     # Gets the current selection if el is not given.
     # Otherwise returns the range that represents the el.
@@ -130,6 +128,40 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
     # slightly different. This takes a given element and selects it.
     select: (el) ->
       @getRange(el).select()
+
+    # Add the coordinates relative to the outer window.
+    getCoordinates: (range) ->
+      range or= @getRange()
+      coords = range.getCoordinates()
+      coords.outer = $.extend({}, @getCoordinatesRelativeToOuter(coords))
+      coords
+
+    #
+    # MISCELLANEOUS
+    #
+
+    # TODO: This is not part of the API. This should be moved to Helpers when
+    # the events infrastructure is added.
+    # Given the coordinates relative to an iframe window, translates them to
+    # coordinates relative to the outer window.
+    getCoordinatesRelativeToOuter: (coords) ->
+      return coords if @doc == document
+      iframeScroll = $(@win).getScroll()
+      iframeCoords = $(@editor.iframe).getCoordinates()
+      # Since the coords are relative to the iframe window, we need to
+      # translate them so they are relative to the viewport of the iframe and
+      # then add on the coordinates of the iframe.
+      if typeof coords.top == "undefined"
+        outerCoords =
+          x: coords.x - iframeScroll.x + iframeCoords.left
+          y: coords.y - iframeScroll.y + iframeCoords.top
+      else
+        outerCoords =
+          top: coords.top - iframeScroll.y + iframeCoords.top
+          bottom: coords.bottom - iframeScroll.y + iframeCoords.top
+          left: coords.left - iframeScroll.x + iframeCoords.left
+          right: coords.right - iframeScroll.x + iframeCoords.left
+      outerCoords
 
     # Gets the default block from the whitelist.
     getDefaultBlock: ->
