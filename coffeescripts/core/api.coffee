@@ -153,14 +153,14 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       # then add on the coordinates of the iframe.
       if typeof coords.top == "undefined"
         outerCoords =
-          x: coords.x - iframeScroll.x + iframeCoords.left
-          y: coords.y - iframeScroll.y + iframeCoords.top
+          x: Math.round(coords.x - iframeScroll.x + iframeCoords.left)
+          y: Math.round(coords.y - iframeScroll.y + iframeCoords.top)
       else
         outerCoords =
-          top: coords.top - iframeScroll.y + iframeCoords.top
-          bottom: coords.bottom - iframeScroll.y + iframeCoords.top
-          left: coords.left - iframeScroll.x + iframeCoords.left
-          right: coords.right - iframeScroll.x + iframeCoords.left
+          top: Math.round(coords.top - iframeScroll.y + iframeCoords.top)
+          bottom: Math.round(coords.bottom - iframeScroll.y + iframeCoords.top)
+          left: Math.round(coords.left - iframeScroll.x + iframeCoords.left)
+          right: Math.round(coords.right - iframeScroll.x + iframeCoords.left)
       outerCoords
 
     # Gets the default block from the whitelist.

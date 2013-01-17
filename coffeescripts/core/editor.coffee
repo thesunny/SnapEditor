@@ -68,7 +68,43 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
         success: (css) -> Helpers.insertStyles(css)
       )
 
+    domEvents: [
+      "mouseover"
+      "mouseout"
+      "mousedown"
+      "mouseup"
+      "click"
+      "dblclick"
+      "keydown"
+      "keyup"
+      "keypress"
+    ]
+
+    # Add custom SnapEditor data to the event.
+    handleDOMEvent: (e) =>
+      if e.pageX
+        coords = @api.getCoordinatesRelativeToOuter(x: e.pageX, y: e.pageY)
+        e.outerPageX = coords.x
+        e.outerPageY = coords.y
+      # We want to pass the original DOM event through to the handler but with
+      # our custom data and the event type with "snapeditor" as the namespace.
+      # However, simply doing @api.trigger("snapeditor.event", e) doesn't work
+      # because the handler would see it as function(event, e). We want
+      # function(e) instead. To get around this, we pass e directly to the
+      # trigger. This forces jQuery to use e instead of creating a new event.
+      # However, jQuery uses e's type as the event name to trigger. Hence, we
+      # modify it to include the "snapeditor" namespace to trick it.
+      e.type = "snapeditor.#{e.type}"
+      @api.trigger(e)
+
+    attachDOMEvents: ->
+      @$el.on(event, @handleDOMEvent) for event in @domEvents
+
+    detachDOMEvents: ->
+      @$el.off(event, @handleDOMEvent) for event in @domEvents
+
     activate: ->
+      @attachDOMEvents()
       @api.trigger("activate.editor")
       @api.trigger("ready.editor")
 
@@ -76,6 +112,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @api.trigger("tryDeactivate.editor")
 
     deactivate: ->
+      @detachDOMEvents()
       @api.trigger("deactivate.editor")
 
     update: ->
