@@ -31,10 +31,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # This part is the same as IE's textRange.
         clientRect = @range.getBoundingClientRect()
         windowScroll = $(@win).getScroll()
+        # Round the numbers because Webkit returns decimal pixels.
         coords =
-          top: clientRect.top + windowScroll.y,
-          bottom: clientRect.bottom + windowScroll.y,
-          left: clientRect.left + windowScroll.x,
-          right: clientRect.right + windowScroll.x
+          top: Math.round(clientRect.top + windowScroll.y)
+          bottom: Math.round(clientRect.bottom + windowScroll.y)
+          left: Math.round(clientRect.left + windowScroll.x)
+          right: Math.round(clientRect.right + windowScroll.x)
       coords
   }

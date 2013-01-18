@@ -12,26 +12,27 @@ define ["../lib/jquery", "../lib/mustache"], ->
     offset = this.offset()
     width = this.width()
     height = this.height()
+    # Round the numbers because Webkit returns decimal pixels.
     return {
-      top: offset.top,
-      bottom: offset.top + height,
-      left: offset.left,
-      right: offset.left + width,
-      width: width,
-      height: height
+      top: Math.round(offset.top)
+      bottom: Math.round(offset.top + height)
+      left: Math.round(offset.left)
+      right: Math.round(offset.left + width)
+      width: Math.round(width)
+      height: Math.round(height)
     }
 
   # Mimics MooTools getScroll.
   $.fn.getScroll = ->
     return {
-      x: this.scrollLeft(),
+      x: this.scrollLeft()
       y: this.scrollTop()
     }
 
   # Mimcs MooTools getSize.
   $.fn.getSize = ->
     return {
-      x: this.width(),
+      x: this.width()
       y: this.height()
     }
 
@@ -70,8 +71,8 @@ define ["../lib/jquery", "../lib/mustache"], ->
     el = this[0]
     before = el.style.cssText
     this.css(
-      display: 'block',
-      position: 'absolute',
+      display: 'block'
+      position: 'absolute'
       visibility: 'hidden'
     )
     => el.style.cssText = before

@@ -25,10 +25,10 @@ if isWebkit
             coords = range.getCoordinates()
             expect(coords.top).toEqual(100)
             # The bottom fluctuates depending on the font. From what I've seen,
-            # when running with the headless webkit, I get 115. When running in
+            # when running with the headless webkit, I get 116. When running in
             # Chrome, I get 114.
             expect(coords.bottom).toBeGreaterThan(113)
-            expect(coords.bottom).toBeLessThan(116)
+            expect(coords.bottom).toBeLessThan(117)
             expect(coords.left).toEqual(200)
             expect(coords.right).toEqual(200)
 
@@ -55,10 +55,10 @@ if isWebkit
             coords = range.getCoordinates()
             expect(coords.top).toEqual(100)
             # The bottom fluctuates depending on the font. From what I've seen,
-            # when running with the headless webkit, I get 130. When running in
+            # when running with the headless webkit, I get 132. When running in
             # Chrome, I get 128.
             expect(coords.bottom).toBeGreaterThan(127)
-            expect(coords.bottom).toBeLessThan(131)
+            expect(coords.bottom).toBeLessThan(133)
             expect(coords.left).toEqual(200)
             # When the selection spans multiple lines, the right side is the
             # width of the window.
