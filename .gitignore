@@ -12,4 +12,5 @@ tags
 /vendor/
 /bundle/
 /build/snapeditor.js
+/spec/acceptance/assets/javascripts/snapeditor.js
 /storage/
