@@ -2,8 +2,8 @@ define ["core/toolbar/toolbar", "core/toolbar/toolbar.floating.displayer"], (Too
   class FloatingToolbar extends Toolbar
     constructor: ->
       super(arguments...)
-      @api.on("activate.editor", @show)
-      @api.on("deactivate.editor", @hide)
+      @api.on("snapeditor.activate", @show)
+      @api.on("snapeditor.deactivate", @hide)
 
     setup: ->
       super

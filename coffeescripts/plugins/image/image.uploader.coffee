@@ -39,7 +39,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
         # getting the size will return the correct value.
         placeholderId = "image_upload_button_#{Math.floor(Math.random()*99999)}"
         @dialog = @ui.dialog(@api.lang.imageUploadTitle, "<span id=\"#{placeholderId}\"></span>")
-        @dialog.on("hide.dialog", @handleDialogHide)
+        @dialog.on("snapeditor.dialog.hide", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
         @snapImage = new SnapImage(
           flashUrl: @api.assets.flash("SnapImage.swf")
@@ -120,7 +120,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
     insertImage: (url, width, height) ->
       $img = $(@api.createElement("img"))
       $img.attr(id: "SNAPEDITOR_INSERTED_IMAGE", src: url, width: width, height: height)
-      @range.paste($img[0])
+      @range.insert($img[0])
       $img = $(@api.find("#SNAPEDITOR_INSERTED_IMAGE")).removeAttr("id")
       @uploadedImages.push($img)
 
@@ -131,6 +131,5 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
       # Firefox.
       @api.win.focus() if Browser.isWebkit
       @api.clean()
-      @api.update()
 
   return Uploader

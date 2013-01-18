@@ -12,7 +12,7 @@
         getRange: -> new Range($editable[0], window)
         getBlankRange: -> new Range($editable[0])
         isValid: -> true
-      Helpers.delegate(execCommand.api, "getRange()", "getParentElement", "getParentElements", "isCollapsed", "unselect", "paste")
+      Helpers.delegate(execCommand.api, "getRange()", "getParentElement", "getParentElements", "isCollapsed", "unselect", "insert")
       Helpers.delegate(execCommand.api, "getBlankRange()", "select", "selectNodeContents", "selectEndOfElement")
 
     afterEach ->

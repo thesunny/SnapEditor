@@ -6,8 +6,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       $.extend(@options, options)
 
     register: (@api) ->
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     getUI: (ui) ->
       insertTable = ui.button(action: "insertTable", description: @api.lang.table, icon: { url: @api.assets.image("table.png"), width: 24, height: 24, offset: [3, 3] })
@@ -62,7 +62,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           isEndOfEditableArea = @api.isEndOfElement(@api.el)
 
           # Add the table.
-          @api.paste($table[0])
+          @api.insert($table[0])
 
           # Find the table.
           $table = $(@api.find("#INSERTED_TABLE"))
@@ -276,7 +276,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       # Firefox.
       @api.win.focus() if Browser.isWebkit
       @api.clean()
-      @api.update()
 
     activate: =>
       $(@api.el).on("keydown", @onkeydown)

@@ -132,6 +132,5 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       # Firefox.
       @api.win.focus() if Browser.isWebkit
       @api.clean()
-      @api.update()
 
   return Block

@@ -26,7 +26,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @keyboard = new Keyboard(@api, @plugins.getKeyboardShortcuts(), "keydown")
       #@contexts = new Contexts(@api, @plugins.getContexts())
       @contextmenu = new ContextMenu(@api, @$templates, @plugins.getContextMenuButtons())
-      @api.trigger("ready.plugins")
+      @api.trigger("snapeditor.plugins.ready")
 
     prepareConfig: ->
       @config.cleaner or= {}
@@ -105,18 +105,18 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
 
     activate: ->
       @attachDOMEvents()
-      @api.trigger("activate.editor")
-      @api.trigger("ready.editor")
+      @api.trigger("snapeditor.activate")
+      @api.trigger("snapeditor.ready")
 
     tryDeactivate: ->
-      @api.trigger("tryDeactivate.editor")
+      @api.trigger("snapeditor.tryDeactivate")
 
     deactivate: ->
       @detachDOMEvents()
-      @api.trigger("deactivate.editor")
+      @api.trigger("snapeditor.deactivate")
 
     update: ->
-      @api.trigger("update.editor")
+      @api.trigger("snapeditor.update")
 
     getContents: ->
       # Clean the content before returning it.

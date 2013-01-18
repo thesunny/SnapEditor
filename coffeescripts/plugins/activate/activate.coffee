@@ -24,19 +24,16 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "plugins
     #
     # NOTE: This should trigger making @api.$el editable.
     click: ->
-      # TODO: Once it is confirmed that editable does not need to know whether
-      # an image was selected, remove this.
-      #@api.trigger("click.activate", $(e.target).tagName() == "img")
-      @api.trigger("click.activate")
+      @api.trigger("snapeditor.activate.click")
 
     # Activates the editing session.
     activate: ->
       @api.activate()
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     # Deactivates the editing session.
     deactivate: =>
-      @api.off("deactivate.editor", @deactivate)
+      @api.off("snapeditor.deactivate", @deactivate)
       # TODO: remove this once editable is listening to deactivate.editor
       #@editable.deactivate()
       @addActivateEvents()

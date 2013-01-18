@@ -43,6 +43,5 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       # Firefox.
       @api.win.focus() if Browser.isWebkit
       @api.clean()
-      @api.update()
 
   return InlineStyler

@@ -30,8 +30,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       @$el = $(@api.el)
       @keys = {}
       @add(keyboardShortcuts)
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     # (key, fn) - Takes a key and a function.
     # (map) - Takes a map of keys and functions.

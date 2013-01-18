@@ -1,8 +1,8 @@
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   class EnterHandler
     register: (@api) ->
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     activate: =>
       $(@api.el).on("keydown", @onkeydown)
@@ -44,7 +44,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       # When there is no text after the <br>, the caret cannot be placed
       # afterwards. With the zero width break space, the caret can now be
       # placed after the <br>.
-      @api.paste("#{next.outerHTML}#{Helpers.zeroWidthNoBreakSpace}")
+      @api.insert("#{next.outerHTML}#{Helpers.zeroWidthNoBreakSpace}")
 
     handleBlock: (block, next) ->
       isEndOfElement = @api.isEndOfElement(block)

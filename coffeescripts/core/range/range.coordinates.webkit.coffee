@@ -12,7 +12,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # of the span as 0. Hence, the top and bottom coordinates are
         # the same. In order to get the real top and bottom, we insert
         # a zero width no-break space.
-        @paste($(@createElement("span")).attr("id", "CURSORPOS").html(Helpers.zeroWidthNoBreakSpace)[0])
+        @insert($(@createElement("span")).attr("id", "CURSORPOS").html(Helpers.zeroWidthNoBreakSpace)[0])
         $span = @find('#CURSORPOS')
         coords = $span.getCoordinates()
         # NOTE: When the spans are added, they split up textnodes. This causes
@@ -24,8 +24,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         $span.parent()[0].normalize()
         $span.remove()
         # NOTE: In Safari only (not in Chrome), the selection gets lost after
-        # the paste.Hence we need to reselec it. There is no harm in leaving it
-        # in for Chrome.
+        # the insert. Hence we need to reselec it. There is no harm in leaving
+        # it in for Chrome.
         @select()
       else
         # This part is the same as IE's textRange.

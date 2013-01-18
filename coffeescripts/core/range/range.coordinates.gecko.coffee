@@ -12,7 +12,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # of the span as 0. Hence, the top and bottom coordinates are
         # the same. In order to get the real top and bottom, we insert
         # a zero width no-break space.
-        @pasteNode(@createElement("span").attr("id", "CURSORPOS").html(Helpers.zeroWidthNoBreakSpace)[0])
+        @insertNode(@createElement("span").attr("id", "CURSORPOS").html(Helpers.zeroWidthNoBreakSpace)[0])
         $span = @find('#CURSORPOS')
         coords = $span.getCoordinates()
         $span.remove()

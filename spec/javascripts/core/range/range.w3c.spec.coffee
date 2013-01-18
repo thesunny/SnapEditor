@@ -421,7 +421,7 @@ if hasW3CRanges
               range.select()
               range.keepRange(->)
               range.range = Range.getRangeFromSelection(win)
-              range.pasteHTML("<b></b>")
+              range.insertHTML("<b></b>")
               expect(clean($start.html())).toEqual("st<b></b>art")
 
             it "keeps the range when not collapsed", ->
@@ -469,7 +469,7 @@ if hasW3CRanges
                 range.select()
                 range = new Range()
                 range.range = Range.getRangeFromSelection(win)
-                range.pasteHTML("a")
+                range.insertHTML("a")
                 expect($start.html()).toEqual("astart")
 
               it "sets the start to the end of the element", ->
@@ -480,7 +480,7 @@ if hasW3CRanges
                 range.select()
                 range = new Range()
                 range.range = Range.getRangeFromSelection(win)
-                range.pasteHTML("a")
+                range.insertHTML("a")
                 expect($start.html()).toEqual("starta")
 
               it "sets the end to the start of the element", ->
@@ -491,7 +491,7 @@ if hasW3CRanges
                 range.select()
                 range = new Range()
                 range.range = Range.getRangeFromSelection(win)
-                range.pasteHTML("a")
+                range.insertHTML("a")
                 expect($end.html()).toEqual("aend")
 
               it "sets the end to the end of the element", ->
@@ -502,7 +502,7 @@ if hasW3CRanges
                 range.select()
                 range = new Range()
                 range.range = Range.getRangeFromSelection(win)
-                range.pasteHTML("a")
+                range.insertHTML("a")
                 expect($end.html()).toEqual("enda")
 
             describe "textnode", ->
@@ -521,7 +521,7 @@ if hasW3CRanges
                 range.select()
                 range = new Range()
                 range.range = Range.getRangeFromSelection(win)
-                range.pasteHTML("a")
+                range.insertHTML("a")
                 expect(clean($editable.html())).toEqual("astart<span>middle</span>end")
 
               it "sets the start to the end of the textnode", ->
@@ -532,7 +532,7 @@ if hasW3CRanges
                 range.select()
                 range = new Range()
                 range.range = Range.getRangeFromSelection(win)
-                range.pasteHTML("a")
+                range.insertHTML("a")
                 expect(clean($editable.html())).toEqual("starta<span>middle</span>end")
 
               it "sets the end to the start of the textnode", ->
@@ -543,7 +543,7 @@ if hasW3CRanges
                 range.select()
                 range = new Range()
                 range.range = Range.getRangeFromSelection(win)
-                range.pasteHTML("a")
+                range.insertHTML("a")
                 expect(clean($editable.html())).toEqual("start<span>middle</span>aend")
 
               it "sets the end to the end of the textnode", ->
@@ -554,26 +554,26 @@ if hasW3CRanges
                 range.select()
                 range = new Range()
                 range.range = Range.getRangeFromSelection(win)
-                range.pasteHTML("a")
+                range.insertHTML("a")
                 expect(clean($editable.html())).toEqual("start<span>middle</span>enda")
 
-          describe "#pasteNode", ->
-            it "pastes the given element node", ->
+          describe "#insertNode", ->
+            it "inserts the given element node", ->
               range = new Range()
               range.el = $editable
               range.range = Range.getBlankRange(win)
               range.range.selectNodeContents($start[0])
               range.range.collapse(true)
-              range.pasteNode($("<span/>")[0])
+              range.insertNode($("<span/>")[0])
               expect($start.html()).toEqual("<span></span>start")
 
-            it "pastes the given text node", ->
+            it "inserts the given text node", ->
               range = new Range()
               range.el = $editable
               range.range = Range.getBlankRange(win)
               range.range.selectNodeContents($start[0])
               range.range.collapse(true)
-              range.pasteNode(doc.createTextNode("test"))
+              range.insertNode(doc.createTextNode("test"))
               expect($start.html()).toEqual("teststart")
 
             it "puts the selection after the node", ->
@@ -585,17 +585,17 @@ if hasW3CRanges
               range.range = Range.getBlankRange(win)
               range.range.selectNodeContents($start[0])
               range.range.collapse(true)
-              range.pasteNode(text)
+              range.insertNode(text)
               expect(range.selectAfterElement).toHaveBeenCalledWith(text)
 
 
-          describe "#pasteHTML", ->
+          describe "#insertHTML", ->
             it "inserts the given HTML", ->
               range = new Range()
               range.range = Range.getBlankRange(win)
               range.range.selectNodeContents($start[0])
               range.range.collapse(true)
-              range.pasteHTML("<span><b>bold</b></span><div><ul><li>item</li></ul></div>")
+              range.insertHTML("<span><b>bold</b></span><div><ul><li>item</li></ul></div>")
               expect($start.html()).toEqual("<span><b>bold</b></span><div><ul><li>item</li></ul></div>start")
 
             it "puts the selection after the node", ->
@@ -604,7 +604,7 @@ if hasW3CRanges
               range.range = Range.getBlankRange(win)
               range.range.selectNodeContents($start[0])
               range.range.collapse(true)
-              range.pasteHTML("<span></span>")
+              range.insertHTML("<span></span>")
               expect(range.selectAfterElement).toHaveBeenCalled()
 
           describe "#surroundContents", ->
@@ -698,7 +698,7 @@ if hasW3CRanges
               range.range.setEnd($end[0].childNodes[0], 2)
               range.select()
               range.delete()
-              range.pasteHTML("<b></b>")
+              range.insertHTML("<b></b>")
               expect($editable.find("div").html()).toEqual("star<b></b>d")
 
             it "returns true if something was deleted", ->

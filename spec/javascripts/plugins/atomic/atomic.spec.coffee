@@ -89,19 +89,19 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
         it "moves the cursor to the next sibling when moving forward", ->
           atomic.moveCollapsedRange($middle[0], "forward")
           range = new Range($editable[0], window)
-          range.paste("a")
+          range.insert("a")
           expect(clean($end.html())).toEqual("aend")
 
         it "moves the cursor to the previous sibling when moving backward", ->
           atomic.moveCollapsedRange($middle[0], "backward")
           range = new Range($editable[0], window)
-          range.paste("a")
+          range.insert("a")
           expect(clean($start.html())).toEqual("starta")
 
         it "moves the cursor to the next sibling when clicking", ->
           atomic.moveCollapsedRange($middle[0], "mouse")
           range = new Range($editable[0], window)
-          range.paste("a")
+          range.insert("a")
           expect(clean($end.html())).toEqual("aend")
 
       describe "inline", ->
@@ -114,19 +114,19 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
         it "moves the cursor to the next sibling when moving forward", ->
           atomic.moveCollapsedRange($span[0], "forward")
           range = new Range($editable[0], window)
-          range.paste("a")
+          range.insert("a")
           expect(clean($editable.html())).toEqual("start<span>middle</span>aend")
 
         it "moves the cursor to the previous sibling when moving backward", ->
           atomic.moveCollapsedRange($span[0], "backward")
           range = new Range($editable[0], window)
-          range.paste("a")
+          range.insert("a")
           expect(clean($editable.html())).toEqual("starta<span>middle</span>end")
 
         it "moves the cursor to the next sibling when clicking", ->
           atomic.moveCollapsedRange($span[0], "mouse")
           range = new Range($editable[0], window)
-          range.paste("a")
+          range.insert("a")
           expect(clean($editable.html())).toEqual("start<span>middle</span>aend")
 
     describe "#moveSelectedRange", ->
@@ -146,7 +146,7 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
         atomic.moveSelectedRange($middle[0], null, "forward")
         range = new Range($editable[0], window)
         range.delete()
-        range.paste("a")
+        range.insert("a")
         expect(clean($editable.html())).toEqual("<div>start</div><div>middle</div><div>and</div>")
 
       it "moves the end to after the atomic when moving forward", ->
@@ -165,7 +165,7 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
         atomic.moveSelectedRange(null, $middle[0], "forward")
         range = new Range($editable[0], window)
         range.delete()
-        range.paste("a")
+        range.insert("a")
         expect(clean($editable.html())).toEqual("<div>saend</div>")
 
       it "moves the start to before the atomic when moving backward", ->
@@ -184,7 +184,7 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
         atomic.moveSelectedRange($middle[0], null, "backward")
         range = new Range($editable[0], window)
         range.delete()
-        range.paste("a")
+        range.insert("a")
         expect(clean($editable.html())).toEqual("<div>startand</div>")
 
       it "moves the end to before the atomic when moving backward", ->
@@ -203,7 +203,7 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
         atomic.moveSelectedRange(null, $middle[0], "backward")
         range = new Range($editable[0], window)
         range.delete()
-        range.paste("a")
+        range.insert("a")
         expect(clean($editable.html())).toEqual("<div>sa</div><div>middle</div><div>end</div>")
 
       it "moves the start to before the atomic when clicking", ->
@@ -222,7 +222,7 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
         atomic.moveSelectedRange($middle[0], null, "mouse")
         range = new Range($editable[0], window)
         range.delete()
-        range.paste("a")
+        range.insert("a")
         expect(clean($editable.html())).toEqual("<div>startand</div>")
 
       it "moves the end to after the atomic when clicking", ->
@@ -241,6 +241,6 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
         atomic.moveSelectedRange(null, $middle[0], "mouse")
         range = new Range($editable[0], window)
         range.delete()
-        range.paste("a")
+        range.insert("a")
         expect(clean($editable.html())).toEqual("<div>saend</div>")
 

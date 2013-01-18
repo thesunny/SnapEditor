@@ -1,8 +1,8 @@
 define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
   class List
     register: (@api) ->
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     getUI: (ui) ->
       orderedList = ui.button(action: "orderedList", description: @api.lang.numberedList, shortcut: "Ctrl+Shift+7", icon: { url: @api.assets.image("text_list_numbers.png"), width: 24, height: 24, offset: [3, 3] })
@@ -51,7 +51,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       # Firefox.
       @api.win.focus() if Browser.isWebkit
       @api.clean()
-      @api.update()
 
     activate: =>
       $(@api.el).on("keydown", @onkeydown)

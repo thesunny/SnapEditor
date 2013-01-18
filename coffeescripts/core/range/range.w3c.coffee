@@ -360,38 +360,38 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       # MODIFY RANGE CONTENT FUNCTIONS
       #
 
-      # Paste the given node and set the selection to after the node.
+      # Insert the given node and set the selection to after the node.
       #   text|
       #   <div>element</div>|
       #
-      # NOTE: In W3C, we manually need to move the caret. In IE, the pasteHTML
-      # method automatically moves the caret to after the end of the pasted
+      # NOTE: In W3C, we manually need to move the caret. In IE, the insertHTML
+      # method automatically moves the caret to after the end of the inserted
       # node.
       #
-      # NOTE: In IE, the pasted node is a copy of the node given.  In W3C, the
-      # actual node is pasted in. Although I can normalize this, in some special
-      # cases, we may need access to that node for W3C only
-      # so I have not removed reference-ability in W3C. 
+      # NOTE: In IE, the inserted node is a copy of the node given.  In W3C,
+      # the actual node is inserted in. Although I can normalize this, in some
+      # special cases, we may need access to that node for W3C only so I have
+      # not removed reference-ability in W3C.
       #
       # NOTE: This uses #selectAfterElement. In WebKit, there are problems when
       # the node is an inline element with content. Refer to
       # #selectAfterElement for details.
-      pasteNode: (node) ->
+      insertNode: (node) ->
         @range.insertNode(node)
         @selectAfterElement(node)
 
-      # Paste HTML and set the selection to after the HTML.
+      # Insert HTML and set the selection to after the HTML.
       #   text|
       #   <div>element</div>|
       #
-      # NOTE: In W3C, we manually need to move the caret. In IE, the pasteHTML
-      # method automatically moves the caret to after the end of the pasted
+      # NOTE: In W3C, we manually need to move the caret. In IE, the insertHTML
+      # method automatically moves the caret to after the end of the inserted
       # node.
       #
       # NOTE: This uses #selectAfterElement. In WebKit, there are problems when
       # the node is an inline element with content. Refer to
       # #selectAfterElement for details.
-      pasteHTML: (html) ->
+      insertHTML: (html) ->
         @select()
         div = @doc.createElement("div")
         div.innerHTML = html

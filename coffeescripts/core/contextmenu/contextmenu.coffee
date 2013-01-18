@@ -11,8 +11,8 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
       @contexts = []
       @contexts.push(context) for context, button of @config
       @setupMenu()
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     setupTemplates: ->
       @$template = @$templates.find("#snapeditor_contextmenu_template")

@@ -41,14 +41,14 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # Firefox has some quirkiness.
       #
       # When selecting backwards, we need to use document.execCommand() here
-      # instead of #pasteNode() which uses range.insertNode(). When using
+      # instead of #insertNode() which uses range.insertNode(). When using
       # range.insertNode(), we cannot reselect the savedRange. It seems like
       # range.insertNode() somehow destroys the ordering of the containers and
       # offsets. this makes the savedRange invalid. If we use
       # document.execCommand(), all seems to be fine.
       #
       # When selecting forwards, the opposite is true. Here,
-      # document.execCommand() makes the savedRange invalid. #pasteNode() does
+      # document.execCommand() makes the savedRange invalid. #insertNode() does
       # not have this effect and everything is ok.
       @collapse(backwards)
       if backwards
@@ -65,7 +65,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # Without content in the span, Firefox calculates the height of the span
         # as 0. Hence, the top and bottom coordinates are the same. In order to
         # get the real top and bottom, we insert a zero width no-break space.
-        @pasteNode($("<span id=\"CURSORPOS\">#{Helpers.zeroWidthNoBreakSpace}</span>")[0])
+        @insertNode($("<span id=\"CURSORPOS\">#{Helpers.zeroWidthNoBreakSpace}</span>")[0])
       $span = $('#CURSORPOS')
       coords = $span.getCoordinates()
       $span.remove()

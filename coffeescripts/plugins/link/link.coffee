@@ -52,7 +52,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
 
     setupDialog: ->
       unless @$dialog
-        @dialog.on("hide.dialog", @handleDialogHide)
+        @dialog.on("snapeditor.dialog.hide", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
         @$error = @$dialog.find(".error")
         @$form = @$dialog.find(".link_form").on("submit", @submit)
@@ -245,13 +245,13 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
         $link.text(text) if text
         $link.attr("target", "_blank") if newWindow
         if @api.isCollapsed()
-          @range.paste($link[0])
+          @range.insert($link[0])
         else
           if @imageSelected
             @range.surroundContents($link[0])
           else
             @range.delete()
-            @range.paste($link[0])
+            @range.insert($link[0])
       @update()
 
     update: ->
@@ -261,6 +261,5 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
       # Firefox.
       @api.win.focus() if Browser.isWebkit
       @api.clean()
-      @api.update()
 
   return Link

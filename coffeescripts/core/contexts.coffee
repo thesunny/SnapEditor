@@ -6,8 +6,8 @@ define ["jquery.custom"], ($) ->
     constructor: (@api, @contexts) ->
       @$el = $(@api.el)
       @currentContexts = {}
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     activate: =>
       @$el.on("keyup", @onkeyup)
@@ -17,7 +17,7 @@ define ["jquery.custom"], ($) ->
     deactivate: =>
       @$el.off("keyup", @onkeyup)
       @$el.off("mouseup", @onmouseup)
-      @api.trigger("update.contexts", contexts: {}, removed: @contexts)
+      @api.trigger("snapeditor.contexts.update", contexts: {}, removed: @contexts)
 
     onkeyup: (e) =>
       # Key code 13 is 'ENTER'.
@@ -31,7 +31,7 @@ define ["jquery.custom"], ($) ->
       matchedContexts = $(@api.getParentElement()).contexts(@contexts, @api.el)
       removedContexts = @getRemovedContexts(matchedContexts)
       @currentContexts = matchedContexts
-      @api.trigger("update.contexts", contexts: matchedContexts, removed: removedContexts)
+      @api.trigger("snapeditor.contexts.update", contexts: matchedContexts, removed: removedContexts)
 
     getRemovedContexts: (matchedContexts) ->
       removedContexts = []

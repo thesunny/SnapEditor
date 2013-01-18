@@ -69,7 +69,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
         # dialog here guarantees that the iframe is already shown and that
         # getting the size will return the correct value.
         @generateDialog(@ui)
-        @dialog.on("hide.dialog", @handleDialogHide)
+        @dialog.on("snapeditor.dialog.hide", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
         @$error = @$dialog.find(".error")
         @$form = @$dialog.find(".insert_image_form")
@@ -130,7 +130,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
     insertImage: (url, width, height) ->
       $img = $(@api.createElement("img"))
       $img.attr(id: "SNAPEDITOR_INSERTED_IMAGE", src: url, width: width, height: height)
-      @range.paste($img[0])
+      @range.insert($img[0])
       $img = $(@api.find("#SNAPEDITOR_INSERTED_IMAGE")).removeAttr("id")
       @api.select($img[0])
       @update()
@@ -153,6 +153,5 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       # Firefox.
       @api.win.focus() if Browser.isWebkit
       @api.clean()
-      @api.update()
 
   return SingleUploader

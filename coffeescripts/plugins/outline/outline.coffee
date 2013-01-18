@@ -2,8 +2,8 @@ define ["jquery.custom"], ($) ->
   class Outline
     register: (@api) ->
       @$el = $(@api.el)
-      @api.on("deactivate.editor", @activate)
-      @api.on("activate.editor", @deactivate)
+      @api.on("snapeditor.deactivate", @activate)
+      @api.on("snapeditor.activate", @deactivate)
       @activate()
 
     activate: =>

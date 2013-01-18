@@ -49,7 +49,7 @@ unless hasW3CRanges
             expect(actualRange.text.length).toEqual(0)
 
             # Insert a span and ensure it is in the correct place.
-            actualRange.pasteHTML("<span/>")
+            actualRange.insertHTML("<span/>")
             expect(clean($start.html())).toEqual("<span></span>start")
 
           it "returns null when there is no selected range", ->
@@ -353,7 +353,7 @@ unless hasW3CRanges
             range.selectEndOfElement($start[0])
 
             actualRange = document.selection.createRange()
-            actualRange.pasteHTML("<span></span>")
+            actualRange.insertHTML("<span></span>")
             expect(clean($start.html())).toEqual("start<span></span>")
 
           it "selects the end of the inside of the element when there is content with <br>", ->
@@ -365,7 +365,7 @@ unless hasW3CRanges
             range.selectEndOfElement($start[0])
 
             actualRange = document.selection.createRange()
-            actualRange.pasteHTML("<span></span>")
+            actualRange.insertHTML("<span></span>")
             expect(clean($start.html())).toEqual("start<br><br>break<span></span>")
 
           it "selects the end of the inside of the cell when there is content", ->
@@ -377,7 +377,7 @@ unless hasW3CRanges
             range.selectEndOfElement($td[0])
 
             actualRange = document.selection.createRange()
-            actualRange.pasteHTML("<span></span>")
+            actualRange.insertHTML("<span></span>")
             expect(clean($td.html())).toEqual("before<span></span>")
 
           it "selects the end of the inside of the cell when there is content with <br>", ->
@@ -389,7 +389,7 @@ unless hasW3CRanges
             range.selectEndOfElement($td[0])
 
             actualRange = document.selection.createRange()
-            actualRange.pasteHTML("<span></span>")
+            actualRange.insertHTML("<span></span>")
             expect(clean($td.html())).toEqual("before<br><br>break<span></span>")
 
           it "selects the end of the inside of the cell when there is no content", ->
@@ -401,7 +401,7 @@ unless hasW3CRanges
             range.selectEndOfElement($td[0])
 
             actualRange = document.selection.createRange()
-            actualRange.pasteHTML("<span></span>")
+            actualRange.insertHTML("<span></span>")
             expect(clean($td.html())).toEqual("<span></span>")
 
         describe "#keepRange", ->
@@ -436,7 +436,7 @@ unless hasW3CRanges
             range.select()
             range.keepRange(->)
             range.range = Range.getRangeFromSelection(win)
-            range.pasteHTML("<b></b>")
+            range.insertHTML("<b></b>")
             expect(clean($start.html())).toEqual("s<b></b>tart")
 
           it "keeps the range when not collapsed", ->
@@ -499,7 +499,7 @@ unless hasW3CRanges
               range.select()
               range = new Range()
               range.range = Range.getRangeFromSelection(win)
-              range.pasteHTML("a")
+              range.insertHTML("a")
               expect($start.html()).toEqual("astart")
 
             it "sets the start to the end of the element", ->
@@ -510,7 +510,7 @@ unless hasW3CRanges
               range.select()
               range = new Range()
               range.range = Range.getRangeFromSelection(win)
-              range.pasteHTML("a")
+              range.insertHTML("a")
               expect($start.html()).toEqual("starta")
 
             it "sets the end to the start of the element", ->
@@ -521,7 +521,7 @@ unless hasW3CRanges
               range.select()
               range = new Range()
               range.range = Range.getRangeFromSelection(win)
-              range.pasteHTML("a")
+              range.insertHTML("a")
               expect($end.html()).toEqual("aend")
 
             it "sets the end to the end of the element", ->
@@ -532,7 +532,7 @@ unless hasW3CRanges
               range.select()
               range = new Range()
               range.range = Range.getRangeFromSelection(win)
-              range.pasteHTML("a")
+              range.insertHTML("a")
               expect($end.html()).toEqual("enda")
 
           describe "textnode", ->
@@ -551,7 +551,7 @@ unless hasW3CRanges
               range.select()
               range = new Range()
               range.range = Range.getRangeFromSelection(win)
-              range.pasteHTML("a")
+              range.insertHTML("a")
               expect(clean($editable.html())).toEqual("astart<span>middle</span>end")
 
             it "sets the start to the end of the textnode", ->
@@ -562,7 +562,7 @@ unless hasW3CRanges
               range.select()
               range = new Range()
               range.range = Range.getRangeFromSelection(win)
-              range.pasteHTML("a")
+              range.insertHTML("a")
               expect(clean($editable.html())).toEqual("starta<span>middle</span>end")
 
             it "sets the end to the start of the textnode", ->
@@ -573,7 +573,7 @@ unless hasW3CRanges
               range.select()
               range = new Range()
               range.range = Range.getRangeFromSelection(win)
-              range.pasteHTML("a")
+              range.insertHTML("a")
               expect(clean($editable.html())).toEqual("start<span>middle</span>aend")
 
             it "sets the end to the end of the textnode", ->
@@ -584,23 +584,23 @@ unless hasW3CRanges
               range.select()
               range = new Range()
               range.range = Range.getRangeFromSelection(win)
-              range.pasteHTML("a")
+              range.insertHTML("a")
               expect(clean($editable.html())).toEqual("start<span>middle</span>enda")
 
-        describe "#pasteNode", ->
-          it "pastes the given element node", ->
+        describe "#insertNode", ->
+          it "inserts the given element node", ->
             range = new Range()
-            spyOn(range, "pasteHTML")
-            range.pasteNode($("<span/>")[0])
-            expect(range.pasteHTML).toHaveBeenCalledWith("<SPAN></SPAN>")
+            spyOn(range, "insertHTML")
+            range.insertNode($("<span/>")[0])
+            expect(range.insertHTML).toHaveBeenCalledWith("<SPAN></SPAN>")
 
-          it "pastes the given text node", ->
+          it "inserts the given text node", ->
             range = new Range()
-            spyOn(range, "pasteHTML")
-            range.pasteNode(document.createTextNode("test"))
-            expect(range.pasteHTML).toHaveBeenCalledWith("test")
+            spyOn(range, "insertHTML")
+            range.insertNode(document.createTextNode("test"))
+            expect(range.insertHTML).toHaveBeenCalledWith("test")
 
-        describe "#pasteHTML", ->
+        describe "#insertHTML", ->
           describe "collapsed", ->
             range = null
             beforeEach ->
@@ -609,17 +609,17 @@ unless hasW3CRanges
               range.range.collapse(true)
 
             it "inserts elements", ->
-              range.pasteHTML("<span><b>bold</b></span><div><ul><li>item</li></ul></div>")
+              range.insertHTML("<span><b>bold</b></span><div><ul><li>item</li></ul></div>")
               expect(clean($start.html())).toEqual("<span><b>bold</b></span><div><ul><li>item</li></ul></div>start")
 
             it "inserts text", ->
-              range.pasteHTML("test")
+              range.insertHTML("test")
               expect(clean($start.html())).toEqual("teststart")
 
             it "puts the selection after the HTML", ->
-              range.pasteHTML("<span></span>")
+              range.insertHTML("<span></span>")
               actualRange = document.selection.createRange()
-              actualRange.pasteHTML("<b></b>")
+              actualRange.insertHTML("<b></b>")
               expect(clean($start.html())).toEqual("<span></span><b></b>start")
 
           describe "not collapsed", ->
@@ -630,23 +630,23 @@ unless hasW3CRanges
               range.range.findText("start")
 
             it "inserts elements", ->
-              range.pasteHTML("<span></span>")
+              range.insertHTML("<span></span>")
               expect(clean($start.html())).toEqual("<span></span>")
 
             it "inserts text", ->
-              range.pasteHTML("test")
+              range.insertHTML("test")
               expect(clean($start.html())).toEqual("test")
 
             it "puts the selection after the text", ->
-              range.pasteHTML("test")
+              range.insertHTML("test")
               actualRange = document.selection.createRange()
-              actualRange.pasteHTML("<b></b>")
+              actualRange.insertHTML("<b></b>")
               expect(clean($start.html())).toEqual("test<b></b>")
 
             it "puts the selection after the elements", ->
-              range.pasteHTML("<span>test</span>")
+              range.insertHTML("<span>test</span>")
               actualRange = document.selection.createRange()
-              actualRange.pasteHTML("<b></b>")
+              actualRange.insertHTML("<b></b>")
               expect(clean($start.html())).toEqual("<span>test<b></b></span>")
 
           describe "image", ->
@@ -658,31 +658,31 @@ unless hasW3CRanges
               range.range = Range.getRangeFromElement($img[0])
 
             it "inserts elements", ->
-              range.pasteHTML("<span></span>")
+              range.insertHTML("<span></span>")
               expect(clean($editable.html())).toEqual("before<span></span>after")
 
             it "inserts text", ->
-              range.pasteHTML("test")
+              range.insertHTML("test")
               expect(clean($editable.html())).toEqual("beforetestafter")
 
             it "puts the selection after the text", ->
-              range.pasteHTML("test")
+              range.insertHTML("test")
               actualRange = document.selection.createRange()
-              actualRange.pasteHTML("<b></b>")
+              actualRange.insertHTML("<b></b>")
               expect(clean($editable.html())).toEqual("beforetest<b></b>after")
 
         describe "#surroundContents", ->
           it "inserts the given HTML", ->
             range = new Range()
-            spyOn(range, "pasteNode")
+            spyOn(range, "insertNode")
             range.range = Range.getBlankRange()
             range.range.findText("start")
             range.surroundContents($("<span/>")[0])
 
-            expect(range.pasteNode).toHaveBeenCalled()
-            # Check the first argument to the first call to #pasteNode.
+            expect(range.insertNode).toHaveBeenCalled()
+            # Check the first argument to the first call to #insertNode.
             # We're expecting the argument to be the node "<span>start</span>".
-            el = range.pasteNode.argsForCall[0][0]
+            el = range.insertNode.argsForCall[0][0]
             expect(el.tagName).toEqual("SPAN")
             expect(el.innerHTML).toEqual("start")
 
@@ -690,14 +690,14 @@ unless hasW3CRanges
             $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
             $img = $editable.find("img")
             range = new Range()
-            spyOn(range, "pasteNode")
+            spyOn(range, "insertNode")
             range.range = Range.getRangeFromElement($img[0])
             range.surroundContents($("<span/>")[0])
 
-            expect(range.pasteNode).toHaveBeenCalled()
-            # Check the first argument to the first call to #pasteNode.
+            expect(range.insertNode).toHaveBeenCalled()
+            # Check the first argument to the first call to #insertNode.
             # We're expecting the argument to be the node "<span>start</span>".
-            el = range.pasteNode.argsForCall[0][0]
+            el = range.insertNode.argsForCall[0][0]
             expect(el.tagName).toEqual("SPAN")
             if isIE7
               # IE7 changes the path to a full URL.
@@ -802,7 +802,7 @@ unless hasW3CRanges
             range.select()
             range.delete()
             range = Range.getRangeFromSelection(win)
-            range.pasteHTML("<b></b>")
+            range.insertHTML("<b></b>")
             expect(clean($editable.find("div").html())).toEqual("star<b></b>d")
 
           it "keeps the range after deleting an image", ->
@@ -813,7 +813,7 @@ unless hasW3CRanges
             range.select()
             range.delete()
             range = Range.getRangeFromSelection(win)
-            range.pasteHTML("<b></b>")
+            range.insertHTML("<b></b>")
             expect(clean($editable.html())).toEqual("before<b></b>after")
 
           it "keeps the range valid after deleting", ->
@@ -823,7 +823,7 @@ unless hasW3CRanges
             range.range = Range.getRangeFromElement($editable.find("img")[0])
             range.select()
             range.delete()
-            range.pasteHTML("<b></b>")
+            range.insertHTML("<b></b>")
             expect(clean($editable.html())).toEqual("before<b></b>after")
 
           it "returns true if something was deleted", ->

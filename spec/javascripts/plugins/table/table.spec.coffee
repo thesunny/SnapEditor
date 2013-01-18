@@ -24,7 +24,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         isValid: -> true
         getDefaultBlock: -> @createElement("p")
       spyOn(table, "update")
-      Helpers.delegate(table.api, "getRange()", "getParentElement", "paste", "isEndOfElement")
+      Helpers.delegate(table.api, "getRange()", "getParentElement", "insert", "isEndOfElement")
       Helpers.delegate(table.api, "getBlankRange()", "selectEndOfElement")
 
     afterEach ->
@@ -63,7 +63,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         placeSelection()
         table.insertTable()
         range = new Range($editable[0], window)
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect(clean($before.find("td").html())).toEqual("&nbsp;<b></b>")
 
       it "does not insert the default block after the table when the table is not at the end of the editable area", ->
@@ -119,14 +119,14 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
           $p = $editable.find("p")
           expect($p.length).toEqual(1)
           range = new Range($editable[0], window)
-          range.paste("<b></b>")
+          range.insert("<b></b>")
           expect($p.find("b").length).toEqual(1)
       else
         it "places the caret at the end of the previous text", ->
           placeSelection()
           table.deleteTable()
           range = new Range($editable[0], window)
-          range.paste("<b></b>")
+          range.insert("<b></b>")
           expect(clean($after.html())).toEqual("<b></b>after")
 
       it "updates the api", ->
@@ -180,7 +180,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range.selectEndOfElement($(".first").find("th")[0])
         table.addRow(true)
         range = new Range($editable[0], window)
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect($($table.find("td")[0]).find("b").length).toEqual(1)
 
       it "updates the api", ->
@@ -210,7 +210,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range.selectEndOfElement($(".first").find("th")[0])
         table.deleteRow()
         range = new Range($editable[0], window)
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect($($(".middle").find("td")[0]).find("b").length).toEqual(1)
 
       it "places the caret at the end of the first cell of the previous row when there is no next row", ->
@@ -218,7 +218,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range.selectEndOfElement($(".last").find("td")[0])
         table.deleteRow()
         range = new Range($editable[0], window)
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect($($(".middle").find("td")[0]).find("b").length).toEqual(1)
 
       it "updates the api", ->
@@ -317,7 +317,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range.selectEndOfElement($(".1")[1])
         table.addCol(true)
         range = new Range($editable[0], window)
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect($($(".middle").find("td")[0]).find("b").length).toEqual(1)
 
       it "updates the api", ->
@@ -357,7 +357,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range.selectEndOfElement($(".1")[1])
         table.deleteCol()
         range = new Range($editable[0], window)
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect($($(".2")[1]).find("b").length).toEqual(1)
 
       it "places the caret in the previous cell if the next cell does not exist", ->
@@ -365,7 +365,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range.selectEndOfElement($(".2")[1])
         table.deleteCol()
         range = new Range($editable[0], window)
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect($($(".1")[1]).find("b").length).toEqual(1)
 
       it "updates the api", ->

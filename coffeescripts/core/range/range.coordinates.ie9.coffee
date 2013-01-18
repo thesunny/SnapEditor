@@ -36,7 +36,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
           # we remove the span, there is no range set. We reselect the range
           # afterwards.
           range = @range
-          @paste(@createElement("span").attr("id", "CURSORPOS")[0])
+          @insert(@createElement("span").attr("id", "CURSORPOS")[0])
           @unselect()
           $span = @find('#CURSORPOS')
           coords = $span.getCoordinates()

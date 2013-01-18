@@ -90,7 +90,7 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
         # Use our own id for inserting and finding.
         $link.attr("id", "SNAPEDITOR_INSERTED_LINK")
         $link.html($link.attr("href"))
-        @api.paste($link[0])
+        @api.insert($link[0])
         $insertedLink = $(@api.find("#SNAPEDITOR_INSERTED_LINK"))
         # Restore or remove the id.
         if id

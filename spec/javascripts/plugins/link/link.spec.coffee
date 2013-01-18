@@ -10,7 +10,7 @@
         clean: ->
         getRange: -> new Range($editable[0], window)
         isValid: -> true
-      Helpers.delegate(link.api, "getRange()", "isCollapsed", "getParentElement", "paste", "surroundContents", "isImageSelected")
+      Helpers.delegate(link.api, "getRange()", "isCollapsed", "getParentElement", "insert", "surroundContents", "isImageSelected")
 
     afterEach ->
       $editable.remove()
@@ -31,9 +31,9 @@
           #$a = $("<a id='LINK' href='#{url}'>link</a>")
           #range = new Range($editable[0])
           #range.selectEndOfElement($div[0])
-          #range.paste($a[0])
+          #range.insert($a[0])
           #$a = $("#LINK")
-          #p "Range paste: #{$a.attr("href")}"
+          #p "Range insert: #{$a.attr("href")}"
           #$a.remove()
 
           #$a = $('<a id="LINK">link</a>')

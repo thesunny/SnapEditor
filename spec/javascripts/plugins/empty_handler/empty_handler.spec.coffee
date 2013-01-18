@@ -26,5 +26,5 @@ require ["jquery.custom", "plugins/empty_handler/empty_handler", "core/helpers",
       it "puts the selection at the end of the default block", ->
         handler.deleteAll()
         range = new Range($editable[0], window)
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect(clean($editable.html())).toEqual("<p><b></b></p>")

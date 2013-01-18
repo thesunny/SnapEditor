@@ -27,8 +27,8 @@
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   class EraseHandler
     register: (@api) ->
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     activate: =>
       $(@api.el).on("keydown", @onkeydown)

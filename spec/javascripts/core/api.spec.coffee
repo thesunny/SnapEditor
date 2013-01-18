@@ -31,7 +31,7 @@ require ["jquery.custom", "core/api", "core/range"], ($, API, Range) ->
         expectedRange.selectEndOfElement($td[0])
 
         range = api.getRange()
-        range.paste("test")
+        range.insert("test")
         expect($td.html()).toEqual("celltest")
 
       it "returns the element's range when an element is given", ->

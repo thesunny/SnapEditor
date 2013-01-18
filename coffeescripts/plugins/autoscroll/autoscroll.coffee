@@ -7,8 +7,8 @@ define ["jquery.custom"], ($) ->
       bottomMargin: 50
 
     register: (@api) ->
-      @api.on("activate.editor", @start)
-      @api.on("deactivate.editor", @stop)
+      @api.on("snapeditor.activate", @start)
+      @api.on("snapeditor.deactivate", @stop)
 
     start: =>
       $(@api.el).on("keyup", @autoscroll)

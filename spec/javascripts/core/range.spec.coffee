@@ -220,23 +220,23 @@ require ["core/range"], (Range) ->
         range = new Range($editable[0])
         expect(range.collapse(true)).toBe(range)
 
-    describe "#paste", ->
-      it "calls #pasteHTML() when given a string", ->
+    describe "#insert", ->
+      it "calls #insertHTML() when given a string", ->
         range = new Range($editable[0])
-        spyOn(range, "pasteHTML")
-        range.paste("string")
-        expect(range.pasteHTML).toHaveBeenCalledWith("string")
+        spyOn(range, "insertHTML")
+        range.insert("string")
+        expect(range.insertHTML).toHaveBeenCalledWith("string")
 
-      it "calls #pasteNode() when given an element", ->
+      it "calls #insertNode() when given an element", ->
         $el = $("<div/>")
         range = new Range($editable[0])
-        spyOn(range, "pasteNode")
-        range.paste($el[0])
-        expect(range.pasteNode).toHaveBeenCalledWith($el[0])
+        spyOn(range, "insertNode")
+        range.insert($el[0])
+        expect(range.insertNode).toHaveBeenCalledWith($el[0])
 
-      it "pastes over an image", ->
+      it "inserts over an image", ->
         $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
         range = new Range($editable[0], $editable.find("img")[0])
         range.select()
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect(clean($editable.html())).toEqual("<b></b>")

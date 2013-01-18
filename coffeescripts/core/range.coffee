@@ -32,7 +32,7 @@
 # moveBoundary(boundaries, el): moves a boundary to the start/end of the el
 #
 # These functions modify the content.
-# paste(arg): pastes the given node or html
+# insert(arg): inserts the given node or html
 # surroundContents(el): surrounds the range with the given el
 # delete(): delete the contents of the range
 #
@@ -136,9 +136,9 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # span. Then it destroyed the span. However, this posed two problems:
     # 1. When the range was not collapsed, the span would replace whatever was
     # selected.
-    # 2. It used Editor.Range.pasteNode() which calls range.focus(). this made
+    # 2. It used Editor.Range.insertNode() which calls range.focus(). this made
     # IE jump up and down due to the focus.
-    # TODO: Problem #2 is invalid. range.focus() doesn't exist and #pasteNode()
+    # TODO: Problem #2 is invalid. range.focus() doesn't exist and #insertNode()
     # doesn't call #focus().
     #
     # The second solution attempted to account for an uncollapsed range in a
@@ -266,21 +266,21 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # MODIFY RANGE CONTENT FUNCTIONS
     #
 
-    # Paste the given arg.
+    # Insert the given arg.
     # arg:
-    #   - HTML string: pastes the HTML string as is
-    #   - element: pastes the element
+    #   - HTML string: inserts the HTML string as is
+    #   - element: inserts the element
     #
     # NOTE: The browser may normalize the content.
-    paste: (arg) ->
-      # If an image is selected, all browsers paste beside the image instead of
+    insert: (arg) ->
+      # If an image is selected, all browsers insert beside the image instead of
       # replacing the image. Hence, we manually delete the image first and then
-      # paste.
+      # insert.
       @delete() if @isImageSelected()
       switch Helpers.typeOf(arg)
-        when "string" then @pasteHTML(arg)
-        when "element" then @pasteNode(arg)
-        else throw "Don't know how to paste this type of arg"
+        when "string" then @insertHTML(arg)
+        when "element" then @insertNode(arg)
+        else throw "Don't know how to insert this type of arg"
 
     # Surround range with element.
     surroundContents: (el) ->

@@ -2,9 +2,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class Atomic
     register: (@api) ->
       @classname = @api.config.atomic.classname
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
-      @api.on("ready.editor", @mouseup)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
+      @api.on("snapeditor.ready", @mouseup)
 
     activate: =>
       $(@api.el).on(
@@ -41,7 +41,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       else if startParent or endParent
         @moveSelectedRange(startParent, endParent, direction)
       @api.clean()
-      @api.update()
 
     # Returns the previous/next sibling of el.
     #

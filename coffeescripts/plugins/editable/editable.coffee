@@ -2,8 +2,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/edita
   class Editable
     register: (@api) ->
       @el = @api.el
-      @api.on("click.activate", => @start.apply(this))
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate.click", => @start.apply(this))
+      @api.on("snapeditor.deactivate", @deactivate)
 
     # Turn on editing in the div. This includes preserving the caret position
     # as editing is turned on in all browsers.

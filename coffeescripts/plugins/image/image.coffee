@@ -1,8 +1,8 @@
 define ["jquery.custom"], ($) ->
   class Image
     register: (@api) ->
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     activate: =>
       $(@api.el).on("mousedown", @mousedown)

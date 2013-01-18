@@ -54,7 +54,7 @@ require ["jquery.custom", "plugins/image/image.single_uploader", "core/helpers",
 
       it "selects the image", ->
         range = new Range($editable[0], window)
-        range.paste("<b></b>")
+        range.insert("<b></b>")
         expect(clean($editable.html())).toEqual("hel<b></b>lo")
 
       it "updates the api", ->

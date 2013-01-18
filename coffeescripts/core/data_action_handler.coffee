@@ -8,8 +8,8 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
     # api is the editor API object.
     constructor: (el, @api) ->
       @$el = $(el)
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     activate: =>
       # Listen to any change events on <select>.

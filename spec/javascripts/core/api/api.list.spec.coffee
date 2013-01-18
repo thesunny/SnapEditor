@@ -164,7 +164,7 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler.empty_list_item_h
 
         it "puts the selection at the end of the next block", ->
           range = new Range($editable[0], window)
-          range.paste("<b></b>")
+          range.insert("<b></b>")
           expect(clean($editable.find("p").html())).toEqual("<b></b>")
 
       describe "nested list", ->
@@ -194,7 +194,7 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler.empty_list_item_h
 
         it "puts the selection at the end of the item", ->
           range = new Range($editable[0], window)
-          range.paste("<b></b>")
+          range.insert("<b></b>")
           expect(clean($($ul.find("li")[1]).html())).toEqual("<b></b>")
 
     describe "#handleNextItems", ->

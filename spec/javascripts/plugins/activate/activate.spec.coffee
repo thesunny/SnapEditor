@@ -26,7 +26,7 @@ describe "Activate", ->
       activate.api = { trigger: null }
       spyOn(activate.api, "trigger")
       activate.click({})
-      expect(activate.api.trigger).toHaveBeenCalledWith("click.activate")
+      expect(activate.api.trigger).toHaveBeenCalledWith("snapeditor.activate.click")
 
   describe "#activate", ->
     ait "activates the editor", required, (Activate) ->
@@ -45,7 +45,7 @@ describe "Activate", ->
       spyOn(activate.api, "activate")
       spyOn(activate.api, "on")
       activate.activate(target: $target)
-      expect(activate.api.on).toHaveBeenCalledWith("deactivate.editor", activate.deactivate)
+      expect(activate.api.on).toHaveBeenCalledWith("snapeditor.deactivate", activate.deactivate)
 
   describe "#deactivate", ->
     ait "stops listening to deactivate.editor", required, (Activate) ->
@@ -54,7 +54,7 @@ describe "Activate", ->
       spyOn(activate.api, "off")
       spyOn(activate, "addActivateEvents")
       activate.deactivate()
-      expect(activate.api.off).toHaveBeenCalledWith("deactivate.editor", activate.deactivate)
+      expect(activate.api.off).toHaveBeenCalledWith("snapeditor.deactivate", activate.deactivate)
 
     ait "adds the activate events", required, (Activate) ->
       activate = new Activate()

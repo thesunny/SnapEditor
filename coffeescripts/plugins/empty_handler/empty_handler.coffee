@@ -1,9 +1,9 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class EmptyHandler
     register: (@api) ->
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
-      @api.on("finished.cleaner", @onCleanerFinished)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
+      @api.on("snapeditor.cleaner.finished", @onCleanerFinished)
 
     activate: =>
       $(@api.el).on("keyup", @onkeyup)

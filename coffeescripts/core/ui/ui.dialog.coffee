@@ -40,7 +40,7 @@ define ["jquery.custom", "core/helpers", "core/events"], ($, Helpers, Events) ->
       $(@getEl()).hide()
       @api.offDocument("mousedown", @tryMouseHide)
       @api.offDocument("keyup", @tryKeyHide)
-      @trigger("hide.dialog")
+      @trigger("snapeditor.dialog.hide")
 
     tryMouseHide: (e) =>
       $target = $(e.target)

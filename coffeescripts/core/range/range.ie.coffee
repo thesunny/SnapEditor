@@ -242,10 +242,10 @@ define ["core/helpers"], (Helpers) ->
           range = @constructor.getBlankRange(@win)
           range.setEndPoint("StartToStart", @range)
           range.collapse(true)
-          range.pasteHTML('<span id="RANGE_START"></span>')
+          range.insertHTML('<span id="RANGE_START"></span>')
           range.setEndPoint("StartToEnd", @range)
           range.collapse(false)
-          range.pasteHTML('<span id="RANGE_END"></span>')
+          range.insertHTML('<span id="RANGE_END"></span>')
           startElement = @find("#RANGE_START")[0]
           endElement = @find("#RANGE_END")[0]
         fn(startElement, endElement)
@@ -338,43 +338,44 @@ define ["core/helpers"], (Helpers) ->
       # MODIFY RANGE CONTENT FUNCTIONS
       #
 
-      # Paste the given node and set the selection to after the node.
+      # Insert the given node and set the selection to after the node.
       #   text|
       #   <div>element</div>|
       #
-      # NOTE: In W3C, we manually need to move the caret. In IE, the pasteHTML
-      # method automatically moves the caret to after the end of the pasted
+      # NOTE: In W3C, we manually need to move the caret. In IE, the insertHTML
+      # method automatically moves the caret to after the end of the inserted
       # node.
       #
-      # NOTE: In IE, the pasted node is a copy of the node given.  In W3C, the
-      # actual node is pasted in. Although I can normalize this, in some special
-      # cases, we may need access to that node for W3C only
-      # so I have not removed reference-ability in W3C. 
-      pasteNode: (node) ->
+      # NOTE: In IE, the inserted node is a copy of the node given.  In W3C,
+      # the actual node is inserted in. Although I can normalize this, in some
+      # special cases, we may need access to that node for W3C only so I have
+      # not removed reference-ability in W3C. 
+      insertNode: (node) ->
         div = @doc.createElement("div")
         div.appendChild(node)
-        @pasteHTML(div.innerHTML)
+        @insertHTML(div.innerHTML)
 
-      # Paste HTML and set the selection to after the HTML.
+      # Insert HTML and set the selection to after the HTML.
       #   text|
       #   <div>element</div>|
       #
-      # NOTE: In W3C, we manually need to move the caret. In IE, the pasteHTML
-      # method automatically moves the caret to after the end of the pasted
+      # NOTE: In W3C, we manually need to move the caret. In IE, the insertHTML
+      # method automatically moves the caret to after the end of the inserted
       # node.
       #
       # NOTE: IE attempts to be too smart when placing the selection after
       # pasting elements. It does not always go after the elements. Furthermore,
       # IE7 behave differently in certain situations.
       # Inline element (not <a>):
-      #   If the pasted element has content and there's no content afterwards,
-      #   the selection always goes at the end of the inside of the element.
+      #   If the inserted element has content and there's no content
+      #   afterwards, the selection always goes at the end of the inside of
+      #   the element.
       #     <span>test|</span>
-      #   If the pasted element has content and there's content afterwards, it
-      #   depends on the IE version.
+      #   If the inserted element has content and there's content afterwards,
+      #   it depends on the IE version.
       #     IE7: <span>test|<span>after
       #     IE8: <span>test</span>|after
-      #   If the pasted element has no content, it depends on what's around.
+      #   If the inserted element has no content, it depends on what's around.
       #     <span>|<span>
       #     <span></span>|after
       #     before|<span></span>
@@ -399,17 +400,17 @@ define ["core/helpers"], (Helpers) ->
       # Block element (including inline element as block) with content and
       # content afterwards.
       #   <div>test</div>|after
-      pasteHTML: (html) ->
-        # In IE7, in order for the selection to be placed after the pasted node
-        # automatically, the range must be selected first. There is no harm in
-        # leaving this in for other versions.
+      insertHTML: (html) ->
+        # In IE7, in order for the selection to be placed after the inserted
+        # node automatically, the range must be selected first. There is no
+        # harm in leaving this in for other versions.
         @select()
         # If an image is selected, we have a controlRange. Remove the image and
         # refind the range.
         if @isImageSelected()
           $(@range.item(0)).remove()
           @range = @constructor.getRangeFromSelection(@win)
-        @range.pasteHTML(html)
+        @range.insertHTML(html)
 
       # Surround range with element and place the selection after the element.
       surroundContents: (el) ->
@@ -417,7 +418,7 @@ define ["core/helpers"], (Helpers) ->
           el.innerHTML = @range.item(0).outerHTML
         else
           el.innerHTML = @range.htmlText
-        @pasteNode(el)
+        @insertNode(el)
 
       # Delete the contents of the range.
       delete: ->

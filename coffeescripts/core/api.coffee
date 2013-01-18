@@ -13,7 +13,7 @@
 #
 # Editor Functions:
 # activate(): activates the editor
-# update(): tells the editor to update itself
+# clean(): clean the HTML
 #
 # Range Functions:
 # range([el]): returns the current selection if el is not given, else returns the range that represents the el
@@ -30,14 +30,14 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       @execCommand = new ExecCommand(this)
       @whitelist = @editor.whitelist
       Helpers.delegate(this, "editor",
-        "getContents", "setContents", "activate", "tryDeactivate", "deactivate", "update", "save"
+        "getContents", "setContents", "activate", "tryDeactivate", "deactivate", "save"
       )
       Helpers.delegate(this, "assets", "file", "image", "stylesheet", "template")
       Helpers.delegate(this, "getRange()",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getParentElement", "getParentElements", "getText",
         "collapse", "unselect", "keepRange", "moveBoundary",
-        "paste", "surroundContents", "delete"
+        "insert", "surroundContents", "delete"
       )
       Helpers.delegate(this, "getBlankRange()", "selectNodeContents", "selectEndOfElement")
       Helpers.delegate(this, "execCommand",
@@ -49,7 +49,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       # The default is to deactivate immediately. However, to accommodate
       # plugins such as the Save plugin, this can be disabled and handled in a
       # customized way. Use #disableImmediateDeactivate.
-      @on("tryDeactivate.editor", @deactivate)
+      @on("snapeditor.tryDeactivate", @deactivate)
 
     #
     # DOM SHORTCUTS
@@ -63,13 +63,9 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
     createTextNode: (text) ->
       @doc.createTextNode(text)
 
-    # Shortcut to find elements in the doc.
+    # Shortcut to find elements in the doc. Always returns an array.
     find: (selector) ->
-      matches = $(@doc).find(selector)
-      switch matches.length
-        when 0 then return null
-        when 1 then return matches[0]
-        else return matches.toArray()
+      $(@doc).find(selector).toArray()
 
     #
     # EVENTS
@@ -106,7 +102,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       )
 
     disableImmediateDeactivate: ->
-      @off("tryDeactivate", @deactivate)
+      @off("snapeditor.tryDeactivate", @deactivate)
 
     #
     # RANGE

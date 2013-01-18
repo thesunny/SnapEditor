@@ -6,8 +6,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class Edit
     register: (@api) ->
       @$el = $(@api.el)
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     getUI: (ui) ->
       cut = ui.button(action: "cut", description: @api.lang.cut, shortcut: "Ctrl+X", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [0, 0] })

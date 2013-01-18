@@ -4,8 +4,8 @@ define ["jquery.custom"], ($) ->
 
     register: (@api) ->
       $(@api.el).addClass(@classname)
-      @api.on("activate.editor", @activate)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.activate", @activate)
+      @api.on("snapeditor.deactivate", @deactivate)
 
     activate: =>
       # mousedown and mouseup are tracked to ensure that the entire click

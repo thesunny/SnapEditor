@@ -2,9 +2,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
   class Save
     register: (@api) ->
       @checkOptions()
-      @api.on("ready.editor", @activate)
-      @api.on("tryDeactivate.editor", @cancel)
-      @api.on("deactivate.editor", @deactivate)
+      @api.on("snapeditor.ready", @activate)
+      @api.on("snapeditor.tryDeactivate", @cancel)
+      @api.on("snapeditor.deactivate", @deactivate)
       @api.disableImmediateDeactivate()
 
     checkOptions: ->

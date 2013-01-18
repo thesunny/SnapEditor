@@ -32,7 +32,7 @@ if isWebkit
             expect($editable.html()).toEqual("<h1>header headingsome text</h1>")
 
             range = new Range($editable[0], window)
-            range.paste("<b></b>")
+            range.insert("<b></b>")
             expect($h1.html()).toEqual("header heading<b></b>some text")
 
           it "does not merge the nodes together when the next node is a table", ->
@@ -48,7 +48,7 @@ if isWebkit
             expect($editable.html()).toEqual(html)
 
             range = new Range($editable[0], window)
-            range.paste("<b></b>")
+            range.insert("<b></b>")
             expect($h1.html()).toEqual("header heading<b></b>")
 
           it "merges the first list item into the node when the next node is a list", ->
@@ -64,7 +64,7 @@ if isWebkit
             expect($editable.find("ul").length).toEqual(0)
 
             range = new Range($editable[0], window)
-            range.paste("<b></b>")
+            range.insert("<b></b>")
             expect($h1.html()).toEqual("header heading<b></b>item")
 
         describe "backspace", ->
@@ -82,7 +82,7 @@ if isWebkit
             expect($editable.html()).toEqual("<h1>header headingsome text</h1>")
 
             range = new Range($editable[0], window)
-            range.paste("<b></b>")
+            range.insert("<b></b>")
             expect($h1.html()).toEqual("header heading<b></b>some text")
 
           it "does not merge the nodes together when the previous node is a table", ->
@@ -98,7 +98,7 @@ if isWebkit
             expect($editable.html()).toEqual(html)
 
             range = new Range($editable[0], window)
-            range.paste("<b></b>")
+            range.insert("<b></b>")
             expect($p.html()).toEqual("<b></b>some text")
 
           it "does not merge the nodes together when the previous node is a list", ->
@@ -115,5 +115,5 @@ if isWebkit
             expect($editable.find("p").length).toEqual(0)
 
             range = new Range($editable[0], window)
-            range.paste("<b></b>")
+            range.insert("<b></b>")
             expect($li.html()).toEqual("item<b></b>some text")
