@@ -51,7 +51,7 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
         obj.next = @whitelistByLabel[obj.next] if typeof obj.next == "string"
 
     isLabel: (label) ->
-      !!label.match(/^[A-Z]/)
+      !!label.match(/^[A-Z0-9]/)
 
     parse: (string) ->
       [element, next] = ($.trim(s) for s in string.split(">"))

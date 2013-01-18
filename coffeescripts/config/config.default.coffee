@@ -77,7 +77,7 @@ define [
             # Inlines
             "Bold": "b"
             "Italic": "i"
-            "Links": "a[href, target]"
+            "Link": "a[href, target]"
             "Range Start": "span#RANGE_START"
             "Range End": "span#RANGE_END"
             # Images
