@@ -33,14 +33,14 @@ require ["core/helpers", "core/iframe.snapeditor"], (Helpers, IFrame) ->
         it "returns true when a block element is given", ->
           expect(Helpers.isBlock($("<div/>").appendTo($editable)[0])).toBeTruthy()
 
-        it "returns false when an line element is given", ->
+        it "returns false when an inline element is given", ->
           expect(Helpers.isBlock($("<span/>").appendTo($editable)[0])).toBeFalsy()
 
       describe "when the block is not in the DOM", ->
         it "returns true when a block element is given", ->
           expect(Helpers.isBlock($("<div/>")[0], false)).toBeTruthy()
 
-        it "returns false when an line element is given", ->
+        it "returns false when an inline element is given", ->
           expect(Helpers.isBlock($("<span/>")[0], false)).toBeFalsy()
 
         it "does not modify the element", ->
