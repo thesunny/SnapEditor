@@ -36,11 +36,13 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # * direction - forward/backward/mouse
     handleRange: (direction) ->
       [startParent, endParent] = @api.getParentElements(".#{@classname}")
-      if @api.isCollapsed() and startParent
-        @moveCollapsedRange(startParent, direction)
-      else if startParent or endParent
-        @moveSelectedRange(startParent, endParent, direction)
-      @api.clean()
+      # Only do something if the range is inside an atomic element.
+      if startParent or endParent
+        if @api.isCollapsed() and startParent
+          @moveCollapsedRange(startParent, direction)
+        else if startParent or endParent
+          @moveSelectedRange(startParent, endParent, direction)
+        @api.clean()
 
     # Returns the previous/next sibling of el.
     #
