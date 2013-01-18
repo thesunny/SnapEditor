@@ -37,11 +37,13 @@ define ["../lib/jquery", "../lib/mustache"], ->
     }
 
   $.fn.getPadding = ->
+    # Webkit returns decimal pixels. Hence parse to float first and then
+    # round.
     return {
-      top: parseInt(this.css("padding-top"), 10)
-      bottom: parseInt(this.css("padding-bottom"), 10)
-      left: parseInt(this.css("padding-left"), 10)
-      right: parseInt(this.css("padding-right"), 10)
+      top: Math.round(parseFloat(this.css("padding-top")))
+      bottom: Math.round(parseFloat(this.css("padding-bottom")))
+      left: Math.round(parseFloat(this.css("padding-left")))
+      right: Math.round(parseFloat(this.css("padding-right")))
     }
 
   # Mimics MooTools isVisible.
