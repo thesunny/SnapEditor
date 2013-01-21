@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/editor", "config/config.default.form", "core/assets", "core/iframe", "core/toolbar/toolbar.static"], ($, Editor, Defaults, Assets, IFrame, Toolbar) ->
+define ["jquery.custom", "core/editor", "config/config.default.form", "core/assets", "core/iframe.snapeditor", "core/toolbar/toolbar.static"], ($, Editor, Defaults, Assets, IFrame, Toolbar) ->
   class FormEditor extends Editor
     constructor: (textarea, config) ->
       # Transform the string into a CSS id selector.

@@ -1,7 +1,7 @@
 # NOTE: These tests only work in Webkit because the iframe loads immediately.
 # In the other browsers, the load is delayed and falls out of the runtime of
 # the tests.
-require ["jquery.custom", "core/iframe"], ($, IFrame) ->
+require ["jquery.custom", "core/iframe.snapeditor"], ($, IFrame) ->
   describe "IFrame", ->
     $editable = null
     beforeEach ->
@@ -15,33 +15,33 @@ require ["jquery.custom", "core/iframe"], ($, IFrame) ->
         iframe = new IFrame()
         expect($(iframe).tagName()).toEqual("iframe")
 
-      it "writes the content to the document", ->
+      it "sets the class", ->
         iframe = new IFrame(
-          write: ->
-            @doc.write("<html><body><b>Hello</b></body></html>")
-          load: ->
-            expect($(@doc).find("b").length).toEqual(1)
+          class: "frame"
+          load: -> expect($(this).hasClass("frame")).toBeTruthy()
         )
         $(iframe).appendTo($editable)
 
-      it "performs the after write", ->
+      it "sets the content", ->
         iframe = new IFrame(
-          write: ->
-            @doc.write("<html><body><b>Hello</b></body></html>")
-          afterWrite: ->
-            @$b = $(@doc).find("b")
-          load: ->
-            expect(@$b.length).toEqual(1)
+          contents: "<b>hello</b>"
+          load: -> expect(@el.innerHTML).toEqual("<b>hello</b>")
+        )
+        $(iframe).appendTo($editable)
+
+      it "sets the content class", ->
+        iframe = new IFrame(
+          contentClass: "editable"
+          load: -> expect($(@el).hasClass("editable")).toBeTruthy()
         )
         $(iframe).appendTo($editable)
 
       it "triggers events properly", ->
         iframe = new IFrame(
-          write: ->
-            @doc.write("<html><body><b>Hello</b></body></html>")
+          contents: "<b>hello</b>"
           load: ->
             clicked = false
-            $(@doc).find("b").on("click", -> clicked = true)
+            $(@el).find("b").on("click", -> clicked = true)
             $(@doc).find("b").trigger("click")
             expect(clicked).toBeTruthy()
         )
