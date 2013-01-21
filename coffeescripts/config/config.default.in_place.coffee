@@ -13,5 +13,6 @@ define [
         new Save()
       ])
       defaults.toolbar = defaults.toolbar
+      defaults.snap = true
       return defaults
   }
