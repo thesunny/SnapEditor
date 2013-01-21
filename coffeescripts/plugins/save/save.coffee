@@ -1,16 +1,14 @@
 define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
   class Save
     register: (@api) ->
-      @checkOptions()
-      @api.on("snapeditor.ready", @activate)
-      @api.on("snapeditor.tryDeactivate", @cancel)
-      @api.on("snapeditor.deactivate", @deactivate)
-      @api.disableImmediateDeactivate()
-
-    checkOptions: ->
-      throw "Missing 'onSave' callback config" unless @api.config['onSave']
+      if @api.config.onSave
+        @api.on("snapeditor.ready", @activate)
+        @api.on("snapeditor.tryDeactivate", @cancel)
+        @api.on("snapeditor.deactivate", @deactivate)
+        @api.disableImmediateDeactivate()
 
     getUI: (ui) ->
+
       save = ui.button(action: "save", description: @api.lang.save, shortcut: "Ctrl+S", icon: { url: @api.assets.image("disk.png"), width: 24, height: 24, offset: [3, 3] })
       cancel = ui.button(action: "cancel", description: @api.lang.cancel, icon: { url: @api.assets.image("cross.png"), width: 24, height: 24, offset: [3, 3] })
       @generateDialog(ui)
