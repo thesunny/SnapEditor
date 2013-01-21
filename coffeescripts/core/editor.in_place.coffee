@@ -7,4 +7,8 @@ define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.f
       toolbarComponents = @plugins.getToolbarComponents()
       @toolbar = new Toolbar(@api, @$templates, toolbarComponents.available, toolbarComponents.config)
 
+    prepareConfig: ->
+      super()
+      @config.snap = @defaults.snap if typeof @config.snap == "undefined"
+
   return InPlaceEditor
