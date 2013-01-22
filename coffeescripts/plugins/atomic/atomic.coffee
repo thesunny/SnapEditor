@@ -1,7 +1,6 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class Atomic
     register: (@api) ->
-      @classname = @api.config.atomic.classname
       @api.on("snapeditor.activate", @activate)
       @api.on("snapeditor.deactivate", @deactivate)
       @api.on("snapeditor.ready", @mouseup)
@@ -17,6 +16,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         keyup: @keyup
         mouseup: @mouseup
       )
+
+    getClassnamesSelector: ->
+      "." + @api.config.atomic.classnames.join(", .")
 
     forwardKeys: ["right", "down", "pagedown", "end"]
     backwardKeys: ["left", "up", "pageup", "home"]
@@ -35,7 +37,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # Arugments:
     # * direction - forward/backward/mouse
     handleRange: (direction) ->
-      [startParent, endParent] = @api.getParentElements(".#{@classname}")
+      [startParent, endParent] = @api.getParentElements(@getClassnamesSelector())
       # Only do something if the range is inside an atomic element.
       if startParent or endParent
         if @api.isCollapsed() and startParent
@@ -53,7 +55,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       sibling = el["#{which}Sibling"]
       # If the sibling doesn't exist or it is an atomic element, then we
       # insert a new sibling.
-      if !sibling or $(sibling).hasClass(@classname)
+      if !sibling or Helpers.hasClass(sibling, @api.config.atomic.classnames)
         position = if which == "previous" then "before" else "after"
         sibling = @insertSibling(position, el)
       sibling

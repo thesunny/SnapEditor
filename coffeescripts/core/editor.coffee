@@ -37,6 +37,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @config.lang or= @defaults.lang
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
+      @config.atomic.classnames = [@config.atomic.classname]
       @config.widget or= {}
       @config.widget.classname or= @defaults.widget.classname
 
