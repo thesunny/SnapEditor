@@ -41,8 +41,10 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @config.widget or= {}
       @config.widget.classname or= @defaults.widget.classname
 
-      # Add the atomic classname to the cleaner's ignore list.
-      @config.cleaner.ignore.push(@config.atomic.classname)
+      # Add the widget classname to the atomic classnames list.
+      @config.atomic.classnames.push(@config.widget.classname)
+      # Add the atomic classnames to the cleaner's ignore list.
+      @config.cleaner.ignore = @config.cleaner.ignore.concat(@config.atomic.classnames)
       SnapEditor.DEBUG("End: Prepare Config")
 
     loadAssets: ->

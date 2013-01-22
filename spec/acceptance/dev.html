@@ -351,7 +351,7 @@
         save: function () {
           this.popup.hide();
           this.e.json.data = this.popup.find("form")[0].data.value;
-          this.e.html = $("<div/>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.json.data)).html();
+          this.e.html = $("<div>hell world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.json.data)).html();
           this.e.save();
         }
       };
