@@ -31,19 +31,21 @@ require ["jquery.custom"], ($) ->
         expect(coords.height).toEqual(100)
 
     describe "#getScroll", ->
-      it "returns the 0 with no scrolling", ->
+      it "returns 0 with no scrolling", ->
         scroll = $(window).getScroll()
         expect(scroll.x).toEqual(0)
         expect(scroll.y).toEqual(0)
 
       it "returns the correct scroll", ->
-        $el = $('<div id="el"></div>').appendTo($editable)
-        $el.attr("style", "width: 6000px; height: 9000px;")
+        # Scroll the body instead of inserting a really large div  because IE
+        # craps out otherwise.
+        $("body").css(width: 6000, height: 9000)
         window.scrollTo(300, 500)
         scroll = $(window).getScroll()
         expect(scroll.x).toEqual(300)
         expect(scroll.y).toEqual(500)
         window.scrollTo(0, 0)
+        $("body").css(width: "auto", height: "auto")
 
     describe "#getPadding", ->
       $el = null

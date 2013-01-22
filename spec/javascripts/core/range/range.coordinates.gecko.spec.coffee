@@ -23,9 +23,7 @@ if isGecko and not isGecko1
             range.range.selectNodeContents($first[0])
             range.collapse(true)
             coords = range.getCoordinates()
-            # Should be 100, but FF decides to add a single px.
-            expect(coords.top).toEqual(101)
-            # Should be 114, but FF decides to add 2 px.
+            expect(coords.top).toEqual(100)
             expect(coords.bottom).toEqual(116)
             expect(coords.left).toEqual(200)
             expect(coords.right).toEqual(200)
@@ -52,7 +50,7 @@ if isGecko and not isGecko1
             range.select()
             coords = range.getCoordinates()
             expect(coords.top).toEqual(100)
-            expect(coords.bottom).toEqual(128)
+            expect(coords.bottom).toEqual(130)
             expect(coords.left).toEqual(200)
             # When the selection spans multiple lines, the right side is the
             # width of the window.

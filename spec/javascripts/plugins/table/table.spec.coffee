@@ -85,7 +85,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
           range.range.setStart($editable[0].childNodes[0], 4)
         else
           range.range.findText("test")
-          range.collapse(true)
+          range.collapse(false)
         range.select()
         table.insertTable()
         expect($editable.find("p").length).toEqual(1)

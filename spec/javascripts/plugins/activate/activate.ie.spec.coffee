@@ -38,21 +38,22 @@ if isIE
 
     describe "#onmouseup", ->
       describe "target is not a link", ->
-        ait "saves the range and reselects it when the target is not an image", required, (Module, $, Helpers) ->
-          Helpers.include(Activate, Module)
+        # TODO: Remove this. See code for comment.
+        #ait "saves the range and reselects it when the target is not an image", required, (Module, $, Helpers) ->
+          #Helpers.include(Activate, Module)
 
-          range = { select: null }
-          spyOn(range, "select")
+          #range = { select: null }
+          #spyOn(range, "select")
 
-          activate = new Activate()
-          activate.isLink = (el) -> false
-          spyOn(activate, "click")
-          spyOn(activate, "activate")
-          spyOn(activate.api, "range").andReturn(range)
+          #activate = new Activate()
+          #activate.isLink = (el) -> false
+          #spyOn(activate, "click")
+          #spyOn(activate, "activate")
+          #spyOn(activate.api, "range").andReturn(range)
 
-          activate.onmouseup(target: $("<div/>")[0])
-          expect(activate.api.range).toHaveBeenCalled()
-          expect(range.select).toHaveBeenCalled()
+          #activate.onmouseup(target: $("<div/>")[0])
+          #expect(activate.api.range).toHaveBeenCalled()
+          #expect(range.select).toHaveBeenCalled()
 
         ait "selects the target when the target is an image", required, (Module, $, Helpers) ->
           Helpers.include(Activate, Module)
