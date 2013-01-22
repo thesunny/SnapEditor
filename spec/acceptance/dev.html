@@ -266,6 +266,8 @@
     <script src="/spec/javascripts/support/assets/javascripts/toISOString.js" type="text/javascript" charset="utf-8"></script>
     <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
+      SnapEditor.debug = true;
+
       //var secureResourceId = "secure/123";
       var insecureDirectory = "insecure/123";
       //var secureUrl = "/snapimage_api_secure";
@@ -364,15 +366,16 @@
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
+        snap: false,
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
-        },
+        }/*,
         onSave: function (html) {
           console.log(html);
           return "OMG! ERROR!";
-        }
+        }*/
       });
 
       /*

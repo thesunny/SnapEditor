@@ -1,8 +1,14 @@
 define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.floating"], (Editor, Defaults, Toolbar) ->
   class InPlaceEditor extends Editor
     constructor: (el, config) ->
-      super(el, Defaults.build(), config)
+      defaults = Defaults.build()
+      defaults.toolbar = defaults.toolbar.concat(["|", "SaveCancel"]) if config.onSave
+      super(el, defaults, config)
       toolbarComponents = @plugins.getToolbarComponents()
       @toolbar = new Toolbar(@api, @$templates, toolbarComponents.available, toolbarComponents.config)
+
+    prepareConfig: ->
+      super()
+      @config.snap = @defaults.snap if typeof @config.snap == "undefined"
 
   return InPlaceEditor

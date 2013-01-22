@@ -1,9 +1,8 @@
 define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
   class Table
-    constructor: (options = {}) ->
-      @options =
-        table: [2, 3]
-      $.extend(@options, options)
+    options:
+      rows: 2
+      cols: 3
 
     register: (@api) ->
       @api.on("snapeditor.activate", @activate)
@@ -54,8 +53,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           $tbody = $(@api.createElement("tbody")).appendTo($table)
           $td = $(@api.createElement("td")).html("&nbsp")
           $tr = $(@api.createElement("tr"))
-          $tr.append($td.clone()) for i in [1..@options.table[1]]
-          $tbody.append($tr.clone()) for i in [1..@options.table[0]]
+          $tr.append($td.clone()) for i in [1..@options.cols]
+          $tbody.append($tr.clone()) for i in [1..@options.rows]
 
           # Handle the special case when inserting at the end of the editable
           # area.

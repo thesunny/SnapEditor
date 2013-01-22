@@ -1,10 +1,11 @@
 define ["jquery.custom"], ($) ->
   class Snap
     register: (@api) ->
-      @$el = $(@api.el)
-      @api.on("snapeditor.activate", @snap)
-      @api.on("snapeditor.deactivate", @unsnap)
-      @api.on("snapeditor.cleaner.finished", @update)
+      if @api.config.snap
+        @$el = $(@api.el)
+        @api.on("snapeditor.activate", @snap)
+        @api.on("snapeditor.deactivate", @unsnap)
+        @api.on("snapeditor.cleaner.finished", @update)
 
     # Prepare the semi-transparent divs and the snap/unsnap effects.
     setup: ->

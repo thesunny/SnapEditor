@@ -12,6 +12,7 @@ define [
         new Outline()
         new Save()
       ])
-      defaults.toolbar = defaults.toolbar.concat(["|", "SaveCancel"])
+      defaults.toolbar = defaults.toolbar
+      defaults.snap = true
       return defaults
   }
