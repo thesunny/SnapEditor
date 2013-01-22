@@ -13,8 +13,8 @@ define ["jquery.custom"], ($) ->
       unless @isLink(target)
         isImage = $(target).tagName() == "img"
         # TODO: This no longer seems to apply. Commenting out for now along
-        # with the "else" statement below. Remove this once we're sure we
-        # don't need it.
+        # with the "else" statement below and the test. Remove this once we're
+        # sure we don't need it.
         # NOTE: In IE, we need to save the range prior to turning on
         # contentEditable and then selecting it after contentEditable. This
         # allows the selection to keep after the editor has been turned on.

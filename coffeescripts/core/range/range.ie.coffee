@@ -242,10 +242,10 @@ define ["core/helpers"], (Helpers) ->
           range = @constructor.getBlankRange(@win)
           range.setEndPoint("StartToStart", @range)
           range.collapse(true)
-          range.insertHTML('<span id="RANGE_START"></span>')
+          range.pasteHTML('<span id="RANGE_START"></span>')
           range.setEndPoint("StartToEnd", @range)
           range.collapse(false)
-          range.insertHTML('<span id="RANGE_END"></span>')
+          range.pasteHTML('<span id="RANGE_END"></span>')
           startElement = @find("#RANGE_START")[0]
           endElement = @find("#RANGE_END")[0]
         fn(startElement, endElement)
@@ -410,7 +410,7 @@ define ["core/helpers"], (Helpers) ->
         if @isImageSelected()
           $(@range.item(0)).remove()
           @range = @constructor.getRangeFromSelection(@win)
-        @range.insertHTML(html)
+        @range.pasteHTML(html)
 
       # Surround range with element and place the selection after the element.
       surroundContents: (el) ->

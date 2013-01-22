@@ -23,7 +23,7 @@ if isIE9
               range.collapse(true)
               coords = range.getCoordinates()
               expect(coords.top).toEqual(111)
-              expect(coords.bottom).toEqual(126)
+              expect(coords.bottom).toEqual(125)
               expect(coords.left).toEqual(200)
               expect(coords.right).toEqual(200)
 
@@ -32,10 +32,10 @@ if isIE9
               range.range.setStart($second[0].childNodes[0], 6)
               range.collapse(false)
               coords = range.getCoordinates()
-              expect(coords.top).toEqual(126)
-              expect(coords.bottom).toEqual(141)
-              expect(coords.left).toEqual(235)
-              expect(coords.right).toEqual(235)
+              expect(coords.top).toEqual(124)
+              expect(coords.bottom).toEqual(138)
+              expect(coords.left).toEqual(233)
+              expect(coords.right).toEqual(233)
 
             it "does not alter the HTML", ->
               html = $editable.html()
@@ -58,9 +58,9 @@ if isIE9
               range.range.setEnd($second[0], 1)
               coords = range.getCoordinates()
               expect(coords.top).toEqual(100)
-              expect(coords.bottom).toEqual(129)
+              expect(coords.bottom).toEqual(128)
               expect(coords.left).toEqual(200)
-              expect(coords.right).toEqual(235)
+              expect(coords.right).toEqual(233)
 
             it "does not alter the HTML", ->
               html = $editable.html()
