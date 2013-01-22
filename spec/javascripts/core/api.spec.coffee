@@ -7,7 +7,9 @@ require ["jquery.custom", "core/api", "core/range"], ($, API, Range) ->
       $td = $("#td")
       api = new API(
         $el: $editable
-        config: path: "/"
+        config:
+          path: "/"
+          widget: classname: "widget"
         contents: null
         activate: null
         assets: {}

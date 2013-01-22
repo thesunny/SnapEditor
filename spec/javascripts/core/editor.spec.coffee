@@ -14,6 +14,8 @@ require ["core/editor", "core/helpers"], (Editor, Helpers) ->
         lang: "en",
         atomic:
           classname: "atomic"
+        widget:
+          classname: "widget"
       config = path: "spec/javascripts/support/assets"
       editor = new Editor($editable[0], defaults, config)
 

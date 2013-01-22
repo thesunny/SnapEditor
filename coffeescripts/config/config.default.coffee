@@ -90,5 +90,7 @@ define [
         lang: "en"
         atomic:
           classname: "atomic"
+        widget:
+          classname: "widget"
       }
   }

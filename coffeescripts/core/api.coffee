@@ -18,7 +18,7 @@
 # Range Functions:
 # range([el]): returns the current selection if el is not given, else returns the range that represents the el
 # select(el): selects the el
-define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/events", "core/range"], ($, ExecCommand, Helpers, Events, Range) ->
+define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/events", "core/range", "core/widget/widgets_manager"], ($, ExecCommand, Helpers, Events, Range, WidgetsManager) ->
   class API
     constructor: (@editor) ->
       @el = @editor.$el[0]
@@ -29,6 +29,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       @lang = @editor.lang
       @execCommand = new ExecCommand(this)
       @whitelist = @editor.whitelist
+      @widgetsManager = new WidgetsManager(this, @editor.config.widget.classname)
       Helpers.delegate(this, "editor",
         "getContents", "setContents", "activate", "tryDeactivate", "deactivate", "save"
       )
@@ -45,6 +46,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
         "insertUnorderedList", "insertOrderedList", "insertLink"
       )
       Helpers.delegate(this, "whitelist", "isAllowed", "getReplacement", "getNext")
+      Helpers.delegate(this, "widgetsManager", "createWidget")
 
       # The default is to deactivate immediately. However, to accommodate
       # plugins such as the Save plugin, this can be disabled and handled in a

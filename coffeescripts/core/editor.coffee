@@ -35,6 +35,8 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @config.lang or= @defaults.lang
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
+      @config.widget or= {}
+      @config.widget.classname or= @defaults.widget.classname
 
       # Add the atomic classname to the cleaner's ignore list.
       @config.cleaner.ignore.push(@config.atomic.classname)

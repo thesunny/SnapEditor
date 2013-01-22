@@ -298,6 +298,62 @@
         }
       });
       */
+
+      SnapEditor.widgets.graph = {
+        create: function (e) {
+          this.e = e;
+          this.displayPopup();
+        },
+        edit: function (e) {
+          this.e = e;
+          this.displayPopup();
+          console.log(this.e.json.data);
+          this.popup.find("input[name=data]").val(this.e.json.data);
+        },
+        displayPopup: function () {
+          this.setupPopup();
+          this.popup.show();
+          this.popup.find("input[name=data]")[0].focus();
+        },
+        setupPopup: function () {
+          if(!this.popup) {
+            this.popup = $([
+              '<div class="snapeditor_ignore_deactivate">',
+                '<form>',
+                  '<label for="name">Data</label>',
+                  '&nbsp;',
+                  '<input name="data" type="text" style="width: 300px;" />',
+                  '&nbsp;',
+                  '<input type="submit" />',
+                '</form>',
+              '</div>'
+            ].join("")).hide().appendTo("body");
+            this.popup.css({
+              position: "fixed",
+              top: 100,
+              left: 300,
+              zIndex: 300,
+              border: "1px solid gray",
+              background: "white",
+              padding: 10
+            });
+            var self = this;
+            this.popup.find("form").submit(function (e) {
+              e.preventDefault();
+              self.save();
+            });
+          }
+        },
+        heights: [5, 50, 100, 150, 200],
+        counter: 0,
+        save: function () {
+          this.popup.hide();
+          this.e.json.data = this.popup.find("form")[0].data.value;
+          this.e.html = $("<div/>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.json.data)).html();
+          this.e.save();
+        }
+      };
+
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
         stylesheets: [],
