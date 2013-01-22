@@ -27,11 +27,13 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class Keyboard
     constructor: (@api, keyboardShortcuts, @type) ->
+      SnapEditor.DEBUG("Start: Keyboard setup")
       @$el = $(@api.el)
       @keys = {}
       @add(keyboardShortcuts)
       @api.on("snapeditor.activate", @activate)
       @api.on("snapeditor.deactivate", @deactivate)
+      SnapEditor.DEBUG("End: Keyboard setup")
 
     # (key, fn) - Takes a key and a function.
     # (map) - Takes a map of keys and functions.
@@ -41,7 +43,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         throw "Expected a map object" unless $.isPlainObject(arguments[0])
         @add(key, fn) for own key, fn of arguments[0]
       else if arglen == 2
+        SnapEditor.DEBUG("Start: Add key - #{arguments[0]}")
         @keys[Helpers.normalizeKeys(arguments[0])] = arguments[1]
+        SnapEditor.DEBUG("End: Add key - #{arguments[0]}")
       else
         throw "Wrong number of arguments to Keyboard#add"
 

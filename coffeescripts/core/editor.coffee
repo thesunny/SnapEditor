@@ -26,9 +26,11 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @keyboard = new Keyboard(@api, @plugins.getKeyboardShortcuts(), "keydown")
       #@contexts = new Contexts(@api, @plugins.getContexts())
       @contextmenu = new ContextMenu(@api, @$templates, @plugins.getContextMenuButtons())
+      SnapEditor.DEBUG("Finished: Plugins are a go")
       @api.trigger("snapeditor.plugins.ready")
 
     prepareConfig: ->
+      SnapEditor.DEBUG("Start: Prepare Config")
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
       @config.cleaner.ignore or= @defaults.cleaner.ignore
@@ -38,6 +40,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
 
       # Add the atomic classname to the cleaner's ignore list.
       @config.cleaner.ignore.push(@config.atomic.classname)
+      SnapEditor.DEBUG("End: Prepare Config")
 
     loadAssets: ->
       @loadLang()
@@ -45,20 +48,25 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       @loadCSS()
 
     loadLang: ->
+      SnapEditor.DEBUG("Start: Load Lang")
       $.ajax(
         url: @assets.lang(@config.lang),
         async: false,
         success: (json) => @lang = json
       )
+      SnapEditor.DEBUG("End: Load Lang")
 
     loadTemplates: ->
+      SnapEditor.DEBUG("Start: Load Templates")
       $.ajax(
         url: @assets.template("snapeditor.html")
         async: false,
         success: (html) => @$templates = $("<div/>").html(html)
       )
+      SnapEditor.DEBUG("End: Load Templates")
 
     loadCSS: ->
+      SnapEditor.DEBUG("Start: Load CSS")
       # Don't use a <link> tag because it loads asynchronously. Attaching to
       # the onload is not reliable. This hack loads the CSS through AJAX
       # synchronously and dumps the styles into a <style> tag.
@@ -67,6 +75,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
         async: false,
         success: (css) -> Helpers.insertStyles(css)
       )
+      SnapEditor.DEBUG("End: Load CSS")
 
     domEvents: [
       "mouseover"
