@@ -23,7 +23,8 @@ task :compileAndBuild => [:compile, :build]
 namespace :prepare do
   desc "Prepares snapeditor.js for testing"
   task :test => [:compile, :build] do
-    cp "build/snapeditor.js", "spec/acceptance/assets/javascripts"
+    mkdir_p "spec/acceptance/assets/javascripts"
+    cp "build/snapeditor.js", "spec/acceptance/assets/javascripts/."
   end
 
   desc "Prepare the bundle for uploading"
@@ -34,11 +35,11 @@ namespace :prepare do
     rm_rf "bundle/snapeditor"
     mkdir_p "bundle/snapeditor"
     mkdir_p "bundle/snapeditor/javascripts"
-    cp "documentation/LICENSE.md", "bundle/snapeditor"
-    cp "documentation/LICENSE.html", "bundle/snapeditor"
-    cp "documentation/README.md", "bundle/snapeditor"
-    cp "documentation/README.html", "bundle/snapeditor"
-    cp "build/snapeditor.js", "bundle/snapeditor/javascripts"
+    cp "documentation/LICENSE.md", "bundle/snapeditor/."
+    cp "documentation/LICENSE.html", "bundle/snapeditor/."
+    cp "documentation/README.md", "bundle/snapeditor/."
+    cp "documentation/README.html", "bundle/snapeditor/."
+    cp "build/snapeditor.js", "bundle/snapeditor/javascripts/."
     cp_r "spec/acceptance/assets/stylesheets", "bundle/snapeditor/."
     cp_r "spec/acceptance/assets/templates", "bundle/snapeditor/."
     cp_r "spec/acceptance/assets/images", "bundle/snapeditor/."
