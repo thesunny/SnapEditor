@@ -1,8 +1,11 @@
 require ["jquery.custom"], ($) ->
   window.isIE = $.browser.msie
-  window.isIE7 = isIE and parseInt($.browser.version, 10) == 7
-  window.isIE8 = isIE and parseInt($.browser.version, 10) == 8
-  window.isIE9 = isIE and parseInt($.browser.version, 10) == 9
+  #window.isIE7 = isIE and parseInt($.browser.version, 10) == 7
+  #window.isIE8 = isIE and parseInt($.browser.version, 10) == 8
+  #window.isIE9 = isIE and parseInt($.browser.version, 10) == 9
+  window.isIE7 = isIE and document.documentMode == 7
+  window.isIE8 = isIE and document.documentMode == 8
+  window.isIE9 = isIE and document.documentMode == 9
   window.isGecko = $.browser.mozilla
   window.isGecko1 = isGecko and parseInt($.browser.version, 10) == 1
   window.isWebkit = $.browser.webkit

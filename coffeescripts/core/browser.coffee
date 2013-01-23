@@ -1,8 +1,11 @@
 define ["jquery.custom"], ($) ->
   isIE = $.browser.msie
-  isIE7 = isIE and parseInt($.browser.version, 10) == 7
-  isIE8 = isIE and parseInt($.browser.version, 10) == 8
-  isIE9 = isIE and parseInt($.browser.version, 10) == 9
+  #isIE7 = isIE and parseInt($.browser.version, 10) == 7
+  #isIE8 = isIE and parseInt($.browser.version, 10) == 8
+  #isIE9 = isIE and parseInt($.browser.version, 10) == 9
+  isIE7 = isIE and document.documentMode == 7
+  isIE8 = isIE and document.documentMode == 8
+  isIE9 = isIE and document.documentMode == 9
 
   isGecko = $.browser.mozilla
   isGecko1 = isGecko and parseInt($.browser.version, 10) == 1
