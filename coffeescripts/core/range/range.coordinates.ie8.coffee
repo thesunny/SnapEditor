@@ -40,6 +40,13 @@ define ["jquery.custom"], ($) ->
     getCoordinates: ->
       if @range.getBoundingClientRect
         coords = @range.getBoundingClientRect()
+        # IE8's rectangle is read-only. However, we need a writable object so
+        # we recreate the coords object.
+        coords =
+          top: coords.top
+          bottom: coords.bottom
+          left: coords.left
+          right: coords.right
         if coords.top == coords.bottom
           startCoords = @getEdgeCoordinates(true)
           endCoords = @getEdgeCoordinates(false)
