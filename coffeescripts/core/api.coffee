@@ -119,11 +119,17 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
     getBlankRange: ->
       new Range(@el)
 
-    # Select the given el. If no el is given, selects the current selection.
+    # Select the given arg. If no arg is given, selects the current selection.
     # NOTE: This is not directly delegated to the Range object because it is
-    # slightly different. This takes a given element and selects it.
-    select: (el) ->
-      @getRange(el).select()
+    # slightly different. This takes a given argument and selects it.
+    # Arguments:
+    # * arg - Either a SnapEditor Range or DOM element.
+    select: (arg) ->
+      if arg and Helpers.klass(arg) == "Range"
+        range = arg
+      else
+        range = @getRange(arg)
+      range.select()
 
     # Add the coordinates relative to the outer window.
     getCoordinates: (range) ->
