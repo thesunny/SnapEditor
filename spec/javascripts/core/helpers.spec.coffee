@@ -303,6 +303,17 @@ require ["core/helpers", "core/iframe.snapeditor"], (Helpers, IFrame) ->
         object.delFn1()
         expect(object.delObject.value).toBeTruthy()
 
+    describe "#klass", ->
+      it "returns the correct class", ->
+        class Test
+        test = new Test()
+        expect(Helpers.klass(test)).toEqual("Test")
+
+      it "returns null for an anonymous function", ->
+        Test = ->
+        test = new Test()
+        expect(Helpers.klass(test)).toBeNull()
+
     describe "#pass", ->
       it "passes arguments through", ->
         sum = (one, two, three) -> one + two + three
