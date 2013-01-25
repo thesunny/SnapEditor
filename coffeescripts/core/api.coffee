@@ -125,7 +125,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
     # Arguments:
     # * arg - Either a SnapEditor Range or DOM element.
     select: (arg) ->
-      if arg and Helpers.klass(arg) == "Range"
+      if arg and arg.collapse
         range = arg
       else
         range = @getRange(arg)

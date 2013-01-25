@@ -159,15 +159,6 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         throw "Delegate: #{del} does not exist on #{object}" if typeof object[del] == "undefined"
         delFn(object, fn)
 
-    # Returns the class of the object. Expects the class' constructor to be of
-    # the form "function Class(". If the class cannot be determined, returns
-    # null.
-    klass: (object) ->
-      klass = null
-      match = object.constructor.toString().match(/function (.+)\(/)
-      klass = match[1] if match
-      return klass
-
     #
     # Function
     #
