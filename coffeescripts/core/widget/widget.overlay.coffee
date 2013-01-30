@@ -1,3 +1,48 @@
+# This is an overlay for the widget. It adds the overlay to the top of the
+# widget and is absolutely positioned to cover the widget.
+#
+# The iframe is used because it provides a better overlay than just a simple
+# div. There were 2 problems with using the iframe.
+# 1. The iframe needed to be transparent so the stuff underneath can be seen.
+# 2. The iframe needed to be clickable to render the edit dialog.
+# The following are the solutions and they work together to solve both (1) and
+# (2).
+# 1. The iframe contains an html, body, and a div overlay. Everything needs to
+#    have 100% height in order for the overlay to have 100% height. If the
+#    height is not 100%, there's nothing to click.
+# 2. The allowtransparency attribute is required to make the iframe
+#    transparent.
+# 3. The div overlay is used because the transparency styles cannot be applied
+#    to the body.
+# 4. A background colour of white and opacity is used to fake transparency.
+#
+# The buttons are positioned absolutely on top of the iframe.
+#
+# There is a wrapper div around both the iframe and buttons to solve a
+# previous problem. Before, there was no wrapper div and the mouse events were
+# applied to the iframe. This caused a problem because the buttons were
+# positioned at 0 top and 0 left. When the mouse left the widget through the
+# top or left of the buttons, the mouseout event would not fire from the
+# iframe because we moused out of the buttons, not the iframe. We could
+# position the buttons at 1 top and 1 left, but the issue remained if the
+# buttons' height was larger than the widget's height. Mousing out from the
+# bottom of the button would cause the same problem. Hence, we use a wrapper
+# div and put the mousein and mouseout events on that instead. This way, the
+# events bubble up to the wrapper and it will always fire the events. The
+# mouseup needs to remain on the iframe though because the mouseup occurs from
+# the inside of the iframe and does not bubble up to the wrapper div.
+#
+# <div class="widget">
+#   <div>
+#     <iframe>
+#       <!-- actual overlay -->
+#     </iframe>
+#     <div>
+#       <!-- buttons -->
+#     </div>
+#   </div>
+#   <p>Widget content</p>
+# </div>
 define ["jquery.custom", "core/widget/widget.event", "core/iframe"], ($, WidgetEvent, IFrame) ->
   class WidgetOverlay
     constructor: (el, @classname, @api) ->
@@ -10,8 +55,21 @@ define ["jquery.custom", "core/widget/widget.event", "core/iframe"], ($, WidgetE
     insert: ->
       @$el.css("position", "relative")
       size = @$el.getSize()
+
+      @$overlay = $("<div/>").css(
+        position: "absolute"
+        top: 0
+        left: 0
+        zIndex: 100
+        width: "100%"
+        height: "100%"
+      ).on(
+        mouseover: @mouseover
+        mouseout: @mouseout
+      ).prependTo(@$el)
+
       self = this
-      @overlay = new IFrame(
+      $(new IFrame(
         write: ->
           @doc.write("""
             <!DOCTYPE html>
@@ -25,10 +83,6 @@ define ["jquery.custom", "core/widget/widget.event", "core/iframe"], ($, WidgetE
                     margin: 0;
                   }
                   .overlay {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    z-index: -1;
                     background-color: white;
                     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
                     filter: alpha(opacity=10);
@@ -40,28 +94,19 @@ define ["jquery.custom", "core/widget/widget.event", "core/iframe"], ($, WidgetE
             </html>
           """)
         load: ->
-          $(@find("body")).on(
-            mouseup: self.mouseup
-            mouseover: self.mouseover
-            mouseout: self.mouseout
-          )
-      )
+          $(@find("body")).mouseup(self.mouseup)
+      )).
       # The frameborder must be set before the iframe is inserted. If it is
       # added afterwards, it has no effect.
-      $(@overlay).
-        attr("frameborder", 0).
-        attr("allowtransparency", true).
-        css(
-          border: "none"
-          position: "absolute"
-          top: 0
-          left: 0
-          zIndex: 100
-          width: "100%"
-          height: "100%"
-          cursor: "default"
-        ).
-        prependTo(@$el)
+      attr("frameborder", 0).
+      attr("allowtransparency", true).
+      css(
+        border: "none"
+        width: "100%"
+        height: "100%"
+        cursor: "default"
+      ).
+      appendTo(@$overlay)
 
       @$buttons = $("<div/>").
         addClass("#{@classname}_buttons").
@@ -73,7 +118,7 @@ define ["jquery.custom", "core/widget/widget.event", "core/iframe"], ($, WidgetE
           cursor: "default"
         ).
         hide().
-        insertAfter(@overlay)
+        appendTo(@$overlay)
       @$edit = $("<button/>").
         addClass("#{@classname}_edit").
         html("edit").
