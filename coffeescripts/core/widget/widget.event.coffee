@@ -22,10 +22,8 @@ define ["../../../lib/json2", "jquery.custom"], (J, $) ->
       @$el.attr("data-type", @type)
       @$el.attr("data-json", JSON.stringify(@json))
       @$el.html(@html)
-      console.log "SAVED"
-      console.log @$el
-      console.log @$el.html()
       (new @overlayClass(@$el, @classname, @api)).insert()
+      @api.clean(@$el.parent()[0].firstChild, @$el.parent()[0].lastChild)
 
     remove: ->
       @$el.remove()
