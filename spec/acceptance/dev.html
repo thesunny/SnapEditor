@@ -304,13 +304,19 @@
       SnapEditor.widgets.graph = {
         create: function (e) {
           this.e = e;
+          this.save("1,2,200");
+          /* Commenting out for quickness.
           this.displayPopup();
+          */
         },
         edit: function (e) {
           this.e = e;
+          this.save("1,2,200");
+          /* Commenting out for quickness.
           this.displayPopup();
           console.log(this.e.json.data);
           this.popup.find("input[name=data]").val(this.e.json.data);
+          */
         },
         displayPopup: function () {
           this.setupPopup();
@@ -342,16 +348,18 @@
             var self = this;
             this.popup.find("form").submit(function (e) {
               e.preventDefault();
-              self.save();
+              self.save(this.data.value);
             });
           }
         },
         heights: [5, 50, 100, 150, 200],
         counter: 0,
-        save: function () {
+        save: function (data) {
+          /* Commenting out for quickness.
           this.popup.hide();
-          this.e.json.data = this.popup.find("form")[0].data.value;
-          this.e.html = $("<div>hell world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.json.data)).html();
+          */
+          this.e.json.data = data;
+          this.e.html = $("<div>hello world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.json.data)).html();
           this.e.save();
         }
       };
