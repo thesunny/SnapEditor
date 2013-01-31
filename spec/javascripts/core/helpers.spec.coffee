@@ -1,4 +1,4 @@
-require ["core/helpers", "core/iframe.snapeditor"], (Helpers, IFrame) ->
+require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers, IFrame) ->
   describe "helpers", ->
     $editable = null
     beforeEach ->
@@ -150,6 +150,22 @@ require ["core/helpers", "core/iframe.snapeditor"], (Helpers, IFrame) ->
           expect(Helpers.getWindow($editable[0])).toBeDefined()
           expect(Helpers.getWindow($editable[0])).not.toBeNull()
 
+    describe "#getParentIFrame", ->
+      it "returns the correct iframe", ->
+        $iframe1 = $(new IFrame(contents: "<b>hello</b>")).attr("id", "iframe1")
+        $iframe2 = $(new IFrame(
+          contents: "<b>hello</b>"
+          load: ->
+            b = $(@el).find("b")
+            expect($(Helpers.getParentIFrame(b[0])).attr("id")).toEqual("iframe2")
+        )).attr("id", "iframe2")
+        $($iframe1).appendTo($editable)
+        $($iframe2).appendTo($editable)
+
+      it "returns null when the element is not inside an iframe", ->
+        $div = $("<div>").appendTo($editable)
+        expect(Helpers.getParentIFrame($div[0])).toBeNull()
+
     describe "#replaceWithChildren", ->
       $editable = null
       beforeEach ->
@@ -167,7 +183,7 @@ require ["core/helpers", "core/iframe.snapeditor"], (Helpers, IFrame) ->
           # In IE7/8, the space disappears after a block. This should be okay.
           expect(clean($editable.html())).toEqual("this is <em>some</em> text <p>to replace</p>the parent")
 
-    describe "#insertStyle", ->
+    describe "#insertStyles", ->
       it "inserts the styles into the head", ->
         Helpers.insertStyles("test {position: absolute}")
         $style = $("head").find("style").last()
@@ -175,6 +191,54 @@ require ["core/helpers", "core/iframe.snapeditor"], (Helpers, IFrame) ->
         expect($style.attr("type")).toEqual("text/css")
         expect(clean($style.html())).toEqual("test {position: absolute}")
         $style.remove()
+
+    describe "transformCoordinatesRelativeToOuter", ->
+      mouseCoords = x: 100, y: 200
+      elCoords =
+        top: 100
+        bottom: 200
+        left: 300
+        right: 400
+
+      $div = null
+      beforeEach ->
+        $div = $("<div/>").appendTo($editable)
+
+      describe "mouseCoords", ->
+        it "returns the same coordinates when there is no iframe", ->
+          expect(Helpers.transformCoordinatesRelativeToOuter(mouseCoords, $div[0])).toBe(mouseCoords)
+
+        it "returns the translated coordinates when there is an iframe", ->
+          spyOn(Helpers, "getDocument").andReturn("doc")
+          spyOn($.fn, "getScroll").andReturn(x: 5, y: 10)
+          spyOn($.fn, "getCoordinates").andReturn(
+            top: 1
+            bottom: 2
+            left: 3
+            right: 4
+          )
+          outerCoords = Helpers.transformCoordinatesRelativeToOuter(mouseCoords, $div[0])
+          expect(outerCoords.x).toEqual(98)
+          expect(outerCoords.y).toEqual(191)
+
+      describe "elCoords", ->
+        it "returns the same coordinates when there is no iframe", ->
+          expect(Helpers.transformCoordinatesRelativeToOuter(elCoords, $div[0])).toBe(elCoords)
+
+        it "returns the translated coordinates when there is an iframe", ->
+          spyOn(Helpers, "getDocument").andReturn("doc")
+          spyOn($.fn, "getScroll").andReturn(x: 5, y: 10)
+          spyOn($.fn, "getCoordinates").andReturn(
+            top: 1
+            bottom: 2
+            left: 3
+            right: 4
+          )
+          outerCoords = Helpers.transformCoordinatesRelativeToOuter(elCoords, $div[0])
+          expect(outerCoords.top).toEqual(91)
+          expect(outerCoords.bottom).toEqual(191)
+          expect(outerCoords.left).toEqual(298)
+          expect(outerCoords.right).toEqual(398)
 
     describe "#typeOf", ->
       it "returns boolean", ->

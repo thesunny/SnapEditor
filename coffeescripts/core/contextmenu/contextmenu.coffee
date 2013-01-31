@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_action_handler"], ($, Builder, DataActionHandler) ->
+define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_action_handler", "core/helpers"], ($, Builder, DataActionHandler, Helpers) ->
   class ContextMenu
     # Arguments:
     # api - editor API object
@@ -48,7 +48,11 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
       @buildMenu(e.target)
       if @$menu.children().length > 0
         e.preventDefault()
-        coords = @api.getCoordinatesRelativeToOuter(x: e.pageX, y: e.pageY)
+        coords = Helpers.transformCoordinatesRelativeToOuter(
+          x: e.pageX
+          y: e.pageY
+          e.target
+        )
         @$menu.css(@getStyles(coords.x, coords.y)).show()
         @api.onDocument(mousedown: @tryHide, keydown: @hide)
 

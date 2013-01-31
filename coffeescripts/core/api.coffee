@@ -135,35 +135,12 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
     getCoordinates: (range) ->
       range or= @getRange()
       coords = range.getCoordinates()
-      coords.outer = $.extend({}, @getCoordinatesRelativeToOuter(coords))
+      coords.outer = $.extend({}, Helpers.transformCoordinatesRelativeToOuter(coords, @el))
       coords
 
     #
     # MISCELLANEOUS
     #
-
-    # TODO: This is not part of the API. This should be moved to Helpers when
-    # the events infrastructure is added.
-    # Given the coordinates relative to an iframe window, translates them to
-    # coordinates relative to the outer window.
-    getCoordinatesRelativeToOuter: (coords) ->
-      return coords if @doc == document
-      iframeScroll = $(@win).getScroll()
-      iframeCoords = $(@editor.iframe).getCoordinates()
-      # Since the coords are relative to the iframe window, we need to
-      # translate them so they are relative to the viewport of the iframe and
-      # then add on the coordinates of the iframe.
-      if typeof coords.top == "undefined"
-        outerCoords =
-          x: Math.round(coords.x - iframeScroll.x + iframeCoords.left)
-          y: Math.round(coords.y - iframeScroll.y + iframeCoords.top)
-      else
-        outerCoords =
-          top: Math.round(coords.top - iframeScroll.y + iframeCoords.top)
-          bottom: Math.round(coords.bottom - iframeScroll.y + iframeCoords.top)
-          left: Math.round(coords.left - iframeScroll.x + iframeCoords.left)
-          right: Math.round(coords.right - iframeScroll.x + iframeCoords.left)
-      outerCoords
 
     # Gets the default block from the whitelist.
     getDefaultBlock: ->

@@ -93,7 +93,11 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
     # Add custom SnapEditor data to the event.
     handleDOMEvent: (e) =>
       if e.pageX
-        coords = @api.getCoordinatesRelativeToOuter(x: e.pageX, y: e.pageY)
+        coords = Helpers.transformCoordinatesRelativeToOuter(
+          x: e.pageX
+          y: e.pageY
+          e.target
+        )
         e.outerPageX = coords.x
         e.outerPageY = coords.y
       # We want to pass the original DOM event through to the handler but with
