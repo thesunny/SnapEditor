@@ -71,36 +71,6 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
     # EVENTS
     #
 
-    # Attaches the given event handlers to the given events on all documents on
-    # the page.
-    #
-    # Arguments:
-    # * event, event handler
-    # * map
-    onDocument: ->
-      args = arguments
-      $(document).on.apply($(document), args)
-      $("iframe").each(->
-        doc = this.contentWindow.document
-        $(doc).on.apply($(doc), args)
-      )
-
-    # Detaches events from all documents on the page.
-    # Given an event handler, detaches only the given event handler.
-    # Given only an event, detaches all event handlers for the given event.
-    #
-    # Arguments:
-    # * event, event handler
-    # * event
-    # * map
-    offDocument: ->
-      args = arguments
-      $(document).off.apply($(document), args)
-      $("iframe").each(->
-        doc = this.contentWindow.document
-        $(doc).off.apply($(doc), args)
-      )
-
     disableImmediateDeactivate: ->
       @off("snapeditor.tryDeactivate", @deactivate)
 

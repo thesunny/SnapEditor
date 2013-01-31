@@ -54,11 +54,11 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
           e.target
         )
         @$menu.css(@getStyles(coords.x, coords.y)).show()
-        @api.onDocument(mousedown: @tryHide, keydown: @hide)
+        @api.on("snapeditor.document_mousedown": @tryHide, "snapeditor.document_keydown": @hide)
 
     hide: =>
       @$menu.hide() if @$menu
-      @api.offDocument(mousedown: @tryHide, keydown: @hide)
+      @api.off("snapeditor.document_mousedown": @tryHide, "snapeditor.document_keydown": @hide)
 
     # Hide if the target is not the contextmenu.
     tryHide: (e) =>

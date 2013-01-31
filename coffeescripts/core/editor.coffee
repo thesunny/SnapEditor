@@ -90,8 +90,50 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       "keypress"
     ]
 
+    outsideDOMEvents: [
+      "mousedown"
+      "mouseup"
+      "click"
+      "dblclick"
+      "keydown"
+      "keyup"
+      "keypress"
+    ]
+
+    # NOTE: This is for the following the functions.
+    # - handleDOMEvent
+    # - handleDocumentEvent
+    # We want to pass the original DOM event through to the handler but with
+    # our custom data and the event type with "snapeditor" as the namespace.
+    # However, simply doing @api.trigger("snapeditor.event", e) doesn't work
+    # because the handler would see it as function(event, e). We want
+    # function(e) instead. To get around this, we pass e directly to the
+    # trigger. This forces jQuery to use e instead of creating a new event.
+    # However, jQuery uses e's type as the event name to trigger. Hence, we
+    # modify it to include the "snapeditor" namespace to trick it.
+    # Also, the way jQuery namespaces work are more like CSS classes. They
+    # aren't true namespaces.
+    # e.g.
+    #   "snapeditor.outside.click" != snapeditor -> outside -> click
+    #   "snapeditor.outside.click == snapeditor -> outside
+    #                                snapeditor -> click
+
     # Add custom SnapEditor data to the event.
     handleDOMEvent: (e) =>
+      @addCustomDataToEvent(e)
+      e.type = "snapeditor.#{e.type}"
+      @api.trigger(e)
+
+    handleDocumentEvent: (e) =>
+      @addCustomDataToEvent(e)
+      type = e.type
+      e.type = "snapeditor.document_#{type}"
+      @api.trigger(e)
+      if $(e.target).closest(@$el).length == 0
+        e.type = "snapeditor.outside_#{type}"
+        @api.trigger(e)
+
+    addCustomDataToEvent: (e) ->
       if e.pageX
         coords = Helpers.transformCoordinatesRelativeToOuter(
           x: e.pageX
@@ -100,22 +142,46 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
         )
         e.outerPageX = coords.x
         e.outerPageY = coords.y
-      # We want to pass the original DOM event through to the handler but with
-      # our custom data and the event type with "snapeditor" as the namespace.
-      # However, simply doing @api.trigger("snapeditor.event", e) doesn't work
-      # because the handler would see it as function(event, e). We want
-      # function(e) instead. To get around this, we pass e directly to the
-      # trigger. This forces jQuery to use e instead of creating a new event.
-      # However, jQuery uses e's type as the event name to trigger. Hence, we
-      # modify it to include the "snapeditor" namespace to trick it.
-      e.type = "snapeditor.#{e.type}"
-      @api.trigger(e)
+
+    # Attaches the given event handlers to the given events on all documents on
+    # the page.
+    #
+    # Arguments:
+    # * event, event handler
+    # * map
+    onDocument: ->
+      args = arguments
+      $document = $(document)
+      $document.on.apply($document, args)
+      $("iframe").each(->
+        $doc = $(this.contentWindow.document)
+        $doc.on.apply($doc, args)
+      )
+
+    # Detaches events from all documents on the page.
+    # Given an event handler, detaches only the given event handler.
+    # Given only an event, detaches all event handlers for the given event.
+    #
+    # Arguments:
+    # * event, event handler
+    # * event
+    # * map
+    offDocument: ->
+      args = arguments
+      $document = $(document)
+      $document.off.apply($document, args)
+      $("iframe").each(->
+        $doc = $(this.contentWindow.document)
+        $doc.off.apply($doc, args)
+      )
 
     attachDOMEvents: ->
       @$el.on(event, @handleDOMEvent) for event in @domEvents
+      @onDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
     detachDOMEvents: ->
       @$el.off(event, @handleDOMEvent) for event in @domEvents
+      @offDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
     activate: ->
       @attachDOMEvents()
