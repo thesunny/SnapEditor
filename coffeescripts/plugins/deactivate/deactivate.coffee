@@ -10,12 +10,16 @@ define ["jquery.custom"], ($) ->
     activate: =>
       # mousedown and mouseup are tracked to ensure that the entire click
       # sequence is on an element that triggers the deactivation.
-      @api.onDocument("mousedown", @setDeactivate)
-      @api.onDocument("mouseup", @tryDeactivate)
+      @api.on(
+        "snapeditor.document_mousedown": @setDeactivate
+        "snapeditor.document_mouseup": @tryDeactivate
+      )
 
     deactivate: =>
-      @api.offDocument("mousedown", @setDeactivate)
-      @api.offDocument("onmouseup", @tryDeactivate)
+      @api.off(
+        "snapeditor.document_mousedown": @setDeactivate
+        "snapeditor.document_mouseup": @tryDeactivate
+      )
 
     setDeactivate: (e) =>
       unless @isIgnore(e.target)

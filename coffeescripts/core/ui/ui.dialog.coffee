@@ -33,13 +33,17 @@ define ["jquery.custom", "core/helpers", "core/events"], ($, Helpers, Events) ->
       # Therefore, the dialog will never show! Using mousedown avoids this
       # problem as mousedown has already propagated before mouseup is even
       # fired.
-      @api.onDocument("mousedown", @tryMouseHide)
-      @api.onDocument("keyup", @tryKeyHide)
+      @api.on(
+        "snapeditor.document_mousedown": @tryMouseHide
+        "snapeditor.document_keyup": @tryKeyHide
+      )
 
     hide: =>
       $(@getEl()).hide()
-      @api.offDocument("mousedown", @tryMouseHide)
-      @api.offDocument("keyup", @tryKeyHide)
+      @api.off(
+        "snapeditor.document_mousedown": @tryMouseHide
+        "snapeditor.document_keyup": @tryKeyHide
+      )
       @trigger("snapeditor.dialog.hide")
 
     tryMouseHide: (e) =>

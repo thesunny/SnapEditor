@@ -1,5 +1,9 @@
 define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, Browser, Keyboard) ->
   Helpers = {
+    #
+    # CONSTANTS
+    #
+     
     zeroWidthNoBreakSpace: "&#65279;"
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
 
@@ -19,6 +23,10 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     nodeType:
       ELEMENT: 1
       TEXT: 3
+
+    #
+    # DOM
+    #
 
     # Check if an object is an element.
     isElement: (object) ->
@@ -98,6 +106,12 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
       doc = @getDocument(el)
       doc.defaultView or doc.parentWindow
 
+    # Returns the parent iframe that contains the el.
+    # Returns null if the el is not inside an iframe.
+    getParentIFrame: (el) ->
+      doc = @getDocument(el)
+      $("iframe").filter(-> this.contentWindow.document == doc)[0] or null
+
     # Replace the given node with its children.
     replaceWithChildren: (node) ->
       parent = node.parentNode
@@ -116,6 +130,37 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
       else
         style.innerHTML = styles
       $(style).appendTo("head")
+
+    # Transforms the given coords so that they are relative to the outer
+    # window. The target is a node in the same window the coords are currently
+    # relative to.
+    #
+    # coords can be of 2 types:
+    # 1. { x: <int>, y: <int> }
+    # 2. { top: <int>, bottom: <int>, left: <int>, right: <int> }
+    transformCoordinatesRelativeToOuter: (coords, target) ->
+      # Nothing to transform since the target is part of the outer window.
+      return coords if @getDocument(target) == document
+      iframeScroll = $(@getWindow(target)).getScroll()
+      iframeCoords = $(Helpers.getParentIFrame(target)).getCoordinates()
+      # Since the coords are relative to the iframe window, we need to
+      # translate them so they are relative to the viewport of the iframe and
+      # then add on the coordinates of the iframe.
+      if typeof coords.top == "undefined"
+        outerCoords =
+          x: Math.round(coords.x - iframeScroll.x + iframeCoords.left)
+          y: Math.round(coords.y - iframeScroll.y + iframeCoords.top)
+      else
+        outerCoords =
+          top: Math.round(coords.top - iframeScroll.y + iframeCoords.top)
+          bottom: Math.round(coords.bottom - iframeScroll.y + iframeCoords.top)
+          left: Math.round(coords.left - iframeScroll.x + iframeCoords.left)
+          right: Math.round(coords.right - iframeScroll.x + iframeCoords.left)
+      outerCoords
+
+    #
+    # Object
+    #
 
     # Mimics MoooTools typeOf.
     typeOf: (object) ->

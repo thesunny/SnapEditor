@@ -73,36 +73,6 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
     # EVENTS
     #
 
-    # Attaches the given event handlers to the given events on all documents on
-    # the page.
-    #
-    # Arguments:
-    # * event, event handler
-    # * map
-    onDocument: ->
-      args = arguments
-      $(document).on.apply($(document), args)
-      $("iframe").each(->
-        doc = this.contentWindow.document
-        $(doc).on.apply($(doc), args)
-      )
-
-    # Detaches events from all documents on the page.
-    # Given an event handler, detaches only the given event handler.
-    # Given only an event, detaches all event handlers for the given event.
-    #
-    # Arguments:
-    # * event, event handler
-    # * event
-    # * map
-    offDocument: ->
-      args = arguments
-      $(document).off.apply($(document), args)
-      $("iframe").each(->
-        doc = this.contentWindow.document
-        $(doc).off.apply($(doc), args)
-      )
-
     disableImmediateDeactivate: ->
       @off("snapeditor.tryDeactivate", @deactivate)
 
@@ -121,45 +91,28 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
     getBlankRange: ->
       new Range(@el)
 
-    # Select the given el. If no el is given, selects the current selection.
+    # Select the given arg. If no arg is given, selects the current selection.
     # NOTE: This is not directly delegated to the Range object because it is
-    # slightly different. This takes a given element and selects it.
-    select: (el) ->
-      @getRange(el).select()
+    # slightly different. This takes a given argument and selects it.
+    # Arguments:
+    # * arg - Either a SnapEditor Range or DOM element.
+    select: (arg) ->
+      if arg and arg.collapse
+        range = arg
+      else
+        range = @getRange(arg)
+      range.select()
 
     # Add the coordinates relative to the outer window.
     getCoordinates: (range) ->
       range or= @getRange()
       coords = range.getCoordinates()
-      coords.outer = $.extend({}, @getCoordinatesRelativeToOuter(coords))
+      coords.outer = $.extend({}, Helpers.transformCoordinatesRelativeToOuter(coords, @el))
       coords
 
     #
     # MISCELLANEOUS
     #
-
-    # TODO: This is not part of the API. This should be moved to Helpers when
-    # the events infrastructure is added.
-    # Given the coordinates relative to an iframe window, translates them to
-    # coordinates relative to the outer window.
-    getCoordinatesRelativeToOuter: (coords) ->
-      return coords if @doc == document
-      iframeScroll = $(@win).getScroll()
-      iframeCoords = $(@editor.iframe).getCoordinates()
-      # Since the coords are relative to the iframe window, we need to
-      # translate them so they are relative to the viewport of the iframe and
-      # then add on the coordinates of the iframe.
-      if typeof coords.top == "undefined"
-        outerCoords =
-          x: Math.round(coords.x - iframeScroll.x + iframeCoords.left)
-          y: Math.round(coords.y - iframeScroll.y + iframeCoords.top)
-      else
-        outerCoords =
-          top: Math.round(coords.top - iframeScroll.y + iframeCoords.top)
-          bottom: Math.round(coords.bottom - iframeScroll.y + iframeCoords.top)
-          left: Math.round(coords.left - iframeScroll.x + iframeCoords.left)
-          right: Math.round(coords.right - iframeScroll.x + iframeCoords.left)
-      outerCoords
 
     # Gets the default block from the whitelist.
     getDefaultBlock: ->
