@@ -52,7 +52,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/link/link.mirr
 
     setupDialog: ->
       unless @$dialog
-        @dialog.on("snapeditor.dialog.hide", @handleDialogHide)
+        @dialog.on("snapeditor.dialog_hide", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
         @$error = @$dialog.find(".error")
         @$form = @$dialog.find(".link_form").on("submit", @submit)

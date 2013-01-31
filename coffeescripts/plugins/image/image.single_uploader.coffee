@@ -69,7 +69,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
         # dialog here guarantees that the iframe is already shown and that
         # getting the size will return the correct value.
         @generateDialog(@ui)
-        @dialog.on("snapeditor.dialog.hide", @handleDialogHide)
+        @dialog.on("snapeditor.dialog_hide", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
         @$error = @$dialog.find(".error")
         @$form = @$dialog.find(".insert_image_form")

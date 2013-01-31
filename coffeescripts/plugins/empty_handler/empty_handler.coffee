@@ -3,7 +3,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     register: (@api) ->
       @api.on("snapeditor.activate", @activate)
       @api.on("snapeditor.deactivate", @deactivate)
-      @api.on("snapeditor.cleaner.finished", @onCleanerFinished)
+      @api.on("snapeditor.cleaner_finished", @onCleanerFinished)
 
     activate: =>
       $(@api.el).on("keyup", @onkeyup)
