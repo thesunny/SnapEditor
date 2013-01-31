@@ -5,7 +5,7 @@ define ["jquery.custom"], ($) ->
         @$el = $(@api.el)
         @api.on("snapeditor.activate", @snap)
         @api.on("snapeditor.deactivate", @unsnap)
-        @api.on("snapeditor.cleaner.finished", @update)
+        @api.on("snapeditor.cleaner_finished", @update)
 
     # Prepare the semi-transparent divs and the snap/unsnap effects.
     setup: ->

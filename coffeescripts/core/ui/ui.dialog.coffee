@@ -44,7 +44,7 @@ define ["jquery.custom", "core/helpers", "core/events"], ($, Helpers, Events) ->
         "snapeditor.document_mousedown": @tryMouseHide
         "snapeditor.document_keyup": @tryKeyHide
       )
-      @trigger("snapeditor.dialog.hide")
+      @trigger("snapeditor.dialog_hide")
 
     tryMouseHide: (e) =>
       $target = $(e.target)

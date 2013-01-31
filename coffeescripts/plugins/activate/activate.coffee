@@ -24,7 +24,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "plugins
     #
     # NOTE: This should trigger making @api.$el editable.
     click: ->
-      @api.trigger("snapeditor.activate.click")
+      @api.trigger("snapeditor.activate_click")
 
     # Activates the editing session.
     activate: ->

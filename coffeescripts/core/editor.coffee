@@ -27,7 +27,7 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
       #@contexts = new Contexts(@api, @plugins.getContexts())
       @contextmenu = new ContextMenu(@api, @$templates, @plugins.getContextMenuButtons())
       SnapEditor.DEBUG("Finished: Plugins are a go")
-      @api.trigger("snapeditor.plugins.ready")
+      @api.trigger("snapeditor.plugins_ready")
 
     prepareConfig: ->
       SnapEditor.DEBUG("Start: Prepare Config")

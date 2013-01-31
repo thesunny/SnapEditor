@@ -39,7 +39,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
         # getting the size will return the correct value.
         placeholderId = "image_upload_button_#{Math.floor(Math.random()*99999)}"
         @dialog = @ui.dialog(@api.lang.imageUploadTitle, "<span id=\"#{placeholderId}\"></span>")
-        @dialog.on("snapeditor.dialog.hide", @handleDialogHide)
+        @dialog.on("snapeditor.dialog_hide", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
         @snapImage = new SnapImage(
           flashUrl: @api.assets.flash("SnapImage.swf")

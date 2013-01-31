@@ -5,7 +5,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
       @normalizer = new Normalizer(@api, @api.config.cleaner.ignore)
       @api.on("snapeditor.activate", => @keepRange(=> @clean(@api.el.firstChild, @api.el.lastChild)))
       @api.on("clean", (e, args...) => @clean.apply(this, args))
-      @api.on("snapeditor.plugins.ready", => @clean(@api.el.firstChild, @api.el.lastChild))
+      @api.on("snapeditor.plugins_ready", => @clean(@api.el.firstChild, @api.el.lastChild))
 
     # Given a range, it saves the range, performs the clean up, then
     # repositions the range.
@@ -16,7 +16,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
         when 0 then @keepRange(@cleanup)
         when 2 then @cleanup.apply(this, arguments)
         else throw "Wrong number of arguments to Cleaner.clean(). Expecting nothing () or (startNode, endNode)."
-      @api.trigger("snapeditor.cleaner.finished")
+      @api.trigger("snapeditor.cleaner_finished")
 
     # Cleans up and normalizes all the nodes between and including startNode
     # and endNode.
