@@ -16,7 +16,7 @@ define ["jquery.custom"], ($) ->
 
   isSupported = isIE7 || isIE8 || isIE9 || isGecko || isWebkit
 
-  return Browser =
+  return {
     isIE: isIE
     isIE7: isIE7
     isIE8: isIE8
@@ -26,3 +26,4 @@ define ["jquery.custom"], ($) ->
     isWebkit: isWebkit
     hasW3CRanges: hasW3CRanges
     isSupported: isSupported
+  }
