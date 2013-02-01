@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugins", "core/keyboard", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Helpers, Assets, API, Plugins, Keyboard, ContextMenu, Whitelist) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "core/api", "core/plugins", "core/keyboard", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Browser, Helpers, Assets, API, Plugins, Keyboard, ContextMenu, Whitelist) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -13,6 +13,16 @@ define ["jquery.custom", "core/helpers", "core/assets", "core/api", "core/plugin
     #   * lang: language (default: "en")
     #   * onSave: callback for saving (return true or error message)
     constructor: (el, @defaults, @config = {}) ->
+      SnapEditor.DEBUG("Webkit: #{Browser.isWebkit}")
+      SnapEditor.DEBUG("Gecko: #{Browser.isGecko}")
+      SnapEditor.DEBUG("Gecko1: #{Browser.isGecko1}")
+      SnapEditor.DEBUG("IE: #{Browser.isIE}")
+      SnapEditor.DEBUG("IE7: #{Browser.isIE7}")
+      SnapEditor.DEBUG("IE8: #{Browser.isIE8}")
+      SnapEditor.DEBUG("IE9: #{Browser.isIE9}")
+      SnapEditor.DEBUG("W3C Ranges: #{Browser.hasW3CRanges}")
+      SnapEditor.DEBUG("Supported: #{Browser.isSupported}")
+
       @unsupported = false
       # Transform the string into a CSS id selector.
       el = "#" + el if typeof el == "string"
