@@ -69,7 +69,10 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
         # This cannot be called for IE because it will cause the window to
         # scroll and jump. Hence this is only for Firefox.
         @api.el.focus() if Browser.isGecko
-        @api.trigger("#{@getDataActionEl(e.target).attr("data-action")}", e.target)
+        action = @getDataActionEl(e.target).attr("data-action")
+        SnapEditor.DEBUG("Action: #{action}")
+        SnapEditor.DEBUG("Is Range Valid: #{@api.isValid()}")
+        @api.trigger(action, e.target)
         @trigger("click")
       @isClick = false
       # Purposely added true here because the line above sets @isClick to false.
