@@ -26,7 +26,7 @@ describe "Activate", ->
       activate.api = { trigger: null }
       spyOn(activate.api, "trigger")
       activate.click({})
-      expect(activate.api.trigger).toHaveBeenCalledWith("snapeditor.activate.click")
+      expect(activate.api.trigger).toHaveBeenCalledWith("snapeditor.activate_click")
 
   describe "#activate", ->
     ait "activates the editor", required, (Activate) ->
