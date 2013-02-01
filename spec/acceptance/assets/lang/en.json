@@ -1,6 +1,10 @@
 {
   "bold": "Bold",
   "italic": "Italic",
+  "underline": "Underline",
+  "subscript": "Subscript",
+  "superscript": "Superscript",
+  "strikethrough": "Strikethrough",
   "paragraph": "Paragraph",
   "h1": "Heading 1",
   "h2": "Heading 2",
