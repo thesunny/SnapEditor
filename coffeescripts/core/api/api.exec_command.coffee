@@ -30,17 +30,14 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
 
     # Formats the selection with the given tag.
     # Returns true if the command was allowed. False otherwise.
-    formatInline: (tag) ->
+    formatInline: (type) ->
       allowed = @api.isValid()
       if allowed
         # Gecko defaults to styling with CSS. We want to disable that.
         # NOTE: This disables styling with CSS for the entire document, not just
         # for this editor.
         @exec("styleWithCSS", false) if Browser.isGecko
-        switch tag
-          when "b" then @exec("bold")
-          when "i" then @exec("italic")
-          else throw "The inline style for tag #{tag} is unsupported"
+        @exec(type)
       return allowed
 
     # Add an indent.

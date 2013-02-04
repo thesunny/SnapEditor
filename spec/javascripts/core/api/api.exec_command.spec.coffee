@@ -19,23 +19,19 @@
       $editable.remove()
 
     describe "#formatInline", ->
-      it "throws an error when the tag is not supported", ->
-        spyOn(execCommand, "exec")
-        expect(-> execCommand.formatInline("test")).toThrow()
-
-      it "bolds given 'b'", ->
+      it "bolds given 'bold'", ->
         $div = $("<div>some text</div>").appendTo($editable)
         new Range($editable[0], $div[0]).select()
-        execCommand.formatInline("b")
+        execCommand.formatInline("bold")
         if isIE
           expect(clean($div.html())).toEqual("<strong>some text</strong>")
         else
           expect($div.html()).toEqual("<b>some text</b>")
 
-      it "italicizes given 'i'", ->
+      it "italicizes given 'italic'", ->
         $div = $("<div>some text</div>").appendTo($editable)
         new Range($editable[0], $div[0]).select()
-        execCommand.formatInline("i")
+        execCommand.formatInline("italic")
         if isIE
           expect(clean($div.html())).toEqual("<em>some text</em>")
         else

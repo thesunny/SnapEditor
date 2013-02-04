@@ -77,6 +77,10 @@ define [
             # Inlines
             "Bold": "b"
             "Italic": "i"
+            "Underline": "u"
+            "Subscript": "sub"
+            "Superscript": "sup"
+            "Strikethrough": "strike"
             "Link": "a[href, target]"
             "Range Start": "span#RANGE_START"
             "Range End": "span#RANGE_END"

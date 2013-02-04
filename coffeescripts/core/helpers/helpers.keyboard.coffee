@@ -1,4 +1,4 @@
-define [], ->
+define ["core/browser"], (Browser) ->
   return {
     # Keyboard key mappings taken from MooTools.
     keys:
@@ -16,6 +16,8 @@ define [], ->
       end: 35
       pageup: 33
       pagedown: 34
+      "-": if Browser.isGecko then 173 else 189
+      "=": if Browser.isGecko then 61 else 187
 
     # Returns the string representation of the key pressed. Taken from MooTools.
     keyOf: (event) ->
