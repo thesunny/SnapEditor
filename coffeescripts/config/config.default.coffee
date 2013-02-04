@@ -16,7 +16,8 @@ define [
   "plugins/table/table"
   "plugins/image/image"
   "plugins/image/image.uploader"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, Link, List, Table, Image, ImageUploader) ->
+  "plugins/print/print"
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, Link, List, Table, Image, ImageUploader, Print) ->
   return {
     build: ->
       return {
@@ -38,6 +39,7 @@ define [
           new Table()
           new Image()
           new ImageUploader()
+          new Print()
         ]
         toolbar: [
           "Inline"
