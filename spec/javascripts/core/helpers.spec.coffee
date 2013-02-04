@@ -29,6 +29,10 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
         $editable[0].appendChild(text)
         expect(Helpers.isBlock(text)).toBeFalsy()
 
+      it "returns true when an hr is given", ->
+        $hr = $("<hr/>").appendTo($editable)
+        expect(Helpers.isBlock($hr[0])).toBeTruthy()
+
       describe "when the block is in the DOM", ->
         it "returns true when a block element is given", ->
           expect(Helpers.isBlock($("<div/>").appendTo($editable)[0])).toBeTruthy()

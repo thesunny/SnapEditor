@@ -44,6 +44,8 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         $container = $("<div/>").hide().appendTo("body")
         $object.appendTo($container)
       isBlock = $object.css("display") != "inline"
+      # Add this special case because IE7 displays <hr> as inline.
+      isBlock = true if $object.tagName() == "hr"
       unless inDOM
         $object.detach()
         $container.remove()
