@@ -2,7 +2,11 @@ define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.f
   class InPlaceEditor extends Editor
     constructor: (el, config) ->
       defaults = Defaults.build()
-      defaults.toolbar = defaults.toolbar.concat(["|", "SaveCancel"]) if config.onSave
+      if config.onSave
+        if config.toolbar
+          config.toolbar = config.toolbar.concat(["|", "SaveCancel"])
+        else
+          defaults.toolbar = defaults.toolbar.concat(["|", "SaveCancel"])
       super(el, defaults, config)
       toolbarComponents = @plugins.getToolbarComponents()
       @toolbar = new Toolbar(@api, @$templates, toolbarComponents.available, toolbarComponents.config)
