@@ -76,6 +76,17 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range.insert("<b></b>")
             expect($h1.html()).toEqual("header heading<b></b>item")
 
+          it "deletes the next hr", ->
+            $hr = $("<hr/>").insertAfter($h1)
+
+            range = new Range($editable[0])
+            range.range.selectNodeContents($h1[0])
+            range.collapse(false)
+            range.select()
+
+            handler.handleCursor(event)
+            expect($editable.find("hr").length).toEqual(0)
+
         describe "backspace", ->
           event = null
           beforeEach ->
@@ -126,6 +137,17 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range = new Range($editable[0], window)
             range.insert("<b></b>")
             expect($li.html()).toEqual("item<b></b>some text")
+
+          it "deletes the previous hr", ->
+            $hr = $("<hr/>").insertBefore($p)
+
+            range = new Range($editable[0])
+            range.range.selectNodeContents($p[0])
+            range.collapse(true)
+            range.select()
+
+            handler.handleCursor(event)
+            expect($editable.find("hr").length).toEqual(0)
 
     describe "#deleteAtomicElement", ->
       e = null

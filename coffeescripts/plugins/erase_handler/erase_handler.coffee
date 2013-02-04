@@ -64,18 +64,21 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       # Attempt to find the two nodes to merge.
       key = Helpers.keyOf(e)
       if key == 'delete' and range.isEndOfElement(parentEl)
-        aNode = parentEl
-        bNode = $(parentEl).next()[0]
+        aEl = parentEl
+        bEl = $(parentEl).next()[0]
       else if key == 'backspace' and range.isStartOfElement(parentEl)
-        aNode = $(parentEl).prev()[0]
-        bNode = parentEl
+        aEl = $(parentEl).prev()[0]
+        bEl = parentEl
 
-      # Merge nodes if aNode given.
-      if aNode and bNode
-        # Call preventDefault first so that if @mergeNodes fails, nothing
+      # Merge nodes if both found.
+      if aEl and bEl
+        # Call preventDefault first so that if @merge fails, nothing
         # happens. This will alert us to bugs sooner (crash early).
         e.preventDefault()
-        @api.keepRange(-> $(aNode).merge(bNode))
+        if $(aEl).tagName() == "hr"
+          $(aEl).remove()
+        else
+          @api.keepRange(-> $(aEl).merge(bEl))
 
     deleteAtomicElement: (e, key) ->
       deleted = false
