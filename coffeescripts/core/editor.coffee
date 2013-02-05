@@ -48,6 +48,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "core/ap
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
       @config.atomic.classnames = [@config.atomic.classname]
+      @config.eraseHandler = {}
+      @config.eraseHandler.deleteSelectors = [".#{@config.atomic.classname}"]
 
       # Add the atomic classname to the cleaner's ignore list.
       @config.cleaner.ignore.push(@config.atomic.classname)
