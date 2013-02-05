@@ -18,9 +18,6 @@
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   class EraseHandler
     register: (@api) ->
-      # The delete selectors are selectors in which the erase handler should
-      # just delete the entire element instead of attempting to merge.
-      @deleteSelectors = ["hr"].concat(@api.config.eraseHandler.deleteSelectors)
       @api.on("snapeditor.activate", @activate)
       @api.on("snapeditor.deactivate", @deactivate)
 
@@ -79,7 +76,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           @api.keepRange(-> $(aEl).merge(bEl))
 
     getCSSDeleteSelectors: ->
-      @deleteSelectors.join(",")
+      ["hr"].concat(@api.config.eraseHandler.deleteSelectors).join(",")
 
     shouldDelete: (node) ->
       node and Helpers.isElement(node) and $(node).filter(@getCSSDeleteSelectors()).length > 0
@@ -105,7 +102,6 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           return node unless Helpers.isTextnode(node)
           !node.nodeValue.match(Helpers.emptyRegExp)
         )
-        console.log sibling
         # If the sibling exists and should be deleted, delete it.
         if self.shouldDelete(sibling)
             e.preventDefault()
