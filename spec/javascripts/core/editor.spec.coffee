@@ -12,6 +12,8 @@ require ["core/editor", "core/helpers"], (Editor, Helpers) ->
             "*": "P"
           ignore: []
         lang: "en",
+        eraseHandler:
+          delete: "delete"
         atomic:
           classname: "atomic"
       config = path: "spec/javascripts/support/assets"

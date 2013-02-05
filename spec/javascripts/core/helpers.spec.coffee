@@ -57,27 +57,6 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
           expect(testValue).toBeTruthy()
           expect($("#div").length).toEqual(0)
 
-    describe "#hasClass", ->
-      $div = null
-      beforeEach ->
-        $div = $("<div/>").addClass("test")
-
-      it "returns false when the object is not an element", ->
-        text = document.createTextNode("test")
-        expect(Helpers.hasClass(text, "test")).toBeFalsy()
-
-      it "returns true when the element has the class", ->
-        expect(Helpers.hasClass($div[0], "test")).toBeTruthy()
-
-      it "returns false when the element does not have the class", ->
-        expect(Helpers.hasClass($div[0], "fail")).toBeFalsy()
-
-      it "returns true when the element has at least one of the classes", ->
-        expect(Helpers.hasClass($div[0], ["something", "else", "test", "and", "more"])).toBeTruthy()
-
-      it "returns false when the element does not have the class", ->
-        expect(Helpers.hasClass($div[0], ["something", "else", "and", "more"])).toBeFalsy()
-
     describe "#nodesFrom", ->
       $div = null
       beforeEach ->

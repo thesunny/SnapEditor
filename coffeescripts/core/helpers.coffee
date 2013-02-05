@@ -51,19 +51,6 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         $container.remove()
       return isBlock
 
-    # Check if an object has a classname in the list.
-    hasClass: (object, classnames) ->
-      list = $.makeArray(classnames)
-      found = false
-      if Helpers.isElement(object)
-        $.each(list, ->
-          if $(object).hasClass(this)
-            found = true
-            return false
-          return true
-        )
-      return found
-
     # Returns an array of the nodes between and including startNode and endNode.
     # This assumes the startNode and endNode have the same parent.
     nodesFrom: (startNode, endNode) ->

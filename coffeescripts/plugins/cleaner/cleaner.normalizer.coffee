@@ -4,9 +4,15 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
 
     # Arguments:
     # * api - SnapEditor API
-    # * ignore - an array of classnames to ignore
+    # * ignore - an array of selectors to ignore
     constructor: (@api, @ignore) ->
       @flattener = new Flattener(@ignore)
+
+    getCSSSelectors: ->
+      @ignore.join(",")
+
+    shouldIgnore: (node) ->
+      Helpers.isElement(node) and $(node).filter(@getCSSSelectors()).length > 0
 
     # Normalizes all the nodes between and including startNode and endNode.
     # Assumes startNode and endNode have the same parent.
@@ -52,7 +58,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
           nextSibling = node.nextSibling
 
           # If the node is to be ignored, don't replace it or normalize the inside.
-          isIgnore = Helpers.hasClass(node, @ignore)
+          isIgnore = @shouldIgnore(node)
 
           # Don't replace the node if it is to be ignored.
           unless isIgnore
