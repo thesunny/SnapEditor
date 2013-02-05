@@ -75,11 +75,11 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         else
           @api.keepRange(-> $(aEl).merge(bEl))
 
-    getCSSDeleteSelectors: ->
-      ["hr"].concat(@api.config.eraseHandler.deleteSelectors).join(",")
+    getCSSSelectors: ->
+      ["hr"].concat(@api.config.eraseHandler.delete).join(",")
 
     shouldDelete: (node) ->
-      node and Helpers.isElement(node) and $(node).filter(@getCSSDeleteSelectors()).length > 0
+      node and Helpers.isElement(node) and $(node).filter(@getCSSSelectors()).length > 0
 
     delete: (e, key) ->
       deleted = false

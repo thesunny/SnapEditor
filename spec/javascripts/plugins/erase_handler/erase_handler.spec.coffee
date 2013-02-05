@@ -10,8 +10,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
         el: $editable[0]
         getRange: (el) -> new Range($editable[0], el or window)
         select: (el) -> @getRange(el).select()
-        config:
-          eraseHandler: deleteSelectors: [".delete"]
+        config: eraseHandler: delete: [".delete"]
       )
       Helpers.delegate(api, "getRange()", "delete", "keepRange", "collapse", "isCollapsed")
       handler.register(api)

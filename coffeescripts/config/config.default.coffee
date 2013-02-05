@@ -96,6 +96,8 @@ define [
             "em": "Italic"
           ignore: []
         lang: "en"
+        eraseHandler:
+          delete: []
         atomic:
           classname: "atomic"
       }
