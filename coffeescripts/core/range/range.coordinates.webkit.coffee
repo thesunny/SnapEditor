@@ -25,14 +25,14 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         measureRange = @constructor.getBlankRange()
         measureRange.setStart(@range.startContainer, @range.startOffset)
         measureRange.setEnd(body, body.childNodes.length)
-        clientRect = measureRange.getClientRects()[0]
-        coords = @getCoordinatesFromClientRect(clientRect)
+        coords = @getCoordinatesFromClientRect(measureRange.getClientRects()[0])
         coords.right = coords.left
       else
-        clientRect = @range.getBoundingClientRect()
-        coords = @getCoordinatesFromClientRect(clientRect)
+        coords = @getCoordinatesFromClientRect(@range.getBoundingClientRect())
       coords
 
+    # The clientRect is relative to the viewport. We want the coordinates
+    # relative to the document.
     getCoordinatesFromClientRect: (clientRect) ->
       windowScroll = $(@win).getScroll()
       # Round the numbers because Webkit returns decimal pixels.
