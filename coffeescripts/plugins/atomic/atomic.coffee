@@ -17,9 +17,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         mouseup: @mouseup
       )
 
-    getClassnamesSelector: ->
-      "." + @api.config.atomic.classnames.join(", .")
-
     forwardKeys: ["right", "down", "pagedown", "end"]
     backwardKeys: ["left", "up", "pageup", "home"]
 
@@ -34,10 +31,13 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     mouseup: (e) =>
       @handleRange("mouse")
 
+    getCSSelectors: ->
+      ["hr"].concat(@api.config.atomic.selectors).join(",")
+
     # Arugments:
     # * direction - forward/backward/mouse
     handleRange: (direction) ->
-      [startParent, endParent] = @api.getParentElements(@getClassnamesSelector())
+      [startParent, endParent] = @api.getParentElements(@getCSSelectors())
       # Only do something if the range is inside an atomic element.
       if startParent or endParent
         if @api.isCollapsed() and startParent
@@ -45,6 +45,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         else if startParent or endParent
           @moveSelectedRange(startParent, endParent, direction)
         @api.clean()
+
+    isAtomic: (node) ->
+      Helpers.isElement(node) and $(node).filter(@getCSSelectors()).length > 0
 
     # Returns the previous/next sibling of el.
     #
@@ -55,7 +58,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       sibling = el["#{which}Sibling"]
       # If the sibling doesn't exist or it is an atomic element, then we
       # insert a new sibling.
-      if !sibling or Helpers.hasClass(sibling, @api.config.atomic.classnames)
+      if !sibling or @isAtomic(sibling)
         position = if which == "previous" then "before" else "after"
         sibling = @insertSibling(position, el)
       sibling

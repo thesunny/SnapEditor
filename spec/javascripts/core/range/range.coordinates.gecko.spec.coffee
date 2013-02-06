@@ -24,7 +24,7 @@ if isGecko and not isGecko1
             range.collapse(true)
             coords = range.getCoordinates()
             expect(coords.top).toEqual(100)
-            expect(coords.bottom).toEqual(116)
+            expect(coords.bottom).toEqual(115)
             expect(coords.left).toEqual(200)
             expect(coords.right).toEqual(200)
 

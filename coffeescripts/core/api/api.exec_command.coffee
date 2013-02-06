@@ -64,6 +64,10 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
       @exec("insertorderedlist") if allowed
       return allowed
 
+    # Insert a horizontal rule.
+    insertHorizontalRule: ->
+      @rangeExec("inserthorizontalrule")
+
     # Insert the given link element.
     # It is possible that several links are created. Therefore, this returns an
     # array of inserted links. If insertion fails, an empty array is returned.

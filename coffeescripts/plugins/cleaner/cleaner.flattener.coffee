@@ -1,7 +1,7 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class Flattener
     # Arguments:
-    # * ignore - an array of classnames to ignore
+    # * ignore - an array of selectors to ignore
     constructor: (@ignore) ->
 
     doNotReplace: ["ol", "ul", "li", "table", "tbody", "thead", "tfoot", "tr", "th", "td", "caption"]
@@ -55,7 +55,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
             # Rip the list out of the list item.
             $(child).insertBefore(node)
           when "table"
-            if Helpers.hasClass(child, @ignore)
+            if @shouldIgnore(child)
               # If the table is to be ignored, just move the entire table.
               # Don't flatten.
               $li = $template.clone()
@@ -72,7 +72,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
           else
             # Create a list item out of the block.
             $li = $template.clone()
-            if Helpers.hasClass(child, @ignore)
+            if @shouldIgnore(child)
               # If the child is to be ignored, just move the entire child.
               $li.append(child)
             else
@@ -90,7 +90,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       child = node.childNodes[0]
       while child
         nextSibling = child.nextSibling
-        if Helpers.hasClass(child, @ignore)
+        if @shouldIgnore(child)
           # If the child is to be ignored, remove the previous <br> and skip
           # flattening it.
           $(child.previousSibling).remove() if child.previousSibling
@@ -99,5 +99,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
           # Insert a <br> if there is a next sibling.
           $template.clone().insertBefore(nextSibling) if nextSibling
         child = nextSibling
+
+    getCSSSelectors: ->
+      @ignore.join(",")
+
+    shouldIgnore: (node) ->
+      Helpers.isElement(node) and $(node).filter(@getCSSSelectors()).length > 0
 
   return Flattener

@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <style type="text/css" media="screen">
+    <link rel="stylesheet" href="/spec/acceptance/assets/stylesheets/cssreset-min.css" type="text/css" charset="utf-8">
+    <style type="text/css">
       table {
         border-collapse: collapse;
       }
@@ -25,6 +26,10 @@
       }
       .buttons {
         margin-top: 20px;
+      }
+
+      h1 {
+        text-decoration: underline;
       }
     </style>
   </head>
@@ -369,11 +374,12 @@
         stylesheets: [],
         contentClass: "myClass",
         toolbar: [
-          "Bold", "Italic", "Underline", "Subscript", "Superscript", "Strikethrough", "|"
+          "Bold", "Italic", "Underline", "Subscript", "Superscript", "Strikethrough", "|", "HorizontalRule", "Print"
         ]
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
+        toolbar: [ "Print" ],
         snap: false,
         imageServer: {
           uploadUrl: insecureUploadUrl,

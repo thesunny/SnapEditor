@@ -1,12 +1,3 @@
-# TODO: The atomic plugin requires the ability to override the delete in
-# certain scenarios. However, because there is no events infrastructure in
-# place, we have to add the atomic plugin deletion code here, which is not the
-# correct place. However, this is the only way it will work. This is a hack
-# for now. When the events infrastructure is in place, we should move the
-# atomic deletion code back to the atomic plugin. The original file before the
-# atomic deletion code was added can be found at
-# erase_handler.before_atomic.coffee.
-#
 # Handles the annoying spans that Safari adds when it merges lines together
 # after deleting content through the delete or backspace button.
 #
@@ -41,12 +32,14 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     onkeydown: (e) =>
       key = Helpers.keyOf(e)
       if key == 'delete' or key == 'backspace'
-        # Handle the deletion of the atomic element. If no atomic element was
+        # Handle the deletion of an entire element. If no entire element was
         # deleted, continue with the normal flow of the erase handler.
-        unless @deleteAtomicElement(e, key)
+        unless @delete(e, key)
           if Browser.isWebkit
+            # Webkit is the only browser we have to override the default
+            # deleting because it does some funky stuff.
             if @api.isCollapsed()
-              @handleCursor(e)
+              @merge(e)
             else
               e.preventDefault()
               @api.delete()
@@ -57,33 +50,45 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       key = Helpers.keyOf(e)
       @api.clean() if key == 'delete' or key == 'backspace'
 
-    handleCursor: (e) ->
+    merge: (e) ->
       range = @api.getRange()
       parentEl = range.getParentElement((el) -> Helpers.isBlock(el))
 
       # Attempt to find the two nodes to merge.
       key = Helpers.keyOf(e)
       if key == 'delete' and range.isEndOfElement(parentEl)
-        aNode = parentEl
-        bNode = $(parentEl).next()[0]
+        aEl = parentEl
+        bEl = $(parentEl).next()[0]
       else if key == 'backspace' and range.isStartOfElement(parentEl)
-        aNode = $(parentEl).prev()[0]
-        bNode = parentEl
+        aEl = $(parentEl).prev()[0]
+        bEl = parentEl
 
-      # Merge nodes if aNode given.
-      if aNode and bNode
-        # Call preventDefault first so that if @mergeNodes fails, nothing
+      # Merge nodes if both found.
+      if aEl and bEl
+        # Call preventDefault first so that if @merge fails, nothing
         # happens. This will alert us to bugs sooner (crash early).
         e.preventDefault()
-        @api.keepRange(-> $(aNode).merge(bNode))
+        if $(aEl).tagName() == "hr"
+          # If we're backspacing an <hr>, simply delete the <hr> instead of
+          # merging.
+          $(aEl).remove()
+        else
+          @api.keepRange(-> $(aEl).merge(bEl))
 
-    deleteAtomicElement: (e, key) ->
+    getCSSSelectors: ->
+      ["hr"].concat(@api.config.eraseHandler.delete).join(",")
+
+    shouldDelete: (node) ->
+      node and Helpers.isElement(node) and $(node).filter(@getCSSSelectors()).length > 0
+
+    delete: (e, key) ->
       deleted = false
       # Nothing to do if a selection is found.
       return deleted unless @api.isCollapsed()
-      # Delete the atomic element if needed. Note that startEl == endEl
-      # because the range is collapsed.
+      # Delete the element if needed. Note that startEl == endEl because the
+      # range is collapsed.
       api = @api
+      self = this
       @api.keepRange((startEl, endEl) ->
         if key == "delete"
           el = endEl
@@ -97,8 +102,8 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           return node unless Helpers.isTextnode(node)
           !node.nodeValue.match(Helpers.emptyRegExp)
         )
-        # If the sibling exists and is an atomic element, delete it.
-        if sibling and Helpers.isElement(sibling) and $(sibling).hasClass(api.config.atomic.classname)
+        # If the sibling exists and should be deleted, delete it.
+        if self.shouldDelete(sibling)
             e.preventDefault()
             $(sibling).remove()
             deleted = true

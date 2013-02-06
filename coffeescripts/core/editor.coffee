@@ -47,14 +47,19 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "core/ap
       @config.lang or= @defaults.lang
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
-      @config.atomic.classnames = [@config.atomic.classname]
+      @config.atomic.selectors = [".#{@config.atomic.classname}"]
+      @config.eraseHandler or= {}
+      @config.eraseHandler.delete or= @defaults.eraseHandler.delete
       @config.widget or= {}
       @config.widget.classname or= @defaults.widget.classname
 
-      # Add the widget classname to the atomic classnames list.
-      @config.atomic.classnames.push(@config.widget.classname)
-      # Add the atomic classnames to the cleaner's ignore list.
-      @config.cleaner.ignore = @config.cleaner.ignore.concat(@config.atomic.classnames)
+      # Add selectors to the atomic's selectors list.
+      @config.atomic.selectors.push(".#{@config.widget.classname}")
+      # Add selectors to the cleaner's ignore list.
+      @config.cleaner.ignore = @config.cleaner.ignore.concat(@config.atomic.selectors)
+      # Add selectors to the eraseHandler's delete list.
+      @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
+
       SnapEditor.DEBUG("End: Prepare Config")
 
     loadAssets: ->

@@ -6,7 +6,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
       api = $("<div/>")
       api.el = $editable[0]
       api.createElement = (name) -> document.createElement(name)
-      normalizer = new Normalizer(api, ["ignore", "ignore2"])
+      normalizer = new Normalizer(api, [".ignore", ".ignore2"])
 
     afterEach ->
       $editable.remove()

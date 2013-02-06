@@ -9,9 +9,7 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
       $end = $($editable.find("div")[2])
       atomic = new Atomic()
       atomic.api = $("<div/>")
-      atomic.api.config =
-        atomic:
-          classnames: ["atomic", "widget"]
+      atomic.api.config = atomic: selectors: [".atomic", ".widget"]
       atomic.api.el = $editable[0]
       atomic.api.getRange = (el) -> new Range($editable[0], el or window)
       atomic.api.getBlankRange = -> new Range($editable[0])
@@ -23,10 +21,6 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
 
     afterEach ->
       $editable.remove()
-
-    describe "#getClassnamesSelector", ->
-      it "returns the correct selector", ->
-        expect(atomic.getClassnamesSelector()).toEqual(".atomic, .widget")
 
     describe "#getSibling", ->
       beforeEach ->

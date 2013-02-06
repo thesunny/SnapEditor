@@ -22,20 +22,20 @@ if isIE9
               range.range.selectNodeContents($first[0])
               range.collapse(true)
               coords = range.getCoordinates()
-              expect(coords.top).toEqual(111)
-              expect(coords.bottom).toEqual(125)
+              expect(coords.top).toEqual(100)
+              expect(coords.bottom).toEqual(114)
               expect(coords.left).toEqual(200)
               expect(coords.right).toEqual(200)
 
             it "returns the coordinates of the range when it's at the end of the document", ->
               range = new Range($editable[0])
-              range.range.setStart($second[0].childNodes[0], 6)
-              range.collapse(false)
+              range.range.setStart($second[0].childNodes[0], 5)
+              range.collapse(true)
               coords = range.getCoordinates()
-              expect(coords.top).toEqual(124)
-              expect(coords.bottom).toEqual(138)
-              expect(coords.left).toEqual(233)
-              expect(coords.right).toEqual(233)
+              expect(coords.top).toEqual(114)
+              expect(coords.bottom).toEqual(128)
+              expect(coords.left).toEqual(227)
+              expect(coords.right).toEqual(227)
 
             it "does not alter the HTML", ->
               html = $editable.html()
