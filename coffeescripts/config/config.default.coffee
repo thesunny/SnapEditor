@@ -11,13 +11,14 @@ define [
   "plugins/edit/edit"
   "plugins/inline/inline"
   "plugins/block/block"
+  "plugins/horizontal_rule/horizontal_rule"
   "plugins/link/link"
   "plugins/list/list"
   "plugins/table/table"
   "plugins/image/image"
   "plugins/image/image.uploader"
   "plugins/print/print"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, Link, List, Table, Image, ImageUploader, Print) ->
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, HorizontalRule, Link, List, Table, Image, ImageUploader, Print) ->
   return {
     build: ->
       return {
@@ -34,6 +35,7 @@ define [
           new Edit()
           new Inline()
           new Block()
+          new HorizontalRule()
           new Link()
           new List()
           new Table()
@@ -76,6 +78,8 @@ define [
             "Table Cell": "td > BR"
             # BR
             "BR": "br"
+            # HR
+            "HR": "hr"
             # Inlines
             "Bold": "b"
             "Italic": "i"
@@ -94,6 +98,8 @@ define [
             "em": "Italic"
           ignore: []
         lang: "en"
+        eraseHandler:
+          delete: []
         atomic:
           classname: "atomic"
       }

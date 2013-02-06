@@ -29,6 +29,10 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
         $editable[0].appendChild(text)
         expect(Helpers.isBlock(text)).toBeFalsy()
 
+      it "returns true when an hr is given", ->
+        $hr = $("<hr/>").appendTo($editable)
+        expect(Helpers.isBlock($hr[0])).toBeTruthy()
+
       describe "when the block is in the DOM", ->
         it "returns true when a block element is given", ->
           expect(Helpers.isBlock($("<div/>").appendTo($editable)[0])).toBeTruthy()
@@ -52,27 +56,6 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
           $div.trigger("test")
           expect(testValue).toBeTruthy()
           expect($("#div").length).toEqual(0)
-
-    describe "#hasClass", ->
-      $div = null
-      beforeEach ->
-        $div = $("<div/>").addClass("test")
-
-      it "returns false when the object is not an element", ->
-        text = document.createTextNode("test")
-        expect(Helpers.hasClass(text, "test")).toBeFalsy()
-
-      it "returns true when the element has the class", ->
-        expect(Helpers.hasClass($div[0], "test")).toBeTruthy()
-
-      it "returns false when the element does not have the class", ->
-        expect(Helpers.hasClass($div[0], "fail")).toBeFalsy()
-
-      it "returns true when the element has at least one of the classes", ->
-        expect(Helpers.hasClass($div[0], ["something", "else", "test", "and", "more"])).toBeTruthy()
-
-      it "returns false when the element does not have the class", ->
-        expect(Helpers.hasClass($div[0], ["something", "else", "and", "more"])).toBeFalsy()
 
     describe "#nodesFrom", ->
       $div = null

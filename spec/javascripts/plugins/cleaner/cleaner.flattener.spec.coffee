@@ -3,7 +3,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.flattener"], ($, Flattener) -
     $editable = flattener = null
     beforeEach ->
       $editable = addEditableFixture()
-      flattener = new Flattener(["ignore", "ignore2"])
+      flattener = new Flattener([".ignore", ".ignore2"])
 
     afterEach ->
       $editable.remove()
