@@ -32,7 +32,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       @handleRange("mouse")
 
     getCSSelectors: ->
-      @api.config.atomic.selectors.join(",")
+      ["hr"].concat(@api.config.atomic.selectors).join(",")
 
     # Arugments:
     # * direction - forward/backward/mouse
