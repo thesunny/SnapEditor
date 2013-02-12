@@ -53,6 +53,8 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
     isLabel: (label) ->
       !!label.match(/^[A-Z0-9]/)
 
+    # Parses the given string into a WhitelistObject.
+    # e.g. h1#special-h1.title[data-json, style] > P
     parse: (string) ->
       [element, next] = ($.trim(s) for s in string.split(">"))
       [element, attrs] = ($.trim(s) for s in element.split("["))
