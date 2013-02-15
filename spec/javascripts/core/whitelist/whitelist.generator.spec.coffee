@@ -120,12 +120,29 @@ require ["core/whitelist/whitelist.generator"], (Generator) ->
         expect(obj.attrs).toEqual(width: true, height: true)
         expect(obj.next).toBeUndefined()
 
-      it "parses the id, classes, and attributes together", ->
-        obj = generator.parse("p#special.normal.highlighted[width,height]")
+      it "parses values", ->
+        obj = generator.parse("p[width,height,style=(background|text-align)]")
+        expect(obj.tag).toEqual("p")
+        expect(obj.id).toBeNull()
+        expect(obj.classes).toEqual("")
+        expect(obj.attrs).toEqual(width: true, height: true, style: true)
+        expect(obj.values).toEqual(
+          style:
+            background: true
+            "text-align": true
+        )
+
+      it "parses the id, classes, attributes, and values together", ->
+        obj = generator.parse("p#special.normal.highlighted[width,height, style=(background|text-align)]")
         expect(obj.tag).toEqual("p")
         expect(obj.id).toEqual("special")
         expect(obj.classes).toEqual("highlighted normal")
-        expect(obj.attrs).toEqual(width: true, height: true)
+        expect(obj.attrs).toEqual(width: true, height: true, style: true)
+        expect(obj.values).toEqual(
+          style:
+            background: true
+            "text-align": true
+        )
         expect(obj.next).toBeUndefined()
 
       it "parses a next tag", ->
@@ -170,11 +187,16 @@ require ["core/whitelist/whitelist.generator"], (Generator) ->
         expect(obj.next).toEqual("Block")
 
       it "parses a full string", ->
-        obj = generator.parse("p#special.normal.highlighted[width,height] > div.simple.highlighted")
+        obj = generator.parse("p#special.normal.highlighted[width,height,style=(background|text-align)] > div.simple.highlighted")
         expect(obj.tag).toEqual("p")
         expect(obj.id).toEqual("special")
         expect(obj.classes).toEqual("highlighted normal")
-        expect(obj.attrs).toEqual(width: true, height: true)
+        expect(obj.attrs).toEqual(width: true, height: true, style: true)
+        expect(obj.values).toEqual(
+          style:
+            background: true
+            "text-align": true
+        )
         expect(obj.next.tag).toEqual("div")
         expect(obj.next.id).toBeNull()
         expect(obj.next.classes).toEqual("highlighted simple")

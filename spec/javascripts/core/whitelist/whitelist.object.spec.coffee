@@ -25,6 +25,30 @@ require ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObjec
         expect($el.attr("width")).toEqual("100px")
         expect($el.attr("height")).toBeUndefined()
 
+      it "builds an element with the given tag and all styles", ->
+        obj = new WhitelistObject("p", null, [], ["width", "style"])
+        $el = $(obj.getElement(document, $('<div width="100px" style="background-color: pink; text-align: left;"/>')[0]))
+        expect($el.tagName()).toEqual("p")
+        expect($el.attr("width")).toEqual("100px")
+        if isIE9
+          expect($el.attr("style")).toEqual("text-align: left; background-color: pink;")
+        else if isIE
+          expect($el.attr("style")).toEqual("text-align: left; background-color: pink")
+        else
+          expect($el.attr("style")).toEqual("background-color: pink; text-align: left;")
+
+      it "builds an element with the given tag and styles", ->
+        obj = new WhitelistObject("p", null, [], ["width", "style"], { style: ["font-size", "text-align"] })
+        $el = $(obj.getElement(document, $('<div width="100px" style="font-size: 12px; text-align: left; color: pink;"/>')[0]))
+        expect($el.tagName()).toEqual("p")
+        expect($el.attr("width")).toEqual("100px")
+        if isIE9
+          expect($.trim($el.attr("style"))).toEqual("text-align: left; font-size: 12px;")
+        else if isIE
+          expect($.trim($el.attr("style"))).toEqual("text-align: left; font-size: 12px")
+        else
+          expect($.trim($el.attr("style"))).toEqual("font-size: 12px; text-align: left;")
+
     describe "#idMatches", ->
       it "returns true when both the element and object don't have ids", ->
         obj = new WhitelistObject("p")
@@ -83,3 +107,23 @@ require ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObjec
 
       it "returns false when the element contains disallowed attributes", ->
         expect(obj.attributesAllowed($('<p width="100px" src="some/url"/>')[0])).toBeFalsy()
+
+    describe "#valuesAllowed", ->
+      obj = null
+      beforeEach ->
+        obj = new WhitelistObject("p", null, [], ["style"], { style: ["background", "text-align"] })
+
+      it "throws when not a style attribute", ->
+        expect(-> obj.valuesAllowed("width", "")).toThrow()
+
+      it "returns true when there are no values", ->
+        expect(obj.valuesAllowed("style", "")).toBeTruthy()
+
+      it "returns true when the value is allowed", ->
+        expect(obj.valuesAllowed("style", "background: url('image.png')")).toBeTruthy()
+
+      it "returns true when the values are allowed", ->
+        expect(obj.valuesAllowed("style", "background: url('image.png'); text-align: left;")).toBeTruthy()
+
+      it "returns false when the value is not allowed", ->
+        expect(obj.valuesAllowed("style", "background: url('image.png'); text-align: left; color: pink")).toBeFalsy()

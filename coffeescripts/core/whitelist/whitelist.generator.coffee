@@ -54,16 +54,23 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
       !!label.match(/^[A-Z0-9]/)
 
     # Parses the given string into a WhitelistObject.
-    # e.g. h1#special-h1.title[data-json, style] > P
+    # e.g. h1#special-h1.title[data-json, style=(background|text-align)] > P
     parse: (string) ->
       [element, next] = ($.trim(s) for s in string.split(">"))
       [element, attrs] = ($.trim(s) for s in element.split("["))
       [element, classes...] = ($.trim(s) for s in element.split("."))
       [tag, id] = ($.trim(s) for s in element.split("#"))
+      values = {}
       # Handle attributes if there are any.
       # Use [0..-2] to remove the trailing ']'.
-      attrs = ($.trim(s) for s in attrs[0..-2].split(",")) if attrs
+      if attrs
+        attrs = for s in attrs[0..-2].split(",")
+          [attr, v] = $.trim(s).split("=(")
+          # Handle values if there are any.
+          # Use [0..-2] to remove the trailing ')'.
+          values[attr] = ($.trim(s) for s in v[0..-2].split("|")) if v
+          attr
       next = @parse(next) if next and !@isLabel(next)
-      return new WhitelistObject(tag, id, classes, attrs, next)
+      return new WhitelistObject(tag, id, classes, attrs, values, next)
 
   return Generator
