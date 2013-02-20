@@ -41,7 +41,7 @@ define ["jquery.custom", "core/api/api.exec_command", "core/helpers", "core/even
       )
       Helpers.delegate(this, "getBlankRange()", "selectNodeContents", "selectEndOfElement")
       Helpers.delegate(this, "execCommand",
-        "formatBlock", "formatInline", "indent", "outdent",
+        "formatBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )
       Helpers.delegate(this, "whitelist", "isAllowed", "getReplacement", "getNext")

@@ -11,6 +11,7 @@ define [
   "plugins/edit/edit"
   "plugins/inline/inline"
   "plugins/block/block"
+  "plugins/align/align"
   "plugins/horizontal_rule/horizontal_rule"
   "plugins/link/link"
   "plugins/list/list"
@@ -18,7 +19,7 @@ define [
   "plugins/image/image"
   "plugins/image/image.uploader"
   "plugins/print/print"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, HorizontalRule, Link, List, Table, Image, ImageUploader, Print) ->
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, Align, HorizontalRule, Link, List, Table, Image, ImageUploader, Print) ->
   return {
     build: ->
       return {
@@ -35,6 +36,7 @@ define [
           new Edit()
           new Inline()
           new Block()
+          new Align()
           new HorizontalRule()
           new Link()
           new List()
