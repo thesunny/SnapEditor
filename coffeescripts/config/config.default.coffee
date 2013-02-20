@@ -11,6 +11,7 @@ define [
   "plugins/edit/edit"
   "plugins/inline/inline"
   "plugins/block/block"
+  "plugins/align/align"
   "plugins/horizontal_rule/horizontal_rule"
   "plugins/link/link"
   "plugins/list/list"
@@ -18,7 +19,7 @@ define [
   "plugins/image/image"
   "plugins/image/image.uploader"
   "plugins/print/print"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, HorizontalRule, Link, List, Table, Image, ImageUploader, Print) ->
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, Align, HorizontalRule, Link, List, Table, Image, ImageUploader, Print) ->
   return {
     build: ->
       return {
@@ -35,6 +36,7 @@ define [
           new Edit()
           new Inline()
           new Block()
+          new Align()
           new HorizontalRule()
           new Link()
           new List()
@@ -57,15 +59,15 @@ define [
         cleaner:
           whitelist:
             # Blocks
-            "Paragraph": "p > Paragraph"
-            "Div": "div > Div"
+            "Paragraph": "p[style=(text-align)] > Paragraph"
+            "Div": "div[style=(text-align)] > Div"
             # Headings
-            "Heading 1": "h1 > Paragraph"
-            "Heading 2": "h2 > Paragraph"
-            "Heading 3": "h3 > Paragraph"
-            "Heading 4": "h4 > Paragraph"
-            "Heading 5": "h5 > Paragraph"
-            "Heading 6": "h6 > Paragraph"
+            "Heading 1": "h1[style=(text-align)] > Paragraph"
+            "Heading 2": "h2[style=(text-align)] > Paragraph"
+            "Heading 3": "h3[style=(text-align)] > Paragraph"
+            "Heading 4": "h4[style=(text-align)] > Paragraph"
+            "Heading 5": "h5[style=(text-align)] > Paragraph"
+            "Heading 6": "h6[style=(text-align)] > Paragraph"
             # Lists
             "Unordered List": "ul"
             "Ordered List": "ol"
@@ -74,8 +76,8 @@ define [
             "Table": "table"
             "Table Body": "tbody"
             "Table Row": "tr"
-            "Table Header": "th > BR"
-            "Table Cell": "td > BR"
+            "Table Header": "th[style=(text-align)] > BR"
+            "Table Cell": "td[style=(text-align)] > BR"
             # BR
             "BR": "br"
             # HR

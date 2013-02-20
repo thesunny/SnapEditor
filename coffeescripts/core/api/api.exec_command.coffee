@@ -40,6 +40,69 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
         @exec(type)
       return allowed
 
+    # Aligns the text given how: left, centre/center, right, justify/full.
+    #
+    # NOTE:
+    # Only Webkit and Gecko offer CSS styling for alignment. IE provides only
+    # attributes for alignment.
+    #
+    # NOTE:
+    # There are many edge cases when selecting into tables.
+    # 1. When selecting across an entire table, all browsers do not align any
+    #    of the cells.
+    # 2. When the selection ends inside a table, some of the browsers will
+    #    align the cells while others will not.
+    # 3. When the selection start inside a table, some of the browsers will
+    #    align the cells while others will not.
+    # 4. When the selection starts and ends in different cells, some of the
+    #    browsers will align the cells while others will not.
+    # Due to these differences, it was very hard to stay consistent. Hence, if
+    # the selection doesn't start and end in the same cell, we disallow
+    # alignment. This may seem restrictive, but it's also pretty ridiculous to
+    # do this from the user's perspective.
+    align: (how) ->
+      how = "center" if how == "centre"
+      how = "full" if how == "justify"
+      allowed = true
+      # Only allow alignment in tables if the selection starts and ends in the
+      # same table cell.
+      unless @api.isCollapsed()
+        [startCell, endCell] = @api.getParentElements("td, th")
+        allowed = startCell == endCell
+      if allowed
+        # It is possible that styling with CSS has been turned off. We make sure
+        # that we turn on CSS styling so we get style="text-align: left" instead
+        # of align="left".
+        @exec("styleWithCSS", true) if Browser.isGecko
+        allowed = @rangeExec("justify#{Helpers.capitalize(how)}")
+        # IE adds alignment using align="left" instead of style="text-align:
+        # left". To fix this, we allow IE to do its thing and then look for
+        # all the places it inserted align="left" and change it so that it uses
+        # style="text-align" instead. There is one odd case which is for table
+        # cells. IE wraps the content in a <p> and adds the alignment on the
+        # <p>. Hence, if the alignment element is inside a table cell, we apply
+        # style="text-align: left" on the table cell instead.
+        if allowed and Browser.isIE
+          self = this
+          $(@api.find("*[align]")).each(->
+            $alignEl = $(this)
+            # Since we're grabbing all elements with the align attribute, we
+            # may be dealing with atomic elements too. However, since they're
+            # atomic, we don't actually want to change them. Therefore, we
+            # skip any elements that are atomic. Unfortunately, this is a hack
+            # since execCommand shouldn't actually know about atomic, but this
+            # part of the code is already a hack and it's the simplest way to
+            # do this.
+            if $alignEl.closest(self.api.config.atomic.selectors.join(",")).length == 0
+              align = $alignEl.attr("align")
+              # Align the parent table cell instead if it exists.
+              $cell = $alignEl.parent("td, th")
+              $alignEl = $cell if $cell.length > 0
+              $alignEl.css("text-align", align)
+              $(this).removeAttr("align")
+          )
+      allowed
+
     # Add an indent.
     # Returns true if the command was allowed. False otherwise.
     indent: ->

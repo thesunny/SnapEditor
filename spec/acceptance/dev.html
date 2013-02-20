@@ -148,8 +148,16 @@
     <div class="insecure">
       <h1>Insecure</h1>
       <textarea id="insecure_form" class="form">
+        <p>some text at the beginning</p>
+        <p>some text at the beginning</p>
         <div class="atomic">This is atomic</div>
         <h4>Heading 4</h4>
+        <p>This is some text</p>
+        <p>This is some text</p>
+        <p>This is some text. This is going to be really long because we need to check things like justify and other things like that. That's why this is so long. I normally wouldn't bother typing so much but oh well...</p>
+        <p>This is some text</p>
+        <p>This is some text</p>
+        <p>This is some text</p>
         Make me editable!
         <br/>
         <div class="atomic">This is atomic</div>
@@ -246,6 +254,9 @@
         <div class="atomic">This is atomic</div>
         Make me editable!
         <br/>
+        <p style="text-align: right; background-color: pink">
+          RIGHT HERE!
+        </p>
         <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
         <p><a href="snapeditor.com">SnapEditor</a></p>
         <h1>Heading 1</h1>
@@ -374,7 +385,7 @@
         stylesheets: [],
         contentClass: "myClass",
         toolbar: [
-          "Bold", "Italic", "Underline", "Subscript", "Superscript", "Strikethrough", "|", "HorizontalRule", "Print"
+          "Bold", "Italic", "Underline", "Subscript", "Superscript", "Strikethrough", "|", "HorizontalRule", "Print", "|", "Align"
         ]
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
