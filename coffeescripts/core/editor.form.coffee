@@ -1,6 +1,12 @@
-define ["jquery.custom", "core/editor", "config/config.default.form", "core/assets", "core/iframe.snapeditor", "core/toolbar/toolbar.static"], ($, Editor, Defaults, Assets, IFrame, Toolbar) ->
+define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.form", "core/assets", "core/iframe.snapeditor", "core/toolbar/toolbar.static"], ($, Helpers, Editor, Defaults, Assets, IFrame, Toolbar) ->
   class FormEditor extends Editor
     constructor: (textarea, config) ->
+      # The base editor deals with initializing after document ready. However,
+      # the form editor requires the document to be ready as well. Hence, it
+      # needs to take care of its own initialization.
+      $(Helpers.pass(@formInit, [textarea, config], this))
+
+    formInit: (textarea, config) =>
       # Transform the string into a CSS id selector.
       textarea = "#" + textarea if typeof textarea == "string"
       @$textarea = $(textarea)
@@ -28,6 +34,10 @@ define ["jquery.custom", "core/editor", "config/config.default.form", "core/asse
 
     finishConstructor: (el, config) =>
       FormEditor.__super__.constructor.call(this, el, Defaults.build(), config)
+
+    # Perform the actual initialization of the editor.
+    init: (el) =>
+      super(el)
       toolbarComponents = @plugins.getToolbarComponents()
       @toolbar = new Toolbar(@api, @$templates, toolbarComponents.available, toolbarComponents.config)
       @formize(@toolbar.$toolbar)

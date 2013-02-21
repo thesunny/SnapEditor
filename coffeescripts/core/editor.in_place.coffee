@@ -8,6 +8,10 @@ define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.f
         else
           defaults.toolbar = defaults.toolbar.concat(["|", "SaveCancel"])
       super(el, defaults, config)
+
+    # Perform the actual initialization of the editor.
+    init: (el) =>
+      super(el)
       toolbarComponents = @plugins.getToolbarComponents()
       @toolbar = new Toolbar(@api, @$templates, toolbarComponents.available, toolbarComponents.config)
 

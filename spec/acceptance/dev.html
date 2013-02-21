@@ -32,6 +32,210 @@
         text-decoration: underline;
       }
     </style>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/lib/json2.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/spec/javascripts/support/assets/javascripts/sha1.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/spec/javascripts/support/assets/javascripts/strftime.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/spec/javascripts/support/assets/javascripts/toISOString.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      SnapEditor.debug = true;
+
+      SnapEditor.widgets.graph = {
+        create: function (e) {
+          this.e = e;
+          this.save("1,2,200");
+          /* Commenting out for quickness.
+          this.displayPopup();
+          */
+        },
+        edit: function (e) {
+          this.e = e;
+          this.save("1,2,200");
+          /* Commenting out for quickness.
+          this.displayPopup();
+          console.log(this.e.json.data);
+          this.popup.find("input[name=data]").val(this.e.json.data);
+          */
+        },
+        displayPopup: function () {
+          this.setupPopup();
+          this.popup.show();
+          this.popup.find("input[name=data]")[0].focus();
+        },
+        setupPopup: function () {
+          if(!this.popup) {
+            this.popup = $([
+              '<div class="snapeditor_ignore_deactivate">',
+                '<form>',
+                  '<label for="name">Data</label>',
+                  '&nbsp;',
+                  '<input name="data" type="text" style="width: 300px;" />',
+                  '&nbsp;',
+                  '<input type="submit" />',
+                '</form>',
+              '</div>'
+            ].join("")).hide().appendTo("body");
+            this.popup.css({
+              position: "fixed",
+              top: 100,
+              left: 300,
+              zIndex: 300,
+              border: "1px solid gray",
+              background: "white",
+              padding: 10
+            });
+            var self = this;
+            this.popup.find("form").submit(function (e) {
+              e.preventDefault();
+              self.save(this.data.value);
+            });
+          }
+        },
+        heights: [5, 50, 100, 150, 200],
+        counter: 0,
+        save: function (data) {
+          /* Commenting out for quickness.
+          this.popup.hide();
+          */
+          this.e.json.data = data;
+          this.e.html = $("<div>hello world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.json.data)).html();
+          this.e.save();
+        }
+      };
+
+      //var secureResourceId = "secure/123";
+      var insecureDirectory = "insecure/123";
+      //var secureUrl = "/snapimage_api_secure";
+      var insecureUploadUrl = "/snapimage_api";
+      var insecurePublicUrl = "/storage"
+      //var insecureUploadUrl = "http://" + window.location.hostname + ":54321/snapimage_api";
+      //var insecureUploadUrl = "http://images.snapeditor.com/snapimage_api";
+      //var clientSecurityToken = CryptoJS.SHA1("client:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
+      //var serverSecurityToken = CryptoJS.SHA1("server:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
+
+      /*
+      var secureForm = new SnapEditor.Form("secure_form", {
+        path: "/spec/acceptance/assets",
+        image_server: {
+          url: secureUrl,
+          resource_id: secureResourceId,
+          client_security_token: clientSecurityToken
+        }
+      });
+      var secureInPlace = new SnapEditor.InPlace("secure_in_place", {
+        path: "/spec/acceptance/assets",
+        image_server: {
+          url: secureUrl,
+          resource_id: secureResourceId,
+          client_security_token: clientSecurityToken
+        },
+        onSave: function (html) {
+          console.log(html);
+          return true;
+        }
+      });
+      */
+      var insecureForm = new SnapEditor.Form("insecure_form", {
+        path: "/spec/acceptance/assets",
+        stylesheets: [],
+        contentClass: "myClass",
+        toolbar: [
+          "Bold", "Italic", "Underline", "Subscript", "Superscript", "Strikethrough", "|", "HorizontalRule", "Print", "|", "alignleft", "aligncentre", "alignright", "alignjustify"
+        ]
+      });
+      var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
+        path: "/spec/acceptance/assets",
+        toolbar: [ "Print" ],
+        snap: false,
+        imageServer: {
+          uploadUrl: insecureUploadUrl,
+          publicUrl: insecurePublicUrl,
+          directory: insecureDirectory
+        }/*,
+        onSave: function (html) {
+          console.log(html);
+          return "OMG! ERROR!";
+        }*/
+      });
+
+      /*
+      var success = function (data, text, xhr) { console.log(data); };
+      var error = function (xhr, text, error) { console.log(text); };
+
+      $(".server_sync").click(function (e) {
+        var $parent = $(e.target).parents(".insecure");
+        var url;
+        var options = {
+          action: "sync_resource",
+          content: {},
+          sync_date_time: new Date().toISOString()
+        }
+        if($parent.length > 0) {
+          url = insecureUploadUrl;
+          options["content"]["form"] = insecureForm.getContents();
+          options["content"]["in_place"] = insecureInPlace.getContents();
+          options["resource_identifier"] = insecureDirectory;
+        } else {
+          url = secureUrl;
+          options["content"]["form"] = secureForm.getContents();
+          options["content"]["in_place"] = secureInPlace.getContents();
+          options["resource_identifier"] = secureResourceId;
+          options["server_security_token"] = serverSecurityToken;
+        }
+        $.ajax({
+          url: url,
+          type: "POST",
+          data: { json: JSON.stringify(options) },
+          success: success,
+          error: error
+        });
+      });
+
+      $(".server_list").click(function (e) {
+        var $parent = $(e.target).parents(".insecure");
+        var url;
+        var options = { action: "list_resource_images" }
+        if($parent.length > 0) {
+          url = insecureUploadUrl;
+          options["resource_identifier"] = insecureDirectory;
+        } else {
+          url = secureUrl;
+          options["resource_identifier"] = secureResourceId;
+          options["server_security_token"] = serverSecurityToken;
+        }
+        $.ajax({
+          url: url,
+          type: "POST",
+          data: { json: JSON.stringify(options) },
+          success: success,
+          error: error
+        });
+      });
+
+      $(".server_delete").click(function (e) {
+        var $parent = $(e.target).parents(".insecure");
+        var url;
+        var options = { action: "delete_resource_images" }
+        if($parent.length > 0) {
+          url = insecureUploadUrl;
+          options["resource_identifier"] = insecureDirectory;
+        } else {
+          url = secureUrl;
+          options["resource_identifier"] = secureResourceId;
+          options["server_security_token"] = serverSecurityToken;
+        }
+        $.ajax({
+          url: url,
+          type: "POST",
+          data: { json: JSON.stringify(options) },
+          success: success,
+          error: error
+        });
+      });
+      */
+    </script>
   </head>
   <body>
     <!--<div class="secure">-->
@@ -274,210 +478,5 @@
         <!--<button class="server_delete">Delete</button>-->
       <!--</div>-->
     </div>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/lib/json2.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/spec/javascripts/support/assets/javascripts/sha1.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/spec/javascripts/support/assets/javascripts/strftime.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/spec/javascripts/support/assets/javascripts/toISOString.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" charset="utf-8">
-      SnapEditor.debug = true;
-
-      //var secureResourceId = "secure/123";
-      var insecureDirectory = "insecure/123";
-      //var secureUrl = "/snapimage_api_secure";
-      var insecureUploadUrl = "/snapimage_api";
-      var insecurePublicUrl = "/storage"
-      //var insecureUploadUrl = "http://" + window.location.hostname + ":54321/snapimage_api";
-      //var insecureUploadUrl = "http://images.snapeditor.com/snapimage_api";
-      //var clientSecurityToken = CryptoJS.SHA1("client:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
-      //var serverSecurityToken = CryptoJS.SHA1("server:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
-
-      /*
-      var secureForm = new SnapEditor.Form("secure_form", {
-        path: "/spec/acceptance/assets",
-        image_server: {
-          url: secureUrl,
-          resource_id: secureResourceId,
-          client_security_token: clientSecurityToken
-        }
-      });
-      var secureInPlace = new SnapEditor.InPlace("secure_in_place", {
-        path: "/spec/acceptance/assets",
-        image_server: {
-          url: secureUrl,
-          resource_id: secureResourceId,
-          client_security_token: clientSecurityToken
-        },
-        onSave: function (html) {
-          console.log(html);
-          return true;
-        }
-      });
-      */
-
-      SnapEditor.widgets.graph = {
-        create: function (e) {
-          this.e = e;
-          this.save("1,2,200");
-          /* Commenting out for quickness.
-          this.displayPopup();
-          */
-        },
-        edit: function (e) {
-          this.e = e;
-          this.save("1,2,200");
-          /* Commenting out for quickness.
-          this.displayPopup();
-          console.log(this.e.json.data);
-          this.popup.find("input[name=data]").val(this.e.json.data);
-          */
-        },
-        displayPopup: function () {
-          this.setupPopup();
-          this.popup.show();
-          this.popup.find("input[name=data]")[0].focus();
-        },
-        setupPopup: function () {
-          if(!this.popup) {
-            this.popup = $([
-              '<div class="snapeditor_ignore_deactivate">',
-                '<form>',
-                  '<label for="name">Data</label>',
-                  '&nbsp;',
-                  '<input name="data" type="text" style="width: 300px;" />',
-                  '&nbsp;',
-                  '<input type="submit" />',
-                '</form>',
-              '</div>'
-            ].join("")).hide().appendTo("body");
-            this.popup.css({
-              position: "fixed",
-              top: 100,
-              left: 300,
-              zIndex: 300,
-              border: "1px solid gray",
-              background: "white",
-              padding: 10
-            });
-            var self = this;
-            this.popup.find("form").submit(function (e) {
-              e.preventDefault();
-              self.save(this.data.value);
-            });
-          }
-        },
-        heights: [5, 50, 100, 150, 200],
-        counter: 0,
-        save: function (data) {
-          /* Commenting out for quickness.
-          this.popup.hide();
-          */
-          this.e.json.data = data;
-          this.e.html = $("<div>hello world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.json.data)).html();
-          this.e.save();
-        }
-      };
-
-      var insecureForm = new SnapEditor.Form("insecure_form", {
-        path: "/spec/acceptance/assets",
-        stylesheets: [],
-        contentClass: "myClass",
-        toolbar: [
-          "Bold", "Italic", "Underline", "Subscript", "Superscript", "Strikethrough", "|", "HorizontalRule", "Print", "|", "Align"
-        ]
-      });
-      var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
-        path: "/spec/acceptance/assets",
-        toolbar: [ "Print" ],
-        snap: false,
-        imageServer: {
-          uploadUrl: insecureUploadUrl,
-          publicUrl: insecurePublicUrl,
-          directory: insecureDirectory
-        }/*,
-        onSave: function (html) {
-          console.log(html);
-          return "OMG! ERROR!";
-        }*/
-      });
-
-      /*
-      var success = function (data, text, xhr) { console.log(data); };
-      var error = function (xhr, text, error) { console.log(text); };
-
-      $(".server_sync").click(function (e) {
-        var $parent = $(e.target).parents(".insecure");
-        var url;
-        var options = {
-          action: "sync_resource",
-          content: {},
-          sync_date_time: new Date().toISOString()
-        }
-        if($parent.length > 0) {
-          url = insecureUploadUrl;
-          options["content"]["form"] = insecureForm.getContents();
-          options["content"]["in_place"] = insecureInPlace.getContents();
-          options["resource_identifier"] = insecureDirectory;
-        } else {
-          url = secureUrl;
-          options["content"]["form"] = secureForm.getContents();
-          options["content"]["in_place"] = secureInPlace.getContents();
-          options["resource_identifier"] = secureResourceId;
-          options["server_security_token"] = serverSecurityToken;
-        }
-        $.ajax({
-          url: url,
-          type: "POST",
-          data: { json: JSON.stringify(options) },
-          success: success,
-          error: error
-        });
-      });
-
-      $(".server_list").click(function (e) {
-        var $parent = $(e.target).parents(".insecure");
-        var url;
-        var options = { action: "list_resource_images" }
-        if($parent.length > 0) {
-          url = insecureUploadUrl;
-          options["resource_identifier"] = insecureDirectory;
-        } else {
-          url = secureUrl;
-          options["resource_identifier"] = secureResourceId;
-          options["server_security_token"] = serverSecurityToken;
-        }
-        $.ajax({
-          url: url,
-          type: "POST",
-          data: { json: JSON.stringify(options) },
-          success: success,
-          error: error
-        });
-      });
-
-      $(".server_delete").click(function (e) {
-        var $parent = $(e.target).parents(".insecure");
-        var url;
-        var options = { action: "delete_resource_images" }
-        if($parent.length > 0) {
-          url = insecureUploadUrl;
-          options["resource_identifier"] = insecureDirectory;
-        } else {
-          url = secureUrl;
-          options["resource_identifier"] = secureResourceId;
-          options["server_security_token"] = serverSecurityToken;
-        }
-        $.ajax({
-          url: url,
-          type: "POST",
-          data: { json: JSON.stringify(options) },
-          success: success,
-          error: error
-        });
-      });
-      */
-    </script>
   </body>
 </html>

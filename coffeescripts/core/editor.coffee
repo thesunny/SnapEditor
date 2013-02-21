@@ -13,6 +13,11 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "core/ap
     #   * lang: language (default: "en")
     #   * onSave: callback for saving (return true or error message)
     constructor: (el, @defaults, @config = {}) ->
+      # Delay the initialization of the editor until the document is ready.
+      $(Helpers.pass(@init, [el], this))
+
+    # Perform the actual initialization of the editor.
+    init: (el) =>
       SnapEditor.DEBUG("Webkit: #{Browser.isWebkit}")
       SnapEditor.DEBUG("Gecko: #{Browser.isGecko}")
       SnapEditor.DEBUG("Gecko1: #{Browser.isGecko1}")
