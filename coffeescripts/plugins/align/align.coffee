@@ -33,7 +33,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       }
 
     align: (how) =>
-      console.log "align"
       @update() if @api.align(how)
 
     update: ->
