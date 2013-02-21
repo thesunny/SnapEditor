@@ -11,7 +11,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         "toolbar:default": "align"
         align: [left, centre, right, justify]
         alignLeft: left
-        alignCenter: centre
+        alignCentre: centre
         alignRight: right
         alignJustify: justify
       }
