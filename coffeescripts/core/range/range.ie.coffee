@@ -322,12 +322,12 @@ define ["core/helpers"], (Helpers) ->
               #   After removing our span marker.
               #     before<span>|middle</span>|after
               #   This is now correct.
-              elRange.range = @constructor.getBlankRange()
+              elRange.range = @constructor.getBlankRange(@win)
               elRange.selectEndOfElement(el)
             else
               elRange.range = @constructor.getRangeFromElement(el)
           when "StartToEnd", "EndToEnd"
-            elRange.range = @constructor.getBlankRange()
+            elRange.range = @constructor.getBlankRange(@win)
             elRange.moveToEndOfElement(el)
         @range.setEndPoint(ieBoundaries, elRange.range)
         if isTextnode

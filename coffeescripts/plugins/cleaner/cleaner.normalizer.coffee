@@ -74,11 +74,16 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
             @blockify(inlineNodes, node)
             inlineNodes = []
 
-          # Don't normalize the inside if node is to be ignored.
-          unless isIgnore
-            if Helpers.isElement(node)
+          if Helpers.isElement(node)
+            # Don't normalize the inside if node is to be ignored.
+            if isIgnore
+              # Inline nodes that are ignored should still be treated as
+              # inline.
+              inlineNodes.push(node) unless isBlock
+            else
               # Normalize the children first.
               innerBlockFound = @normalizeNodes(node.firstChild, node.lastChild)
+
               if isBlock and !innerBlockFound and !replacement and node.firstChild
                 # If there are children and all the children are inline nodes
                 # and no replacement was found for the block, we cannot just
@@ -105,9 +110,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
                 # If the node is inline, no blocks were found, and a replacement
                 # was found, add the node to the inline nodes.
                 inlineNodes.push(node)
-            else
-              # If the node is a textnode, add it to the inline nodes.
-              inlineNodes.push(node)
+          else
+            # If the node is a textnode, add it to the inline nodes.
+            inlineNodes.push(node)
 
           # If we are at the endNode break out of the loop.
           break if stop

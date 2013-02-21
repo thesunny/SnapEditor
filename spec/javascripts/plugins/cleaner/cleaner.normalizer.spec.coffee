@@ -201,3 +201,8 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         $div = $('<div>before text<div class="ignore"><div>this should be ignored</div></div>middle text<p class="ignore2">this should also be ignored</p>more text</div>').appendTo($editable)
         expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
         expect(clean($editable.html())).toEqual("<div><div>before text</div><div class=ignore><div>this should be ignored</div></div><div>middle text</div><p class=ignore2>this should also be ignored</p><div>more text</div></div>")
+
+      it "still treats ignored inlines as inline", ->
+        $div = $('<div>before text <span class="ignore">ignore me</span> after text<p>block</p></div>').appendTo($editable)
+        expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
+        expect(clean($editable.html())).toEqual("<div><div>before text <span class=ignore>ignore me</span> after text</div><p>block</p></div>")
