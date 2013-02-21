@@ -3,7 +3,7 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     #
     # CONSTANTS
     #
-     
+
     zeroWidthNoBreakSpace: "&#65279;"
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
 
