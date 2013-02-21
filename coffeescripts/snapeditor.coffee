@@ -24,7 +24,7 @@ require ["jquery.custom", "core/browser", "core/editor.in_place", "core/editor.f
       #$log.append(a).append("<br>") for a in arguments
 
   window.SnapEditor =
-    version: "1.2.0"
+    version: "1.2.1"
     InPlace: if Browser.isSupported then InPlaceEditor else UnsupportedEditor
     Form: if Browser.isSupported then FormEditor else UnsupportedEditor
     debug: false
