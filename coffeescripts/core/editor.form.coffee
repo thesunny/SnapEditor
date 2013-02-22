@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.form", "core/assets", "core/iframe.snapeditor", "core/toolbar/toolbar.static"], ($, Helpers, Editor, Defaults, Assets, IFrame, Toolbar) ->
+define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.form", "core/assets", "styles/cssreset-min.css", "styles/snapeditor_iframe.css", "core/iframe.snapeditor", "core/toolbar/toolbar.static"], ($, Helpers, Editor, Defaults, Assets, CSSReset, CSS, IFrame, Toolbar) ->
   class FormEditor extends Editor
     constructor: (textarea, config) ->
       # The base editor deals with initializing after document ready. However,
@@ -22,7 +22,8 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
         class: "snapeditor_form_iframe"
         contents: @$textarea.attr("value")
         contentClass: config.contentClass || "snapeditor_form_content"
-        stylesheets: $.makeArray(config.stylesheets || [assets.stylesheet("cssreset-min.css"), assets.stylesheet("snapeditor_iframe.css")])
+        stylesheets: $.makeArray(config.stylesheets)
+        styles: CSSReset + CSS
         load: -> self.finishConstructor.call(self, this.el, config)
       )
       # The frameborder must be set before the iframe is inserted. If it is
