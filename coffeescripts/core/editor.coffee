@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "styles/snapeditor.css", "core/api", "core/plugins", "core/keyboard", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Browser, Helpers, Assets, CSS, API, Plugins, Keyboard, ContextMenu, Whitelist) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templates/snapeditor.html", "styles/snapeditor.css", "core/api", "core/plugins", "core/keyboard", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Browser, Helpers, Assets, Templates, CSS, API, Plugins, Keyboard, ContextMenu, Whitelist) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -78,11 +78,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "styles/
 
     loadTemplates: ->
       SnapEditor.DEBUG("Start: Load Templates")
-      $.ajax(
-        url: @assets.template("snapeditor.html")
-        async: false,
-        success: (html) => @$templates = $("<div/>").html(html)
-      )
+      @$templates = $("<div/>").html(Templates)
       SnapEditor.DEBUG("End: Load Templates")
 
     loadCSS: ->

@@ -40,7 +40,6 @@ namespace :prepare do
     cp "documentation/README.md", "bundle/snapeditor/."
     cp "documentation/README.html", "bundle/snapeditor/."
     cp "build/snapeditor.js", "bundle/snapeditor/javascripts/."
-    cp_r "spec/acceptance/assets/templates", "bundle/snapeditor/."
     cp_r "spec/acceptance/assets/images", "bundle/snapeditor/."
     cp_r "spec/acceptance/assets/lang", "bundle/snapeditor/."
     cp_r "spec/acceptance/assets/flash", "bundle/snapeditor"
