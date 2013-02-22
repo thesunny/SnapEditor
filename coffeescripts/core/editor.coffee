@@ -10,7 +10,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templat
     #   * plugins: an array of editor plugins to add
     #   * toolbar: toolbar config that replaces the default one
     #   * whitelist: object specifying the whitelist
-    #   * lang: language (default: "en")
     #   * onSave: callback for saving (return true or error message)
     constructor: (el, @defaults, @config = {}) ->
       # Delay the initialization of the editor until the document is ready.
@@ -49,7 +48,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templat
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
       @config.cleaner.ignore or= @defaults.cleaner.ignore
-      @config.lang or= @defaults.lang
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
       @config.atomic.selectors = [".#{@config.atomic.classname}"]
@@ -69,11 +67,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templat
 
     loadLang: ->
       SnapEditor.DEBUG("Start: Load Lang")
-      $.ajax(
-        url: @assets.lang(@config.lang),
-        async: false,
-        success: (json) => @lang = json
-      )
+      @lang = SnapEditor.lang
       SnapEditor.DEBUG("End: Load Lang")
 
     loadTemplates: ->
