@@ -1,9 +1,9 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   return {
-    # IE9 has three types of ranges: textRange, controlRange, and W3C range.
-    # Since IE9 is W3C compatible, we use the W3C range.
+    # IE10 has three types of ranges: textRange, controlRange, and W3C range.
+    # Since IE10 is W3C compatible, we use the W3C range.
     #
-    # IE9 W3C range has #getBoundingClientRect() which gives the coordinates of
+    # IE10 W3C range has #getBoundingClientRect() which gives the coordinates of
     # the range relative to the viewport. Hence, we need to account for
     # scrolling.
     #
@@ -21,7 +21,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       if @isImageSelected()
         # The range's startContainer and startOffset is set to the image.
         img = @range.startContainer.childNodes[@range.startOffset]
-        # In IE9, if the image is selected, but you click on the perimeter of
+        # In IE10, if the image is selected, but you click on the perimeter of
         # the image, the startContainer is a textnode before the image and the
         # endContainer is a textnode after the image. For instance, if you
         # click on the corner square box used for resizing. Hence, we check for
@@ -40,13 +40,13 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
             coords = @getCoordinatesFromClientRect(clientRect)
             coords.right = coords.left
           else
-            # In IE9, after adding the span and grabbing the coordinates, we
+            # In IE10, after adding the span and grabbing the coordinates, we
             # remove the span. Unfortunately, the act of removing the span causes
             # a "re-focus" where the removed span is scrolled into view. This
             # causes problems because you can't scroll away from where the caret
             # is since it always "re-focuses" back to the caret. My guess as to
             # what's happening is that when we remove the span, the range gets
-            # messed up and IE9 attempts to fix it and in doing so, "re-focuses"
+            # messed up and IE10 attempts to fix it and in doing so, "re-focuses"
             # the browser to that location. To fix this problem, we save the
             # range and unselect it after the span is inserted. Therefore, when
             # we remove the span, there is no range set. We reselect the range
@@ -67,8 +67,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     getCoordinatesFromClientRect: (clientRect) ->
       windowScroll = $(@win).getScroll()
       coords =
-        top: clientRect.top + windowScroll.y
-        bottom: clientRect.bottom + windowScroll.y
-        left: clientRect.left + windowScroll.x
-        right: clientRect.right + windowScroll.x
+        top: Math.round(clientRect.top + windowScroll.y)
+        bottom: Math.round(clientRect.bottom + windowScroll.y)
+        left: Math.round(clientRect.left + windowScroll.x)
+        right: Math.round(clientRect.right + windowScroll.x)
   }
