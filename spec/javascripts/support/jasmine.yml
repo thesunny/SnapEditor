@@ -28,7 +28,7 @@ src_files:
 #   - stylesheets/*.css
 #
 stylesheets:
-  - "styles/cssreset-min.css"
+  - "spec/javascripts/support/assets/stylesheets/cssreset-min.css"
 
 # helpers
 #
