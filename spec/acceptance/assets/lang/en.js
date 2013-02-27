@@ -1,4 +1,4 @@
-{
+SnapEditor.lang = {
   "bold": "Bold",
   "italic": "Italic",
   "underline": "Underline",

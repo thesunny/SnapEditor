@@ -6,6 +6,7 @@ define ["jquery.custom", "core/browser", "core/iframe"], ($, Browser, IFrame) ->
       contents = options.contents or ""
       contentClass = options.contentClass or ""
       stylesheets = options.stylesheets or []
+      styles = options.styles or ""
       options.load or= ->
 
       options.write = ->
@@ -23,6 +24,9 @@ define ["jquery.custom", "core/browser", "core/iframe"], ($, Browser, IFrame) ->
         # Load stylesheets if any.
         for stylesheet in stylesheets
           @doc.write("<link href=\"#{stylesheet}\" rel=\"stylesheet\" type=\"text/css\" />")
+        # Load styles if any.
+        if $.trim(styles).length > 0
+          @doc.write("<style>#{styles}</style>")
         # Write the contents.
         contentStyle = if Browser.isIE7 then "" else "height: 100%"
         @doc.write("</head><body style=\"#{contentStyle}\"><div class=\"#{contentClass}\" style=\"#{contentStyle}\">#{contents}</div></body></html>")

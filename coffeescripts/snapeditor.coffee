@@ -2,7 +2,7 @@
 # The third argument is the relName. We don't need it so we set it to null.
 # The fourth argument is set to true for loading the editor synchronously.
 # This is needed so that the SnapEditor object is available immediately.
-require ["jquery.custom", "core/browser", "core/editor.in_place", "core/editor.form", "core/editor.unsupported"], (($, Browser, InPlaceEditor, FormEditor, UnsupportedEditor) ->
+require ["jquery.custom", "core/browser", "lang/en", "core/editor.in_place", "core/editor.form", "core/editor.unsupported"], (($, Browser, LangEn, InPlaceEditor, FormEditor, UnsupportedEditor) ->
   log =  ->
     if typeof console != "undefined" and typeof console.log != "undefined"
       if typeof console.log.apply == "undefined"
@@ -24,9 +24,10 @@ require ["jquery.custom", "core/browser", "core/editor.in_place", "core/editor.f
       #$log.append(a).append("<br>") for a in arguments
 
   window.SnapEditor =
-    version: "1.2.1"
+    version: "1.4.0"
     InPlace: if Browser.isSupported then InPlaceEditor else UnsupportedEditor
     Form: if Browser.isSupported then FormEditor else UnsupportedEditor
+    lang: LangEn
     debug: false
     DEBUG: ->
       log.apply(this, arguments) if @debug

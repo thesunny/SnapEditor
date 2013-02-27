@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "core/api", "core/plugins", "core/keyboard", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Browser, Helpers, Assets, API, Plugins, Keyboard, ContextMenu, Whitelist) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templates/snapeditor.html", "styles/snapeditor.css", "core/api", "core/plugins", "core/keyboard", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Browser, Helpers, Assets, Templates, CSS, API, Plugins, Keyboard, ContextMenu, Whitelist) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -10,7 +10,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "core/ap
     #   * plugins: an array of editor plugins to add
     #   * toolbar: toolbar config that replaces the default one
     #   * whitelist: object specifying the whitelist
-    #   * lang: language (default: "en")
     #   * onSave: callback for saving (return true or error message)
     constructor: (el, @defaults, @config = {}) ->
       # Delay the initialization of the editor until the document is ready.
@@ -49,7 +48,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "core/ap
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
       @config.cleaner.ignore or= @defaults.cleaner.ignore
-      @config.lang or= @defaults.lang
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
       @config.atomic.selectors = [".#{@config.atomic.classname}"]
@@ -74,32 +72,19 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "core/ap
 
     loadLang: ->
       SnapEditor.DEBUG("Start: Load Lang")
-      $.ajax(
-        url: @assets.lang(@config.lang),
-        async: false,
-        success: (json) => @lang = json
-      )
+      @lang = SnapEditor.lang
       SnapEditor.DEBUG("End: Load Lang")
 
     loadTemplates: ->
       SnapEditor.DEBUG("Start: Load Templates")
-      $.ajax(
-        url: @assets.template("snapeditor.html")
-        async: false,
-        success: (html) => @$templates = $("<div/>").html(html)
-      )
+      @$templates = $("<div/>").html(Templates)
       SnapEditor.DEBUG("End: Load Templates")
 
     loadCSS: ->
       SnapEditor.DEBUG("Start: Load CSS")
-      # Don't use a <link> tag because it loads asynchronously. Attaching to
-      # the onload is not reliable. This hack loads the CSS through AJAX
-      # synchronously and dumps the styles into a <style> tag.
-      $.ajax(
-        url: @assets.stylesheet("snapeditor.css")
-        async: false,
-        success: (css) -> Helpers.insertStyles(css)
-      )
+      unless SnapEditor.cssLoaded
+        Helpers.insertStyles(CSS)
+        SnapEditor.cssLoaded = true
       SnapEditor.DEBUG("End: Load CSS")
 
     domEvents: [
