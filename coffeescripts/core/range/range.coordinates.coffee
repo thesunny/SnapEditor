@@ -1,10 +1,12 @@
-define ["core/browser", "core/range/range.coordinates.ie7", "core/range/range.coordinates.ie8", "core/range/range.coordinates.ie9", "core/range/range.coordinates.webkit", "core/range/range.coordinates.gecko1", "core/range/range.coordinates.gecko"], (Browser, IE7Coordinates, IE8Coordinates, IE9Coordinates, WebkitCoordinates, Gecko1Coordinates, GeckoCoordinates) ->
+define ["core/browser", "core/range/range.coordinates.ie7", "core/range/range.coordinates.ie8", "core/range/range.coordinates.ie9", "core/range/range.coordinates.ie10", "core/range/range.coordinates.webkit", "core/range/range.coordinates.gecko1", "core/range/range.coordinates.gecko"], (Browser, IE7Coordinates, IE8Coordinates, IE9Coordinates, IE10Coordinates, WebkitCoordinates, Gecko1Coordinates, GeckoCoordinates) ->
   if Browser.isIE7
     Coordinates = IE7Coordinates
   else if Browser.isIE8
     Coordinates = IE8Coordinates
   else if Browser.isIE9
     Coordinates = IE9Coordinates
+  else if Browser.isIE10
+    Coordinates = IE10Coordinates
   else if Browser.isWebkit
     Coordinates = WebkitCoordinates
   else if Browser.isGecko1
