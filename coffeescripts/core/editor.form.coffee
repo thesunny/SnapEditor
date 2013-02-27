@@ -11,19 +11,22 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       textarea = "#" + textarea if typeof textarea == "string"
       @$textarea = $(textarea)
       throw "SnapEditor.Form expects a textarea." unless @$textarea.tagName() == "textarea"
+      # Ensure stylesheets is an array.
+      config.stylesheets = $.makeArray(config.stylesheets)
       @$container = $('<div class="snapeditor_form"/>').hide().insertAfter(@$textarea)
       @$iframeContainer = $('<div class="snapeditor_form_iframe_container"/>').appendTo(@$container)
-      self = this
       # This is here because assets aren't initialized until we call the super
       # constructor. However, we can't call the super constructor before the
       # iframe loads, but we need the assets to create the iframe.
       assets = new Assets(config.path)
+      self = this
       @iframe = new IFrame(
         class: "snapeditor_form_iframe"
         contents: @$textarea.attr("value")
         contentClass: config.contentClass || "snapeditor_form_content"
-        stylesheets: $.makeArray(config.stylesheets)
-        styles: CSSReset + CSS
+        stylesheets: config.stylesheets
+        # Adds default CSS if no stylesheets are given.
+        styles: if config.stylesheets.length > 0 then "" else CSSReset + CSS
         load: -> self.finishConstructor.call(self, this.el, config)
       )
       # The frameborder must be set before the iframe is inserted. If it is
