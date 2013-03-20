@@ -21,12 +21,10 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
     # Cleans up and normalizes all the nodes between and including startNode
     # and endNode.
     cleanup: (startNode, endNode) =>
-      SnapEditor.DEBUG("Start: Cleanup")
       if startNode and endNode
         startTopNode = @expandTopNode(@findTopNode(startNode), true)
         endTopNode = @expandTopNode(@findTopNode(endNode), false)
         @normalizer.normalize(startTopNode, endTopNode)
-      SnapEditor.DEBUG("End: Cleanup")
 
     # Runs up the parent chain and returns the node at the top.
     findTopNode: (node) ->

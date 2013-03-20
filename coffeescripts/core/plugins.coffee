@@ -3,7 +3,6 @@ define ["jquery.custom", "core/ui/ui"], ($, UI) ->
     constructor: (@api, @templates, @defaultPlugins, @extraPlugins, @defaultToolbarComponents, @customToolbarComponents) ->
 
     setup: ->
-      SnapEditor.DEBUG("Start: Setup Plugins")
       @toolbarComponents =
         config: @customToolbarComponents or @defaultToolbarComponents
         available:
@@ -13,7 +12,6 @@ define ["jquery.custom", "core/ui/ui"], ($, UI) ->
       @registerPlugin(plugin, true) for plugin in @defaultPlugins
       @registerPlugin(plugin, false) for plugin in @extraPlugins if @extraPlugins
       @normalizeKeyboardShortcuts()
-      SnapEditor.DEBUG("End: Setup Plugins")
 
     getUI: ->
       @ui or= new UI(@api, @templates)
@@ -22,12 +20,10 @@ define ["jquery.custom", "core/ui/ui"], ($, UI) ->
     # shortcuts.
     registerPlugin: (plugin, isDefault) ->
       klass = plugin.constructor.toString().match(/^function (.*)\(\) {/)
-      SnapEditor.DEBUG("Start: Register Plugin - #{klass && klass[1]}")
       plugin.register(@api)
       @addUIs(plugin, isDefault) if plugin.getUI
       @addActions(plugin) if plugin.getActions
       @addKeyboard(plugin) if plugin.getKeyboardShortcuts
-      SnapEditor.DEBUG("End: Register Plugin - #{klass && klass[1]}")
 
     # Adds the UI components to the toolbar or contextmenu.
     addUIs: (plugin, isDefault) ->
