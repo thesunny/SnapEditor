@@ -1,17 +1,17 @@
-define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "core/helpers"], ($, Gecko, Browser, Helpers) ->
+define ["jquery.custom", "core/exec_command/exec_command.gecko", "core/browser", "core/helpers"], ($, Gecko, Browser, Helpers) ->
   class ExecCommand
-    constructor: (@api) ->
+    constructor: (@editor) ->
 
     # Calls document.execCommand().
     exec: (cmd, value = null) ->
-      @api.doc.execCommand(cmd, false, value)
+      @editor.doc.execCommand(cmd, false, value)
 
     # This differs from #exec() in that it requires a range to perform the
     # execCommand. This will check whether the range is valid before performing
     # the execCommand.
     # Returns true if the command was allowed. False otherwise.
     rangeExec: (cmd, value = null) ->
-      valid = @api.isValid()
+      valid = @editor.isValid()
       @exec(cmd, value) if valid
       return valid
 
@@ -31,7 +31,7 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
     # Formats the selection with the given tag.
     # Returns true if the command was allowed. False otherwise.
     formatInline: (type) ->
-      allowed = @api.isValid()
+      allowed = @editor.isValid()
       if allowed
         # Gecko defaults to styling with CSS. We want to disable that.
         # NOTE: This disables styling with CSS for the entire document, not just
@@ -66,8 +66,8 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
       allowed = true
       # Only allow alignment in tables if the selection starts and ends in the
       # same table cell.
-      unless @api.isCollapsed()
-        [startCell, endCell] = @api.getParentElements("td, th")
+      unless @editor.isCollapsed()
+        [startCell, endCell] = @editor.getParentElements("td, th")
         allowed = startCell == endCell
       if allowed
         # It is possible that styling with CSS has been turned off. We make sure
@@ -84,7 +84,7 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
         # style="text-align: left" on the table cell instead.
         if allowed and Browser.isIE
           self = this
-          $(@api.find("*[align]")).each(->
+          $(@editor.find("*[align]")).each(->
             $alignEl = $(this)
             # Since we're grabbing all elements with the align attribute, we
             # may be dealing with atomic elements too. However, since they're
@@ -93,7 +93,7 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
             # since execCommand shouldn't actually know about atomic, but this
             # part of the code is already a hack and it's the simplest way to
             # do this.
-            if $alignEl.closest(self.api.config.atomic.selectors.join(",")).length == 0
+            if $alignEl.closest(self.editor.config.atomic.selectors.join(",")).length == 0
               align = $alignEl.attr("align")
               # Align the parent table cell instead if it exists.
               $cell = $alignEl.parent("td, th")
@@ -140,22 +140,22 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
 
       # If the selection starts or ends inside a link, we change the
       # selection to select the link so that "createLink" modifies the link.
-      [startParent, endParent] = @api.getParentElements("a")
-      @api.selectNodeContents(startParent || endParent) if startParent || endParent
+      [startParent, endParent] = @editor.getParentElements("a")
+      @editor.selectNodeContents(startParent || endParent) if startParent || endParent
 
       # When the range is collapsed, the "createLink" execCommand does nothing.
       # A selection must be made in order for "createLink" to insert a link.
       # The only browser that inserts a link when the range is collapsed is
       # Webkit. However, we don't make a special case for Webkit because the
       # collpased code still works.
-      if @api.isCollapsed()
+      if @editor.isCollapsed()
         # Save the id in case the link has one.
         id = $link.attr("id")
         # Use our own id for inserting and finding.
         $link.attr("id", "SNAPEDITOR_INSERTED_LINK")
         $link.html($link.attr("href"))
-        @api.insert($link[0])
-        $insertedLink = $(@api.find("#SNAPEDITOR_INSERTED_LINK"))
+        @editor.insert($link[0])
+        $insertedLink = $(@editor.find("#SNAPEDITOR_INSERTED_LINK"))
         # Restore or remove the id.
         if id
           $insertedLink.attr("id", id)
@@ -170,27 +170,27 @@ define ["jquery.custom", "core/api/api.exec_command.gecko", "core/browser", "cor
         randomHref = "http://snapeditor.com/#{Math.floor(Math.random() * 99999)}"
         if @rangeExec("createLink", randomHref)
           # It is possible for "createLink" to insert multiple links.
-          $a = $(@api.find("a[href=\"#{randomHref}\"]"))
+          $a = $(@editor.find("a[href=\"#{randomHref}\"]"))
           $a.each((index) ->
             insertedLinks.push($link.clone()[0])
             $(this).replaceElementWith(insertedLinks[index])
           )
       # TODO: Not sure where to place the selection yet. Figure this out.
       # If links were inserted, places the selection at the end of the last link.
-      @api.selectEndOfElement(insertedLinks[insertedLinks.length - 1]) if insertedLinks.length > 0
+      @editor.selectEndOfElement(insertedLinks[insertedLinks.length - 1]) if insertedLinks.length > 0
       return insertedLinks
 
     # Returns true if block formatting is allowed. False otherwise.
     allowFormatBlock: ->
-      return false unless @api.isValid()
-      allowed = !@api.getParentElement("table, li")
+      return false unless @editor.isValid()
+      allowed = !@editor.getParentElement("table, li")
       alert("Sorry. This action cannot be performed inside a table or list.") unless allowed
       return allowed
 
     # Returns true if list formatting is allowed. False otherwise.
     allowList: ->
-      return false unless @api.isValid()
-      allowed = !@api.getParentElement("table")
+      return false unless @editor.isValid()
+      allowed = !@editor.getParentElement("table")
       alert("Sorry. This action cannot be performed inside a table.") unless allowed
       return allowed
 

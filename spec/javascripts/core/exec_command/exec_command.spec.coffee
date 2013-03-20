@@ -1,10 +1,10 @@
- require ["jquery.custom", "core/api/api.exec_command", "core/range", "core/helpers"], ($, ExecCommand, Range, Helpers) ->
-  describe "API.ExecCommand", ->
+ require ["jquery.custom", "core/exec_command/exec_command", "core/range", "core/helpers"], ($, ExecCommand, Range, Helpers) ->
+  describe "ExecCommand", ->
     $editable = execCommand = null
     beforeEach ->
       $editable = addEditableFixture()
       execCommand = new ExecCommand()
-      execCommand.api =
+      execCommand.editor =
         doc: document
         win: window
         el: $editable[0]
@@ -13,8 +13,8 @@
         getBlankRange: -> new Range($editable[0])
         isValid: -> true
         config: atomic: selectors: [".atomic"]
-      Helpers.delegate(execCommand.api, "getRange()", "getParentElement", "getParentElements", "isCollapsed", "unselect", "insert")
-      Helpers.delegate(execCommand.api, "getBlankRange()", "select", "selectNodeContents", "selectEndOfElement")
+      Helpers.delegate(execCommand.editor, "getRange()", "getParentElement", "getParentElements", "isCollapsed", "unselect", "insert")
+      Helpers.delegate(execCommand.editor, "getBlankRange()", "select", "selectNodeContents", "selectEndOfElement")
 
     afterEach ->
       $editable.remove()

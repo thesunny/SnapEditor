@@ -1,8 +1,8 @@
-require ["core/keyboard/keyboard"], (Keyboard) ->
+require ["core/keyboard"], (Keyboard) ->
   describe "Keyboard", ->
     keyboard = null
     beforeEach ->
-      keyboard = new Keyboard($("<div/>"), {})
+      keyboard = new Keyboard($("<div/>"), "keydown")
 
     describe "#add", ->
       it "adds the key when given a key and a function", ->
@@ -28,19 +28,3 @@ require ["core/keyboard/keyboard"], (Keyboard) ->
         keyboard.remove(["ctrl.shift.a", "b"])
         expect(keyboard.keys["ctrl.shift.a"]).toBeUndefined()
         expect(keyboard.keys["b"]).toBeUndefined()
-
-    describe "#buildKey", ->
-      it "returns the key when given a single key", ->
-        expect(keyboard.buildKey("a")).toEqual("a")
-
-      it "combines the special key with the key", ->
-        expect(keyboard.buildKey("a", ["ctrl"])).toEqual("ctrl.a")
-
-      it "combines the sorted special keys with the key", ->
-        expect(keyboard.buildKey("a", ["shift", "ctrl"])).toEqual("ctrl.shift.a")
-
-    describe "#normalize", ->
-      it "separates out the special keys from the key", ->
-        spyOn(keyboard, "buildKey").andReturn("key")
-        expect(keyboard.normalize("ctrl.shift.alt.a")).toEqual("key")
-        expect(keyboard.buildKey).toHaveBeenCalledWith("a", ["ctrl", "shift", "alt"])

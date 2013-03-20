@@ -1,6 +1,6 @@
  if isGecko
-   require ["jquery.custom", "core/api/api.exec_command.gecko", "core/range", "core/helpers"], ($, Module, Range, Helpers) ->
-    describe "API.ExecCommand.Gecko", ->
+   require ["jquery.custom", "core/exec_command/exec_command.gecko", "core/range", "core/helpers"], ($, Module, Range, Helpers) ->
+    describe "ExecCommand.Gecko", ->
       $editable = execCommand = null
       beforeEach ->
         $editable = addEditableFixture()
@@ -8,10 +8,10 @@
           rangeExec: (command) -> document.execCommand(command, false, null)
         Helpers.include(ExecCommand, Module)
         execCommand = new ExecCommand()
-        execCommand.api =
+        execCommand.editor =
           createElement: (tag) -> document.createElement(tag)
           getRange: -> new Range($editable[0], window)
-        Helpers.delegate(execCommand.api, "getRange()", "getParentElements")
+        Helpers.delegate(execCommand.editor, "getRange()", "getParentElements")
 
       afterEach ->
         $editable.remove()
