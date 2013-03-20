@@ -13,7 +13,7 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
       throw "Missing 'directory' in image config" unless @options.directory
 
     getUI: (@ui) ->
-      image = @ui.button(action: "insert_image", description: @api.lang.image, shortcut: "Ctrl+G", icon: { url: @api.assets.image("image.png"), width: 24, height: 24, offset: [3, 3] })
+      image = @ui.button(action: "insert_image", description: @api.config.lang.image, shortcut: "Ctrl+G", icon: { url: @api.imageAsset("image.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "image"
         image: image
@@ -38,11 +38,11 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
         # dialog here guarantees that the iframe is already shown and that
         # getting the size will return the correct value.
         placeholderId = "image_upload_button_#{Math.floor(Math.random()*99999)}"
-        @dialog = @ui.dialog(@api.lang.imageUploadTitle, "<span id=\"#{placeholderId}\"></span>")
+        @dialog = @ui.dialog(@api.config.lang.imageUploadTitle, "<span id=\"#{placeholderId}\"></span>")
         @dialog.on("snapeditor.dialog_hide", @handleDialogHide)
         @$dialog = $(@dialog.getEl())
         @snapImage = new SnapImage(
-          flashUrl: @api.assets.flash("SnapImage.swf")
+          flashUrl: @api.flash("SnapImage.swf")
           uploadUrl: @options.uploadUrl
           # uploadName: "file"
           uploadParams: @options.uploadParams
@@ -58,10 +58,10 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/b
           # maxImageHeight: 2096
 
           buttonPlaceholderId: placeholderId
-          buttonImageUrl: @api.assets.image("select_images.png")
+          buttonImageUrl: @api.imageAsset("select_images.png")
           buttonWidth: 105
           buttonHeight: 28
-          buttonText: @api.lang.image
+          buttonText: @api.config.lang.image
           buttonTextStyle: "color: #FFFFFF; font-size: 12px; text-align: center;"
           buttonTextPaddingTop: 6
           # buttonTextPaddingLeft: 12

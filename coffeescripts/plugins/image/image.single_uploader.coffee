@@ -13,7 +13,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       throw "Missing 'resource_id' in image config" unless @options.resource_id
 
     getUI: (@ui) ->
-      image = @ui.button(action: "insert_image", description: "Insert Image", shortcut: "Ctrl+G", icon: { url: @api.assets.image("image.png"), width: 24, height: 24, offset: [3, 3] })
+      image = @ui.button(action: "insert_image", description: "Insert Image", shortcut: "Ctrl+G", icon: { url: @api.imageAsset("image.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "image"
         image: image

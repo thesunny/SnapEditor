@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <link rel="stylesheet" href="/spec/acceptance/assets/stylesheets/cssreset-min.css" type="text/css" charset="utf-8">
+    <!--<link rel="stylesheet" href="/spec/javascripts/support/assets/stylesheets/cssreset-min.css" type="text/css" charset="utf-8">-->
     <style type="text/css">
       table {
         border-collapse: collapse;
@@ -78,22 +78,25 @@
         path: "/spec/acceptance/assets",
         stylesheets: [],
         contentClass: "myClass",
-        toolbar: [
-          "Bold", "Italic", "Underline", "Subscript", "Superscript", "Strikethrough", "|", "HorizontalRule", "Print", "|", "alignleft", "aligncentre", "alignright", "alignjustify"
-        ]
+        toolbar: {
+          items: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link"]
+        }
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
         snap: false,
+        toolbar: {
+          items: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link"]
+        },
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
-        }/*,
+        },
         onSave: function (html) {
           console.log(html);
           return "OMG! ERROR!";
-        }*/
+        }
       });
 
       /*

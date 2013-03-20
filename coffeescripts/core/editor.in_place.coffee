@@ -4,9 +4,9 @@ define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.f
       defaults = Defaults.build()
       if config.onSave
         if config.toolbar
-          config.toolbar = config.toolbar.concat(["|", "SaveCancel"])
+          config.toolbar.items = config.toolbar.items.concat(["|", "save", "exit"])
         else
-          defaults.toolbar = defaults.toolbar.concat(["|", "SaveCancel"])
+          defaults.toolbar = defaults.toolbar.concat(["|", "save", "exit"])
       super(el, defaults, config)
 
     # Perform the actual initialization of the editor.

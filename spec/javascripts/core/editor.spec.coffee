@@ -1,5 +1,12 @@
-require ["core/editor", "core/helpers"], (Editor, Helpers) ->
+require ["jquery.custom", "core/editor", "core/helpers", "core/range"], ($, Editor, Helpers, Range) ->
   describe "Editor", ->
+    $.extend(SnapEditor,
+      lang: {}
+      getAllCommands: -> {}
+      getAllPlugins: -> {}
+      insertStyles: ->
+    )
+
     $editable = editor = null
     beforeEach ->
       $editable = addEditableFixture()
@@ -37,3 +44,21 @@ require ["core/editor", "core/helpers"], (Editor, Helpers) ->
       it "removes any zero width no break spaces", ->
         $editable.html("<p>Hello, there #{Helpers.zeroWidthNoBreakSpace}are zero width no #{Helpers.zeroWidthNoBreakSpace}break spaces in#{Helpers.zeroWidthNoBreakSpace} here!")
         expect(editor.getContents().match(Helpers.zeroWidthNoBreakSpaceUnicode)).toBeNull()
+
+    describe "#getRange", ->
+      $table = $td = null
+      beforeEach ->
+        $table = $('<table><tbody><tr><td id="td">cell</td><td>another</td></tr></tbody></table>').appendTo($editable)
+        $td = $("#td")
+
+      it "returns the selection when no element is given", ->
+        expectedRange = new Range($editable[0], $td[0])
+        expectedRange.selectEndOfElement($td[0])
+
+        range = editor.getRange()
+        range.insert("test")
+        expect($td.html()).toEqual("celltest")
+
+      it "returns the element's range when an element is given", ->
+        range = editor.getRange($td[0])
+        expect(range.getParentElement("tr")).not.toBeNull()

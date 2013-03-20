@@ -47,4 +47,7 @@ require ["jquery.custom"], ($) ->
 
   # Stub out the SnapEditor object.
   window.SnapEditor =
+    internalPlugins: {}
+    lang: {}
+    insertStyles: ->
     DEBUG: ->
