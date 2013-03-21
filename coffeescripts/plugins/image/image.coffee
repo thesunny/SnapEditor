@@ -15,4 +15,9 @@ define ["jquery.custom", "plugins/helpers", "plugins/image/image.upload_dialog"]
       # in for consistency.
       e.api.select($el[0]) if $el.tagName() == "img"
 
-  window.SnapEditor.insertStyles("image", Helpers.createStyles("image", 23 * -26))
+  styles = """
+    .snapeditor_dialog .insert_image_form .insert_image_text {
+      margin-bottom: 10px;
+    }
+  """ + Helpers.createStyles("image", 23 * -26)
+  window.SnapEditor.insertStyles("image", styles)

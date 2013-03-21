@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers", "lang/en", "core/ui/ui.dialog"], ($, Helpers, LangEn, Dialog) ->
+define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers, LangEn, Dialog) ->
   unless window.SnapEditor
     window.SnapEditor =
       #

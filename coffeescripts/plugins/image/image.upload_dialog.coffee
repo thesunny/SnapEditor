@@ -1,7 +1,7 @@
 # json2 is needed for IE7. IE7 does not implement JSON natively.
 # NOTE: json2 does not follow AMD. The J is needed to swallow up the undefined
 # given by json2.
-define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "core/ui/ui.dialog"], (J, $, SnapImage, Dialog) ->
+define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "ui/ui.dialog"], (J, $, SnapImage, Dialog) ->
   class UploadDialog extends Dialog
     # Options:
     # * uploadParams

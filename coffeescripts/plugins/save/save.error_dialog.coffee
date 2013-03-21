@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/ui/ui.dialog"], ($, Dialog) ->
+define ["jquery.custom", "ui/ui.dialog"], ($, Dialog) ->
   class ErrorDialog extends Dialog
     getHTML: ->
       """

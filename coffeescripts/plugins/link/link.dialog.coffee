@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers", "core/browser", "core/ui/ui.dialog", "plugins/link/link.mirrorInput"], ($, Helpers, Browser, Dialog, MirrorInput) ->
+define ["jquery.custom", "core/helpers", "core/browser", "ui/ui.dialog", "plugins/link/link.mirrorInput"], ($, Helpers, Browser, Dialog, MirrorInput) ->
   class LinkDialog extends Dialog
     getHTML: ->
       """

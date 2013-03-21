@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "templates/snapeditor.html", "styles/snapeditor.css", "core/range", "core/exec_command/exec_command", "core/plugins", "core/keyboard", "core/whitelist/whitelist", "core/api"], ($, Browser, Helpers, Events, Assets, Templates, CSS, Range, ExecCommand, Plugins, Keyboard, Whitelist, API) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/plugins", "core/keyboard", "core/whitelist/whitelist", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Plugins, Keyboard, Whitelist, API) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -27,8 +27,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @el = @$el[0]
       @doc = Helpers.getDocument(@el)
       @win = Helpers.getWindow(@el)
-      @$templates = $("<div/>").html(Templates)
-      @insertStyles("snapeditor", CSS)
 
       # Setup the config.
       @prepareConfig()
@@ -49,7 +47,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @setupPlugins()
 
       # Deal with plugins.
-      @plugins = new Plugins(@api, @$templates, @defaults.plugins, @config.plugins, @defaults.toolbar, @config.toolbar)
+      @plugins = new Plugins(@api, @defaults.plugins, @config.plugins)
 
       # The default is to deactivate immediately. However, to accommodate
       # plugins such as the Save plugin, this can be disabled and handled in a

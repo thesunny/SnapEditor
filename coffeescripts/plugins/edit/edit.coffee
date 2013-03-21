@@ -9,21 +9,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       @api.on("snapeditor.activate", @activate)
       @api.on("snapeditor.deactivate", @deactivate)
 
-    getUI: (ui) ->
-      cut = ui.button(action: "cut", description: @api.config.lang.cut, shortcut: "Ctrl+X", icon: { url: @api.imageAsset("contextmenu.png"), width: 16, height: 16, offset: [0, 0] })
-      copy = ui.button(action: "copy", description: @api.config.lang.copy, shortcut: "Ctrl+C", icon: { url: @api.imageAsset("contextmenu.png"), width: 16, height: 16, offset: [-16, 0] })
-      paste = ui.button(action: "paste", description: @api.config.lang.paste, shortcut: "Ctrl+V", icon: { url: @api.imageAsset("contextmenu.png"), width: 16, height: 16, offset: [-32, 0] })
-      return {
-        "context:default": [cut, copy, paste]
-      }
-
-    getActions: ->
-      return {
-        cut: => alert(@api.config.lang.cutMessage)
-        copy: => alert(@api.config.lang.copyMessage)
-        paste: => alert(@api.config.lang.pasteMessage)
-      }
-
     activate: =>
       @$el.on("keydown", @onkeydown)
       @$el.on("keyup", @onkeyup)

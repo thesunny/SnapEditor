@@ -12,8 +12,7 @@ define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.f
     # Perform the actual initialization of the editor.
     init: (el) =>
       super(el)
-      toolbarComponents = @plugins.getToolbarComponents()
-      @toolbar = new Toolbar(@api, @$templates, toolbarComponents.available, toolbarComponents.config)
+      @toolbar = new Toolbar(@api)
 
     prepareConfig: ->
       super()

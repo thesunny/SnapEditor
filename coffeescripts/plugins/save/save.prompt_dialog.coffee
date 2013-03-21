@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers", "core/ui/ui.dialog"], ($, Helpers, Dialog) ->
+define ["jquery.custom", "core/helpers", "ui/ui.dialog"], ($, Helpers, Dialog) ->
   # Triggers:
   # * save
   # * resume

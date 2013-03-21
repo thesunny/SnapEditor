@@ -1,3 +1,5 @@
+# TODO: This is kept here in case we ever want to move away from flash. The
+# issue we had with using a form is submitting an upload to another URL.
 # json2 is needed for IE7. IE7 does not implement JSON natively.
 # NOTE: json2 does not follow AMD. The J is needed to swallow up the undefined
 # given by json2.
