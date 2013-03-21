@@ -17,9 +17,8 @@ define [
   "plugins/list/list"
   "plugins/table/table"
   "plugins/image/image"
-  "plugins/image/image.uploader"
   "plugins/print/print"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, StyleBlock, Align, HorizontalRule, Link, List, Table, Image, ImageUploader, Print) ->
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, StyleBlock, Align, HorizontalRule, Link, List, Table, Image, Print) ->
   return {
     build: ->
       return {
@@ -34,17 +33,11 @@ define [
           new Autoscroll()
           new Atomic()
           new Edit()
-          new Image()
-          new ImageUploader()
         ]
-        toolbar: [
-          "|"
-          "List"
-          "|"
-          "Link"
-          "Table"
-          "Image"
-        ]
+        toolbar:
+          items: [
+            "bold", "italic", "|", "styleBlock", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "link", "table", "image"
+          ]
         cleaner:
           whitelist:
             # Blocks

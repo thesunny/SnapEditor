@@ -78,16 +78,18 @@
         path: "/spec/acceptance/assets",
         stylesheets: [],
         contentClass: "myClass",
-        toolbar: {
-          items: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link"]
-        }
+        imageServer: {
+          uploadUrl: insecureUploadUrl,
+          publicUrl: insecurePublicUrl,
+          directory: insecureDirectory
+        },
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
         snap: false,
-        toolbar: {
-          items: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link"]
-        },
+        //toolbar: {
+          //items: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link"]
+        //},
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,

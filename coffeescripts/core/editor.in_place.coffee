@@ -6,7 +6,7 @@ define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.f
         if config.toolbar
           config.toolbar.items = config.toolbar.items.concat(["|", "save", "exit"])
         else
-          defaults.toolbar = defaults.toolbar.concat(["|", "save", "exit"])
+          defaults.toolbar.items = defaults.toolbar.items.concat(["|", "save", "exit"])
       super(el, defaults, config)
 
     # Perform the actual initialization of the editor.

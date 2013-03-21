@@ -60,6 +60,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @trigger("snapeditor.plugins_ready")
 
     prepareConfig: ->
+      @config.toolbar or= @defaults.toolbar
       @config.lang = SnapEditor.lang
       @config.commands = SnapEditor.getAllCommands()
       @config.plugins = SnapEditor.getAllPlugins()
