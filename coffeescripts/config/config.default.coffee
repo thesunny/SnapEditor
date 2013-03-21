@@ -70,7 +70,7 @@ define [
             "Underline": "u"
             "Subscript": "sub"
             "Superscript": "sup"
-            "Strikethrough": "strike"
+            "Strikethrough": "del"
             "Link": "a[href, target]"
             "Range Start": "span#RANGE_START"
             "Range End": "span#RANGE_END"
@@ -80,6 +80,7 @@ define [
             "*": "Paragraph"
             "strong": "Bold"
             "em": "Italic"
+            "strike": "Strikethrough"
           ignore: []
         lang: "en"
         eraseHandler:
