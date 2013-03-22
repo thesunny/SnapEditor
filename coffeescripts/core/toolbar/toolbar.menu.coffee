@@ -209,13 +209,13 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
           # Doesn't fit above.
           styles.top = windowBoundary.top
           fitsVertically = false
-      # Then fit horizonatlly.
+      # Then fit horizontally.
       if fitsVertically
         # If the dropdown fits vertically, align the left side of the submenu
         # with the left side of the button, or align the right side of the
-        # submenu with the right side of the button.
+        # submenu with the right side of the window.
         left = relCoords.left
-        right = relCoords.right
+        right = windowBoundary.right
       else
         # If the dropdown doesn't fit vertically, align the left side of the
         # submenu with the right side of the button, or align the right side
@@ -244,7 +244,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
       windowBoundary = Helpers.getWindowBoundary()
 
       styles = {}
-      # Fit horizonatlly first.
+      # Fit horizontally first.
       if relCoords.right + menuSize.x <= windowBoundary.right
         # Fits to the right.
         styles.left = relCoords.right
