@@ -157,12 +157,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
           "snapeditor.toolbar_final_action": @hide
           "snapeditor.document_mousedown": @documentMousedown
         )
-        coords = @$relEl.getCoordinates(true)
-        if @options.flyOut
-          style = top: coords.top, left: coords.right
-        else
-          style = top: coords.bottom, left: coords.left
-        @$menu.css(style).show()
+        @$menu.css(@getStyles(@options.flyOut)).show()
         @shown = true
       # Prevent the if statement from above from returning false and stopping
       # propagation.
@@ -183,3 +178,90 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
 
     hideSubmenus: ->
       menu.hide() for menu in @$menu.menus
+
+    getStyles: (flyOut) ->
+      relCoords = @$relEl.getCoordinates(true)
+      if flyOut
+        styles = @getFlyOutStyles()
+      else
+        styles = @getDropDownStyles()
+      styles
+
+    # The entire idea here is that we don't want to cover the button. Hence,
+    # we try to position below, above, right then left.
+    getDropDownStyles: () ->
+      relCoords = @$relEl.getCoordinates(true)
+      menuSize = @$menu.getSize(true, true)
+      windowBoundary = Helpers.getWindowBoundary()
+
+      fitsVertically = true
+      styles = {}
+      # Fit vertically first.
+      if relCoords.bottom + menuSize.y <= windowBoundary.bottom
+        # Fits below.
+        styles.top = relCoords.bottom
+      else
+        # Doesn't fit below.
+        if relCoords.top - menuSize.y >= windowBoundary.top
+          # Fits above.
+          styles.top = relCoords.top - menuSize.y
+        else
+          # Doesn't fit above.
+          styles.top = windowBoundary.top
+          fitsVertically = false
+      # Then fit horizonatlly.
+      if fitsVertically
+        # If the dropdown fits vertically, align the left side of the submenu
+        # with the left side of the button, or align the right side of the
+        # submenu with the right side of the button.
+        left = relCoords.left
+        right = relCoords.right
+      else
+        # If the dropdown doesn't fit vertically, align the left side of the
+        # submenu with the right side of the button, or align the right side
+        # of the submenu with the left side of the button.
+        left = relCoords.right
+        right = relCoords.left
+
+      if left + menuSize.x <= windowBoundary.right
+        # Fits to the right.
+        styles.left = left
+      else
+        # Doesn't fit to the right.
+        # We ignore it if it doesn't fit to the left because that's just
+        # ridiculous.
+        styles.left = right - menuSize.x
+
+      styles
+
+    # The entire idea here is to try to show the entire flyout to the right,
+    # then left, while keeping it vertically in view.
+    getFlyOutStyles: ->
+      relCoords = @$relEl.getCoordinates(true)
+      menuSize = @$menu.getSize(true, true)
+      windowSize = $(window).getSize()
+      windowScroll = $(window).getScroll()
+      windowBoundary = Helpers.getWindowBoundary()
+
+      styles = {}
+      # Fit horizonatlly first.
+      if relCoords.right + menuSize.x <= windowBoundary.right
+        # Fits to the right.
+        styles.left = relCoords.right
+      else
+        # Doesn't fit to the right.
+        styles.left = relCoords.left - menuSize.x
+      # Then fit vertically.
+      if relCoords.top + menuSize.y <= windowBoundary.bottom
+        # Fits below.
+        styles.top = relCoords.top
+      else
+        # Doesn't fit below.
+        if relCoords.bottom - menuSize.y >= windowBoundary.top
+          # Fits above.
+          styles.top = relCoords.bottom - menuSize.y
+        else
+          # Doesn't fit above.
+          styles.top = windowBoundary.top
+
+      styles

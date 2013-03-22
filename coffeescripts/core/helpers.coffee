@@ -147,6 +147,16 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
           right: Math.round(coords.right - iframeScroll.x + iframeCoords.left)
       outerCoords
 
+    getWindowBoundary: (win = window) ->
+      windowSize = $(win).getSize()
+      windowScroll = $(win).getScroll()
+      return {
+        top: windowScroll.y
+        bottom: windowScroll.y + windowSize.y
+        left: windowScroll.x
+        right: windowScroll.x + windowSize.x
+      }
+
     #
     # Object
     #
