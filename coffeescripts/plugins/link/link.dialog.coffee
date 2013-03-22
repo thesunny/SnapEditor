@@ -57,7 +57,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "ui/ui.dialog", "plugin
           @$text.keydown(@handleEnter)
           @$newWindow.keydown(@handleEnter)
 
-    show: (api) ->
+    show: (api) =>
       super(api)
       # Save the range.
       @range = @api.getRange()
@@ -68,10 +68,11 @@ define ["jquery.custom", "core/helpers", "core/browser", "ui/ui.dialog", "plugin
       @mirrorInput.activate()
       @$href[0].focus()
 
-    hide: ->
-      super()
-      @mirrorInput.deactivate()
-      @range.select()
+    hide: =>
+      if @shown
+        super()
+        @mirrorInput.deactivate()
+        @range.select()
 
     #
     # FORM

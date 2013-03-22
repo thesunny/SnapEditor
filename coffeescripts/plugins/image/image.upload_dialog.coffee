@@ -75,8 +75,9 @@ define ["../../../lib/json2", "jquery.custom", "../../../lib/SnapImage", "ui/ui.
       @uploadedImages = []
 
     hide: =>
-      super()
-      @range.select()
+      if @shown
+        super()
+        @range.select()
 
     # TODO: Handle errors
     handleResponse: (serverData, imageData) =>
