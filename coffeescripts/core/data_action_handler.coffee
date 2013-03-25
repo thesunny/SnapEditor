@@ -36,6 +36,10 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       @$el.on("keypress", @change)
       # Listen to any mouseovers.
       @$el.on("mouseover", @mouseover)
+      # In IE, the link causes the window's onbeforeunload to trigger, even if
+      # the link isn't actually doing anything. In order to prevent this,
+      # false is returned on the click to prevent the default behaviour.
+      @$el.on("click", -> false) if Browser.isIE
 
     deactivate: =>
       @$el.children("select[data-action]").off("change", @change)

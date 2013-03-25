@@ -20,7 +20,8 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       # IE7 and IE8 destroy the range when it is collapsed and the toolbar is
       # clicked. In order to prevent this, we set unselectable to on for every
       # element in the toolbar.
-      if Browser.isIE7 or Browser.isIE8
+      # IE9/10 does not work properly without unselectable set to on.
+      if Browser.isIE
         $container.find("*").each(-> $(this).attr("unselectable", "on"))
         $container.attr("unselectable", "on")
       $container
