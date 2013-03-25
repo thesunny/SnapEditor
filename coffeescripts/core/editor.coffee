@@ -32,7 +32,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @prepareConfig()
 
       # Create needed objects.
-      @assets = new Assets(@config.path)
+      @assets = new Assets(@config.path or SnapEditor.getPath())
       @whitelist = new Whitelist(@config.cleaner.whitelist)
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)

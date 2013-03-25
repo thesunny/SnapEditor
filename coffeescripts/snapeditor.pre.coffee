@@ -46,6 +46,24 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
           $.extend(@allPlugins, @plugins)
         @allPlugins
 
+      getPath: ->
+        unless @path
+          for script in $("script")
+            match = @matchPath($(script).attr("src"))
+            if match
+              @path = match
+              break
+          throw "Error finding the SnapEditor path!" unless @path
+        @path
+
+      matchPath: (src) ->
+        path = null
+        match = /^(|.*\/)snapeditor.js$/.exec(src)
+        if match
+          path = match[1]
+          path = "." if path == ""
+        path
+
       DEBUG: ->
         if @debug
           if typeof console != "undefined" and typeof console.log != "undefined"
