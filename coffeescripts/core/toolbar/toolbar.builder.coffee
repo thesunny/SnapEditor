@@ -41,7 +41,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       else
         # Make sure the command has been defined.
         command = options.api.config.commands[item]
-        throw "Command does not exist: #{item}. Make sure it has been defined." unless command
+        throw "Command does not exist: #{item}. Commands are case sensitive." unless command
         throw "Missing text for command #{item}." unless command.text
         throw "Missing action for command #{item}." unless command.action or command.items
         # Add the button.
