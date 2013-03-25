@@ -52,7 +52,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # The default is to deactivate immediately. However, to accommodate
       # plugins such as the Save plugin, this can be disabled and handled in a
       # customized way. Use #disableImmediateDeactivate.
-      @on("snapeditor.tryDeactivate", @deactivate)
+      @on("snapeditor.try_deactivate", @deactivate)
 
       # Ready.
       @trigger("snapeditor.plugins_ready")
