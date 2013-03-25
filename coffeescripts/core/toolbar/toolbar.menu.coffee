@@ -33,6 +33,8 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
           position: absolute;
           z-index: 201;
           width: 300px;
+          font-size: 14px;
+          font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;
         }
 
         .snapeditor_toolbar_menu ul {
@@ -57,7 +59,6 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
         }
 
         .snapeditor_toolbar_menu li a {
-          font-size: 14px;
           color: #1e1e1e;
           display: block;
           margin: 0;

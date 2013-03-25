@@ -15,7 +15,7 @@ define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
     format: (e) -> e.api.clean() if e.api.formatBlock(e.type)
 
   styles = """
-    div.snapeditor_toolbar_menu_style_block { width: 250px;}
+    div.snapeditor_toolbar_menu_style_block { width: 275px; }
     .snapeditor_style_block_h1 { margin: 0; padding: 0; font-size: 200%; }
     .snapeditor_style_block_h2 { margin: 0; padding: 0; font-size: 180%; }
     .snapeditor_style_block_h3 { margin: 0; padding: 0; font-size: 160%; }

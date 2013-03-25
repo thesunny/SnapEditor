@@ -8,7 +8,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
     commands:
       table:
         text: window.SnapEditor.lang.table
-        items: ["insertTable", "addRowAbove", "addRowBelow", "deleteRow", "addColumnLeft", "addColumnRight", "deleteColumn", "deleteTable"]
+        items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable"]
       insertTable: Helpers.createCommand("insertTable", "", ((e) -> e.api.config.plugins.table.insertTable(e.api)), langKey: "tableInsert")
       addRowAbove: Helpers.createCommand("addRowAbove", "ctrl.shift.enter", ((e) -> e.api.config.plugins.table.addRow(e.api, true)), langKey: "tableAddRowAbove")
       addRowBelow: Helpers.createCommand("addRowBelow", "ctrl.enter", ((e) -> e.api.config.plugins.table.addRow(e.api, false)), langKey: "tableAddRowBelow")
