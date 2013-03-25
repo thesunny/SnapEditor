@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templates/snapeditor.html", "styles/snapeditor.css", "core/api", "core/plugins", "core/keyboard", "core/contextmenu/contextmenu", "core/whitelist/whitelist"], ($, Browser, Helpers, Assets, Templates, CSS, API, Plugins, Keyboard, ContextMenu, Whitelist) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/plugins", "core/keyboard", "core/whitelist/whitelist", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Plugins, Keyboard, Whitelist, API) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -17,34 +17,51 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templat
 
     # Perform the actual initialization of the editor.
     init: (el) =>
-      SnapEditor.DEBUG("Webkit: #{Browser.isWebkit}")
-      SnapEditor.DEBUG("Gecko: #{Browser.isGecko}")
-      SnapEditor.DEBUG("Gecko1: #{Browser.isGecko1}")
-      SnapEditor.DEBUG("IE: #{Browser.isIE}")
-      SnapEditor.DEBUG("IE7: #{Browser.isIE7}")
-      SnapEditor.DEBUG("IE8: #{Browser.isIE8}")
-      SnapEditor.DEBUG("IE9: #{Browser.isIE9}")
-      SnapEditor.DEBUG("W3C Ranges: #{Browser.hasW3CRanges}")
-      SnapEditor.DEBUG("Supported: #{Browser.isSupported}")
-
       @unsupported = false
+
       # Transform the string into a CSS id selector.
       el = "#" + el if typeof el == "string"
+
+      # Set up DOM related things.
       @$el = $(el)
+      @el = @$el[0]
+      @doc = Helpers.getDocument(@el)
+      @win = Helpers.getWindow(@el)
+
+      # Setup the config.
       @prepareConfig()
-      @assets = new Assets(@config.path)
+
+      # Create needed objects.
+      @assets = new Assets(@config.path or SnapEditor.getPath())
       @whitelist = new Whitelist(@config.cleaner.whitelist)
-      @loadAssets()
+      @keyboard = new Keyboard(this, "keydown")
+      @execCommand = new ExecCommand(this)
+
+      # Delegate Public API functions.
+      @delegatePublicAPIFunctions()
+
+      # Instantiate the API.
       @api = new API(this)
-      @plugins = new Plugins(@api, @$templates, @defaults.plugins, @config.plugins, @defaults.toolbar, @config.toolbar)
-      @keyboard = new Keyboard(@api, @plugins.getKeyboardShortcuts(), "keydown")
-      #@contexts = new Contexts(@api, @plugins.getContexts())
-      @contextmenu = new ContextMenu(@api, @$templates, @plugins.getContextMenuButtons())
-      SnapEditor.DEBUG("Finished: Plugins are a go")
-      @api.trigger("snapeditor.plugins_ready")
+
+      # Deal with new plugins.
+      @setupPlugins()
+
+      # Deal with plugins.
+      @plugins = new Plugins(@api, @defaults.plugins, @config.plugins)
+
+      # The default is to deactivate immediately. However, to accommodate
+      # plugins such as the Save plugin, this can be disabled and handled in a
+      # customized way. Use #disableImmediateDeactivate.
+      @on("snapeditor.try_deactivate", @deactivate)
+
+      # Ready.
+      @trigger("snapeditor.plugins_ready")
 
     prepareConfig: ->
-      SnapEditor.DEBUG("Start: Prepare Config")
+      @config.toolbar or= @defaults.toolbar
+      @config.lang = SnapEditor.lang
+      @config.commands = SnapEditor.getAllCommands()
+      @config.plugins = SnapEditor.getAllPlugins()
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
       @config.cleaner.ignore or= @defaults.cleaner.ignore
@@ -58,29 +75,11 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templat
       @config.cleaner.ignore = @config.cleaner.ignore.concat(@config.atomic.selectors)
       # Add the atomic selectors to the erase handler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
-      SnapEditor.DEBUG("End: Prepare Config")
 
-    loadAssets: ->
-      @loadLang()
-      @loadTemplates()
-      @loadCSS()
-
-    loadLang: ->
-      SnapEditor.DEBUG("Start: Load Lang")
-      @lang = SnapEditor.lang
-      SnapEditor.DEBUG("End: Load Lang")
-
-    loadTemplates: ->
-      SnapEditor.DEBUG("Start: Load Templates")
-      @$templates = $("<div/>").html(Templates)
-      SnapEditor.DEBUG("End: Load Templates")
-
-    loadCSS: ->
-      SnapEditor.DEBUG("Start: Load CSS")
-      unless SnapEditor.cssLoaded
-        Helpers.insertStyles(CSS)
-        SnapEditor.cssLoaded = true
-      SnapEditor.DEBUG("End: Load CSS")
+    setupPlugins: ->
+      for name, plugin of @config.plugins
+        for key, fn of plugin.events or {}
+          @on("snapeditor.#{Helpers.camelToSnake(key)}", fn)
 
     domEvents: [
       "mouseover"
@@ -109,7 +108,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templat
     # - handleDocumentEvent
     # We want to pass the original DOM event through to the handler but with
     # our custom data and the event type with "snapeditor" as the namespace.
-    # However, simply doing @api.trigger("snapeditor.event", e) doesn't work
+    # However, simply doing @trigger("snapeditor.event", e) doesn't work
     # because the handler would see it as function(event, e). We want
     # function(e) instead. To get around this, we pass e directly to the
     # trigger. This forces jQuery to use e instead of creating a new event.
@@ -124,20 +123,20 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templat
 
     # Add custom SnapEditor data to the event.
     handleDOMEvent: (e) =>
-      @addCustomDataToEvent(e)
       e.type = "snapeditor.#{e.type}"
-      @api.trigger(e)
+      @trigger(e)
 
     handleDocumentEvent: (e) =>
-      @addCustomDataToEvent(e)
-      type = e.type
-      e.type = "snapeditor.document_#{type}"
-      @api.trigger(e)
-      if $(e.target).closest(@$el).length == 0
-        e.type = "snapeditor.outside_#{type}"
-        @api.trigger(e)
+      unless e.type == "snapeditor"
+        type = e.type
+        e.type = "snapeditor.document_#{type}"
+        @trigger(e)
+        if $(e.target).closest(@$el).length == 0
+          e.type = "snapeditor.outside_#{type}"
+          @trigger(e)
 
     addCustomDataToEvent: (e) ->
+      e.api = @api
       if e.pageX
         coords = Helpers.transformCoordinatesRelativeToOuter(
           x: e.pageX
@@ -187,34 +186,169 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/assets", "templat
       @$el.off(event, @handleDOMEvent) for event in @domEvents
       @offDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
+    ############################################################################
+    #
+    # PUBLIC API
+    #
+    ############################################################################
+
+    delegatePublicAPIFunctions: ->
+      Helpers.delegate(this, "whitelist", "isAllowed", "getReplacement", "getNext")
+      Helpers.delegate(this, "getRange()",
+        "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
+        "getParentElement", "getParentElements", "getText",
+        "collapse", "unselect", "keepRange", "moveBoundary",
+        "insert", "surroundContents", "delete"
+      )
+      Helpers.delegate(this, "getBlankRange()", "selectNodeContents", "selectEndOfElement")
+      Helpers.delegate(this, "execCommand",
+        "formatBlock", "formatInline", "align", "indent", "outdent",
+        "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
+      )
+
+    #
+    # EVENTS
+    #
+
+    # Activate the editor.
     activate: ->
       @attachDOMEvents()
-      @api.trigger("snapeditor.activate")
-      @api.trigger("snapeditor.ready")
+      @trigger("snapeditor.activate")
+      @trigger("snapeditor.ready")
 
+    # Try to deactivate the editor.
     tryDeactivate: ->
-      @api.trigger("snapeditor.tryDeactivate")
+      @trigger("snapeditor.try_deactivate")
 
-    deactivate: ->
+    # Disable the immediate deactivation of the editor.
+    disableImmediateDeactivate: ->
+      @off("snapeditor.try_deactivate", @deactivate)
+
+    # Deactivate the editor.
+    deactivate: =>
       @detachDOMEvents()
-      @api.trigger("snapeditor.deactivate")
+      @trigger("snapeditor.deactivate")
 
+    # Update the editor.
     update: ->
-      @api.trigger("snapeditor.update")
+      @trigger("snapeditor.update")
 
-    getContents: ->
-      # Clean the content before returning it.
-      @api.clean(@$el[0].firstChild, @$el[0].lastChild)
-      regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
-      @$el.html().replace(regexp, "")
+    # Clean the editor.
+    clean: ->
+      @trigger("clean", arguments)
 
-    setContents: (html) ->
-      @$el.html(html)
-      @api.clean(@$el[0].firstChild, @$el[0].lastChild)
-
+    # Save the contents of the editor.
     save: ->
       saved = "No save callback defined."
       saved = @config.onSave(@getContents()) if @config.onSave
-      return saved
+      saved
+
+    #
+    # CONTENTS
+    #
+
+    # Returns the contents of the editor after cleaning.
+    getContents: ->
+      # Clean the content before returning it.
+      @clean(@el.firstChild, @el.lastChild)
+      regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
+      @$el.html().replace(regexp, "")
+
+    # Sets the contents of the editor and cleans it.
+    setContents: (html) ->
+      @$el.html(html)
+      @clean(@el.firstChild, @el.lastChild)
+
+    #
+    # DOM
+    #
+
+    # Shortcut to the doc's createElement().
+    createElement: (name) ->
+      @doc.createElement(name)
+
+    # Shortcut to the doc's createTextNode().
+    createTextNode: (text) ->
+      @doc.createTextNode(text)
+
+    # Shortcut to find elements in the doc. Always returns an array.
+    find: (selector) ->
+      $(@doc).find(selector).toArray()
+
+    # Inserts the given styles into the head of the document.
+    # The id is used to ensure duplicate styles are not added.
+    insertStyles: (id, styles) ->
+      SnapEditor.insertStyles(id, styles)
+
+    #
+    # KEYBOARD
+    #
+
+    addKeyboardShortcut: (key, fn) ->
+      @keyboard.add(key, fn)
+
+    removeKeyboardShortcut: (key) ->
+      @keyboard.remove(key)
+
+    #
+    # WHITELIST
+    #
+
+    # Gets the default block from the whitelist.
+    getDefaultBlock: ->
+      @whitelist.getDefaults()["*"].getElement(@doc)
+
+    #
+    # ASSETS
+    #
+
+    imageAsset: (filename) ->
+      @assets.image(filename)
+
+    flashAsset: (filename) ->
+      @assets.flash(filename)
+
+    #
+    # RANGE
+    #
+
+    # Gets the current selection if el is not given.
+    # Otherwise returns the range that represents the el.
+    # If a selection does not exist, use #getBlankRange().
+    getRange: (el) ->
+      new Range(@el, el or @win)
+
+    # Get a blank range. This is here in case a selection does not exist.
+    # If a selection exists, use #getRange().
+    getBlankRange: ->
+      new Range(@el)
+
+    # Select the given arg. If no arg is given, selects the current selection.
+    # NOTE: This is not directly delegated to the Range object because it is
+    # slightly different. This takes a given argument and selects it.
+    # Arguments:
+    # * arg - Either a SnapEditor Range or DOM element.
+    select: (arg) ->
+      if arg and arg.collapse
+        range = arg
+      else
+        range = @getRange(arg)
+      range.select()
+
+    # Add the coordinates relative to the outer window.
+    getCoordinates: (range) ->
+      range or= @getRange()
+      coords = range.getCoordinates()
+      coords.outer = $.extend({}, Helpers.transformCoordinatesRelativeToOuter(coords, @el))
+      coords
+
+  Helpers.include(Editor, Events)
+  # Override the default trigger() from Events so that we can add custom data
+  # to the event being triggered.
+  Editor.prototype.elTrigger = Editor.prototype.trigger
+  Editor.prototype.trigger = (event, params = []) ->
+    e = if typeof event == "string" then $.Event(event) else event
+    @addCustomDataToEvent(e)
+    @elTrigger(e, params)
 
   return Editor

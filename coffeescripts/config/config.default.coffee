@@ -10,16 +10,15 @@ define [
   "plugins/atomic/atomic"
   "plugins/edit/edit"
   "plugins/inline/inline"
-  "plugins/block/block"
+  "plugins/style_block/style_block"
   "plugins/align/align"
   "plugins/horizontal_rule/horizontal_rule"
   "plugins/link/link"
   "plugins/list/list"
   "plugins/table/table"
   "plugins/image/image"
-  "plugins/image/image.uploader"
   "plugins/print/print"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, Align, HorizontalRule, Link, List, Table, Image, ImageUploader, Print) ->
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, StyleBlock, Align, HorizontalRule, Link, List, Table, Image, Print) ->
   return {
     build: ->
       return {
@@ -34,28 +33,11 @@ define [
           new Autoscroll()
           new Atomic()
           new Edit()
-          new Inline()
-          new Block()
-          new Align()
-          new HorizontalRule()
-          new Link()
-          new List()
-          new Table()
-          new Image()
-          new ImageUploader()
-          new Print()
         ]
-        toolbar: [
-          "Inline"
-          "|"
-          "Block"
-          "|"
-          "List"
-          "|"
-          "Link"
-          "Table"
-          "Image"
-        ]
+        toolbar:
+          items: [
+            "bold", "italic", "|", "styleBlock", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "link", "table", "image"
+          ]
         cleaner:
           whitelist:
             # Blocks

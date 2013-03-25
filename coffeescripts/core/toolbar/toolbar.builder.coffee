@@ -1,92 +1,81 @@
-# This builds the toolbar from the given component groups.
-# 
-# Arguments:
-# * template - element holding the toolbar template
-# * availableComponents - a map of available components
-# * components - the components to display
-#
-# The format of the availableComponents is an array of objects that respond to
-# htmlForToolbar() and cssForToolbar().
-#
-# The components argument is an array of components.
-# * "|" specifies a division between groups of components.
-# * "-" specifies a gap between components.
-# * Strings are mapped to the availableComponents.
-# e.g.
-#   [
-#     "Bold", "Italic", "-", "Underline", "|",
-#     "H1", "H2", "H3", "|",
-#     "Left, "Center", "Right", "|",
-#     "Image", "Link", "Table", "|"
-#   ]
-define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
-  class ToolbarBuilder
-    constructor: (@api, template, @availableComponents, @components) ->
-      @$template = $(template)
-
-    # Builds the toolbar with the given component groups.
-    # Returns [toolbar, css]
-    build: ->
-      [components, css] = @getComponents()
-      $toolbar = $(@$template.mustache(componentGroups: components))
+define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
+  return {
+    # Options:
+    # * items
+    # * api
+    # * templates
+    #   * container
+    #   * item
+    #   * divider
+    # * menu
+    #   * class
+    #   * options
+    # * itemBuilder
+    build: (items, options) ->
+      $container = $(options.templates.container)
+      $content = $container.find("ul")
+      $content.menus = []
+      @addItem($content, item, options) for item in items
+      $container.menus = $content.menus
+      # IE7 and IE8 destroy the range when it is collapsed and the toolbar is
+      # clicked. In order to prevent this, we set unselectable to on for every
+      # element in the toolbar.
+      # IE9/10 does not work properly without unselectable set to on.
       if Browser.isIE
-        $toolbar.attr("unselectable", "on")
-        $toolbar.find("*").each(-> $(this).attr("unselectable", "on"))
-      else if Browser.isGecko
-        $toolbar.css("-moz-user-select", "none")
-      else if Browser.isWebkit
-        # Webkit has a -webkit-user-select style, but it doesn't behave like
-        # Firefox. Instead, we listen to the mousedown and if it didn't come
-        # from a button, we save the range. When the click occurs, we reselect
-        # the range.
-        $toolbar.on(mousedown: @handleMouseDown, click: @handleClick)
-      return [$toolbar, css]
+        $container.find("*").each(-> $(this).attr("unselectable", "on"))
+        $container.attr("unselectable", "on")
+      $container
 
-    handleMouseDown: (e) =>
-      @savedRange = @api.getRange() unless $(e.target).attr("data-action")
-
-    handleClick: (e) =>
-      @savedRange.select() unless $(e.target).attr("data-action")
-
-    # Returns an array of component groups.
-    # e.g.
-    #   [
-    #     [{components: {html: "HTML string"}}, ...],
-    #     ...
-    #   ]
-    getComponents: ->
-      groups = []
-      html = ""
-      css = ""
-      for component in @components
-        if component == "|"
-          # If there is a new group, store the old one and create a new one.
-          groups.push(html: html)
-          html = ""
-        else
-          # If it is a component, continue adding it to the current group.
-          [componentHTML, componentCSS] = @getComponentHtmlAndCss(component)
-          html += componentHTML
-          css += componentCSS
-      # Store the last group if there are components in it.
-      groups.push(html: html) unless html.length == 0
-      groups[groups.length-1].last = true if groups.length > 0
-      return [groups, css]
-
-    # Return the HTML and CSS strings that correspond to the component.
-    getComponentHtmlAndCss: (key) ->
-      html = ""
-      css = ""
-      # Normalize the key to lowercase.
-      components = @availableComponents[key.toLowerCase()]
-      throw "The component(s) for #{key} is not available. Please check that the plugin has been included." unless components
-      for component in components
-        switch Helpers.typeOf(component)
-          when "string" then [componentHTML, componentCSS] = @getComponentHtmlAndCss(component)
-          when "object" then [componentHTML, componentCSS] = [component.htmlForToolbar(), component.cssForToolbar()]
-          else throw "Unrecognized component format for '#{key}'. Expecting a string or UI component object"
-        html += componentHTML
-        css += componentCSS
-      return [html, css]
-
-  return ToolbarBuilder
+    # Options:
+    # * api
+    # * templates
+    #   * item
+    #   * divider
+    # * menu
+    #   * class
+    #   * options
+    # * itemBuilder
+    addItem: ($content, item, options) ->
+      if item == "|"
+        $(options.templates.divider).appendTo($content)
+      else
+        # Make sure the command has been defined.
+        command = options.api.config.commands[item]
+        throw "Command does not exist: #{item}. Make sure it has been defined." unless command
+        throw "Missing text for command #{item}." unless command.text
+        throw "Missing action for command #{item}." unless command.action or command.items
+        # Add the button.
+        $item = $(options.templates.item).appendTo($content)
+        options.itemBuilder($item.find("a"), item, command)
+        actionHandler = (e) ->
+          # If this is a final action that doesn't trigger another menu, let
+          # others know so they can close their menus.
+          e.api.trigger("snapeditor.toolbar_final_action")
+          command.action(e)
+        # If there are items, we need to create a dropdown. We ignore the
+        # action given by the command. Instead, the action should trigger the
+        # dropdown.
+        if command.items
+          menu = new options.menu.class(options.api, $item, command.items, options.menu.options)
+          menu.$menu.addClass("snapeditor_toolbar_menu_#{Helpers.camelToSnake(item)}")
+          actionHandler = (e) ->
+            # If the menu is not a flyout (i.e. a dropdown) and is already
+            # shown, then hide it.
+            # Else, show the menu.
+            if !menu.options.flyOut and menu.isShown()
+              menu.hide(e)
+            else
+              # Hide all the other menus before showing ths one.
+              m.hide(e) for m in $content.menus
+              menu.show()
+          $content.menus.push(menu)
+        options.api.on(item, (e) =>
+          # In Webkit, after the toolbar is clicked, the focus hops to the parent
+          # window. We need to refocus it back into the iframe. Focusing breaks IE
+          # and kills the range so the focus is only for Webkit. It does not affect
+          # Firefox.
+          e.api.win.focus() if Browser.isWebkit
+          actionHandler(e)
+        )
+        options.api.addKeyboardShortcut(command.shortcut, -> options.api.trigger(item)) if command.shortcut
+  }

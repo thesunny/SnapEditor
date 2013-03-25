@@ -38,7 +38,7 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       @$el.getCoordinates()
 
     floaterSize: ->
-      @$floater.getSize()
+      @$floater.getSize(true, true)
 
     # Returns the styles needed to center the floater relative to the el.
     # This ensures that the floater will not show up outside of the window.

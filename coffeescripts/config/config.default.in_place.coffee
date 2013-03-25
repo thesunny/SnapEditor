@@ -10,7 +10,6 @@ define [
       defaults.plugins = defaults.plugins.concat([
         new Snap()
         new Outline()
-        new Save()
       ])
       defaults.toolbar = defaults.toolbar
       defaults.snap = true

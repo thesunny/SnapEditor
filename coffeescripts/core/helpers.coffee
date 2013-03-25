@@ -147,6 +147,16 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
           right: Math.round(coords.right - iframeScroll.x + iframeCoords.left)
       outerCoords
 
+    getWindowBoundary: (win = window) ->
+      windowSize = $(win).getSize()
+      windowScroll = $(win).getScroll()
+      return {
+        top: windowScroll.y
+        bottom: windowScroll.y + windowSize.y
+        left: windowScroll.x
+        right: windowScroll.x + windowSize.x
+      }
+
     #
     # Object
     #
@@ -208,6 +218,32 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     # Taken from MooTools.
     capitalize: (string) ->
       string.replace(/\b[a-z]/g, (match) -> match.toUpperCase())
+
+    # Changes a string from camel case to snake case.
+    # e.g. "someMadeUpName" -> "some_made_up_name"
+    camelToSnake: (string) ->
+      string.replace(/[A-Z]/g, (match) -> "_" + match.toLowerCase())
+
+    # Changes ctrl.shift.a to Ctrl+Shift+A.
+    displayShortcut: (shortcut) ->
+      $.map(shortcut.split("."), (s) -> Helpers.capitalize(s)).join("+")
+
+    # Normalizes the URL.
+    normalizeURL: (url) ->
+      normalizedUrl = url
+      if /@/.test(url)
+        # Normalize email.
+        normalizedUrl = "mailto:#{url}"
+      else
+        matches = url.match(/^([a-z]+:|)(\/\/.*)$/)
+        if matches
+          # Normalize URL.
+          protocol = if matches[1].length > 0 then matches[1] else "http:"
+          normalizedUrl = protocol + matches[2]
+        else
+          # Normalize path.
+          normalizedUrl = "http://#{url}" unless url.charAt(0) == "/"
+      normalizedUrl
   }
 
   $.extend(Helpers, Keyboard)

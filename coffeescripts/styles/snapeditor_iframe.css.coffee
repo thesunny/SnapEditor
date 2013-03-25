@@ -10,7 +10,7 @@ define [], ->
       padding: 0 5px;
     }
 
-    h1, h2, h3 {
+    h1, h2, h3, h4, h5, h6 {
       color: black;
     }
 
@@ -20,12 +20,27 @@ define [], ->
     }
 
     h2 {
-      font-size: 150%;
+      font-size: 180%;
       margin: 1.25em 0 0.75em;
     }
 
     h3 {
-      font-size: 125%;
+      font-size: 160%;
+      margin: 1em 0 0.75em;
+    }
+
+    h4 {
+      font-size: 140%;
+      margin: 1em 0 0.75em;
+    }
+
+    h5 {
+      font-size: 120%;
+      margin: 1em 0 0.75em;
+    }
+
+    h6 {
+      font-size: 110%;
       margin: 1em 0 0.75em;
     }
 

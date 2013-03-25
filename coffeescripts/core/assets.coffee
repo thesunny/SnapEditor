@@ -8,18 +8,9 @@ define [], ->
       @path + filename
 
     image: (filename) ->
-      @path + "images/#{filename}"
-
-    stylesheet: (filename) ->
-      @path + "stylesheets/#{filename}"
-
-    template: (filename) ->
-      @path + "templates/#{filename}"
+      @file("images/#{filename}")
 
     flash: (filename) ->
-      @path + "flash/#{filename}"
-
-    lang: (lang) ->
-      @path + "lang/#{lang}.json"
+      @file("flash/#{filename}")
 
   return Assets

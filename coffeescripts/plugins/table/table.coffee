@@ -1,70 +1,44 @@
-define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
-  class Table
-    options:
-      rows: 2
-      cols: 3
-
-    register: (@api) ->
-      @api.on("snapeditor.activate", @activate)
-      @api.on("snapeditor.deactivate", @deactivate)
-
-    getUI: (ui) ->
-      insertTable = ui.button(action: "insertTable", description: @api.lang.table, icon: { url: @api.assets.image("table.png"), width: 24, height: 24, offset: [3, 3] })
-      addRowAbove = ui.button(action: "addRowAbove", description: @api.lang.tableAddRowAbove, shortcut: "Ctrl+Shift+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [0, -16] })
-      addRowBelow = ui.button(action: "addRowBelow", description: @api.lang.tableAddRowBelow, shortcut: "Ctrl+Enter", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-16, -16] })
-      deleteRow = ui.button(action: "deleteRow", description: @api.lang.tableDeleteRow, icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-32, -16] })
-      addColLeft = ui.button(action: "addColLeft", description: @api.lang.tableAddColumnLeft, shortcut: "Ctrl+Shift+M", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-48, -16] })
-      addColRight = ui.button(action: "addColRight", description: @api.lang.tableAddColumnRight, shortcut: "Ctrl+M", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-64, -16] })
-      deleteCol = ui.button(action: "deleteCol", description: @api.lang.tableDeleteColumn, icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-80, -16] })
-      deleteTable = ui.button(action: "deleteTable", description: @api.lang.tableDelete, icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-96, -16] })
-      return {
-        "toolbar:default": "table"
-        table: insertTable
-        "context:table": [addRowAbove, addRowBelow, deleteRow, addColLeft, addColRight, deleteCol, deleteTable]
-      }
-
-    getActions: ->
-      return {
-        insertTable: @insertTable
-        deleteTable: (e) => @deleteTable()
-        addRowAbove: Helpers.pass(@addRow, true, this)
-        addRowBelow: Helpers.pass(@addRow, false, this)
-        deleteRow: @deleteRow
-        addColLeft: Helpers.pass(@addCol, true, this)
-        addColRight: Helpers.pass(@addCol, false, this)
-        deleteCol: @deleteCol
-      }
-
-    getKeyboardShortcuts: ->
-      return {
-        "ctrl.shift.enter": "addRowAbove"
-        "ctrl.enter": "addRowBelow"
-        "ctrl.shift.m": "addColLeft"
-        "ctrl.m": "addColRight"
-      }
-
-    insertTable: =>
-      if @api.isValid()
-        if @api.getParentElement("table, li")
+define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browser) ->
+  window.SnapEditor.internalPlugins.table =
+    events:
+      activate: (e) ->
+        $(e.api.el).on("keydown", e.api.config.plugins.table.handleKeydown)
+      deactivate: (e) ->
+        $(e.api.el).off("keydown", e.api.config.plugins.table.handleKeydown)
+    commands:
+      table:
+        text: window.SnapEditor.lang.table
+        items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable"]
+      insertTable: Helpers.createCommand("insertTable", "", ((e) -> e.api.config.plugins.table.insertTable(e.api)), langKey: "tableInsert")
+      addRowAbove: Helpers.createCommand("addRowAbove", "ctrl.shift.enter", ((e) -> e.api.config.plugins.table.addRow(e.api, true)), langKey: "tableAddRowAbove")
+      addRowBelow: Helpers.createCommand("addRowBelow", "ctrl.enter", ((e) -> e.api.config.plugins.table.addRow(e.api, false)), langKey: "tableAddRowBelow")
+      deleteRow: Helpers.createCommand("deleteRow", "", ((e) -> e.api.config.plugins.table.deleteRow(e.api)), langKey: "tableDeleteRow")
+      addColumnLeft: Helpers.createCommand("addColumnLeft", "ctrl.shift.m", ((e) -> e.api.config.plugins.table.addColumn(e.api, true)), langKey: "tableAddColumnLeft")
+      addColumnRight: Helpers.createCommand("addColumnRight", "ctrl.m", ((e) -> e.api.config.plugins.table.addColumn(e.api, false)), langKey: "tableAddColumnRight")
+      deleteColumn: Helpers.createCommand("deleteColumn", "", ((e) -> e.api.config.plugins.table.deleteColumn(e.api)), langKey: "tableDeleteColumn")
+      deleteTable: Helpers.createCommand("deleteTable", "", ((e) -> e.api.config.plugins.table.deleteTable(e.api)), langKey: "tableDelete")
+    insertTable: (api) ->
+      if api.isValid()
+        if api.getParentElement("table, li")
           alert("Sorry. This action cannot be performed inside a table or list.")
         else
           # Build the table.
-          $table = $(@api.createElement("table")).attr("id", "INSERTED_TABLE")
-          $tbody = $(@api.createElement("tbody")).appendTo($table)
-          $td = $(@api.createElement("td")).html("&nbsp")
-          $tr = $(@api.createElement("tr"))
-          $tr.append($td.clone()) for i in [1..@options.cols]
-          $tbody.append($tr.clone()) for i in [1..@options.rows]
+          $table = $(api.createElement("table")).attr("id", "INSERTED_TABLE")
+          $tbody = $(api.createElement("tbody")).appendTo($table)
+          $td = $(api.createElement("td")).html("&nbsp")
+          $tr = $(api.createElement("tr"))
+          $tr.append($td.clone()) for i in [1..3]
+          $tbody.append($tr.clone()) for i in [1..2]
 
           # Handle the special case when inserting at the end of the editable
           # area.
-          isEndOfEditableArea = @api.isEndOfElement(@api.el)
+          isEndOfEditableArea = api.isEndOfElement(api.el)
 
           # Add the table.
-          @api.insert($table[0])
+          api.insert($table[0])
 
           # Find the table.
-          $table = $(@api.find("#INSERTED_TABLE"))
+          $table = $(api.find("#INSERTED_TABLE"))
           # If the table is being inserted at the end of the editable area,
           # insert the default block afterwards. This fixes several problems:
           # 1. When there is nothing after the table, it is possible to
@@ -141,19 +115,16 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           #    several lines in a cell. We only want to override the browser's
           #    default down behaviour when we're on the last line of the cell.
           if isEndOfEditableArea
-            $block = $(@api.getDefaultBlock()).html(Helpers.zeroWidthNoBreakSpace)
+            $block = $(api.getDefaultBlock()).html(Helpers.zeroWidthNoBreakSpace)
             $block.insertAfter($table)
           # Set the cursor inside the first td of the table. Then remove the id.
-          @api.selectEndOfElement($table.find("td")[0])
+          api.selectEndOfElement($table.find("td")[0])
           $table.removeAttr("id")
-
-          # Update.
-          @update()
-
-    # Deletes the entire table. If no table is passed in, it attempts to the
-    # find a table that contains the range.
-    deleteTable: (table) =>
-      table = table or @api.getParentElement("table")
+          api.clean()
+    # Deletes the entire table. If no table is passed in, it attempts to find
+    # a table that contains the range.
+    deleteTable: (api, table) ->
+      table = table or api.getParentElement("table")
       if table
         $table = $(table)
         # In IE, when the table is destroyed, the cursor is placed at the
@@ -163,34 +134,30 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         # this doesn't work in IE because selecting the end of the inserted
         # paragraph places the cursor at the start of the next element.
         if Browser.hasW3CRanges
-          $p = $(@api.createElement("p")).html(Helpers.zeroWidthNoBreakSpace)
+          $p = $(api.createElement("p")).html(Helpers.zeroWidthNoBreakSpace)
           $table.replaceWith($p)
-          @api.selectEndOfElement($p[0])
+          api.selectEndOfElement($p[0])
         else
           $table.remove()
-        @update()
-
-
-    # Inserts a new row. The first argument specifies whether the row should
-    # appear before or after the current row.
-    addRow: (before) =>
-      cell = @getCell()
+        api.clean()
+    # Inserts a new row. Set before to true to insert the row above.
+    addRow: (api, before) ->
+      cell = @getCell(api)
       if cell
         $cell = $(cell)
         $tr = $cell.parent("tr")
         $tds = $tr.children()
-        $newTr = $(@api.createElement("tr"))
-        $newTr.append($(@api.createElement("td")).html(Helpers.zeroWidthNoBreakSpace)) for i in [1..$tds.length]
+        $newTr = $(api.createElement("tr"))
+        $newTr.append($(api.createElement("td")).html(Helpers.zeroWidthNoBreakSpace)) for i in [1..$tds.length]
         $tr[if before then "before" else "after"]($newTr)
         # Put the cursor in the first td of the newly added tr.
-        @api.selectEndOfElement($newTr.children("td")[0])
-        @update()
-
+        api.selectEndOfElement($newTr.children("td")[0])
+        api.clean()
     # Deletes a row and moves the caret to the first cell in the next row.
     # If no next row, moves caret to first cell in previous row. If no more
     # rows, deletes the table.
-    deleteRow: =>
-      tr = @api.getParentElement("tr")
+    deleteRow: (api) ->
+      tr = api.getParentElement("tr")
       if tr
         $tr = $(tr)
         $defaultTr = $tr.next("tr")
@@ -199,16 +166,15 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           # NOTE: Place the selection first before removing the row. This is
           # crucial in IE9. If we remove the row first, IE9 loses the range and
           # craps out on the selection.
-          @api.selectEndOfElement($defaultTr.children()[0])
+          api.selectEndOfElement($defaultTr.children()[0])
           $tr.remove()
         else
-          @deleteTable($tr.closest("table", @api.el)[0])
-        @update()
-
-    # inserts a new column. The first argument specifies whether the column
-    # should appear before or after the current column.
-    addCol: (before) =>
-      cell = @getCell()
+          @deleteTable(api, $tr.closest("table", api.el)[0])
+        api.clean()
+    # Inserts a new column. Set before to true to insert the column to the
+    # left.
+    addColumn: (api, before) ->
+      cell = @getCell(api)
       if cell
         $cell = $(cell)
         @eachCellInCol($cell, ->
@@ -217,13 +183,12 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         )
         $nextCell = $cell[if before then "prev" else "next"]($cell.tagName())
         # Put the cursor in the newly added column beside the original cell.
-        @api.selectEndOfElement($nextCell[0])
-        @update()
-
-    # deletes column and moves cursor to right. If no right cell, to left.
+        api.selectEndOfElement($nextCell[0])
+        api.clean()
+    # Deletes column and moves cursor to right. If no right cell, to left.
     # If no left or right, it deletes the whole table.
-    deleteCol: =>
-      cell = @getCell()
+    deleteColumn: (api) ->
+      cell = @getCell(api)
       if cell
         $cell = $(cell)
         $defaultCell = $cell.next()
@@ -232,19 +197,17 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           # NOTE: Place the selection first before removing the row. This is
           # crucial in IE9. If we remove the row first, IE9 loses the range and
           # craps out on the selection.
-          @api.selectEndOfElement($defaultCell[0])
+          api.selectEndOfElement($defaultCell[0])
           @eachCellInCol($cell, -> $(this).remove())
         else
-          @deleteTable($cell.closest("table", @api.el))
-        @update()
-
+          @deleteTable(api, $cell.closest("table", api.el))
+        api.clean()
     # Find the currently selected cell (i.e. td or th).
-    getCell: ->
-      @api.getParentElement((el) ->
+    getCell: (api) ->
+      api.getParentElement((el) ->
         tag = $(el).tagName()
         tag == 'td' or tag == 'th'
       )
-
     # This function iterates through a single column of cells based on the
     # cell passed in.
     eachCellInCol: (cell, fn) ->
@@ -255,11 +218,10 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         break if $cells[i] == $cell[0]
       for row in $tr.parent().children("tr")
         fn.apply($(row).children()[i])
-
     # NOTE: Leaving this here for now because I'm not sure if we'll need it.
     # Change the tag of the current cell (th or td are expected values).
     #tag: (tag) ->
-      #cell = @getCell()
+      #cell = @getCell(api)
       #if cell
         #$cell = cell
         #cellTag = $cell.tagName()
@@ -267,42 +229,25 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           #newCell($("<#{tag}/>").html($cell.html()))
           #$cell.replaceWith(newCell)
           #@api.selectEndOfElement(newCell.get(0))
-
-    update: ->
-      # In Webkit, after the toolbar is clicked, the focus hops to the parent
-      # window. We need to refocus it back into the iframe. Focusing breaks IE
-      # and kills the range so the focus is only for Webkit. It does not affect
-      # Firefox.
-      @api.win.focus() if Browser.isWebkit
-      @api.clean()
-
-    activate: =>
-      $(@api.el).on("keydown", @onkeydown)
-
-    deactivate: =>
-      $(@api.el).off("keydown", @onkeydown)
-
-    onkeydown: (e) =>
+    handleKeydown: (e) ->
       keys = Helpers.keysOf(e)
       if keys == "tab" or keys == "shift.tab"
-        cell = @getCell()
+        cell = @getCell(e.api)
         if cell
           e.preventDefault()
-          @moveToSiblingCell(cell, keys == "tab")
-
+          @moveToSiblingCell(e.api, cell, keys == "tab")
     # Move to a sibling cell. If this is the last cell, add a new row and move
     # to the first cell in the new row.
     # Arguments:
     # cell - current cell
     # next - true to move to next cell, false to move to previous cell
-    moveToSiblingCell: (cell, next) ->
+    moveToSiblingCell: (api, cell, next) ->
       siblingCell = @findSiblingCell(cell, next)
       if siblingCell
-        @api.selectEndOfElement(siblingCell)
+        api.selectEndOfElement(siblingCell)
       else
         # Add a row if we are at the bottom and we want the next sibling.
-        @addRow(false) if next
-
+        @addRow(api, false) if next
     # Find the sibling cell. Returns null if none is found.
     # Arguments:
     # cell - current cell
@@ -322,4 +267,4 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           $siblingCell = $siblingRow.find("td, th")[position]()
       return $siblingCell[0] or null
 
-  return Table
+  window.SnapEditor.insertStyles("plugins_table", Helpers.createStyles("table", 22 * -26))

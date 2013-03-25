@@ -42,10 +42,10 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
     # Perform the actual initialization of the editor.
     init: (el) =>
       super(el)
-      toolbarComponents = @plugins.getToolbarComponents()
-      @toolbar = new Toolbar(@api, @$templates, toolbarComponents.available, toolbarComponents.config)
+      @toolbar = new Toolbar(@api)
       @formize(@toolbar.$toolbar)
       @$el.blur(@updateTextarea)
+      @insertStyles("snapeditor_form", @css)
 
     formize: (toolbar) ->
       $toolbar = $(toolbar)
@@ -66,6 +66,13 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       # Swap.
       @$textarea.hide()
       @$container.show()
+
+    css: """
+      .snapeditor_form_iframe_container {
+        border: 1px solid #dddddd;
+        border-top: none;
+      }
+    """
 
     updateTextarea: =>
       newContents = @getContents()
