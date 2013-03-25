@@ -74,10 +74,14 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
 
         .snapeditor_toolbar_menu table, .snapeditor_toolbar_menu th, .snapeditor_toolbar_menu td {
           border: none;
+          margin: 0;
+          padding: 0;
         }
 
         .snapeditor_toolbar_menu table {
           width: 100%;
+          margin: 0;
+          padding: 0;
         }
 
         .snapeditor_toolbar_menu_shortcut {
