@@ -1,4 +1,4 @@
-require ["jquery.custom"], ($) ->
+require ["jquery.custom", "snapeditor.pre"], ($) ->
   window.isIE = $.browser.msie
   #window.isIE7 = isIE and parseInt($.browser.version, 10) == 7
   #window.isIE8 = isIE and parseInt($.browser.version, 10) == 8
@@ -44,10 +44,3 @@ require ["jquery.custom"], ($) ->
   # Remove ", \n, \r, and zero width no break space.
   window.clean = (s) ->
     s.toLowerCase().replace(/["\n\r\t\ufeff]/g, "")
-
-  # Stub out the SnapEditor object.
-  window.SnapEditor =
-    internalPlugins: {}
-    lang: {}
-    insertStyles: ->
-    DEBUG: ->
