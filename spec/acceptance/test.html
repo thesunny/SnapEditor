@@ -38,7 +38,7 @@
     <script src="/spec/javascripts/support/assets/javascripts/sha1.js" type="text/javascript" charset="utf-8"></script>
     <script src="/spec/javascripts/support/assets/javascripts/strftime.js" type="text/javascript" charset="utf-8"></script>
     <script src="/spec/javascripts/support/assets/javascripts/toISOString.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/spec/acceptance/assets/javascripts/snapeditor.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/spec/acceptance/assets/snapeditor.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       SnapEditor.debug = true;
 
@@ -75,7 +75,6 @@
       });
       */
       var insecureForm = new SnapEditor.Form("insecure_form", {
-        path: "/spec/acceptance/assets",
         stylesheets: [],
         contentClass: "myClass",
         imageServer: {
@@ -85,7 +84,6 @@
         },
       });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
-        path: "/spec/acceptance/assets",
         snap: false,
         toolbar: {
           items: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link"]
