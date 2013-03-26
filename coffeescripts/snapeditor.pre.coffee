@@ -5,7 +5,7 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
       # PUBLIC
       #
 
-      version: "1.4.1"
+      version: "1.5.0"
       lang: LangEn
       commands: {}
       plugins: {}
