@@ -14,4 +14,4 @@ define ["jquery.custom", "ui/ui.dialog"], ($, Dialog) ->
 
     show: (api, message) =>
       super(api)
-      @$error.text(message)
+      @$error.html(message)
