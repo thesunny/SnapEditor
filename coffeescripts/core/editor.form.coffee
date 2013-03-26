@@ -1,6 +1,6 @@
 define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.form", "core/assets", "styles/cssreset-min.css", "styles/snapeditor_iframe.css", "core/iframe.snapeditor", "core/toolbar/toolbar.static"], ($, Helpers, Editor, Defaults, Assets, CSSReset, CSS, IFrame, Toolbar) ->
   class FormEditor extends Editor
-    constructor: (textarea, config) ->
+    constructor: (textarea, config = {}) ->
       # The base editor deals with initializing after document ready. However,
       # the form editor requires the document to be ready as well. Hence, it
       # needs to take care of its own initialization.

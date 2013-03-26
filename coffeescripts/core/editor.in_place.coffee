@@ -1,6 +1,6 @@
 define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.floating"], (Editor, Defaults, Toolbar) ->
   class InPlaceEditor extends Editor
-    constructor: (el, config) ->
+    constructor: (el, config = {}) ->
       defaults = Defaults.build()
       if config.onSave
         if config.toolbar
