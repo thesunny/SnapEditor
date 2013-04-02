@@ -59,6 +59,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     prepareConfig: ->
       @config.toolbar or= @defaults.toolbar
+      @config.plugins2 or= @defaults.plugins2
       @config.lang = SnapEditor.lang
       @config.commands = SnapEditor.getAllCommands()
       @config.plugins = SnapEditor.getAllPlugins()
@@ -77,7 +78,10 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
     setupPlugins: ->
-      for name, plugin of @config.plugins
+      for name in @config.plugins2
+        # TODO: Change @config.plugins.
+        plugin = @config.plugins[name]
+        throw "Plugin does not exist: #{name}" unless plugin
         for key, fn of plugin.events or {}
           @on("snapeditor.#{Helpers.camelToSnake(key)}", fn)
 
