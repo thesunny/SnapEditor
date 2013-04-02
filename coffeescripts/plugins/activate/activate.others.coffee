@@ -1,21 +1,24 @@
-# NOTE: We can't use CoffeeScript's => (fat arrow) to define the mousedown and
-# mouseup functions because it sets "this" to the window, not the object. This
-# happens because we aren't defining a class.
 define ["jquery.custom"], ($) ->
   return {
     # W3C requires contentEditable to be set after a mousedown in order to
     # preserve cusor position. However, at this point, a range does not exist.
     # It exists after a click or mouseup.
-    addActivateEvents: ->
-      $(@api.el).one("mousedown", => @onmousedown.apply(this, arguments))
-      $(@api.el).one("mouseup", => @onmouseup.apply(this, arguments))
+    addActivateEvents: (api) ->
+      plugin = api.config.plugins.activate
+      data = api: api
+      $(api.el).one("mousedown", data, plugin.onmousedown)
+      $(api.el).one("mouseup", data, plugin.onmouseup)
 
     onmousedown: (e) ->
-      @click() unless @isLink(e.target)
+      api = e.data.api
+      plugin = api.config.plugins.activate
+      plugin.click(api) unless plugin.isLink(e.target)
 
     onmouseup: (e) ->
       target = e.target
-      unless @isLink(target)
+      api = e.data.api
+      plugin = api.config.plugins.activate
+      unless plugin.isLink(target)
         # NOTE: Clicking on an image to activate the editor for the very first
         # time causes some problems. In Webkit, it does not create a range
         # immediately. Not even after a mouseup. If we delay for 100ms, then
@@ -27,7 +30,6 @@ define ["jquery.custom"], ($) ->
         # NOTE: In Gecko, there are no problems. However, there is no harm in
         # leaving it in. We leave it in for Gecko for consistency.
         #
-        # TODO: Once the API is figured out, revisit @api.select(...)
-        @api.select(target) if $(target).tagName() == 'img'
-        @activate()
+        api.select(target) if $(target).tagName() == 'img'
+        plugin.activate(api)
   }

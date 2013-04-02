@@ -1,80 +1,59 @@
-describe "Activate", ->
-  required = ["plugins/activate/activate"]
+require ["jquery.custom", "plugins/activate/activate"], ($, A) ->
+  describe "Activate", ->
 
-  describe "modules", ->
-    ait "includes browser specific functions", required, (Activate) ->
-      activate = new Activate()
-      activate.api = { $el: $("<div/>") }
-      expect(-> activate.addActivateEvents()).not.toThrow()
+    activate = api = null
+    beforeEach ->
+      activate = window.SnapEditor.internalPlugins.activate
+      api = $("<div/>")
+      api.activate = ->
+      api.config = plugins: activate: activate
 
-  describe "#register", ->
-    ait "stores the api", required, (Activate) ->
-      activate = new Activate()
-      spyOn(activate, "addActivateEvents")
-      activate.register("api")
-      expect(activate.api).toEqual("api")
+    describe "modules", ->
+      it "includes browser specific functions", ->
+        expect(-> activate.addActivateEvents(api)).not.toThrow()
 
-    ait "adds the activate events", required, (Activate) ->
-      activate = new Activate()
-      spyOn(activate, "addActivateEvents")
-      activate.register("api")
-      expect(activate.addActivateEvents).toHaveBeenCalled()
+    describe "#click", ->
+      it "triggers snapeditor.activate_click", ->
+        spyOn(api, "trigger")
+        activate.click(api)
+        expect(api.trigger).toHaveBeenCalledWith("snapeditor.activate_click")
 
-  describe "#click", ->
-    ait "triggers click.activate", required, (Activate) ->
-      activate = new Activate()
-      activate.api = { trigger: null }
-      spyOn(activate.api, "trigger")
-      activate.click({})
-      expect(activate.api.trigger).toHaveBeenCalledWith("snapeditor.activate_click")
+    describe "#activate", ->
+      it "activates the editor", ->
+        $target = $("<div/>")
+        spyOn(api, "activate")
+        spyOn(api, "on")
+        activate.activate(api)
+        expect(api.activate).toHaveBeenCalled()
 
-  describe "#activate", ->
-    ait "activates the editor", required, (Activate) ->
-      $target = $("<div/>")
-      activate = new Activate()
-      activate.api = { activate: null, on: null }
-      spyOn(activate.api, "activate")
-      spyOn(activate.api, "on")
-      activate.activate(target: $target)
-      expect(activate.api.activate).toHaveBeenCalled()
+      it "listens to deactivate.editor", ->
+        $target = $("<div/>")
+        spyOn(api, "activate")
+        spyOn(api, "on")
+        activate.activate(api)
+        expect(api.on).toHaveBeenCalledWith("snapeditor.deactivate", activate.deactivate)
 
-    ait "listens to deactivate.editor", required, (Activate) ->
-      $target = $("<div/>")
-      activate = new Activate()
-      activate.api = { activate: null, on: null }
-      spyOn(activate.api, "activate")
-      spyOn(activate.api, "on")
-      activate.activate(target: $target)
-      expect(activate.api.on).toHaveBeenCalledWith("snapeditor.deactivate", activate.deactivate)
+    describe "#deactivate", ->
+      it "stops listening to deactivate.editor", ->
+        spyOn(api, "off")
+        spyOn(activate, "addActivateEvents")
+        activate.deactivate(api: api)
+        expect(api.off).toHaveBeenCalledWith("snapeditor.deactivate", activate.deactivate)
 
-  describe "#deactivate", ->
-    ait "stops listening to deactivate.editor", required, (Activate) ->
-      activate = new Activate()
-      activate.api = { off: null }
-      spyOn(activate.api, "off")
-      spyOn(activate, "addActivateEvents")
-      activate.deactivate()
-      expect(activate.api.off).toHaveBeenCalledWith("snapeditor.deactivate", activate.deactivate)
+      it "adds the activate events", ->
+        spyOn(api, "off")
+        spyOn(activate, "addActivateEvents")
+        activate.deactivate(api: api)
+        expect(activate.addActivateEvents).toHaveBeenCalled()
 
-    ait "adds the activate events", required, (Activate) ->
-      activate = new Activate()
-      activate.api = { off: null }
-      spyOn(activate.api, "off")
-      spyOn(activate, "addActivateEvents")
-      activate.deactivate()
-      expect(activate.addActivateEvents).toHaveBeenCalled()
+    describe "#isLink", ->
+      it "returns true if the element is a link", ->
+        expect(activate.isLink($("<a/>"))).toBeTruthy()
 
-  describe "#isLink", ->
-    ait "returns true if the element is a link", required, (Activate) ->
-      activate = new Activate()
-      expect(activate.isLink($("<a/>"))).toBeTruthy()
+      it "returns true if the element is inside link", ->
+        $a = $("<a/>")
+        $span = $("<span/>").appendTo($a)
+        expect(activate.isLink($span)).toBeTruthy()
 
-    ait "returns true if the element is inside link", required, (Activate) ->
-      $a = $("<a/>")
-      $span = $("<span/>").appendTo($a)
-      activate = new Activate()
-      expect(activate.isLink($span)).toBeTruthy()
-
-    ait "returns false otherwise", required, (Activate) ->
-      activate = new Activate()
-      expect(activate.isLink($("<div/>"))).toBeFalsy()
+      it "returns false otherwise", ->
+        expect(activate.isLink($("<div/>"))).toBeFalsy()
