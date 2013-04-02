@@ -25,7 +25,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       api.on("snapeditor.keydown", @onkeydown)
       api.on("snapeditor.keyup", @onkeyup)
 
-    deactivate: ->
+    deactivate: (api) ->
       api.off("snapeditor.keydown", @onkeydown)
       api.off("snapeditor.keyup", @onkeyup)
 
