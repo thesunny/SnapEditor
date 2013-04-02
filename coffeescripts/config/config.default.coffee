@@ -23,7 +23,6 @@ define [
     build: ->
       return {
         plugins: [
-          new Deactivate()
           new Editable()
           new Cleaner()
           new EraseHandler()
@@ -35,6 +34,7 @@ define [
         ]
         plugins2: [
           "activate"
+          "deactivate"
           "inline"
           "styleBlock"
           "align"
