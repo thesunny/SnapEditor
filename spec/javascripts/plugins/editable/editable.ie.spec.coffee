@@ -1,55 +1,45 @@
 if isIE
-  describe "Editable.IE", ->
-    required = ["plugins/editable/editable.ie", "core/helpers"]
+  require ["jquery.custom", "plugins/editable/editable.ie"], ($, IE) ->
+    describe "Editable.IE", ->
+      $div = api = null
+      beforeEach ->
+        # If the div is not in the DOM, IE craps out.
+        $div = $("<div/>").prepend("body")
+        api =
+          el: $div[0]
+          config: plugins: editable: IE
 
-    Editable = $el = null
-    beforeEach ->
-      $el = $("<div/>").prependTo("body")
-      class Editable
-        api: { el: $el[0] }
+      afterEach ->
+        $div.remove()
 
-    afterEach ->
-      $el.remove()
+      describe "#start", ->
+        it "prevents the image resize handlers from working", ->
+          spyOn(IE, "preventResize")
+          IE.start(api)
+          console.log 1
 
-    describe "#start", ->
-      ait "prevents the image resize handlers from working", required, (Module, Helpers) ->
-        Helpers.include(Editable, Module)
+          # NOTE: The event handler is attached using native JavaScript. Hence,
+          # we need to fire the event using native JavaScript.
+          api.el.fireEvent("onresizestart", document.createEventObject())
+          expect(IE.preventResize).toHaveBeenCalled()
 
-        editable = new Editable()
-        spyOn(editable, "preventResize")
-        editable.start()
+        it "makes the el editable", ->
+          IE.start(api)
+          expect($(api.el).attr("contenteditable")).toEqual("true")
 
-        # NOTE: The event handler is attached using native JavaScript. Hence,
-        # we need to fire the event using native JavaScript.
-        $el[0].fireEvent("onresizestart", document.createEventObject())
-        expect(editable.preventResize).toHaveBeenCalled()
+      describe "#deactivateBrowser", ->
+        it "detaches the onresizestart event handler", ->
+          spyOn(IE, "preventResize")
+          IE.start(api)
+          IE.deactivateBrowser(api)
 
-      ait "makes the el editable", required, (Module, Helpers) ->
-        Helpers.include(Editable, Module)
+          # NOTE: The event handler is attached using native JavaScript. Hence,
+          # we need to fire the event using native JavaScript.
+          api.el.fireEvent("onresizestart", document.createEventObject())
+          expect(IE.preventResize).not.toHaveBeenCalled()
 
-        editable = new Editable()
-        editable.start()
-        expect($(editable.api.el).attr("contentEditable")).toEqual("true")
-
-    describe "#deactivateBrowser", ->
-      ait "detaches the onresizestart event handler", required, (Module, Helpers) ->
-        Helpers.include(Editable, Module)
-
-        editable = new Editable()
-        spyOn(editable, "preventResize")
-        editable.start()
-        editable.deactivateBrowser()
-
-        # NOTE: The event handler is attached using native JavaScript. Hence,
-        # we need to fire the event using native JavaScript.
-        $el[0].fireEvent("onresizestart", document.createEventObject())
-        expect(editable.preventResize).not.toHaveBeenCalled()
-
-    describe "#preventResize", ->
-      ait "sets the return value to false", required, (Module, Helpers) ->
-        Helpers.include(Editable, Module)
-
-        e = { returnValue: true }
-        editable = new Editable()
-        editable.preventResize(e)
-        expect(e.returnValue).toBeFalsy()
+      describe "#preventResize", ->
+        it "sets the return value to false", ->
+          e = returnValue: true
+          IE.preventResize(e)
+          expect(e.returnValue).toBeFalsy()
