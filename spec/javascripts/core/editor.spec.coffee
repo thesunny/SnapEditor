@@ -12,6 +12,7 @@ require ["jquery.custom", "core/editor", "core/helpers", "core/range"], ($, Edit
       $editable = addEditableFixture()
       defaults =
         plugins: []
+        plugins2: []
         toolbar: []
         cleaner:
           whitelist:
