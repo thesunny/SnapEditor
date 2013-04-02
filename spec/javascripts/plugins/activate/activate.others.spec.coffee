@@ -60,8 +60,7 @@ unless isIE
         event = null
         beforeEach ->
           event =
-            data:
-              api: api
+            data: api: api
             target: $("<div/>")[0]
 
         it "selects the target if an image is clicked", ->

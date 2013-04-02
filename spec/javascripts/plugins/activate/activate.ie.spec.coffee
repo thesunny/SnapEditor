@@ -9,6 +9,7 @@ if isIE
           isLink: -> false
         Helpers.extend(activate, IE)
         api = $("<div/>")
+        api.el = $("<div/>")[0]
         api.select = ->
         api.config = plugins: activate: activate
 
@@ -17,33 +18,39 @@ if isIE
           spyOn(activate, "onmouseup")
           activate.addActivateEvents(api)
 
-          api.trigger("snapeditor.mouseup")
+          $(api.el).trigger("mouseup")
           expect(activate.onmouseup).toHaveBeenCalled()
 
         it "listens to mouseup only once", ->
           spyOn(activate, "onmouseup")
           activate.addActivateEvents(api)
 
-          api.trigger("snapeditor.mouseup")
-          api.trigger("snapeditor.mouseup")
+          $(api.el).trigger("mouseup")
+          $(api.el).trigger("mouseup")
 
           expect(activate.onmouseup.callCount).toEqual(1)
 
       describe "#onmouseup", ->
+        event = null
+        beforeEach ->
+          event =
+            data: api: api
+            target: $("<div/>")[0]
+
         describe "target is not a link", ->
           it "selects the target when the target is an image", ->
-            $target = $("<img/>")
             spyOn(activate, "click")
             spyOn(activate, "activate")
             spyOn(api, "select")
 
-            activate.onmouseup(api: api, target: $target[0])
-            expect(api.select).toHaveBeenCalledWith($target[0])
+            event.target = $("<img/>")[0]
+            activate.onmouseup(event)
+            expect(api.select).toHaveBeenCalledWith(event.target)
 
           it "triggers click.activate and activates the editor", ->
             spyOn(activate, "click")
             spyOn(activate, "activate")
-            activate.onmouseup(api: api, target: $("<div/>")[0])
+            activate.onmouseup(event)
             expect(activate.click).toHaveBeenCalled()
             expect(activate.activate).toHaveBeenCalled()
 
@@ -52,6 +59,6 @@ if isIE
             spyOn(activate, "isLink").andReturn(true)
             spyOn(activate, "click")
             spyOn(activate, "activate")
-            activate.onmouseup(api: api, target: $("<div/>")[0])
+            activate.onmouseup(event)
             expect(activate.click).not.toHaveBeenCalled()
             expect(activate.activate).not.toHaveBeenCalled()

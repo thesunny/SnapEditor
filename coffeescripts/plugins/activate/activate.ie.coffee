@@ -3,11 +3,15 @@ define ["jquery.custom"], ($) ->
     # IE requires contentEditable to be set after a mouseup in order to
     # preserve cursor position. At this point, a range will exist.
     addActivateEvents: (api) ->
-      api.on("snapeditor.mouseup", api.config.plugins.activate.onmouseup)
+      # Add the events directly to the element instead of using SnapEditor
+      # events because the Activate plugin is the one that starts off the
+      # SnapEditor events.
+      data = api: api
+      $(api.el).one("mouseup", data, api.config.plugins.activate.onmouseup)
 
     onmouseup: (e) ->
       target = e.target
-      api = e.api
+      api = e.data.api
       plugin = api.config.plugins.activate
       api.off("snapeditor.mouseup", plugin.onmouseup)
       unless plugin.isLink(target)

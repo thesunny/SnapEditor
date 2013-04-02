@@ -4,6 +4,9 @@ define ["jquery.custom"], ($) ->
     # preserve cusor position. However, at this point, a range does not exist.
     # It exists after a click or mouseup.
     addActivateEvents: (api) ->
+      # Add the events directly to the element instead of using SnapEditor
+      # events because the Activate plugin is the one that starts off the
+      # SnapEditor events.
       plugin = api.config.plugins.activate
       data = api: api
       $(api.el).one("mousedown", data, plugin.onmousedown)
