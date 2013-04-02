@@ -1,8 +1,8 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   window.SnapEditor.internalPlugins.emptyHandler =
     events:
-      activate: (e) -> e.api.on("keyup", e.api.config.plugins.emptyHandler.onkeyup)
-      deactivate: (e) -> e.api.off("keyup", e.api.config.plugins.emptyHandler.onkeyup)
+      activate: (e) -> e.api.on("snapeditor.keyup", e.api.config.plugins.emptyHandler.onkeyup)
+      deactivate: (e) -> e.api.off("snapeditor.keyup", e.api.config.plugins.emptyHandler.onkeyup)
       cleanerFinished: (e) -> e.api.config.plugins.emptyHandler.onCleanerFinished(e.api)
 
     onkeyup: (e) ->
