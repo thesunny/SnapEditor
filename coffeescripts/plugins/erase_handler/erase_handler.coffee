@@ -81,7 +81,6 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       ["hr"].concat(api.config.eraseHandler.delete).join(",")
 
     shouldDelete: (api, node) ->
-      console.log node
       node and Helpers.isElement(node) and $(node).filter(@getCSSSelectors(api)).length > 0
 
     delete: (e, key) ->
