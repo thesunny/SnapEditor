@@ -230,12 +230,14 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
           #$cell.replaceWith(newCell)
           #@api.selectEndOfElement(newCell.get(0))
     handleKeydown: (e) ->
+      api = e.api
+      plugin = e.api.config.plugins.table
       keys = Helpers.keysOf(e)
       if keys == "tab" or keys == "shift.tab"
-        cell = @getCell(e.api)
+        cell = plugin.getCell(api)
         if cell
           e.preventDefault()
-          @moveToSiblingCell(e.api, cell, keys == "tab")
+          plugin.moveToSiblingCell(api, cell, keys == "tab")
     # Move to a sibling cell. If this is the last cell, add a new row and move
     # to the first cell in the new row.
     # Arguments:
