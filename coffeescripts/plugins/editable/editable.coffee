@@ -14,8 +14,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/edita
     deactivate: (api) ->
       api.el.contentEditable = false
       api.el.blur()
-      api.config.plugins.editable.deactivateBrowser()
-    deactivateBrowser: ->
+      api.config.plugins.editable.deactivateBrowser(api)
+    deactivateBrowser: (api) ->
       # Overridden by browser specific implementation.
 
   Helpers.extend(window.SnapEditor.internalPlugins.editable, if Browser.isIE then IE else Others)
