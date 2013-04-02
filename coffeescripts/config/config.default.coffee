@@ -44,6 +44,7 @@ define [
           "image"
           "horizontalRule"
           "print"
+          "save"
         ]
         toolbar:
           items: [
