@@ -17,8 +17,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         mouseup: @mouseup
       )
 
-    forwardKeys: ["right", "down", "pagedown", "end"]
-    backwardKeys: ["left", "up", "pageup", "home"]
+    # Backspace is considered a forward key because when we backspace into an
+    # atomic element, we want to push the cursor forward so it stays at the
+    # end of the atomic element. The same reasoning is used for delete.
+    forwardKeys: ["right", "down", "pagedown", "end", "backspace"]
+    backwardKeys: ["left", "up", "pageup", "home", "delete"]
 
     keyup: (e) =>
       key = Helpers.keyOf(e)
