@@ -16,42 +16,44 @@
 # This is unexpected behaviour. We should expect "Some text" to be styled as h1.
 # <h1>This is a header Some text</h1>
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
-  class EraseHandler
-    register: (@api) ->
-      @api.on("snapeditor.activate", @activate)
-      @api.on("snapeditor.deactivate", @deactivate)
+  window.SnapEditor.internalPlugins.eraseHandler =
+    events:
+      activate: (e) -> e.api.config.plugins.eraseHandler.activate(e.api)
+      deactivate: (e) -> e.api.config.plugins.eraseHandler.deactivate(e.api)
 
-    activate: =>
-      $(@api.el).on("keydown", @onkeydown)
-      $(@api.el).on("keyup", @onkeyup)
+    activate: (api) ->
+      api.on("snapeditor.keydown", @onkeydown)
+      api.on("snapeditor.keyup", @onkeyup)
 
-    deactivate: =>
-      $(@api.el).off("keydown", @onkeydown)
-      $(@api.el).off("keyup", @onkeyup)
+    deactivate: ->
+      api.off("snapeditor.keydown", @onkeydown)
+      api.off("snapeditor.keyup", @onkeyup)
 
-    onkeydown: (e) =>
+    onkeydown: (e) ->
+      api = e.api
+      plugin = e.api.config.plugins.eraseHandler
       key = Helpers.keyOf(e)
       if key == 'delete' or key == 'backspace'
         # Handle the deletion of an entire element. If no entire element was
         # deleted, continue with the normal flow of the erase handler.
-        unless @delete(e, key)
+        unless plugin.delete(e, key)
           if Browser.isWebkit
             # Webkit is the only browser we have to override the default
             # deleting because it does some funky stuff.
-            if @api.isCollapsed()
-              @merge(e)
+            if api.isCollapsed()
+              plugin.merge(e)
             else
               e.preventDefault()
-              @api.delete()
+              api.delete()
 
-    onkeyup: (e) =>
+    onkeyup: (e) ->
       # Cleaning is done on keyup in case the browser's default was allowed to
       # occur. In this case, the cleaning will happen afterwards.
       key = Helpers.keyOf(e)
-      @api.clean() if key == 'delete' or key == 'backspace'
+      e.api.clean() if key == 'delete' or key == 'backspace'
 
     merge: (e) ->
-      range = @api.getRange()
+      range = e.api.getRange()
       parentEl = range.getParentElement((el) -> Helpers.isBlock(el))
 
       # Attempt to find the two nodes to merge.
@@ -73,23 +75,24 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           # merging.
           $(aEl).remove()
         else
-          @api.keepRange(-> $(aEl).merge(bEl))
+          e.api.keepRange(-> $(aEl).merge(bEl))
 
-    getCSSSelectors: ->
-      ["hr"].concat(@api.config.eraseHandler.delete).join(",")
+    getCSSSelectors: (api) ->
+      ["hr"].concat(api.config.eraseHandler.delete).join(",")
 
-    shouldDelete: (node) ->
-      node and Helpers.isElement(node) and $(node).filter(@getCSSSelectors()).length > 0
+    shouldDelete: (api, node) ->
+      console.log node
+      node and Helpers.isElement(node) and $(node).filter(@getCSSSelectors(api)).length > 0
 
     delete: (e, key) ->
       deleted = false
+      api = e.api
       # Nothing to do if a selection is found.
-      return deleted unless @api.isCollapsed()
+      return deleted unless api.isCollapsed()
       # Delete the element if needed. Note that startEl == endEl because the
       # range is collapsed.
-      api = @api
       self = this
-      @api.keepRange((startEl, endEl) ->
+      api.keepRange((startEl, endEl) ->
         if key == "delete"
           el = endEl
           which = "next"
@@ -103,7 +106,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           !node.nodeValue.match(Helpers.emptyRegExp)
         )
         # If the sibling exists and should be deleted, delete it.
-        if self.shouldDelete(sibling)
+        if self.shouldDelete(api, sibling)
             e.preventDefault()
             $(sibling).remove()
             deleted = true
