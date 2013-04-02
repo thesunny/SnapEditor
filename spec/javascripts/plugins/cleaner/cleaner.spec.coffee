@@ -1,12 +1,10 @@
-require ["jquery.custom", "plugins/cleaner/cleaner", "core/range"], ($, Cleaner, Range) ->
+require ["jquery.custom", "plugins/cleaner/cleaner"], ($, Cleaner) ->
   $editable = cleaner = null
   describe "Cleaner", ->
-    $editable = null
+    $editable = cleaner = null
     beforeEach ->
       $editable = addEditableFixture()
-      cleaner = new Cleaner()
-      cleaner.api = $("<div/>")
-      cleaner.api.el = $editable[0]
+      cleaner = window.SnapEditor.internalPlugins.cleaner
 
     afterEach ->
       $editable.remove()
@@ -16,11 +14,11 @@ require ["jquery.custom", "plugins/cleaner/cleaner", "core/range"], ($, Cleaner,
         $editable.html("this <b>must</b> be a test<div>or <i>maybe</i> not</div>")
 
       it "looks up the parent chain and returns the textnode at the top", ->
-        node = cleaner.findTopNode($editable[0].childNodes[0])
+        node = cleaner.findTopNode($editable[0], $editable[0].childNodes[0])
         expect(node).toBe($editable[0].childNodes[0])
 
       it "looks up the parent chain and returns the element at the top", ->
-        node = cleaner.findTopNode($editable.find("i")[0])
+        node = cleaner.findTopNode($editable[0], $editable.find("i")[0])
         expect(node).toBe($editable.find("div")[0])
 
     describe "#expandTopNode", ->

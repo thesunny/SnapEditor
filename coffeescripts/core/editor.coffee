@@ -239,7 +239,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     # Clean the editor.
     clean: ->
-      @trigger("clean", arguments)
+      @trigger("snapeditor.clean", arguments)
 
     # Save the contents of the editor.
     save: ->

@@ -23,7 +23,6 @@ define [
     build: ->
       return {
         plugins: [
-          new Cleaner()
           new EraseHandler()
           new EnterHandler()
           new EmptyHandler()
@@ -35,6 +34,7 @@ define [
           "activate"
           "deactivate"
           "editable"
+          "cleaner"
           "inline"
           "styleBlock"
           "align"
