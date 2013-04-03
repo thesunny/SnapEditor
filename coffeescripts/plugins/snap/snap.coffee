@@ -1,11 +1,48 @@
 define ["jquery.custom"], ($) ->
-  class Snap
-    register: (@api) ->
-      if @api.config.snap
-        @$el = $(@api.el)
-        @api.on("snapeditor.activate", @snap)
-        @api.on("snapeditor.deactivate", @unsnap)
-        @api.on("snapeditor.cleaner_finished", @update)
+  window.SnapEditor.internalPlugins.snap =
+    events:
+      activate: (e) -> e.api.config.plugins.snap.snap(e.api) if e.api.config.snap
+      deactivate: (e) -> e.api.config.plugins.snap.unsnap() if e.api.config.snap
+      cleanerFinished: (e) -> e.api.config.plugins.snap.update(e) if e.api.config.snap
+
+    # Start the snap.
+    snap: (api) ->
+      @activated = true
+      @api = api
+      @$el = $(@api.el)
+      @setup() unless @divs
+      div.show() for position, div of @divs
+      options = @getFxOptions()
+      div.css(options.unsnapped[position]) for position, div of @divs
+      div.animate(options.snapped[position], duration: "fast") for position, div of @divs
+      @api.on(
+        "snapeditor.keyup": @update
+        "snapeditor.mouseup": @update
+      )
+      self = this
+      @resizeHandler = (e) -> self.update(e)
+      $(window).on("resize", @resizeHandler)
+
+    # Start the unsnap.
+    unsnap: ->
+      if @activated
+        options = @getFxOptions()
+        div.css(options.snapped[position]) for position, div of @divs
+        div.animate(options.unsnapped[position], duration: "fast", complete: -> $(this).hide()) for position, div of @divs
+        @api.off(
+          "snapeditor.keyup": @update
+          "snapeditor.mouseup": @update
+        )
+        $(window).off("resize", @resizeHandler)
+        @active = false
+
+    # Updates the divs in case @$el changed dimensions.
+    update: (e) ->
+      if @activated
+        elCoord = @getElCoordinates()
+        documentSize = $(document).getSize()
+        styles = @getSnappedStyles(elCoord, documentSize)
+        div.css(styles[position]) for position, div of @divs
 
     # Prepare the semi-transparent divs and the snap/unsnap effects.
     setup: ->
@@ -23,25 +60,6 @@ define ["jquery.custom"], ($) ->
         bottom: div.clone(true, false).appendTo("body")
         left: div.clone(true, false).appendTo("body")
         right: div.clone(true, false).appendTo("body")
-
-    # Start the snap.
-    snap: =>
-      @setup() unless @divs
-      div.show() for position, div of @divs
-      options = @getFxOptions()
-      div.css(options.unsnapped[position]) for position, div of @divs
-      div.animate(options.snapped[position], duration: "fast") for position, div of @divs
-      @$el.on("keyup mouseup", @update)
-      $(window).on("resize", @update)
-
-    # Start the unsnap.
-    unsnap: =>
-      if @divs
-        options = @getFxOptions()
-        div.css(options.snapped[position]) for position, div of @divs
-        div.animate(options.unsnapped[position], duration: "fast", complete: -> $(this).hide()) for position, div of @divs
-        @$el.off("keyup mouseup", @update)
-        $(window).off("resize", @update)
 
     # Get the styles of all the divs after they have been snapped. The divs
     # should surround the el.
@@ -131,13 +149,6 @@ define ["jquery.custom"], ($) ->
         unsnapped: @getUnsnappedStyles(documentSize, portCoords)
       }
 
-    # Updates the divs in case @$el changed dimensions.
-    update: =>
-      elCoord = @getElCoordinates()
-      documentSize = $(document).getSize()
-      styles = @getSnappedStyles(elCoord, documentSize)
-      div.css(styles[position]) for position, div of @divs
-
     # Grab the coordinates of the element.
     getElCoordinates: ->
       elCoord = @$el.getCoordinates()
@@ -149,5 +160,3 @@ define ["jquery.custom"], ($) ->
       elCoord.width += padding.left + padding.right
       elCoord.height += padding.top + padding.bottom
       return elCoord
-
-  return Snap
