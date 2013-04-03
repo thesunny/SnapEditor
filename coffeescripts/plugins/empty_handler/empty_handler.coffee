@@ -7,7 +7,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
 
     onkeyup: (e) ->
       api = e.api
-      plugin = api.config.emptyHandler
+      plugin = api.config.plugins.emptyHandler
       key = Helpers.keyOf(e)
       if (key == 'delete' or key == 'backspace') and plugin.isEmpty(api.el)
         plugin.deleteAll(api)
