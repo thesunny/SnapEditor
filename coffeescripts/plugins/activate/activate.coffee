@@ -13,7 +13,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
     # Activates the editing session.
     activate: (api) ->
       api.activate()
-      api.on("snapeditor.deactivate", api.config.plugins.activate.deactivate)
+      api.on("snapeditor.deactivate", @deactivate)
 
     # Deactivates the editing session.
     deactivate: (e) ->

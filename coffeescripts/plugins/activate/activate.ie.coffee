@@ -7,7 +7,7 @@ define ["jquery.custom"], ($) ->
       # events because the Activate plugin is the one that starts off the
       # SnapEditor events.
       data = api: api
-      $(api.el).one("mouseup", data, api.config.plugins.activate.onmouseup)
+      $(api.el).one("mouseup", data, @onmouseup)
 
     onmouseup: (e) ->
       target = e.target
