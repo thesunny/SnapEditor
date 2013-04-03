@@ -1,35 +1,42 @@
 define ["jquery.custom"], ($) ->
-  class Outline
-    register: (@api) ->
+  window.SnapEditor.internalPlugins.outline =
+    events:
+      pluginsReady: (e) -> e.api.config.plugins.outline.activate(e.api)
+      activate: (e) -> e.api.config.plugins.outline.deactivate()
+      deactivate: (e) -> e.api.config.plugins.outline.activate(e.api)
+
+    activate: (api) ->
+      @api = api
       @$el = $(@api.el)
-      @api.on("snapeditor.deactivate", @activate)
-      @api.on("snapeditor.activate", @deactivate)
-      @activate()
+      self = this
+      @showHandler = -> self.show()
+      @hideHandler = -> self.hide()
+      @$el.on(mouseover: @showHandler, mouseout: @hideHandler)
 
-    activate: =>
-      @$el.on(mouseover: @show, mouseout: @hide)
-
-    deactivate: =>
+    deactivate: ->
       @hide()
-      @$el.off(mouseover: @show, mouseout: @hide)
+      self = this
+      @$el.off(mouseover: @showHandler, mouseout: @hideHandler)
 
-    show: =>
+    show: ->
       @setupOutlines()
       @update()
       @outlines.top.show()
       @outlines.bottom.show()
       @outlines.left.show()
       @outlines.right.show()
-      $(window).on("resize", @update)
+      self = this
+      @resizeHandler = -> self.update()
+      $(window).on("resize", @resizeHandler)
 
-    hide: =>
+    hide: ->
       @outlines.top.hide()
       @outlines.bottom.hide()
       @outlines.left.hide()
       @outlines.right.hide()
-      $(window).off("resize", @update)
+      $(window).off("resize", @resizeHandler)
 
-    update: =>
+    update: ->
       styles = @getStyles()
       @outlines.top.css(styles.top)
       @outlines.bottom.css(styles.bottom)
@@ -81,5 +88,3 @@ define ["jquery.custom"], ($) ->
           left: coords.left + coords.width + 1
           height: coords.height + 2
       }
-
-  return Outline
