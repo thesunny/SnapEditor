@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/plugins", "core/keyboard", "core/whitelist/whitelist", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Plugins, Keyboard, Whitelist, API) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, API) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -45,9 +45,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
       # Deal with new plugins.
       @setupPlugins()
-
-      # Deal with plugins.
-      @plugins = new Plugins(@api, @defaults.plugins, @config.plugins)
 
       # The default is to deactivate immediately. However, to accommodate
       # plugins such as the Save plugin, this can be disabled and handled in a
