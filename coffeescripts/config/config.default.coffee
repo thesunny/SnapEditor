@@ -23,7 +23,6 @@ define [
     build: ->
       return {
         plugins: [
-          new Atomic()
           new Edit()
         ]
         plugins2: [
@@ -35,6 +34,7 @@ define [
           "enterHandler"
           "emptyHandler"
           "autoscroll"
+          "atomic"
           "inline"
           "styleBlock"
           "align"
