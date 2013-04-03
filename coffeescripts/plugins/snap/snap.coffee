@@ -3,7 +3,7 @@ define ["jquery.custom"], ($) ->
     events:
       activate: (e) -> e.api.config.plugins.snap.snap(e.api) if e.api.config.snap
       deactivate: (e) -> e.api.config.plugins.snap.unsnap() if e.api.config.snap
-      cleanerFinished: (e) -> e.api.config.plugins.snap.update(e) if e.api.config.snap
+      cleanerFinished: (e) -> e.api.config.plugins.snap.update() if e.api.config.snap
 
     # Start the snap.
     snap: (api) ->
@@ -20,7 +20,7 @@ define ["jquery.custom"], ($) ->
         "snapeditor.mouseup": @update
       )
       self = this
-      @resizeHandler = (e) -> self.update(e)
+      @resizeHandler = -> self.update()
       $(window).on("resize", @resizeHandler)
 
     # Start the unsnap.
@@ -37,7 +37,7 @@ define ["jquery.custom"], ($) ->
         @active = false
 
     # Updates the divs in case @$el changed dimensions.
-    update: (e) ->
+    update: ->
       if @activated
         elCoord = @getElCoordinates()
         documentSize = $(document).getSize()
