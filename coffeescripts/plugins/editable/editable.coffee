@@ -3,6 +3,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/edita
     events:
       activateClick: (e) -> e.api.config.plugins.editable.start(e.api)
       deactivate: (e) -> e.api.config.plugins.editable.deactivate(e.api)
+
     # Turn on editing in the div. This includes preserving the caret position
     # as editing is turned on in all browsers.
     #
@@ -10,11 +11,13 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/edita
     # clickedImage should be set to true. False otherwise.
     start: ->
       throw "Editable.start() needs to be overridden with a browser specific implementation"
+
     # turns editing off in the div. Includes removing the focus from the div.
     deactivate: (api) ->
       api.el.contentEditable = false
       api.el.blur()
-      api.config.plugins.editable.deactivateBrowser(api)
+      @deactivateBrowser(api)
+
     deactivateBrowser: (api) ->
       # Overridden by browser specific implementation.
 

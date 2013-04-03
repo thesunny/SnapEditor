@@ -8,10 +8,10 @@ define ["core/range"], (Range) ->
       #
       # NOTE: The event handler must be attached and detached using native
       # JavaScript or it will not work.
-      api.el.attachEvent("onresizestart", api.config.plugins.editable.preventResize)
+      api.el.attachEvent("onresizestart", @preventResize)
 
     deactivateBrowser: (api) ->
-      api.el.detachEvent("onresizestart", api.config.plugins.editable.preventResize)
+      api.el.detachEvent("onresizestart", @preventResize)
 
     preventResize: (e) ->
       e.returnValue = false
