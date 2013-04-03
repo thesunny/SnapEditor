@@ -8,19 +8,17 @@ define ["jquery.custom"], ($) ->
     classname: "snapeditor_ignore_deactivate"
 
     activate: (api) ->
-      plugin = api.config.plugins.deactivate
       # mousedown and mouseup are tracked to ensure that the entire click
       # sequence is on an element that triggers the deactivation.
       api.on(
-        "snapeditor.document_mousedown": plugin.setDeactivate
-        "snapeditor.document_mouseup": plugin.tryDeactivate
+        "snapeditor.document_mousedown": @setDeactivate
+        "snapeditor.document_mouseup": @tryDeactivate
       )
 
     deactivate: (api) ->
-      plugin = api.config.plugins.deactivate
       api.off(
-        "snapeditor.document_mousedown": plugin.setDeactivate
-        "snapeditor.document_mouseup": plugin.tryDeactivate
+        "snapeditor.document_mousedown": @setDeactivate
+        "snapeditor.document_mouseup": @tryDeactivate
       )
 
     setDeactivate: (e) ->
