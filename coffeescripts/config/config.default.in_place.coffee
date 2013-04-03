@@ -7,11 +7,10 @@ define [
   return {
     build: ->
       defaults = Defaults.build()
-      defaults.plugins = defaults.plugins.concat([
-      ])
       defaults.plugins2 = defaults.plugins2.concat([
         "snap"
         "outline"
+        "save"
       ])
       defaults.toolbar = defaults.toolbar
       defaults.snap = true

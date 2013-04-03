@@ -22,8 +22,6 @@ define [
   return {
     build: ->
       return {
-        plugins: [
-        ]
         plugins2: [
           "activate"
           "deactivate"
@@ -44,7 +42,6 @@ define [
           "image"
           "horizontalRule"
           "print"
-          "save"
         ]
         toolbar:
           items: [
