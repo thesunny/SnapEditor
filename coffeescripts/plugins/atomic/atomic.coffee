@@ -2,19 +2,22 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   window.SnapEditor.internalPlugins.atomic =
     events:
       activate: (e) -> e.api.config.plugins.atomic.activate(e.api)
-      deactivate: (e) -> e.api.config.plugins.atomic.deactivate(e.api)
-      ready: (e) -> e.api.config.plugins.atomic.mouseup(e)
+      deactivate: (e) -> e.api.config.plugins.atomic.deactivate()
+      ready: (e) -> e.api.config.plugins.atomic.mouseup()
 
-    activate: (api) ->
-      api.on(
-        "snapeditor.keyup": @keyup
-        "snapeditor.mouseup": @mouseup
+    activate: (@api) ->
+      self = this
+      @keyupHandler = (e) -> self.keyup(e)
+      @mouseupHandler = (e) -> self.mouseup()
+      @api.on(
+        "snapeditor.keyup": @keyupHandler
+        "snapeditor.mouseup": @mouseupHandler
       )
 
-    deactivate: (api) ->
-      api.off(
-        "snapeditor.keyup": @keyup
-        "snapeditor.mouseup": @mouseup
+    deactivate: ->
+      @api.off(
+        "snapeditor.keyup": @keyupHandler
+        "snapeditor.mouseup": @mouseupHandler
       )
 
     # Backspace is considered a forward key because when we backspace into an
@@ -24,48 +27,46 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     backwardKeys: ["left", "up", "pageup", "home", "delete"]
 
     keyup: (e) ->
-      api = e.api
-      plugin = api.config.plugins.atomic
       key = Helpers.keyOf(e)
-      if $.inArray(key, plugin.forwardKeys) != -1
+      if $.inArray(key, @forwardKeys) != -1
         direction = "forward"
-      else if $.inArray(key, plugin.backwardKeys) != -1
+      else if $.inArray(key, @backwardKeys) != -1
         direction = "backward"
-      plugin.handleRange(api, direction) if direction
+      @handleRange(direction) if direction
 
-    mouseup: (e) ->
-      e.api.config.plugins.atomic.handleRange(e.api, "mouse")
+    mouseup: ->
+      @handleRange("mouse")
 
-    getCSSelectors: (api) ->
-      ["hr"].concat(api.config.atomic.selectors).join(",")
+    getCSSelectors: ->
+      ["hr"].concat(@api.config.atomic.selectors).join(",")
 
     # Arugments:
     # * direction - forward/backward/mouse
-    handleRange: (api, direction) ->
-      [startParent, endParent] = api.getParentElements(@getCSSelectors(api))
+    handleRange: (direction) ->
+      [startParent, endParent] = @api.getParentElements(@getCSSelectors())
       # Only do something if the range is inside an atomic element.
       if startParent or endParent
-        if api.isCollapsed() and startParent
-          @moveCollapsedRange(api, startParent, direction)
+        if @api.isCollapsed() and startParent
+          @moveCollapsedRange(startParent, direction)
         else if startParent or endParent
-          @moveSelectedRange(api, startParent, endParent, direction)
-        api.clean()
+          @moveSelectedRange(startParent, endParent, direction)
+        @api.clean()
 
-    isAtomic: (api, node) ->
-      Helpers.isElement(node) and $(node).filter(@getCSSelectors(api)).length > 0
+    isAtomic: (node) ->
+      Helpers.isElement(node) and $(node).filter(@getCSSelectors()).length > 0
 
     # Returns the previous/next sibling of el.
     #
     # Arguments:
     # which - previous/next
     # el - relative to this element
-    getSibling: (api, which, el) ->
+    getSibling: (which, el) ->
       sibling = el["#{which}Sibling"]
       # If the sibling doesn't exist or it is an atomic element, then we
       # insert a new sibling.
-      if !sibling or @isAtomic(api, sibling)
+      if !sibling or @isAtomic(sibling)
         position = if which == "previous" then "before" else "after"
-        sibling = @insertSibling(api, position, el)
+        sibling = @insertSibling(position, el)
       sibling
 
     # If el is a block element, inserts the default block before/after the
@@ -77,40 +78,40 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # Arguments:
     # position - before/after
     # el - insert relative to this element
-    insertSibling: (api, position, el) ->
+    insertSibling: (position, el) ->
       if Helpers.isBlock(el)
-        sibling = $(api.getDefaultBlock()).html(Helpers.zeroWidthNoBreakSpace)[0]
+        sibling = $(@api.getDefaultBlock()).html(Helpers.zeroWidthNoBreakSpace)[0]
       else
-        sibling = api.createTextNode(Helpers.zeroWidthNoBreakSpaceUnicode)
+        sibling = @api.createTextNode(Helpers.zeroWidthNoBreakSpaceUnicode)
       $(el)[position](sibling)
       sibling
 
     # Arguments:
     # * el - move the range relative to this el
     # * direction - forward/backward/mouse
-    moveCollapsedRange: (api, el, direction) ->
-      range = api.getRange()
+    moveCollapsedRange: (el, direction) ->
+      range = @api.getRange()
       switch direction
         when "forward", "mouse"
-          next = @getSibling(api, "next", el)
-          range.moveBoundary("EndToStart", @getSibling(api, "next", el))
+          next = @getSibling("next", el)
+          range.moveBoundary("EndToStart", @getSibling("next", el))
           range.collapse(false)
         when "backward"
-          range.moveBoundary("StartToEnd", @getSibling(api, "previous", el))
+          range.moveBoundary("StartToEnd", @getSibling("previous", el))
           range.collapse(true)
       range.select()
 
-    moveSelectedRange: (api, startEl, endEl, direction) ->
+    moveSelectedRange: (startEl, endEl, direction) ->
       if startEl or endEl
-        range = api.getRange()
+        range = @api.getRange()
         switch direction
           when "forward"
-            range.moveBoundary("StartToStart", @getSibling(api, "next", startEl)) if startEl
-            range.moveBoundary("EndToStart", @getSibling(api, "next", endEl)) if endEl
+            range.moveBoundary("StartToStart", @getSibling("next", startEl)) if startEl
+            range.moveBoundary("EndToStart", @getSibling("next", endEl)) if endEl
           when "backward"
-            range.moveBoundary("StartToEnd", @getSibling(api, "previous", startEl)) if startEl
-            range.moveBoundary("EndToEnd", @getSibling(api, "previous", endEl)) if endEl
+            range.moveBoundary("StartToEnd", @getSibling("previous", startEl)) if startEl
+            range.moveBoundary("EndToEnd", @getSibling("previous", endEl)) if endEl
           when "mouse"
-            range.moveBoundary("StartToEnd", @getSibling(api, "previous", startEl)) if startEl
-            range.moveBoundary("EndToStart", @getSibling(api, "next", endEl)) if endEl
+            range.moveBoundary("StartToEnd", @getSibling("previous", startEl)) if startEl
+            range.moveBoundary("EndToStart", @getSibling("next", endEl)) if endEl
         range.select()
