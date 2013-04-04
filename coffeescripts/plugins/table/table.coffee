@@ -5,6 +5,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
         $(e.api.el).on("keydown", e.api.config.plugins.table.handleKeydown)
       deactivate: (e) ->
         $(e.api.el).off("keydown", e.api.config.plugins.table.handleKeydown)
+
     commands:
       table:
         text: window.SnapEditor.lang.table
@@ -17,6 +18,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
       addColumnRight: Helpers.createCommand("addColumnRight", "ctrl.m", ((e) -> e.api.config.plugins.table.addColumn(e.api, false)), langKey: "tableAddColumnRight")
       deleteColumn: Helpers.createCommand("deleteColumn", "", ((e) -> e.api.config.plugins.table.deleteColumn(e.api)), langKey: "tableDeleteColumn")
       deleteTable: Helpers.createCommand("deleteTable", "", ((e) -> e.api.config.plugins.table.deleteTable(e.api)), langKey: "tableDelete")
+
     insertTable: (api) ->
       if api.isValid()
         if api.getParentElement("table, li")
@@ -121,6 +123,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
           api.selectEndOfElement($table.find("td")[0])
           $table.removeAttr("id")
           api.clean()
+
     # Deletes the entire table. If no table is passed in, it attempts to find
     # a table that contains the range.
     deleteTable: (api, table) ->
@@ -140,6 +143,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
         else
           $table.remove()
         api.clean()
+
     # Inserts a new row. Set before to true to insert the row above.
     addRow: (api, before) ->
       cell = @getCell(api)
@@ -153,6 +157,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
         # Put the cursor in the first td of the newly added tr.
         api.selectEndOfElement($newTr.children("td")[0])
         api.clean()
+
     # Deletes a row and moves the caret to the first cell in the next row.
     # If no next row, moves caret to first cell in previous row. If no more
     # rows, deletes the table.
@@ -171,6 +176,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
         else
           @deleteTable(api, $tr.closest("table", api.el)[0])
         api.clean()
+
     # Inserts a new column. Set before to true to insert the column to the
     # left.
     addColumn: (api, before) ->
@@ -185,6 +191,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
         # Put the cursor in the newly added column beside the original cell.
         api.selectEndOfElement($nextCell[0])
         api.clean()
+
     # Deletes column and moves cursor to right. If no right cell, to left.
     # If no left or right, it deletes the whole table.
     deleteColumn: (api) ->
@@ -202,12 +209,14 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
         else
           @deleteTable(api, $cell.closest("table", api.el))
         api.clean()
+
     # Find the currently selected cell (i.e. td or th).
     getCell: (api) ->
       api.getParentElement((el) ->
         tag = $(el).tagName()
         tag == 'td' or tag == 'th'
       )
+
     # This function iterates through a single column of cells based on the
     # cell passed in.
     eachCellInCol: (cell, fn) ->
@@ -218,6 +227,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
         break if $cells[i] == $cell[0]
       for row in $tr.parent().children("tr")
         fn.apply($(row).children()[i])
+
     # NOTE: Leaving this here for now because I'm not sure if we'll need it.
     # Change the tag of the current cell (th or td are expected values).
     #tag: (tag) ->
@@ -229,6 +239,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
           #newCell($("<#{tag}/>").html($cell.html()))
           #$cell.replaceWith(newCell)
           #@api.selectEndOfElement(newCell.get(0))
+
     handleKeydown: (e) ->
       api = e.api
       plugin = e.api.config.plugins.table
@@ -238,6 +249,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
         if cell
           e.preventDefault()
           plugin.moveToSiblingCell(api, cell, keys == "tab")
+
     # Move to a sibling cell. If this is the last cell, add a new row and move
     # to the first cell in the new row.
     # Arguments:
@@ -250,6 +262,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
       else
         # Add a row if we are at the bottom and we want the next sibling.
         @addRow(api, false) if next
+
     # Find the sibling cell. Returns null if none is found.
     # Arguments:
     # cell - current cell
