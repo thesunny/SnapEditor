@@ -1,13 +1,21 @@
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   window.SnapEditor.internalPlugins.enterHandler =
     events:
-      activate: (e) -> e.api.on("snapeditor.keydown", e.api.config.plugins.enterHandler.onkeydown)
-      deactivate: (e) -> e.api.off("snapeditor.keydown", e.api.config.plugins.enterHandler.onkeydown)
+      activate: (e) -> e.api.config.plugins.enterHandler.activate(e.api)
+      deactivate: (e) -> e.api.config.plugins.enterHandler.deactivate(e.api)
+
+    activate: (@api) ->
+      self = this
+      @onkeydownHandler = (e) -> self.onkeydown(e)
+      @api.on("snapeditor.keydown", @onkeydownHandler)
+
+    deactivate: ->
+      @api.off("snapeditor.keydown", @onkeydownHandler)
 
     onkeydown: (e) ->
       if Helpers.keysOf(e) == "enter"
         e.preventDefault()
-        e.api.config.plugins.enterHandler.handleEnterKey(e.api)
+        @handleEnterKey(@api)
 
     handleEnterKey: (@api) ->
       if @api.delete()
