@@ -1,21 +1,23 @@
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
-  class EnterHandler
-    register: (@api) ->
-      @api.on("snapeditor.activate", @activate)
-      @api.on("snapeditor.deactivate", @deactivate)
+  window.SnapEditor.internalPlugins.enterHandler =
+    events:
+      activate: (e) -> e.api.plugins.enterHandler.activate(e.api)
+      deactivate: (e) -> e.api.plugins.enterHandler.deactivate(e.api)
 
-    activate: =>
-      $(@api.el).on("keydown", @onkeydown)
+    activate: (@api) ->
+      self = this
+      @onkeydownHandler = (e) -> self.onkeydown(e)
+      @api.on("snapeditor.keydown", @onkeydownHandler)
 
-    deactivate: =>
-      $(@api.el).off("keydown", @onkeydown)
+    deactivate: ->
+      @api.off("snapeditor.keydown", @onkeydownHandler)
 
-    onkeydown: (e) =>
+    onkeydown: (e) ->
       if Helpers.keysOf(e) == "enter"
         e.preventDefault()
-        @handleEnterKey()
+        @handleEnterKey(@api)
 
-    handleEnterKey: ->
+    handleEnterKey: (@api) ->
       if @api.delete()
         parent = @getParentElement()
         next = @api.getNext(parent)
@@ -67,5 +69,3 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
             $first.html("&nbsp;")
           $span.remove()
         )
-
-  return EnterHandler

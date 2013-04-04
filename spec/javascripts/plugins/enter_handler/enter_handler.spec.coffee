@@ -3,11 +3,12 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
     $editable = enterHandler = null
     beforeEach ->
       $editable = addEditableFixture()
-      enterHandler = new EnterHandler()
-      enterHandler.api = $("<div/>")
-      enterHandler.api.el = $editable[0]
-      enterHandler.api.getRange = (el) -> new Range($editable[0], el or window)
-      enterHandler.next = null
+      enterHandler = window.SnapEditor.internalPlugins.enterHandler
+      enterHandler.api = $.extend($("<div/>"),
+        el: $editable[0]
+        getRange: (el) -> new Range($editable[0], el or window)
+      )
+      #enterHandler.next = null
       Helpers.delegate(enterHandler.api, "getRange()", "getParentElement", "insert", "isEndOfElement", "keepRange", "selectEndOfElement")
 
     afterEach ->

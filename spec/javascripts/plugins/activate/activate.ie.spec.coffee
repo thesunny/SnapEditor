@@ -1,99 +1,64 @@
 if isIE
-  describe "Activate.IE", ->
-    required = ["plugins/activate/activate.ie", "jquery.custom", "core/helpers"]
+  require ["jquery.custom", "core/helpers", "plugins/activate/activate.ie"], ($, Helpers, IE) ->
+    describe "Activate.IE", ->
+      activate = api = null
+      beforeEach ->
+        activate =
+          click: ->
+          activate: ->
+          isLink: -> false
+        Helpers.extend(activate, IE)
+        api = $("<div/>")
+        api.el = $("<div/>")[0]
+        api.select = ->
+        api.config = plugins: activate: activate
 
-    Activate = $editable = null
-    beforeEach ->
-      $editable = addEditableFixture()
-      class Activate
-        api: { el: $editable[0], range: null, select: null },
-        click: null,
-        activate: null
+      describe "#addActivateEvents", ->
+        it "adds mouseup events", ->
+          spyOn(activate, "onmouseup")
+          activate.addActivateEvents(api)
 
-    afterEach ->
-      $editable.remove()
+          $(api.el).trigger("mouseup")
+          expect(activate.onmouseup).toHaveBeenCalled()
 
-    describe "#addActivateEvents", ->
-      ait "adds mouseup events", required, (Module, $, Helpers) ->
-        Helpers.include(Activate, Module)
+        it "listens to mouseup only once", ->
+          spyOn(activate, "onmouseup")
+          activate.addActivateEvents(api)
 
-        activate = new Activate()
-        spyOn(activate, "onmouseup")
-        activate.addActivateEvents()
+          $(api.el).trigger("mouseup")
+          $(api.el).trigger("mouseup")
 
-        $(activate.api.el).trigger("mouseup")
-        expect(activate.onmouseup).toHaveBeenCalled()
+          expect(activate.onmouseup.callCount).toEqual(1)
 
-      ait "listens to mouseup only once", required, (Module, $, Helpers) ->
-        Helpers.include(Activate, Module)
+      describe "#onmouseup", ->
+        event = null
+        beforeEach ->
+          event =
+            data: api: api
+            target: $("<div/>")[0]
 
-        activate = new Activate()
-        spyOn(activate, "onmouseup")
-        activate.addActivateEvents()
+        describe "target is not a link", ->
+          it "selects the target when the target is an image", ->
+            spyOn(activate, "click")
+            spyOn(activate, "activate")
+            spyOn(api, "select")
 
-        $(activate.api.el).trigger("mouseup")
-        $(activate.api.el).trigger("mouseup")
+            event.target = $("<img/>")[0]
+            activate.onmouseup(event)
+            expect(api.select).toHaveBeenCalledWith(event.target)
 
-        expect(activate.onmouseup.callCount).toEqual(1)
+          it "triggers click.activate and activates the editor", ->
+            spyOn(activate, "click")
+            spyOn(activate, "activate")
+            activate.onmouseup(event)
+            expect(activate.click).toHaveBeenCalled()
+            expect(activate.activate).toHaveBeenCalled()
 
-    describe "#onmouseup", ->
-      describe "target is not a link", ->
-        # TODO: Remove this. See code for comment.
-        #ait "saves the range and reselects it when the target is not an image", required, (Module, $, Helpers) ->
-          #Helpers.include(Activate, Module)
-
-          #range = { select: null }
-          #spyOn(range, "select")
-
-          #activate = new Activate()
-          #activate.isLink = (el) -> false
-          #spyOn(activate, "click")
-          #spyOn(activate, "activate")
-          #spyOn(activate.api, "range").andReturn(range)
-
-          #activate.onmouseup(target: $("<div/>")[0])
-          #expect(activate.api.range).toHaveBeenCalled()
-          #expect(range.select).toHaveBeenCalled()
-
-        ait "selects the target when the target is an image", required, (Module, $, Helpers) ->
-          Helpers.include(Activate, Module)
-
-          $target = $("<img/>")
-
-          activate = new Activate()
-          activate.isLink = (el) -> false
-          spyOn(activate, "click")
-          spyOn(activate, "activate")
-          spyOn(activate.api, "select")
-
-          activate.onmouseup(target: $target[0])
-          expect(activate.api.select).toHaveBeenCalledWith($target[0])
-
-        ait "triggers click.activate and activates the editor", required, (Module, $, Helpers) ->
-          Helpers.include(Activate, Module)
-
-          range = { select: null }
-          spyOn(range, "select")
-
-          activate = new Activate()
-          activate.isLink = (el) -> false
-          spyOn(activate, "click")
-          spyOn(activate, "activate")
-          spyOn(activate.api, "range").andReturn(range)
-
-          activate.onmouseup(target: $("<div/>")[0])
-          expect(activate.click).toHaveBeenCalled()
-          expect(activate.activate).toHaveBeenCalled()
-
-      describe "target is a link", ->
-        ait "does nothing", required, (Module, $, Helpers) ->
-          Helpers.include(Activate, Module)
-
-          activate = new Activate()
-          activate.isLink = (el) -> true
-          spyOn(activate, "click")
-          spyOn(activate, "activate")
-
-          activate.onmouseup(target: $("<div/>")[0])
-          expect(activate.click).not.toHaveBeenCalled()
-          expect(activate.activate).not.toHaveBeenCalled()
+        describe "target is a link", ->
+          it "does nothing", ->
+            spyOn(activate, "isLink").andReturn(true)
+            spyOn(activate, "click")
+            spyOn(activate, "activate")
+            activate.onmouseup(event)
+            expect(activate.click).not.toHaveBeenCalled()
+            expect(activate.activate).not.toHaveBeenCalled()

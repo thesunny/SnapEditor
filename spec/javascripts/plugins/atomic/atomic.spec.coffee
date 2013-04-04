@@ -7,7 +7,7 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
       $start = $($editable.find("div")[0])
       $middle = $($editable.find("div")[1])
       $end = $($editable.find("div")[2])
-      atomic = new Atomic()
+      atomic = window.SnapEditor.internalPlugins.atomic
       atomic.api = $("<div/>")
       atomic.api.config = atomic: selectors: [".atomic", ".widget"]
       atomic.api.el = $editable[0]
@@ -244,4 +244,3 @@ require ["jquery.custom", "plugins/atomic/atomic", "core/range", "core/helpers",
         range.delete()
         range.insert("a")
         expect(clean($editable.html())).toEqual("<div>saend</div>")
-

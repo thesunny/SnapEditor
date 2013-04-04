@@ -1,5 +1,5 @@
 define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
-  actionHandler = (e) -> e.api.config.plugins.styleBlock.format(e)
+  actionHandler = (e) -> e.api.plugins.styleBlock.format(e)
   window.SnapEditor.internalPlugins.styleBlock =
     commands:
       styleBlock:

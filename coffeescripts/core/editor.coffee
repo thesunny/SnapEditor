@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/plugins", "core/keyboard", "core/whitelist/whitelist", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Plugins, Keyboard, Whitelist, API) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, API) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -37,17 +37,15 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)
 
+      # Deal with new plugins.
+      @setupPlugins()
+      @setupCommands()
+
       # Delegate Public API functions.
       @delegatePublicAPIFunctions()
 
       # Instantiate the API.
       @api = new API(this)
-
-      # Deal with new plugins.
-      @setupPlugins()
-
-      # Deal with plugins.
-      @plugins = new Plugins(@api, @defaults.plugins, @config.plugins)
 
       # The default is to deactivate immediately. However, to accommodate
       # plugins such as the Save plugin, this can be disabled and handled in a
@@ -59,9 +57,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     prepareConfig: ->
       @config.toolbar or= @defaults.toolbar
+      @config.plugins = @defaults.plugins.concat(@config.plugins or [])
       @config.lang = SnapEditor.lang
-      @config.commands = SnapEditor.getAllCommands()
-      @config.plugins = SnapEditor.getAllPlugins()
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
       @config.cleaner.ignore or= @defaults.cleaner.ignore
@@ -76,10 +73,23 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # Add the atomic selectors to the erase handler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
+    # Creates the plugins object and attaches the relevant events.
     setupPlugins: ->
-      for name, plugin of @config.plugins
+      allPlugins = SnapEditor.getAllPlugins()
+      @plugins = {}
+      for name in @config.plugins
+        plugin = allPlugins[name]
+        throw "Plugin does not exist: #{name}" unless plugin
+        @plugins[name] = plugin
         for key, fn of plugin.events or {}
           @on("snapeditor.#{Helpers.camelToSnake(key)}", fn)
+
+    # Creates the commands object including the ones in the plugins.
+    setupCommands: ->
+      @commands = SnapEditor.getAllCommands()
+      for name, plugin of @plugins
+        for key, command of plugin.commands or {}
+          @commands[key] = command
 
     domEvents: [
       "mouseover"
@@ -235,7 +245,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     # Clean the editor.
     clean: ->
-      @trigger("clean", arguments)
+      @trigger("snapeditor.clean", arguments)
 
     # Save the contents of the editor.
     save: ->

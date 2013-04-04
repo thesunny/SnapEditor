@@ -1,7 +1,7 @@
 define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.dialog"], ($, Helpers, Browser, Dialog) ->
   window.SnapEditor.internalPlugins.link =
     commands:
-      link: Helpers.createCommand("link", "ctrl.k", (e) -> e.api.config.plugins.link.showDialog(e.api))
+      link: Helpers.createCommand("link", "ctrl.k", (e) -> e.api.plugins.link.showDialog(e.api))
     showDialog: (api) ->
       if api.isValid()
         @dialog or= new Dialog()

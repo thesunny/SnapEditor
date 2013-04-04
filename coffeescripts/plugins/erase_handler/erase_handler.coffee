@@ -16,20 +16,23 @@
 # This is unexpected behaviour. We should expect "Some text" to be styled as h1.
 # <h1>This is a header Some text</h1>
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
-  class EraseHandler
-    register: (@api) ->
-      @api.on("snapeditor.activate", @activate)
-      @api.on("snapeditor.deactivate", @deactivate)
+  window.SnapEditor.internalPlugins.eraseHandler =
+    events:
+      activate: (e) -> e.api.plugins.eraseHandler.activate(e.api)
+      deactivate: (e) -> e.api.plugins.eraseHandler.deactivate()
 
-    activate: =>
-      $(@api.el).on("keydown", @onkeydown)
-      $(@api.el).on("keyup", @onkeyup)
+    activate: (@api) ->
+      self = this
+      @onkeydownHandler = (e) -> self.onkeydown(e)
+      @onkeyupHandler = (e) -> self.onkeyup(e)
+      @api.on("snapeditor.keydown", @onkeydownHandler)
+      @api.on("snapeditor.keyup", @onkeyupHandler)
 
-    deactivate: =>
-      $(@api.el).off("keydown", @onkeydown)
-      $(@api.el).off("keyup", @onkeyup)
+    deactivate: ->
+      @api.off("snapeditor.keydown", @onkeydownHandler)
+      @api.off("snapeditor.keyup", @onkeyupHandler)
 
-    onkeydown: (e) =>
+    onkeydown: (e) ->
       key = Helpers.keyOf(e)
       if key == 'delete' or key == 'backspace'
         # Handle the deletion of an entire element. If no entire element was
@@ -44,7 +47,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
               e.preventDefault()
               @api.delete()
 
-    onkeyup: (e) =>
+    onkeyup: (e) ->
       # Cleaning is done on keyup in case the browser's default was allowed to
       # occur. In this case, the cleaning will happen afterwards.
       key = Helpers.keyOf(e)
@@ -87,7 +90,6 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       return deleted unless @api.isCollapsed()
       # Delete the element if needed. Note that startEl == endEl because the
       # range is collapsed.
-      api = @api
       self = this
       @api.keepRange((startEl, endEl) ->
         if key == "delete"
@@ -98,7 +100,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           which = "previous"
         # Grab the previous/next sibling.
         # If we find a sibling that is a textnode with no content, skip it.
-        sibling = Helpers.getSibling(which, el, api.el, (node) ->
+        sibling = Helpers.getSibling(which, el, self.api.el, (node) ->
           return node unless Helpers.isTextnode(node)
           !node.nodeValue.match(Helpers.emptyRegExp)
         )

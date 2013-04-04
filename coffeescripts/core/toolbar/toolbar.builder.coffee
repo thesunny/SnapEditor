@@ -40,8 +40,8 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         $(options.templates.divider).appendTo($content)
       else
         # Make sure the command has been defined.
-        command = options.api.config.commands[item]
-        throw "Command does not exist: #{item}. Commands are case sensitive." unless command
+        command = options.api.commands[item]
+        throw "Command does not exist: #{item}. Commands are case sensitive. If the command belongs to a plugin, make sure the plugin has been included." unless command
         throw "Missing text for command #{item}." unless command.text
         throw "Missing action for command #{item}." unless command.action or command.items
         # Add the button.

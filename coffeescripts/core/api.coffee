@@ -5,6 +5,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       @doc = @editor.doc
       @win = @editor.win
       @config = @editor.config
+      @plugins = @editor.plugins
+      @commands = @editor.commands
       Helpers.delegate(this, "editor",
         # EVENTS
         "on", "off", "trigger",

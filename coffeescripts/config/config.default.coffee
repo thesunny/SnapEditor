@@ -12,27 +12,36 @@ define [
   "plugins/inline/inline"
   "plugins/style_block/style_block"
   "plugins/align/align"
-  "plugins/horizontal_rule/horizontal_rule"
-  "plugins/link/link"
   "plugins/list/list"
+  "plugins/link/link"
   "plugins/table/table"
   "plugins/image/image"
+  "plugins/horizontal_rule/horizontal_rule"
   "plugins/print/print"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, StyleBlock, Align, HorizontalRule, Link, List, Table, Image, Print) ->
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, StyleBlock, Align, List, Link, Table, Image, HorizontalRule, Print) ->
   return {
     build: ->
       return {
         plugins: [
-          new Activate()
-          new Deactivate()
-          new Editable()
-          new Cleaner()
-          new EraseHandler()
-          new EnterHandler()
-          new EmptyHandler()
-          new Autoscroll()
-          new Atomic()
-          new Edit()
+          "activate"
+          "deactivate"
+          "editable"
+          "cleaner"
+          "eraseHandler"
+          "enterHandler"
+          "emptyHandler"
+          "autoscroll"
+          "atomic"
+          "edit"
+          "inline"
+          "styleBlock"
+          "align"
+          "list"
+          "link"
+          "table"
+          "image"
+          "horizontalRule"
+          "print"
         ]
         toolbar:
           items: [

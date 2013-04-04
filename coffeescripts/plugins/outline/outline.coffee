@@ -1,36 +1,44 @@
 define ["jquery.custom"], ($) ->
-  class Outline
-    register: (@api) ->
-      @$el = $(@api.el)
-      @api.on("snapeditor.deactivate", @activate)
-      @api.on("snapeditor.activate", @deactivate)
-      @activate()
+  window.SnapEditor.internalPlugins.outline =
+    events:
+      pluginsReady: (e) -> e.api.plugins.outline.setup(e.api)
 
-    activate: =>
-      @$el.on(mouseover: @show, mouseout: @hide)
+    setup: (api) ->
+      self = this
+      el = api.el
+      showHandler = (e) -> self.show(el)
+      hideHandler = (e) -> self.hide()
+      api.on(
+        "snapeditor.activate": ->
+          self.hide()
+          $(el).off(mouseover: showHandler, mouseout: hideHandler)
+        "snapeditor.deactivate": ->
+          # Listen to the el directly because at this point, SnapEditor is not
+          # activated and will not trigger events.
+          $(el).on(mouseover: showHandler, mouseout: hideHandler)
+      )
+      $(el).on(mouseover: showHandler, mouseout: hideHandler)
 
-    deactivate: =>
-      @hide()
-      @$el.off(mouseover: @show, mouseout: @hide)
-
-    show: =>
+    show: (el) ->
       @setupOutlines()
-      @update()
+      @update(el)
       @outlines.top.show()
       @outlines.bottom.show()
       @outlines.left.show()
       @outlines.right.show()
-      $(window).on("resize", @update)
+      self = this
+      @resizeHandler = -> self.update(el)
+      $(window).on("resize", @resizeHandler)
 
-    hide: =>
+    hide: ->
       @outlines.top.hide()
       @outlines.bottom.hide()
       @outlines.left.hide()
       @outlines.right.hide()
-      $(window).off("resize", @update)
+      $(window).off("resize", @resizeHandler)
 
-    update: =>
-      styles = @getStyles()
+    update: (el) ->
+      styles = @getStyles(el)
       @outlines.top.css(styles.top)
       @outlines.bottom.css(styles.bottom)
       @outlines.left.css(styles.left)
@@ -52,17 +60,17 @@ define ["jquery.custom"], ($) ->
           left: $div.clone().css("border-right-width", 1).appendTo("body")
           right: $div.clone().css("border-left-width", 1).appendTo("body")
 
-    getElCoordinates: ->
-      coords = @$el.getCoordinates()
-      padding = @$el.getPadding()
+    getElCoordinates: (el) ->
+      coords = $(el).getCoordinates()
+      padding = $(el).getPadding()
       coords.bottom += padding.top + padding.bottom
       coords.right += padding.left + padding.right
       coords.width += padding.left + padding.right
       coords.height += padding.top + padding.bottom
       return coords
 
-    getStyles: ->
-      coords = @getElCoordinates()
+    getStyles: (el) ->
+      coords = @getElCoordinates(el)
       return {
         top:
           top: coords.top - 1
@@ -81,5 +89,3 @@ define ["jquery.custom"], ($) ->
           left: coords.left + coords.width + 1
           height: coords.height + 2
       }
-
-  return Outline

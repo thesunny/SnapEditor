@@ -1,19 +1,19 @@
 require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "core/helpers"], ($, Handler, Range, Helpers) ->
   describe "EraseHandler", ->
-    $editable = $h1 = $p = handler = null
+    $editable = $h1 = $p = handler = api = null
     beforeEach ->
       $editable = addEditableFixture()
       $h1 = $("<h1>header heading</h1>").appendTo($editable)
       $p = $("<p>some text</p>").appendTo($editable)
-      handler = new Handler()
       api = $.extend($("<div/>"),
         el: $editable[0]
         getRange: (el) -> new Range($editable[0], el or window)
         select: (el) -> @getRange(el).select()
         config: eraseHandler: delete: [".delete"]
       )
+      handler = window.SnapEditor.internalPlugins.eraseHandler
+      handler.api = api
       Helpers.delegate(api, "getRange()", "delete", "keepRange", "collapse", "isCollapsed")
-      handler.register(api)
 
     afterEach ->
       $editable.remove()
@@ -160,7 +160,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
         spyOn(e, "preventDefault")
 
       it "returns false when the range is collapsed", ->
-        spyOn(handler.api, "isCollapsed").andReturn(false)
+        spyOn(api, "isCollapsed").andReturn(false)
         expect(handler.delete(e, "delete")).toBeFalsy()
 
       describe "delete", ->

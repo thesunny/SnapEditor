@@ -1,36 +1,36 @@
 define ["jquery.custom"], ($) ->
-  class Deactivate
+  window.SnapEditor.internalPlugins.deactivate =
+    events:
+      pluginsReady: (e) -> $(e.api.el).addClass(e.api.plugins.deactivate.classname)
+      activate: (e) -> e.api.plugins.deactivate.activate(e.api)
+      deactivate: (e) -> e.api.plugins.deactivate.deactivate()
+
     classname: "snapeditor_ignore_deactivate"
 
-    register: (@api) ->
-      $(@api.el).addClass(@classname)
-      @api.on("snapeditor.activate", @activate)
-      @api.on("snapeditor.deactivate", @deactivate)
-
-    activate: =>
+    activate: (@api) ->
       # mousedown and mouseup are tracked to ensure that the entire click
       # sequence is on an element that triggers the deactivation.
-      @api.on(
-        "snapeditor.document_mousedown": @setDeactivate
-        "snapeditor.document_mouseup": @tryDeactivate
+      self = this
+      @setDeactivateHandler = (e) -> self.setDeactivate(e)
+      @tryDeactivateHandler = (e) -> self.tryDeactivate(e)
+      api.on(
+        "snapeditor.document_mousedown": @setDeactivateHandler
+        "snapeditor.document_mouseup": @tryDeactivateHandler
       )
 
-    deactivate: =>
+    deactivate: ->
       @api.off(
-        "snapeditor.document_mousedown": @setDeactivate
-        "snapeditor.document_mouseup": @tryDeactivate
+        "snapeditor.document_mousedown": @setDeactivateHandler
+        "snapeditor.document_mouseup": @tryDeactivateHandler
       )
 
-    setDeactivate: (e) =>
-      unless @isIgnore(e.target)
-        @isDeactivate = true
+    setDeactivate: (e) ->
+      @isDeactivate = true unless @isIgnore(e.target)
 
-    tryDeactivate: (e) =>
+    tryDeactivate: (e) ->
       if @isDeactivate and !@isIgnore(e.target)
         @isDeactivate = false
         @api.tryDeactivate()
 
     isIgnore: (el) ->
       $(el).closest(".#{@classname}").length > 0
-
-  return Deactivate

@@ -3,21 +3,27 @@
 # the browser unless the user allows it through his/her preferences. Therefore,
 # this needs to be manually tested.
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
-  class Edit
-    register: (@api) ->
-      @$el = $(@api.el)
-      @api.on("snapeditor.activate", @activate)
-      @api.on("snapeditor.deactivate", @deactivate)
+  window.SnapEditor.internalPlugins.edit =
+    events:
+      activate: (e) -> e.api.plugins.edit.activate(e.api)
+      deactivate: (e) -> e.api.plugins.edit.deactivate()
 
-    activate: =>
-      @$el.on("keydown", @onkeydown)
-      @$el.on("keyup", @onkeyup)
+    activate: (@api) ->
+      self = this
+      @onkeydownHandler = (e) -> self.onkeydown(e)
+      @onkeyupHandler = (e) -> self.onkeyup(e)
+      @api.on(
+        "snapeditor.keydown": @onkeydownHandler
+        "snapeditor.keyup": @onkeyupHandler
+      )
 
-    deactivate: =>
-      @$el.off("keydown", @onkeydown)
-      @$el.off("keyup", @onkeyup)
+    deactivate: ->
+      @api.off(
+        "snapeditor.keydown": @onkeydownHandler
+        "snapeditor.keyup": @onkeyupHandler
+      )
 
-    onkeydown: (e) =>
+    onkeydown: (e) ->
       keys = Helpers.keysOf(e)
       switch keys
         when "ctrl.v"
@@ -31,7 +37,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         when "ctr.x"
           @cutOccurred = true
 
-    onkeyup: (e) =>
+    onkeyup: (e) ->
       keys = Helpers.keysOf(e)
       switch keys
         when "ctrl.v", "v" then @paste()
@@ -55,5 +61,3 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         pasteEndParent = @api.getParentElement((el) -> Helpers.isBlock(el)) or @api.el.lastChild
         @api.clean(pasteStartParent, pasteEndParent)
         @pasteStartParent = null
-
-  return Edit
