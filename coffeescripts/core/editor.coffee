@@ -84,8 +84,11 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         for key, fn of plugin.events or {}
           @on("snapeditor.#{Helpers.camelToSnake(key)}", fn)
 
+    # Creates the commands object including the ones in the plugins.
     setupCommands: ->
-      @config.commands = SnapEditor.getAllCommands()
+      @commands = SnapEditor.getAllCommands()
+      for name, plugin of @plugins
+        @commands[key] = command for key, command of plugin.commands || {}
 
     domEvents: [
       "mouseover"

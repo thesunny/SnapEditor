@@ -30,11 +30,14 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
       getAllCommands: ->
         unless @allCommands
           @allCommands = {}
-          for name, plugin of @internalPlugins
-            @allCommands[key] = command for key, command of plugin.commands || {}
-          for name, plugin of @plugins
-            for key, command of plugin.commands || {}
-              @allCommands[key] = command
+          # TODO: The below is commented out as each SnapEditor instance
+          # determines which plugin commands to add. Leaving this here for now
+          # just in case. Remove once we know for sure we don't need it.
+          #for name, plugin of @internalPlugins
+            #@allCommands[key] = command for key, command of plugin.commands || {}
+          #for name, plugin of @plugins
+            #for key, command of plugin.commands || {}
+              #@allCommands[key] = command
           $.extend(@allCommands, @internalCommands)
           $.extend(@allCommands, @commands)
         @allCommands
