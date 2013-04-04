@@ -1,15 +1,15 @@
 require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers", "core/range"], ($, EnterHandler, Helpers, Range) ->
   describe "EnterHandler", ->
-    $editable = enterHandler = api = null
+    $editable = enterHandler = null
     beforeEach ->
       $editable = addEditableFixture()
       enterHandler = window.SnapEditor.internalPlugins.enterHandler
-      api = $.extend($("<div/>"),
+      enterHandler.api = $.extend($("<div/>"),
         el: $editable[0]
         getRange: (el) -> new Range($editable[0], el or window)
       )
       #enterHandler.next = null
-      Helpers.delegate(api, "getRange()", "getParentElement", "insert", "isEndOfElement", "keepRange", "selectEndOfElement")
+      Helpers.delegate(enterHandler.api, "getRange()", "getParentElement", "insert", "isEndOfElement", "keepRange", "selectEndOfElement")
 
     afterEach ->
       $editable.remove()
@@ -28,7 +28,7 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
           range.range.findText("ente")
         range.collapse(false).select()
 
-        enterHandler.handleBR(api, $("<br/>")[0])
+        enterHandler.handleBR($("<br/>")[0])
         expect(clean($div.html())).toEqual("ente<br>r")
 
       it "places the caret after the <br> when there is text after", ->
@@ -38,7 +38,7 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
           range.range.findText("ente")
         range.collapse(false).select()
 
-        enterHandler.handleBR(api, $("<br/>")[0])
+        enterHandler.handleBR($("<br/>")[0])
         range = new Range($editable[0], window)
         range.insert("<b></b>")
         expect(clean($div.html())).toEqual("ente<br><b></b>r")
@@ -50,7 +50,7 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
           range.range.findText("enter")
         range.collapse(false).select()
 
-        enterHandler.handleBR(api, $("<br/>")[0])
+        enterHandler.handleBR($("<br/>")[0])
         range = new Range($editable[0], window)
         range.insert("<b></b>")
         expect(clean($div.html())).toEqual("enter<br><b></b>")
@@ -72,13 +72,13 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
 
         it "adds the next element", ->
           $p = $("<p/>")
-          enterHandler.handleBlock(api, $div[0], $p[0])
+          enterHandler.handleBlock($div[0], $p[0])
           expect($editable.children()[0]).toBe($div[0])
           expect($editable.children()[1]).toBe($p[0])
 
         it "places the caret at the beginning of the next element", ->
           $p = $("<p/>")
-          enterHandler.handleBlock(api, $div[0], $p[0])
+          enterHandler.handleBlock($div[0], $p[0])
           range = new Range($editable[0], window)
           range.insert("<b></b>")
           expect(clean($p.html())).toEqual("<b></b>")
@@ -92,12 +92,12 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
           range.collapse(false).select()
 
         it "splits the block", ->
-          enterHandler.handleBlock(api, $div[0])
+          enterHandler.handleBlock($div[0])
           expect(clean($editable.children()[0].innerHTML)).toEqual("ent")
           expect(clean($editable.children()[1].innerHTML)).toEqual("er")
 
         it "places the caret at the beginning of the second element", ->
-          enterHandler.handleBlock(api, $div[0])
+          enterHandler.handleBlock($div[0])
           range = new Range($editable[0], window)
           range.insert("<b></b>")
           expect(clean($editable.children()[1].innerHTML)).toEqual("<b></b>er")
@@ -111,12 +111,12 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
           range.collapse(true).select()
 
         it "splits the block and places a <br> in the first block", ->
-          enterHandler.handleBlock(api, $div[0])
+          enterHandler.handleBlock($div[0])
           expect(clean($editable.children()[0].innerHTML)).toEqual("&nbsp;")
           expect(clean($editable.children()[1].innerHTML)).toEqual("enter")
 
         it "places the caret at the beginning of the second element", ->
-          enterHandler.handleBlock(api, $div[0])
+          enterHandler.handleBlock($div[0])
           range = new Range($editable[0], window)
           range.insert("<b></b>")
           expect(clean($editable.children()[1].innerHTML)).toEqual("<b></b>enter")
