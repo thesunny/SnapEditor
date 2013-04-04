@@ -1,9 +1,9 @@
 define ["jquery.custom"], ($) ->
   window.SnapEditor.internalPlugins.snap =
     events:
-      activate: (e) -> e.api.config.plugins.snap.snap(e.api) if e.api.config.snap
-      deactivate: (e) -> e.api.config.plugins.snap.unsnap() if e.api.config.snap
-      cleanerFinished: (e) -> e.api.config.plugins.snap.update() if e.api.config.snap
+      activate: (e) -> e.api.plugins.snap.snap(e.api) if e.api.config.snap
+      deactivate: (e) -> e.api.plugins.snap.unsnap() if e.api.config.snap
+      cleanerFinished: (e) -> e.api.plugins.snap.update() if e.api.config.snap
 
     # Start the snap.
     snap: (@api) ->

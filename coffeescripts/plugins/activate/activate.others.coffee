@@ -13,13 +13,13 @@ define ["jquery.custom"], ($) ->
 
     onmousedown: (e) ->
       api = e.data.api
-      plugin = api.config.plugins.activate
+      plugin = api.plugins.activate
       plugin.click(api) unless plugin.isLink(e.target)
 
     onmouseup: (e) ->
       target = e.target
       api = e.data.api
-      plugin = api.config.plugins.activate
+      plugin = api.plugins.activate
       unless plugin.isLink(target)
         # NOTE: Clicking on an image to activate the editor for the very first
         # time causes some problems. In Webkit, it does not create a range

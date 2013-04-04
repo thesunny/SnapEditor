@@ -1,8 +1,8 @@
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   window.SnapEditor.internalPlugins.enterHandler =
     events:
-      activate: (e) -> e.api.config.plugins.enterHandler.activate(e.api)
-      deactivate: (e) -> e.api.config.plugins.enterHandler.deactivate(e.api)
+      activate: (e) -> e.api.plugins.enterHandler.activate(e.api)
+      deactivate: (e) -> e.api.plugins.enterHandler.deactivate(e.api)
 
     activate: (@api) ->
       self = this

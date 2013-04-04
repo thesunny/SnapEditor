@@ -18,8 +18,8 @@
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   window.SnapEditor.internalPlugins.eraseHandler =
     events:
-      activate: (e) -> e.api.config.plugins.eraseHandler.activate(e.api)
-      deactivate: (e) -> e.api.config.plugins.eraseHandler.deactivate()
+      activate: (e) -> e.api.plugins.eraseHandler.activate(e.api)
+      deactivate: (e) -> e.api.plugins.eraseHandler.deactivate()
 
     activate: (@api) ->
       self = this

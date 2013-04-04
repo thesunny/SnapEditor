@@ -2,15 +2,15 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
   window.SnapEditor.internalPlugins.cleaner =
     events:
       pluginsReady: (e) ->
-        plugin = e.api.config.plugins.cleaner
+        plugin = e.api.plugins.cleaner
         plugin.api = e.api
         plugin.clean(e.api.el.firstChild, e.api.el.lastChild)
       activate: (e) ->
-        plugin = e.api.config.plugins.cleaner
+        plugin = e.api.plugins.cleaner
         plugin.api = e.api
         plugin.keepRange(-> @clean(@api.el.firstChild, @api.el.lastChild))
       clean: (e, args...) ->
-        plugin = e.api.config.plugins.cleaner
+        plugin = e.api.plugins.cleaner
         plugin.clean.apply(plugin, args)
 
     # Given a range, it saves the range, performs the clean up, then

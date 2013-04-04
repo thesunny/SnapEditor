@@ -2,17 +2,17 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prom
   window.SnapEditor.internalPlugins.save =
     events:
       activate: (e) -> e.api.disableImmediateDeactivate() if e.api.config.onSave
-      ready: (e) -> e.api.config.plugins.save.activate(e.api) if e.api.config.onSave
-      tryDeactivate: (e) -> e.api.config.plugins.save.exit() if e.api.config.onSave
-      deactivate: (e) -> e.api.config.plugins.save.deactivate() if e.api.config.onSave
+      ready: (e) -> e.api.plugins.save.activate(e.api) if e.api.config.onSave
+      tryDeactivate: (e) -> e.api.plugins.save.exit() if e.api.config.onSave
+      deactivate: (e) -> e.api.plugins.save.deactivate() if e.api.config.onSave
 
     commands:
-      save: Helpers.createCommand("save", "ctrl.s", (e) -> e.api.config.plugins.save.save())
+      save: Helpers.createCommand("save", "ctrl.s", (e) -> e.api.plugins.save.save())
       # TODO: In Chrome, when an element is contenteditable, the esc keydown
       # event does not get triggered. However, the esc keyup event does
       # trigger. Unfortunately, the target is the body and not the element
       # itself. Removing the shortcut until a solution can be found.
-      exit: Helpers.createCommand("exit", "", (e) -> e.api.config.plugins.save.exit())
+      exit: Helpers.createCommand("exit", "", (e) -> e.api.plugins.save.exit())
 
     #
     # PLUGIN EVENT HANDLERS
@@ -49,9 +49,9 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prom
       unless @promptDialog
         @promptDialog = new PromptDialog()
         @promptDialog.on(
-          save: (e) -> e.api.config.plugins.save.save()
-          resume: (e) -> e.api.config.plugins.save.resume()
-          discard: (e) -> e.api.config.plugins.save.discard()
+          save: (e) -> e.api.plugins.save.save()
+          resume: (e) -> e.api.plugins.save.resume()
+          discard: (e) -> e.api.plugins.save.discard()
         )
       @promptDialog
 
@@ -71,7 +71,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prom
       @getPromptDialog().hide()
 
     resume: ->
-      @api.config.plugins.save.getPromptDialog().hide()
+      @getPromptDialog().hide()
 
     discard: ->
       @getPromptDialog().hide()

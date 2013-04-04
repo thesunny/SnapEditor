@@ -1,9 +1,9 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   window.SnapEditor.internalPlugins.emptyHandler =
     events:
-      activate: (e) -> e.api.config.plugins.emptyHandler.activate(e.api)
-      deactivate: (e) -> e.api.config.plugins.emptyHandler.deactivate()
-      cleanerFinished: (e) -> e.api.config.plugins.emptyHandler.onCleanerFinished(e.api)
+      activate: (e) -> e.api.plugins.emptyHandler.activate(e.api)
+      deactivate: (e) -> e.api.plugins.emptyHandler.deactivate()
+      cleanerFinished: (e) -> e.api.plugins.emptyHandler.onCleanerFinished(e.api)
 
     activate: (@api) ->
       self = this

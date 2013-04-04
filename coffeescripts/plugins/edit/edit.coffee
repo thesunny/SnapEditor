@@ -5,8 +5,8 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   window.SnapEditor.internalPlugins.edit =
     events:
-      activate: (e) -> e.api.config.plugins.edit.activate(e.api)
-      deactivate: (e) -> e.api.config.plugins.edit.deactivate()
+      activate: (e) -> e.api.plugins.edit.activate(e.api)
+      deactivate: (e) -> e.api.plugins.edit.deactivate()
 
     activate: (@api) ->
       self = this

@@ -37,14 +37,15 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)
 
+      # Deal with new plugins.
+      @setupPlugins()
+      @setupCommands()
+
       # Delegate Public API functions.
       @delegatePublicAPIFunctions()
 
       # Instantiate the API.
       @api = new API(this)
-
-      # Deal with new plugins.
-      @setupPlugins()
 
       # The default is to deactivate immediately. However, to accommodate
       # plugins such as the Save plugin, this can be disabled and handled in a
@@ -58,8 +59,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @config.toolbar or= @defaults.toolbar
       @config.plugins2 or= @defaults.plugins2
       @config.lang = SnapEditor.lang
-      @config.commands = SnapEditor.getAllCommands()
-      @config.plugins = SnapEditor.getAllPlugins()
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
       @config.cleaner.ignore or= @defaults.cleaner.ignore
@@ -74,13 +73,19 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # Add the atomic selectors to the erase handler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
+    # Creates the plugins object and attaches the relevant events.
     setupPlugins: ->
+      allPlugins = SnapEditor.getAllPlugins()
+      @plugins = {}
       for name in @config.plugins2
-        # TODO: Change @config.plugins.
-        plugin = @config.plugins[name]
+        plugin = allPlugins[name]
         throw "Plugin does not exist: #{name}" unless plugin
+        @plugins[name] = plugin
         for key, fn of plugin.events or {}
           @on("snapeditor.#{Helpers.camelToSnake(key)}", fn)
+
+    setupCommands: ->
+      @config.commands = SnapEditor.getAllCommands()
 
     domEvents: [
       "mouseover"

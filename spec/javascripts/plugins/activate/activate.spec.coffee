@@ -6,7 +6,7 @@ require ["jquery.custom", "plugins/activate/activate"], ($, A) ->
       activate = window.SnapEditor.internalPlugins.activate
       api = $("<div/>")
       api.activate = ->
-      api.config = plugins: activate: activate
+      api.plugins = activate: activate
 
     describe "modules", ->
       it "includes browser specific functions", ->

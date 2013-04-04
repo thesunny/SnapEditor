@@ -12,7 +12,7 @@ define ["jquery.custom"], ($) ->
     onmouseup: (e) ->
       target = e.target
       api = e.data.api
-      plugin = api.config.plugins.activate
+      plugin = api.plugins.activate
       api.off("snapeditor.mouseup", plugin.onmouseup)
       unless plugin.isLink(target)
         isImage = $(target).tagName() == "img"

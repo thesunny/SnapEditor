@@ -2,7 +2,7 @@
 define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activate.others", "plugins/activate/activate.ie"], ($, Browser, Helpers, Others, IE) ->
   window.SnapEditor.internalPlugins.activate =
     events:
-      pluginsReady: (e) -> e.api.config.plugins.activate.addActivateEvents(e.api)
+      pluginsReady: (e) -> e.api.plugins.activate.addActivateEvents(e.api)
 
     # Handles after a click has occurred.
     #
@@ -18,7 +18,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
     # Deactivates the editing session.
     deactivate: (e) ->
       api = e.api
-      plugin = api.config.plugins.activate
+      plugin = api.plugins.activate
       api.off("snapeditor.deactivate", plugin.deactivate)
       plugin.addActivateEvents(api)
 

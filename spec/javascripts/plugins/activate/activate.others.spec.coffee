@@ -11,7 +11,7 @@ unless isIE
         api = $("<div/>")
         api.el = $("<div/>")[0]
         api.select = ->
-        api.config = plugins: activate: activate
+        api.plugins = activate: activate
 
       describe "#addActivateEvents", ->
         it "adds mousedown and mouseup events", ->

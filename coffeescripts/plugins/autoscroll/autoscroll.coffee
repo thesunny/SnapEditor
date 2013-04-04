@@ -3,8 +3,8 @@
 define ["jquery.custom"], ($) ->
   window.SnapEditor.internalPlugins.autoscroll =
     events:
-      activate: (e) -> e.api.on("snapeditor.keyup", e.api.config.plugins.autoscroll.autoscroll)
-      deactivate: (e) -> e.api.off("snapeditor.keyup", e.api.config.plugins.autoscroll.autoscroll)
+      activate: (e) -> e.api.on("snapeditor.keyup", e.api.plugins.autoscroll.autoscroll)
+      deactivate: (e) -> e.api.off("snapeditor.keyup", e.api.plugins.autoscroll.autoscroll)
 
     autoscroll: (e) ->
       margins = top: 50, bottom: 50

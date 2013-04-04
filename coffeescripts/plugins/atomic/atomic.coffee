@@ -1,9 +1,9 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   window.SnapEditor.internalPlugins.atomic =
     events:
-      activate: (e) -> e.api.config.plugins.atomic.activate(e.api)
-      deactivate: (e) -> e.api.config.plugins.atomic.deactivate()
-      ready: (e) -> e.api.config.plugins.atomic.mouseup()
+      activate: (e) -> e.api.plugins.atomic.activate(e.api)
+      deactivate: (e) -> e.api.plugins.atomic.deactivate()
+      ready: (e) -> e.api.plugins.atomic.mouseup()
 
     activate: (@api) ->
       self = this

@@ -1,7 +1,7 @@
 define ["jquery.custom"], ($) ->
   window.SnapEditor.internalPlugins.outline =
     events:
-      pluginsReady: (e) -> e.api.config.plugins.outline.setup(e.api)
+      pluginsReady: (e) -> e.api.plugins.outline.setup(e.api)
 
     setup: (api) ->
       self = this
