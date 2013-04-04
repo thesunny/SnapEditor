@@ -18,8 +18,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prom
     # PLUGIN EVENT HANDLERS
     #
 
-    activate: (api) ->
-      @api = api
+    activate: (@api) ->
       @setOriginalHTML()
       self = this
       @leavePageHandler = -> self.leavePage()
