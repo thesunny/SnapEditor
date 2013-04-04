@@ -7,7 +7,7 @@ define [], ->
     "superscript": "Superscript"
     "strikethrough": "Strikethrough"
     "styleBlock": "Style Block"
-    "p": "Paragraph"
+    "p": "Normal"
     "h1": "Heading 1"
     "h2": "Heading 2"
     "h3": "Heading 3"
