@@ -88,7 +88,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     setupCommands: ->
       @commands = SnapEditor.getAllCommands()
       for name, plugin of @plugins
-        @commands[key] = command for key, command of plugin.commands || {}
+        for key, command of plugin.commands or {}
+          @commands[key] = command
 
     domEvents: [
       "mouseover"
