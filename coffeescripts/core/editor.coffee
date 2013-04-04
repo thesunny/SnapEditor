@@ -57,7 +57,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     prepareConfig: ->
       @config.toolbar or= @defaults.toolbar
-      @config.plugins or= @defaults.plugins
+      @config.plugins = @defaults.plugins.concat(@config.plugins or [])
       @config.lang = SnapEditor.lang
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
