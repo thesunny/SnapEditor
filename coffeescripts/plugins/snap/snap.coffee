@@ -6,9 +6,8 @@ define ["jquery.custom"], ($) ->
       cleanerFinished: (e) -> e.api.config.plugins.snap.update() if e.api.config.snap
 
     # Start the snap.
-    snap: (api) ->
+    snap: (@api) ->
       @activated = true
-      @api = api
       @$el = $(@api.el)
       @setup() unless @divs
       div.show() for position, div of @divs
