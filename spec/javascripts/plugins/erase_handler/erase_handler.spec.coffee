@@ -5,15 +5,14 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
       $editable = addEditableFixture()
       $h1 = $("<h1>header heading</h1>").appendTo($editable)
       $p = $("<p>some text</p>").appendTo($editable)
-      handler = window.SnapEditor.internalPlugins.eraseHandler
       api = $.extend($("<div/>"),
         el: $editable[0]
         getRange: (el) -> new Range($editable[0], el or window)
         select: (el) -> @getRange(el).select()
-        config:
-          plugins: eraseHandler: handler
-          eraseHandler: delete: [".delete"]
+        config: eraseHandler: delete: [".delete"]
       )
+      handler = window.SnapEditor.internalPlugins.eraseHandler
+      handler.api = api
       Helpers.delegate(api, "getRange()", "delete", "keepRange", "collapse", "isCollapsed")
 
     afterEach ->
@@ -24,7 +23,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
         describe "delete", ->
           event = null
           beforeEach ->
-            event = api: api, which:46, type: "keydown", preventDefault: ->
+            event = which:46, type: "keydown", preventDefault: ->
 
           it "merges the nodes together", ->
             range = new Range($editable[0])
@@ -85,7 +84,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
         describe "backspace", ->
           event = null
           beforeEach ->
-            event = api: api, which: 8, type: "keydown", preventDefault: ->
+            event = which: 8, type: "keydown", preventDefault: ->
 
           it "merges the nodes together", ->
             range = new Range($editable[0])
@@ -146,18 +145,18 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
 
     describe "#shouldDelete", ->
       it "returns true for a <hr>", ->
-        expect(handler.shouldDelete(api, $("<hr/>")[0])).toBeTruthy()
+        expect(handler.shouldDelete($("<hr/>")[0])).toBeTruthy()
 
       it "returns true for a class to be deleted", ->
-        expect(handler.shouldDelete(api, $("<div>").addClass("delete")[0])).toBeTruthy()
+        expect(handler.shouldDelete($("<div>").addClass("delete")[0])).toBeTruthy()
 
       it "returns false when it should not be deleted", ->
-        expect(handler.shouldDelete(api, $("<p/>")[0])).toBeFalsy()
+        expect(handler.shouldDelete($("<p/>")[0])).toBeFalsy()
 
     describe "#delete", ->
       e = null
       beforeEach ->
-        e = api: api, preventDefault: ->
+        e = preventDefault: ->
         spyOn(e, "preventDefault")
 
       it "returns false when the range is collapsed", ->
