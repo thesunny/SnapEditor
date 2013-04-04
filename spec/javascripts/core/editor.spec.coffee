@@ -1,18 +1,10 @@
 require ["jquery.custom", "core/editor", "core/helpers", "core/range"], ($, Editor, Helpers, Range) ->
   describe "Editor", ->
-    $.extend(SnapEditor,
-      lang: {}
-      getAllCommands: -> {}
-      getAllPlugins: -> {}
-      insertStyles: ->
-    )
-
     $editable = editor = null
     beforeEach ->
       $editable = addEditableFixture()
       defaults =
         plugins: []
-        plugins2: []
         toolbar: []
         cleaner:
           whitelist:

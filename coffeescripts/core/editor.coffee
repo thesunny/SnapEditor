@@ -57,7 +57,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     prepareConfig: ->
       @config.toolbar or= @defaults.toolbar
-      @config.plugins2 or= @defaults.plugins2
+      @config.plugins or= @defaults.plugins
       @config.lang = SnapEditor.lang
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
@@ -77,7 +77,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     setupPlugins: ->
       allPlugins = SnapEditor.getAllPlugins()
       @plugins = {}
-      for name in @config.plugins2
+      for name in @config.plugins
         plugin = allPlugins[name]
         throw "Plugin does not exist: #{name}" unless plugin
         @plugins[name] = plugin

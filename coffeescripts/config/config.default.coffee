@@ -22,7 +22,7 @@ define [
   return {
     build: ->
       return {
-        plugins2: [
+        plugins: [
           "activate"
           "deactivate"
           "editable"
