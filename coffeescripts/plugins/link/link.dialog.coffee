@@ -125,7 +125,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "ui/ui.dialog", "plugin
     # ACTION HANDLERS
     #
 
-    handleEnter: =>
+    handleEnter: (e) =>
       if Helpers.keysOf(e) == "enter"
         @$form.submit()
         # Need to return false to prevent IE8 from beeping.
