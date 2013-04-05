@@ -120,8 +120,8 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
       # We use window.focus() instead of @$dialog[0].focus() because
       # focusing on the dialog does not fix Webkit. Focusing on the window
       # fixes Firefox.
-      # This does not affect IE.
-      window.focus()
+      # This affects only IE8. It does not affect >IE8.
+      window.focus() unless Browser.isIE8
       @shown = true
 
     hide: =>
