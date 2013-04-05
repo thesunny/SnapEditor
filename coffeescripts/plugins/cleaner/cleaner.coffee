@@ -67,5 +67,5 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
       self = this
       @api.keepRange((startNode, endNode) ->
         self.api.unselect()
-        fn.apply(self)
+        fn.apply(self, [startNode, endNode])
       )
