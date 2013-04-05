@@ -45,7 +45,7 @@ define [
         ]
         toolbar:
           items: [
-            "bold", "italic", "|", "styleBlock", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "link", "table", "image"
+            "styleBlock", "|", "bold", "italic", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "link", "table", "image"
           ]
         cleaner:
           whitelist:
