@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "widget/widgets_manager", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, API) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, API) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -36,7 +36,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @whitelist = new Whitelist(@config.cleaner.whitelist)
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)
-      @widgetsManager = new WidgetsManager(this, @editor.config.widget.classname)
+      @widgetsManager = new WidgetsManager(this, @config.widget.classname)
 
       # Deal with new plugins.
       @setupPlugins()
