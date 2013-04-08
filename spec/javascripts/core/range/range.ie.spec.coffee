@@ -53,6 +53,7 @@ unless hasW3CRanges
             expect(clean($start.html())).toEqual("<span></span>start")
 
           it "returns null when there is no selected range", ->
+            win.document.selection.empty()
             expect(Range.getRangeFromSelection(win)).toBeNull()
 
         describe ".getRangeFromElement", ->

@@ -1,6 +1,6 @@
-require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, Range) ->
-  describe "Table", ->
-    $editable = $before = $after = $table = api = table = null
+require ["plugins/table/table", "core/helpers", "core/range"], (T, Helpers, Range) ->
+  describe "table", ->
+    $editable = $before = $after = $table = table = null
     beforeEach ->
       $editable = addEditableFixture()
       $before = $("<div>before</div>").appendTo($editable)
@@ -14,7 +14,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         </table>
       ").appendTo($editable)
       $after = $("<div>after</div>").appendTo($editable)
-      table = new Table()
+      table = window.SnapEditor.internalPlugins.table
       table.api =
         el: $editable[0]
         createElement: (name) -> document.createElement(name)
@@ -23,7 +23,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         getBlankRange: -> new Range($editable[0])
         isValid: -> true
         getDefaultBlock: -> @createElement("p")
-      spyOn(table, "update")
+        clean: ->
       Helpers.delegate(table.api, "getRange()", "getParentElement", "insert", "isEndOfElement")
       Helpers.delegate(table.api, "getBlankRange()", "selectEndOfElement")
 
@@ -90,10 +90,11 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         table.insertTable()
         expect($editable.find("p").length).toEqual(1)
 
-      it "updates the api", ->
+      it "cleans", ->
+        spyOn(table.api, "clean")
         placeSelection()
         table.insertTable()
-        expect(table.update).toHaveBeenCalled()
+        expect(table.api.clean).toHaveBeenCalled()
 
     describe "#deleteTable", ->
       placeSelection = null
@@ -129,10 +130,11 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
           range.insert("<b></b>")
           expect(clean($after.html())).toEqual("<b></b>after")
 
-      it "updates the api", ->
+      it "cleans", ->
+        spyOn(table.api, "clean")
         placeSelection()
         table.deleteTable()
-        expect(table.update).toHaveBeenCalled()
+        expect(table.api.clean).toHaveBeenCalled()
 
     describe "#addRow", ->
       it "inserts a row before when no row is before", ->
@@ -183,11 +185,12 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range.insert("<b></b>")
         expect($($table.find("td")[0]).find("b").length).toEqual(1)
 
-      it "updates the api", ->
+      it "cleans", ->
+        spyOn(table.api, "clean")
         range = new Range($editable[0])
         range.selectEndOfElement($(".first").find("th")[0])
         table.addRow(true)
-        expect(table.update).toHaveBeenCalled()
+        expect(table.api.clean).toHaveBeenCalled()
 
     describe "#deleteRow", ->
       it "deletes the row when there are other rows in the table", ->
@@ -221,17 +224,18 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         range.insert("<b></b>")
         expect($($(".middle").find("td")[0]).find("b").length).toEqual(1)
 
-      it "updates the api", ->
+      it "cleans", ->
+        spyOn(table.api, "clean")
         range = new Range($editable[0])
         range.selectEndOfElement($(".first").find("th")[0])
         table.deleteRow()
-        expect(table.update).toHaveBeenCalled()
+        expect(table.api.clean).toHaveBeenCalled()
 
-    describe "#addCol", ->
+    describe "#addColumn", ->
       it "inserts a column before when there is no column before", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[0])
-        table.addCol(true)
+        table.addColumn(true)
         $trs = $table.find("tr")
         $tr = $($trs[0])
         $cells = $tr.find("th")
@@ -252,7 +256,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       it "inserts a column before when there is a column before", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".2")[0])
-        table.addCol(true)
+        table.addColumn(true)
         $trs = $table.find("tr")
         $tr = $($trs[0])
         $cells = $tr.find("th")
@@ -273,7 +277,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       it "inserts a column after when there is no column after", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".2")[0])
-        table.addCol(false)
+        table.addColumn(false)
         $trs = $table.find("tr")
         $tr = $($trs[0])
         $cells = $tr.find("th")
@@ -294,7 +298,7 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       it "inserts a column after when there is a column after", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[0])
-        table.addCol(false)
+        table.addColumn(false)
         $trs = $table.find("tr")
         $tr = $($trs[0])
         $cells = $tr.find("th")
@@ -315,22 +319,23 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       it "places the caret in the new column beside the original cell", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[1])
-        table.addCol(true)
+        table.addColumn(true)
         range = new Range($editable[0], window)
         range.insert("<b></b>")
         expect($($(".middle").find("td")[0]).find("b").length).toEqual(1)
 
-      it "updates the api", ->
+      it "cleans", ->
+        spyOn(table.api, "clean")
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[0])
-        table.addCol(true)
-        expect(table.update).toHaveBeenCalled()
+        table.addColumn(true)
+        expect(table.api.clean).toHaveBeenCalled()
 
-    describe "#deleteCol", ->
+    describe "#deleteColumn", ->
       it "deletes the column if there are other columns in the table", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[0])
-        table.deleteCol()
+        table.deleteColumn()
         $trs = $table.find("tr")
         $tr = $($trs[0])
         $cells = $tr.find("th")
@@ -349,13 +354,13 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
         $(".2").remove()
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[0])
-        table.deleteCol()
+        table.deleteColumn()
         expect($editable.find("table").length).toEqual(0)
 
       it "places the caret in the next cell if it exists", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[1])
-        table.deleteCol()
+        table.deleteColumn()
         range = new Range($editable[0], window)
         range.insert("<b></b>")
         expect($($(".2")[1]).find("b").length).toEqual(1)
@@ -363,16 +368,17 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
       it "places the caret in the previous cell if the next cell does not exist", ->
         range = new Range($editable[0])
         range.selectEndOfElement($(".2")[1])
-        table.deleteCol()
+        table.deleteColumn()
         range = new Range($editable[0], window)
         range.insert("<b></b>")
         expect($($(".1")[1]).find("b").length).toEqual(1)
 
-      it "updates the api", ->
+      it "cleans", ->
+        spyOn(table.api, "clean")
         range = new Range($editable[0])
         range.selectEndOfElement($(".1")[0])
-        table.deleteCol()
-        expect(table.update).toHaveBeenCalled()
+        table.deleteColumn()
+        expect(table.api.clean).toHaveBeenCalled()
 
     describe "#getCell", ->
       it "returns null when no cell is selected", ->

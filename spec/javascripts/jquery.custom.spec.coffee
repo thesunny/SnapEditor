@@ -99,6 +99,92 @@ require ["jquery.custom"], ($) ->
         expect(padding.left).toEqual(10)
         expect(padding.right).toEqual(0)
 
+    describe "#getSize", ->
+      it "returns the correct size", ->
+        $el = $('<div id="el"></div>').appendTo($editable)
+        $el.attr("style", "
+          width: 200px;
+          height: 100px;
+        ")
+        size = $el.getSize()
+        expect(size.x).toEqual(200)
+        expect(size.y).toEqual(100)
+
+      it "returns the correct size with padding", ->
+        $el = $('<div id="el"></div>').appendTo($editable)
+        $el.attr("style", "
+          width: 200px;
+          height: 100px;
+          padding: 10px 20px 30px 40px;
+        ")
+        size = $el.getSize(true)
+        expect(size.x).toEqual(260)
+        expect(size.y).toEqual(140)
+
+      it "returns the correct coordinates with border width", ->
+        $el = $('<div id="el"></div>').appendTo($editable)
+        $el.attr("style", "
+          width: 200px;
+          height: 100px;
+          border: solid 1px pink;
+        ")
+        size = $el.getSize(false, true)
+        expect(size.x).toEqual(202)
+        expect(size.y).toEqual(102)
+
+    describe "#getBorderWidth", ->
+      $el = null
+      beforeEach ->
+        $el = $('<div style="border: 1px solid pink;"/>').appendTo($editable)
+
+      it "returns the correct borderWidths when no borderWidth is specified", ->
+        $el = $("<div/>").appendTo($editable)
+        borderWidth = $el.getBorderWidth()
+        expect(borderWidth.top).toEqual(0)
+        expect(borderWidth.bottom).toEqual(0)
+        expect(borderWidth.left).toEqual(0)
+        expect(borderWidth.right).toEqual(0)
+
+      it "returns the correct borderWidths when 1 number is specified", ->
+        $el.css("border-width", 10)
+        borderWidth = $el.getBorderWidth()
+        expect(borderWidth.top).toEqual(10)
+        expect(borderWidth.bottom).toEqual(10)
+        expect(borderWidth.left).toEqual(10)
+        expect(borderWidth.right).toEqual(10)
+
+      it "returns the correct borderWidths when 2 numbers are specified", ->
+        $el.css("border-width", "10px 5px")
+        borderWidth = $el.getBorderWidth()
+        expect(borderWidth.top).toEqual(10)
+        expect(borderWidth.bottom).toEqual(10)
+        expect(borderWidth.left).toEqual(5)
+        expect(borderWidth.right).toEqual(5)
+
+      it "returns the correct borderWidths when 3 numbers are specified", ->
+        $el.css("border-width", "10px 5px 12px")
+        borderWidth = $el.getBorderWidth()
+        expect(borderWidth.top).toEqual(10)
+        expect(borderWidth.bottom).toEqual(12)
+        expect(borderWidth.left).toEqual(5)
+        expect(borderWidth.right).toEqual(5)
+
+      it "returns the correct borderWidths when 4 numbers are specified", ->
+        $el.css("border-width", "10px 5px 12px 7px")
+        borderWidth = $el.getBorderWidth()
+        expect(borderWidth.top).toEqual(10)
+        expect(borderWidth.bottom).toEqual(12)
+        expect(borderWidth.left).toEqual(7)
+        expect(borderWidth.right).toEqual(5)
+
+      it "returns the correct borderWidths when only 1 borderWidth is specified", ->
+        $el = $('<div style="border-left: 10px solid pink;"/>').appendTo($editable)
+        borderWidth = $el.getBorderWidth()
+        expect(borderWidth.top).toEqual(0)
+        expect(borderWidth.bottom).toEqual(0)
+        expect(borderWidth.left).toEqual(10)
+        expect(borderWidth.right).toEqual(0)
+
     describe "#merge", ->
       it "merges the other node in", ->
         $el = $("<div>this is <b>my</b> div</div>").appendTo($editable)

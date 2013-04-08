@@ -1,3 +1,5 @@
+# TODO: This is kept here in case we ever want to move away from flash. The
+# issue we had with using a form is submitting an upload to another URL.
 # json2 is needed for IE7. IE7 does not implement JSON natively.
 # NOTE: json2 does not follow AMD. The J is needed to swallow up the undefined
 # given by json2.
@@ -13,7 +15,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
       throw "Missing 'resource_id' in image config" unless @options.resource_id
 
     getUI: (@ui) ->
-      image = @ui.button(action: "insert_image", description: "Insert Image", shortcut: "Ctrl+G", icon: { url: @api.assets.image("image.png"), width: 24, height: 24, offset: [3, 3] })
+      image = @ui.button(action: "insert_image", description: "Insert Image", shortcut: "Ctrl+G", icon: { url: @api.imageAsset("image.png"), width: 24, height: 24, offset: [3, 3] })
       return {
         "toolbar:default": "image"
         image: image

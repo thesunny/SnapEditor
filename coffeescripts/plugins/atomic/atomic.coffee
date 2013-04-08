@@ -1,26 +1,32 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
-  class Atomic
-    register: (@api) ->
-      @api.on("snapeditor.activate", @activate)
-      @api.on("snapeditor.deactivate", @deactivate)
-      @api.on("snapeditor.ready", @mouseup)
+  window.SnapEditor.internalPlugins.atomic =
+    events:
+      activate: (e) -> e.api.plugins.atomic.activate(e.api)
+      deactivate: (e) -> e.api.plugins.atomic.deactivate()
+      ready: (e) -> e.api.plugins.atomic.mouseup()
 
-    activate: =>
-      $(@api.el).on(
-        keyup: @keyup
-        mouseup: @mouseup
+    activate: (@api) ->
+      self = this
+      @keyupHandler = (e) -> self.keyup(e)
+      @mouseupHandler = (e) -> self.mouseup()
+      @api.on(
+        "snapeditor.keyup": @keyupHandler
+        "snapeditor.mouseup": @mouseupHandler
       )
 
-    deactivate: =>
-      $(@api.el).off(
-        keyup: @keyup
-        mouseup: @mouseup
+    deactivate: ->
+      @api.off(
+        "snapeditor.keyup": @keyupHandler
+        "snapeditor.mouseup": @mouseupHandler
       )
 
-    forwardKeys: ["right", "down", "pagedown", "end"]
-    backwardKeys: ["left", "up", "pageup", "home"]
+    # Backspace is considered a forward key because when we backspace into an
+    # atomic element, we want to push the cursor forward so it stays at the
+    # end of the atomic element. The same reasoning is used for delete.
+    forwardKeys: ["right", "down", "pagedown", "end", "backspace"]
+    backwardKeys: ["left", "up", "pageup", "home", "delete"]
 
-    keyup: (e) =>
+    keyup: (e) ->
       key = Helpers.keyOf(e)
       if $.inArray(key, @forwardKeys) != -1
         direction = "forward"
@@ -28,7 +34,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         direction = "backward"
       @handleRange(direction) if direction
 
-    mouseup: (e) =>
+    mouseup: ->
       @handleRange("mouse")
 
     getCSSelectors: ->

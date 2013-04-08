@@ -1,17 +1,24 @@
 define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], ($, Helpers, Normalizer) ->
-  class Cleaner
-    register: (@api) ->
-      @$el = $(@api.el)
-      @normalizer = new Normalizer(@api, @api.config.cleaner.ignore)
-      @api.on("snapeditor.activate", => @keepRange(=> @clean(@api.el.firstChild, @api.el.lastChild)))
-      @api.on("clean", (e, args...) => @clean.apply(this, args))
-      @api.on("snapeditor.plugins_ready", => @clean(@api.el.firstChild, @api.el.lastChild))
+  window.SnapEditor.internalPlugins.cleaner =
+    events:
+      pluginsReady: (e) ->
+        plugin = e.api.plugins.cleaner
+        plugin.api = e.api
+        plugin.clean(e.api.el.firstChild, e.api.el.lastChild)
+      activate: (e) ->
+        plugin = e.api.plugins.cleaner
+        plugin.api = e.api
+        plugin.keepRange(-> @clean(@api.el.firstChild, @api.el.lastChild))
+      clean: (e, args...) ->
+        plugin = e.api.plugins.cleaner
+        plugin.clean.apply(plugin, args)
 
     # Given a range, it saves the range, performs the clean up, then
     # repositions the range.
     # Given a startNode and endNode, it cleans up between and including
     # startNode and endNode.
     clean: ->
+      self = this
       switch arguments.length
         when 0 then @keepRange(@cleanup)
         when 2 then @cleanup.apply(this, arguments)
@@ -20,19 +27,18 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
 
     # Cleans up and normalizes all the nodes between and including startNode
     # and endNode.
-    cleanup: (startNode, endNode) =>
-      SnapEditor.DEBUG("Start: Cleanup")
+    cleanup: (startNode, endNode) ->
       if startNode and endNode
-        startTopNode = @expandTopNode(@findTopNode(startNode), true)
-        endTopNode = @expandTopNode(@findTopNode(endNode), false)
-        @normalizer.normalize(startTopNode, endTopNode)
-      SnapEditor.DEBUG("End: Cleanup")
+        el = @api.el
+        startTopNode = @expandTopNode(@findTopNode(el, startNode), true)
+        endTopNode = @expandTopNode(@findTopNode(el, endNode), false)
+        new Normalizer(@api, @api.config.cleaner.ignore).normalize(startTopNode, endTopNode)
 
     # Runs up the parent chain and returns the node at the top.
-    findTopNode: (node) ->
+    findTopNode: (stopNode, node) ->
       topNode = node
       parent = topNode.parentNode
-      while parent != @api.el
+      while parent != stopNode
         topNode = parent
         parent = topNode.parentNode
       return topNode
@@ -57,10 +63,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
     # it doesn't get destroyed. API.keepRange() will reset the range anyways so
     # it's okay. This hack has no effect on the other browsers, hence it is
     # left in for consistency.
-    keepRange: (fn) =>
-      @api.keepRange((startNode, endNode) =>
-        @api.unselect()
-        fn(startNode, endNode)
+    keepRange: (fn) ->
+      self = this
+      @api.keepRange((startNode, endNode) ->
+        self.api.unselect()
+        fn.apply(self, [startNode, endNode])
       )
-
-  return Cleaner

@@ -150,13 +150,6 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
         expect(Helpers.getParentIFrame($div[0])).toBeNull()
 
     describe "#replaceWithChildren", ->
-      $editable = null
-      beforeEach ->
-        $editable = addEditableFixture()
-
-      afterEach ->
-        $editable.remove()
-
       it "replaces the parent with the children", ->
         $div = $("<div>this is <em>some</em> text <p>to replace</p> the parent</div>").appendTo($editable)
         Helpers.replaceWithChildren($div[0])
@@ -365,3 +358,26 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
       it "capializes the first letter of each word", ->
         string = "this Is a test 1 1a = =a"
         expect(Helpers.capitalize(string)).toEqual("This Is A Test 1 1a = =A")
+
+    describe "#displayShortcut", ->
+      it "generates the proper display shortcut", ->
+        expect(Helpers.displayShortcut("ctrl.shift.t")).toEqual("Ctrl+Shift+T")
+
+    describe "#normalize", ->
+      it "normalizes an email", ->
+        expect(Helpers.normalizeURL("wesley@snapeditor.com")).toEqual("mailto:wesley@snapeditor.com")
+
+      it "normalizes a full URL", ->
+        expect(Helpers.normalizeURL("http://snapeditor.com")).toEqual("http://snapeditor.com")
+
+      it "normalizes a URL without a protocol", ->
+        expect(Helpers.normalizeURL("//snapeditor.com")).toEqual("http://snapeditor.com")
+
+      it "normalizes an absolute path", ->
+        expect(Helpers.normalizeURL("/abc")).toEqual("/abc")
+
+      it "normalizes a relative path", ->
+        expect(Helpers.normalizeURL("abc")).toEqual("http://abc")
+
+      it "normalizes a domain", ->
+        expect(Helpers.normalizeURL("snapeditor.com")).toEqual("http://snapeditor.com")

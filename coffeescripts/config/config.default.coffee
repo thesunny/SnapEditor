@@ -10,52 +10,43 @@ define [
   "plugins/atomic/atomic"
   "plugins/edit/edit"
   "plugins/inline/inline"
-  "plugins/block/block"
+  "plugins/style_block/style_block"
   "plugins/align/align"
-  "plugins/horizontal_rule/horizontal_rule"
-  "plugins/link/link"
   "plugins/list/list"
+  "plugins/link/link"
   "plugins/table/table"
   "plugins/image/image"
-  "plugins/image/image.uploader"
+  "plugins/horizontal_rule/horizontal_rule"
   "plugins/print/print"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, Block, Align, HorizontalRule, Link, List, Table, Image, ImageUploader, Print) ->
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, StyleBlock, Align, List, Link, Table, Image, HorizontalRule, Print) ->
   return {
     build: ->
       return {
         plugins: [
-          new Activate()
-          new Deactivate()
-          new Editable()
-          new Cleaner()
-          new EraseHandler()
-          new EnterHandler()
-          new EmptyHandler()
-          new Autoscroll()
-          new Atomic()
-          new Edit()
-          new Inline()
-          new Block()
-          new Align()
-          new HorizontalRule()
-          new Link()
-          new List()
-          new Table()
-          new Image()
-          new ImageUploader()
-          new Print()
+          "activate"
+          "deactivate"
+          "editable"
+          "cleaner"
+          "eraseHandler"
+          "enterHandler"
+          "emptyHandler"
+          "autoscroll"
+          "atomic"
+          "edit"
+          "inline"
+          "styleBlock"
+          "align"
+          "list"
+          "link"
+          "table"
+          "image"
+          "horizontalRule"
+          "print"
         ]
-        toolbar: [
-          "Inline"
-          "|"
-          "Block"
-          "|"
-          "List"
-          "|"
-          "Link"
-          "Table"
-          "Image"
-        ]
+        toolbar:
+          items: [
+            "styleBlock", "|", "bold", "italic", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "link", "table", "image"
+          ]
         cleaner:
           whitelist:
             # Blocks
@@ -88,7 +79,7 @@ define [
             "Underline": "u"
             "Subscript": "sub"
             "Superscript": "sup"
-            "Strikethrough": "strike"
+            "Strikethrough": "del"
             "Link": "a[href, target]"
             "Range Start": "span#RANGE_START"
             "Range End": "span#RANGE_END"
@@ -98,6 +89,7 @@ define [
             "*": "Paragraph"
             "strong": "Bold"
             "em": "Italic"
+            "strike": "Strikethrough"
           ignore: []
         lang: "en"
         eraseHandler:

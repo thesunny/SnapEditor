@@ -1,127 +1,113 @@
-define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) ->
-  class Save
-    register: (@api) ->
-      if @api.config.onSave
-        @api.on("snapeditor.ready", @activate)
-        @api.on("snapeditor.tryDeactivate", @cancel)
-        @api.on("snapeditor.deactivate", @deactivate)
-        @api.disableImmediateDeactivate()
+define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prompt_dialog", "plugins/save/save.error_dialog"], ($, Browser, Helpers, PromptDialog, ErrorDialog) ->
+  window.SnapEditor.internalPlugins.save =
+    events:
+      activate: (e) -> e.api.disableImmediateDeactivate() if e.api.config.onSave
+      ready: (e) -> e.api.plugins.save.activate(e.api) if e.api.config.onSave
+      tryDeactivate: (e) -> e.api.plugins.save.exit() if e.api.config.onSave
+      deactivate: (e) -> e.api.plugins.save.deactivate() if e.api.config.onSave
 
-    getUI: (ui) ->
-      save = ui.button(action: "save", description: @api.lang.save, shortcut: "Ctrl+S", icon: { url: @api.assets.image("disk.png"), width: 24, height: 24, offset: [3, 3] })
-      cancel = ui.button(action: "cancel", description: @api.lang.cancel, icon: { url: @api.assets.image("cross.png"), width: 24, height: 24, offset: [3, 3] })
-      @generateDialog(ui)
+    commands:
+      save: Helpers.createCommand("save", "ctrl.s", (e) -> e.api.plugins.save.save())
+      # TODO: In Chrome, when an element is contenteditable, the esc keydown
+      # event does not get triggered. However, the esc keyup event does
+      # trigger. Unfortunately, the target is the body and not the element
+      # itself. Removing the shortcut until a solution can be found.
+      exit: Helpers.createCommand("exit", "", (e) -> e.api.plugins.save.exit())
 
-      return {
-        "toolbar:default": "savecancel",
-        savecancel: [save, cancel],
-        save: save
-        cancel: cancel
-      }
+    #
+    # PLUGIN EVENT HANDLERS
+    #
 
-    getActions: ->
-      return {
-        save: @save
-        cancel: @cancel
-      }
-
-    getKeyboardShortcuts: ->
-      return {
-        "ctrl.s": "save"
-        # TODO: In Chrome, when an element is contenteditable, the esc keydown
-        # event does not get triggered. However, the esc keyup event does
-        # trigger. Unfortunately, the target is the body and not the element
-        # itself. Removing the shortcut until a solution can be found.
-        #"esc": "cancel"
-      }
-
-    generateDialog: (ui) ->
-      @saveDialog = ui.dialog("Save/Cancel",
-        """
-          <div class="save_dialog">
-            <div class="message">#{@api.lang.saveExitMessage}</div>
-            <div class="buttons">
-              <button class="save submit button">#{@api.lang.saveSaveButton}</button>
-              <button class="cancel button">#{@api.lang.formCancel}</button>
-            </div>
-            <div class="discard_message">
-              #{@api.lang.saveOr} <a class="discard" href="javascript:void(null);">#{@api.lang.saveDiscardChanges}</a>
-            </div>
-          </div>
-        """
-      )
-      @$saveDialog = $(@saveDialog.getEl())
-      @$save = @$saveDialog.find(".save").on("click", @save)
-      @$cancel = @$saveDialog.find(".cancel").on("click", @resume)
-      @$discard = @$saveDialog.find(".discard").on("click", @discard)
-
-      @errorDialog = ui.dialog(@api.lang.saveErrorTitle,
-        """
-          <div class="error"></div>
-          <button class="okay">#{@api.lang.formOk}</button>
-        """
-      )
-      @$errorDialog = $(@errorDialog.getEl())
-      @$error = @$errorDialog.find(".error")
-      @$okay = @$errorDialog.find(".okay").on("click", @errorDialog.hide)
-
-    activate: =>
+    activate: (@api) ->
       @setOriginalHTML()
-      $(window).on("beforeunload", @leavePage)
+      self = this
+      @leavePageHandler = -> self.leavePage()
+      $(window).on("beforeunload", @leavePageHandler)
 
-    deactivate: =>
+    deactivate: (api) ->
       @unsetOriginalHTML()
-      $(window).off("beforeunload", @leavePage)
+      $(window).off("beforeunload", @leavePageHandler)
 
-    setOriginalHTML: =>
-      @originalHTML = @api.getContents()
-
-    unsetOriginalHTML: =>
-      @originalHTML = null
-
-    showErrorDialog: (message) ->
-      @$error.text(message)
-      @errorDialog.show()
-
-    isEdited: ->
-      @api.getContents() != @originalHTML
-
-    save: =>
-      result = @api.save()
-      if typeof result == "string"
-        @showErrorDialog(result)
-      else
-        @api.deactivate()
-      @saveDialog.hide()
-
-    cancel: =>
-      if @isEdited()
-        @saveDialog.show()
-      else
-        @api.deactivate()
-
-    resume: =>
-      @saveDialog.hide()
-      # In Webkit and Firefox, we have to manually move the focus back to the
-      # editor.
-      # @api.win.focus() must be used in Webkit because @api.el.focus() makes
-      # the page jump.
-      # @api.el.focus() must be used in Firefox because @api.win.focus() does
-      # nothing.
-      # This affects IE as it makes the page jump to where the cursor is.
-      @api.win.focus() if Browser.isWebkit
-      @api.el.focus() if Browser.isGecko
-
-    discard: =>
-      @saveDialog.hide()
-      @api.setContents(@originalHTML)
-      @api.deactivate()
-
-    leavePage: (e) =>
-      return @api.lang.saveLeavePageMessage if @isEdited()
+    leavePage: ->
+      return @api.config.lang.saveLeavePageMessage if @isEdited()
       # Force an empty return because IE requires an empty return in order to
       # not show a dialog. If you return true or null, a dialog still shows.
       # An empty return does not affect other browsers.
       return
 
-  return Save
+    exit: ->
+      if @isEdited()
+        @getPromptDialog().show(@api)
+      else
+        @api.deactivate()
+
+    #
+    # DIALOGS
+    #
+
+    getPromptDialog: ->
+      unless @promptDialog
+        @promptDialog = new PromptDialog()
+        @promptDialog.on(
+          save: (e) -> e.api.plugins.save.save()
+          resume: (e) -> e.api.plugins.save.resume()
+          discard: (e) -> e.api.plugins.save.discard()
+        )
+      @promptDialog
+
+    getErrorDialog: ->
+      @errorDialog or= new ErrorDialog()
+
+    #
+    # DIALOG EVENT HANDLERS
+    #
+
+    save: ->
+      result = @api.save()
+      if typeof result == "string"
+        @getErrorDialog().show(@api, result)
+      else
+        @api.deactivate()
+      @getPromptDialog().hide()
+
+    resume: ->
+      @getPromptDialog().hide()
+
+    discard: ->
+      @getPromptDialog().hide()
+      @api.setContents(@originalHTML)
+      @api.deactivate()
+
+    #
+    # FUNCTIONS
+    #
+
+    setOriginalHTML: ->
+      @originalHTML = @api.getContents()
+
+    unsetOriginalHTML: ->
+      @originalHTML = null
+
+    isEdited: ->
+      @api.getContents() != @originalHTML
+
+  styles = """
+    .save_dialog .buttons {
+      margin-top: 20px;
+      margin-bottom: 15px;
+    }
+
+    .save_dialog .save {
+      margin-right: 10px;
+    }
+
+    .save_dialog .discard_message {
+      text-align: right;
+    }
+
+    .save_dialog .discard_message a {
+      text-decoration: none;
+      color: #46a7b0;
+    }
+  """ + Helpers.createStyles("save", 26 * -26) + Helpers.createStyles("exit", 27 * -26)
+  window.SnapEditor.insertStyles("save", styles)

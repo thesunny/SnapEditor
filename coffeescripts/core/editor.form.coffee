@@ -1,6 +1,6 @@
 define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.form", "core/assets", "styles/cssreset-min.css", "styles/snapeditor_iframe.css", "core/iframe.snapeditor", "core/toolbar/toolbar.static"], ($, Helpers, Editor, Defaults, Assets, CSSReset, CSS, IFrame, Toolbar) ->
   class FormEditor extends Editor
-    constructor: (textarea, config) ->
+    constructor: (textarea, config = {}) ->
       # The base editor deals with initializing after document ready. However,
       # the form editor requires the document to be ready as well. Hence, it
       # needs to take care of its own initialization.
@@ -42,10 +42,10 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
     # Perform the actual initialization of the editor.
     init: (el) =>
       super(el)
-      toolbarComponents = @plugins.getToolbarComponents()
-      @toolbar = new Toolbar(@api, @$templates, toolbarComponents.available, toolbarComponents.config)
+      @toolbar = new Toolbar(@api)
       @formize(@toolbar.$toolbar)
       @$el.blur(@updateTextarea)
+      @insertStyles("snapeditor_form", @css)
 
     formize: (toolbar) ->
       $toolbar = $(toolbar)
@@ -66,6 +66,13 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       # Swap.
       @$textarea.hide()
       @$container.show()
+
+    css: """
+      .snapeditor_form_iframe_container {
+        border: 1px solid #dddddd;
+        border-top: none;
+      }
+    """
 
     updateTextarea: =>
       newContents = @getContents()

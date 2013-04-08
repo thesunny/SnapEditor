@@ -11,7 +11,7 @@ require ["plugins/snap/snap"], (Snap) ->
       )
       api = $("<div/>")
       api.el = $editable[0]
-      snap = new Snap()
+      snap = window.SnapEditor.internalPlugins.snap
 
     afterEach ->
       $editable.remove()

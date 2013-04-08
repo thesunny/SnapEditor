@@ -23,8 +23,7 @@ task :compileAndBuild => [:compile, :build]
 namespace :prepare do
   desc "Prepares snapeditor.js for testing"
   task :test => [:compile, :build] do
-    mkdir_p "spec/acceptance/assets/javascripts"
-    cp "build/snapeditor.js", "spec/acceptance/assets/javascripts/."
+    cp "build/snapeditor.js", "spec/acceptance/assets/."
   end
 
   desc "Prepare the bundle for uploading"

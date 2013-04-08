@@ -5,7 +5,6 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
     # templates - element that contains #snapeditor_contextmenu_template
     # config - { "<context selector>": [<button object>, ...]
     constructor: (@api, templates, @config) ->
-      SnapEditor.DEBUG("Start: Setup contextmenu")
       @$el = $(@api.el)
       @$templates = $(templates)
       @setupTemplates()
@@ -14,7 +13,6 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
       @setupMenu()
       @api.on("snapeditor.activate", @activate)
       @api.on("snapeditor.deactivate", @deactivate)
-      SnapEditor.DEBUG("End: Setup contextmenu")
 
     setupTemplates: ->
       @$template = @$templates.find("#snapeditor_contextmenu_template")
@@ -34,7 +32,7 @@ define ["jquery.custom", "core/contextmenu/contextmenu.builder", "core/data_acti
         appendTo("body").
         on("contextmenu", (e) -> e.preventDefault())
       @dataActionHandler = new DataActionHandler(@$menu, @api)
-      @dataActionHandler.on("click", @hide)
+      #@dataActionHandler.on("click", @hide)
       @builder = new Builder(@$template, @config)
 
     activate: =>

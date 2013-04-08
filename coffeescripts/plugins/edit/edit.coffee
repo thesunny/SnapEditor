@@ -3,36 +3,27 @@
 # the browser unless the user allows it through his/her preferences. Therefore,
 # this needs to be manually tested.
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
-  class Edit
-    register: (@api) ->
-      @$el = $(@api.el)
-      @api.on("snapeditor.activate", @activate)
-      @api.on("snapeditor.deactivate", @deactivate)
+  window.SnapEditor.internalPlugins.edit =
+    events:
+      activate: (e) -> e.api.plugins.edit.activate(e.api)
+      deactivate: (e) -> e.api.plugins.edit.deactivate()
 
-    getUI: (ui) ->
-      cut = ui.button(action: "cut", description: @api.lang.cut, shortcut: "Ctrl+X", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [0, 0] })
-      copy = ui.button(action: "copy", description: @api.lang.copy, shortcut: "Ctrl+C", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-16, 0] })
-      paste = ui.button(action: "paste", description: @api.lang.paste, shortcut: "Ctrl+V", icon: { url: @api.assets.image("contextmenu.png"), width: 16, height: 16, offset: [-32, 0] })
-      return {
-        "context:default": [cut, copy, paste]
-      }
+    activate: (@api) ->
+      self = this
+      @onkeydownHandler = (e) -> self.onkeydown(e)
+      @onkeyupHandler = (e) -> self.onkeyup(e)
+      @api.on(
+        "snapeditor.keydown": @onkeydownHandler
+        "snapeditor.keyup": @onkeyupHandler
+      )
 
-    getActions: ->
-      return {
-        cut: => alert(@api.lang.cutMessage)
-        copy: => alert(@api.lang.copyMessage)
-        paste: => alert(@api.lang.pasteMessage)
-      }
+    deactivate: ->
+      @api.off(
+        "snapeditor.keydown": @onkeydownHandler
+        "snapeditor.keyup": @onkeyupHandler
+      )
 
-    activate: =>
-      @$el.on("keydown", @onkeydown)
-      @$el.on("keyup", @onkeyup)
-
-    deactivate: =>
-      @$el.off("keydown", @onkeydown)
-      @$el.off("keyup", @onkeyup)
-
-    onkeydown: (e) =>
+    onkeydown: (e) ->
       keys = Helpers.keysOf(e)
       switch keys
         when "ctrl.v"
@@ -46,7 +37,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         when "ctr.x"
           @cutOccurred = true
 
-    onkeyup: (e) =>
+    onkeyup: (e) ->
       keys = Helpers.keysOf(e)
       switch keys
         when "ctrl.v", "v" then @paste()
@@ -70,5 +61,3 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         pasteEndParent = @api.getParentElement((el) -> Helpers.isBlock(el)) or @api.el.lastChild
         @api.clean(pasteStartParent, pasteEndParent)
         @pasteStartParent = null
-
-  return Edit

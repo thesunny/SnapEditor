@@ -1,66 +1,109 @@
-require ["core/toolbar/toolbar.builder"], (Builder) ->
+require ["jquery.custom", "core/toolbar/toolbar.builder"], ($, Builder) ->
   describe "Toolbar.Builder", ->
-    availableComponents = null
+    $content = options = null
     beforeEach ->
-      component =
-        htmlForToolbar: -> "html"
-        cssForToolbar: -> "css"
-      availableComponents =
-        combo: ["component", component]
-        component: [component]
-        components: [component, component, component]
+      $content = $("<ul/>")
+      class Menu
+      options =
+        api: $("<div/>")
+        templates:
+          item: "<li><a></a></li>"
+          divider: '<li class="divider"></li>'
+        menu:
+          class: Menu
+        itemBuilder: ($container, item, command) ->
+          $container.addClass(item).attr("title", command.text)
+      options.api.win = window
+      options.api.addKeyboardShortcut = ->
 
-    describe "#build", ->
-      it "builds the toolbar", ->
-        $templates = null
-        $.ajax(url: "spec/javascripts/support/assets/templates/snapeditor.html", async: false, success: (html) -> $templates = $("<div/>").html(html))
-        builder = new Builder(
-          {},
-          $templates.find("#snapeditor_toolbar_template")[0],
-          availableComponents,
-          ["component", "components", "|", "combo"]
-        )
-        [$div, css] = builder.build()
-        expect($div.hasClass("toolbar")).toBeTruthy()
-        expect($div.find(".group").length).toEqual(2)
-
-        $group = $($div.find(".group")[0])
-        expect(clean($group.html()).replace(/[\s]*/g, "")).toEqual('htmlhtmlhtmlhtml')
-
-        $group = $($div.find(".group")[1])
-        expect($group.html().replace(/\s*/g, "")).toEqual("htmlhtml")
-
-        expect(css).toEqual("csscsscsscsscsscss")
-
-    describe "#getComponents", ->
-      it "returns an object containing all the components", ->
-        builder = new Builder({}, null, availableComponents, ["component", "component", "|", "components", "|", "combo"])
-        [components, css] = builder.getComponents()
-        expect(components.length).toEqual(3)
-        expect(components[0].html).toEqual("htmlhtml")
-        expect(components[1].html).toEqual("htmlhtmlhtml")
-        expect(components[2].html).toEqual("htmlhtml")
-        expect(css).toEqual("csscsscsscsscsscsscss")
-
-      it "flags the last component", ->
-        builder = new Builder({}, null, availableComponents, ["component", "component", "|", "components", "|", "combo"])
-        [components, css] = builder.getComponents()
-        expect(components[2].last).toBeTruthy()
-
-    describe "#getComponentHtmlAndCss", ->
-      builder = null
+    describe "#addItem", ->
       beforeEach ->
-        builder = new Builder({}, null, availableComponents, null)
+        spyOn(options.api, "addKeyboardShortcut")
+        options.api.commands =
+            item:
+              text: "Item"
+              action: ->
+              shortcut: "w"
+            noText:
+              action: ->
+              shortcut: "w"
+            noAction:
+              text: "Test"
+              shortcut: "w"
+            noShortcut:
+              text: "Item"
+              action: ->
+            menu:
+              text: "Menu"
+              action: ->
+              items: ["1", "2"]
 
-      it "throws an error when the component is not available", ->
-        builder.availableComponents = {}
-        expect(-> builder.getComponentHtmlAndCss("component")).toThrow()
+      it "throws an error when the command doesn't exist", ->
+        expect(-> Builder.addItem($content, "fail", options)).toThrow()
 
-      it "renders a single component", ->
-        expect(builder.getComponentHtmlAndCss("component")).toEqual(["html", "css"])
+      it "throws an error when there is no text", ->
+        expect(-> Builder.addItem($content, "noText", options)).toThrow()
 
-      it "renders multiple components", ->
-        expect(builder.getComponentHtmlAndCss("components")).toEqual(["htmlhtmlhtml", "csscsscss"])
+      it "throws an error when there is no action or items", ->
+        expect(-> Builder.addItem($content, "noAction", options)).toThrow()
 
-      it "renders a combination of components", ->
-        expect(builder.getComponentHtmlAndCss("combo")).toEqual(["htmlhtml", "csscss"])
+      describe "item", ->
+        it "add a divider", ->
+          Builder.addItem($content, "|", options)
+          expect($content.find(".divider").length).toEqual(1)
+
+        it "adds an item", ->
+          Builder.addItem($content, "item", options)
+          $li = $content.find("li")
+          expect($li.length).toEqual(1)
+          $a = $li.find("a")
+          expect($a.hasClass("item")).toBeTruthy()
+          expect($a.attr("title")).toEqual(options.api.commands.item.text)
+
+        it "adds the action", ->
+          spyOn(options.api.commands.item, "action")
+          Builder.addItem($content, "item", options)
+          e = $.Event("item")
+          e.api = options.api
+          options.api.trigger(e)
+          expect(options.api.commands.item.action).toHaveBeenCalled()
+
+        it "adds the keyboard shortcut", ->
+          Builder.addItem($content, "item", options)
+          expect(options.api.addKeyboardShortcut).toHaveBeenCalled()
+
+        it "doesn't add the keyboard shortut when none is given", ->
+          Builder.addItem($content, "noShortcut", options)
+          expect(options.api.addKeyboardShortcut).not.toHaveBeenCalled()
+
+      describe "menu", ->
+        constructed = shown = null
+        beforeEach ->
+          constructed = false
+          shown = false
+          class Menu
+            constructor: -> constructed = true
+            options: flyOut: false
+            $menu: $("<div/>")
+            isShown: -> false
+            show: -> shown = true
+            hide: ->
+          options.menu.class = Menu
+          $content.menus = []
+
+        it "creates a menu", ->
+          Builder.addItem($content, "menu", options)
+          expect(constructed).toBeTruthy()
+
+        it "adds its own action", ->
+          spyOn(options.api.commands.menu, "action")
+          Builder.addItem($content, "menu", options)
+          e = $.Event("menu")
+          e.api = options.api
+          options.api.trigger(e)
+          expect(options.api.commands.menu.action).not.toHaveBeenCalled()
+          expect(shown).toBeTruthy()
+
+        it "adds the menu to the content's menu list", ->
+          Builder.addItem($content, "menu", options)
+          expect($content.menus.length).toEqual(1)

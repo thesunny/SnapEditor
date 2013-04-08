@@ -2,11 +2,15 @@
 # changes. It looks for a "data-action" attribute on the target and triggers
 # that event. This makes it so that there is little wiring code needed and it
 # is easy to change the events and the HTML.
-define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Helpers, Browser, Events) ->
+define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   class DataActionHandler
     # $el is the container element.
     # api is the editor API object.
-    constructor: (el, @api) ->
+    #
+    # Options:
+    # * mouseover: Triggers the action on mouseover if the target has
+    #     data-mouseover set to true. The default is false.
+    constructor: (el, @api, @options = {}) ->
       @$el = $(el)
       @api.on("snapeditor.activate", @activate)
       @api.on("snapeditor.deactivate", @deactivate)
@@ -30,6 +34,12 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
       @$el.on("mouseup", @mouseup)
       # Listen to any keypresses.
       @$el.on("keypress", @change)
+      # Listen to any mouseovers.
+      @$el.on("mouseover", @mouseover)
+      # In IE, the link causes the window's onbeforeunload to trigger, even if
+      # the link isn't actually doing anything. In order to prevent this,
+      # false is returned on the click to prevent the default behaviour.
+      @$el.on("click", -> false) if Browser.isIE
 
     deactivate: =>
       @$el.children("select[data-action]").off("change", @change)
@@ -70,10 +80,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
         # scroll and jump. Hence this is only for Firefox.
         @api.el.focus() if Browser.isGecko
         action = @getDataActionEl(e.target).attr("data-action")
-        SnapEditor.DEBUG("Action: #{action}")
-        SnapEditor.DEBUG("Is Range Valid: #{@api.isValid()}")
         @api.trigger(action, e.target)
-        @trigger("click")
       @isClick = false
       # Purposely added true here because the line above sets @isClick to false.
       # Since CoffeeScript returns the last statement, if the line above was the
@@ -82,13 +89,13 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
       # what we want. Hence, the true below.
       return true
 
+    mouseover: (e) =>
+      $action = @getDataActionEl(e.target)
+      @api.trigger($action.attr("data-action"), e.target) if $action.length > 0 and $action.attr("data-mouseover") == "true"
+
     # When a select is changed or a keypress occurs in the el, it triggers the
     # event specified by the 'data-action' attribute of the target. The target's
     # value is passed along through the event.
     change: (e) =>
       $target = $(e.target)
       @api.trigger("#{$target.attr("data-action")}", $target.val()) if $target.attr("data-action")
-
-  Helpers.include(DataActionHandler, Events)
-
-  return DataActionHandler

@@ -8,9 +8,9 @@ define [
     build: ->
       defaults = Defaults.build()
       defaults.plugins = defaults.plugins.concat([
-        new Snap()
-        new Outline()
-        new Save()
+        "snap"
+        "outline"
+        "save"
       ])
       defaults.toolbar = defaults.toolbar
       defaults.snap = true

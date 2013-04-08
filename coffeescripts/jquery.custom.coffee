@@ -8,18 +8,17 @@ define ["../lib/jquery", "../lib/mustache"], ->
     this[0].tagName.toLowerCase()
 
   # Mimics MooTools getCoordinates.
-  $.fn.getCoordinates = ->
+  $.fn.getCoordinates = (withPadding = false, withBorderWidth = false) ->
     offset = this.offset()
-    width = this.width()
-    height = this.height()
+    size = this.getSize(withPadding, withBorderWidth)
     # Round the numbers because Webkit returns decimal pixels.
     return {
       top: Math.round(offset.top)
-      bottom: Math.round(offset.top + height)
+      bottom: Math.round(offset.top + size.y)
       left: Math.round(offset.left)
-      right: Math.round(offset.left + width)
-      width: Math.round(width)
-      height: Math.round(height)
+      right: Math.round(offset.left + size.x)
+      width: Math.round(size.x)
+      height: Math.round(size.y)
     }
 
   # Mimics MooTools getScroll.
@@ -30,10 +29,20 @@ define ["../lib/jquery", "../lib/mustache"], ->
     }
 
   # Mimcs MooTools getSize.
-  $.fn.getSize = ->
+  $.fn.getSize = (withPadding = false, withBorderWidth = false) ->
+    width = this.width()
+    height = this.height()
+    if withPadding
+      padding = this.getPadding()
+      width += padding.left + padding.right
+      height += padding.top + padding.bottom
+    if withBorderWidth
+      borderWidth = this.getBorderWidth()
+      width += borderWidth.left + borderWidth.right
+      height += borderWidth.top + borderWidth.bottom
     return {
-      x: this.width()
-      y: this.height()
+      x: width
+      y: height
     }
 
   $.fn.getPadding = ->
@@ -44,6 +53,16 @@ define ["../lib/jquery", "../lib/mustache"], ->
       bottom: Math.round(parseFloat(this.css("padding-bottom")))
       left: Math.round(parseFloat(this.css("padding-left")))
       right: Math.round(parseFloat(this.css("padding-right")))
+    }
+
+  $.fn.getBorderWidth = ->
+    # Webkit returns decimal pixels. Hence parse to float first and then
+    # round.
+    return {
+      top: Math.round(parseFloat(this.css("border-top-width")) || 0)
+      bottom: Math.round(parseFloat(this.css("border-bottom-width")) || 0)
+      left: Math.round(parseFloat(this.css("border-left-width")) || 0)
+      right: Math.round(parseFloat(this.css("border-right-width")) || 0)
     }
 
   # Mimics MooTools isVisible.
