@@ -9,5 +9,4 @@ require ["jquery.custom", "snapeditor.pre", "core/browser", "core/editor.in_plac
     InPlace: if Browser.isSupported then InPlaceEditor else UnsupportedEditor
     Form: if Browser.isSupported then FormEditor else UnsupportedEditor
   )
-    widgets: {}  
 ), null, true
