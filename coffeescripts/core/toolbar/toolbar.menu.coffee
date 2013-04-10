@@ -62,7 +62,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
           color: #1e1e1e;
           display: block;
           margin: 0;
-          padding: 5px 5px;
+          padding: 6px 5px 6px 12px;
           cursor: pointer;
           text-decoration: none;
           outline: none;
