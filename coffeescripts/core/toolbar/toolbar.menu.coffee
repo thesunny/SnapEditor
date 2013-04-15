@@ -112,26 +112,26 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
           class: Menu
           options:
             flyOut: true
-        itemBuilder: ($container, item, command) ->
-          title = command.text
-          title += " (#{Helpers.displayShortcut(command.shortcut)})" if command.shortcut
+        itemBuilder: ($container, item, button) ->
+          title = button.text
+          title += " (#{Helpers.displayShortcut(button.shortcut)})" if button.shortcut
           $container.
             attr("title", title).
             attr("data-action", item)
 
           # Handle item.
           $item = $container.find(".snapeditor_toolbar_menu_item")
-          if command.html
-            $item.html(command.html)
+          if button.html
+            $item.html(button.html)
           else
-            $item.text(command.text)
+            $item.text(button.text)
 
           # Handle shortcut.
-          if command.shortcut
-            $shortcut = $container.find(".snapeditor_toolbar_menu_shortcut").text(Helpers.displayShortcut(command.shortcut))
+          if button.shortcut
+            $shortcut = $container.find(".snapeditor_toolbar_menu_shortcut").text(Helpers.displayShortcut(button.shortcut))
 
           # Handle submenu.
-          if command.items
+          if button.items
             $container.attr("data-mouseover", true)
             $arrowContainer = $container.find(".snapeditor_toolbar_menu_arrow_container")
             $arrow = $("<div/>").addClass("snapeditor_toolbar_menu_arrow").appendTo($arrowContainer)

@@ -10,11 +10,11 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
           e.preventDefault()
           e.api.trigger(if keys == "tab" then "indent" else "outdent")
 
-  $.extend(SnapEditor.commands,
-    orderedList: Helpers.createCommand("orderedList", "ctrl+shift+8", list.insert)
-    unorderedList: Helpers.createCommand("unorderedList", "ctrl+shift+7", list.insert)
-    indent: Helpers.createCommand("indent", "", list.dent)
-    outdent: Helpers.createCommand("outdent", "", list.dent)
+  $.extend(SnapEditor.buttons,
+    orderedList: Helpers.createButton("orderedList", "ctrl+shift+8", list.insert)
+    unorderedList: Helpers.createButton("unorderedList", "ctrl+shift+7", list.insert)
+    indent: Helpers.createButton("indent", "", list.dent)
+    outdent: Helpers.createButton("outdent", "", list.dent)
   )
 
   SnapEditor.behaviours.list =
@@ -22,6 +22,6 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
     onDeactivate: (e) -> $(e.api.el).off("keydown", list.handleTab)
 
   styles = ""
-  for command, i in ["orderedList", "unorderedList", "indent", "outdent"]
-    styles += Helpers.createStyles(command, (17 + i) * -26) # sprite position * step
+  for button, i in ["orderedList", "unorderedList", "indent", "outdent"]
+    styles += Helpers.createStyles(button, (17 + i) * -26) # sprite position * step
   SnapEditor.insertStyles("plugins_list", styles)

@@ -77,13 +77,13 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
     isEdited: ->
       @api.getContents() != @originalHTML
 
-  $.extend(SnapEditor.commands,
-    save: Helpers.createCommand("save", "ctrl+s", -> save.save())
+  $.extend(SnapEditor.buttons,
+    save: Helpers.createButton("save", "ctrl+s", -> save.save())
     # TODO: In Chrome, when an element is contenteditable, the esc keydown
     # event does not get triggered. However, the esc keyup event does
     # trigger. Unfortunately, the target is the body and not the element
     # itself. Removing the shortcut until a solution can be found.
-    exit: Helpers.createCommand("exit", "", -> save.exit())
+    exit: Helpers.createButton("exit", "", -> save.exit())
   )
 
   SnapEditor.behaviours.save =

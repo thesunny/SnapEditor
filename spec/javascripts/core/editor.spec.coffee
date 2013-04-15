@@ -4,7 +4,6 @@ require ["jquery.custom", "core/editor", "core/helpers", "core/range"], ($, Edit
     beforeEach ->
       $editable = addEditableFixture()
       defaults =
-        commands: []
         behaviours: []
         cleaner:
           whitelist:
