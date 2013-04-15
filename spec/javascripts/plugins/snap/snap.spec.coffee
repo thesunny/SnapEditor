@@ -1,6 +1,6 @@
 require ["plugins/snap/snap"], (Snap) ->
   describe "Snap", ->
-    $editable = api = snap = null
+    $editable = api = null
     beforeEach ->
       $editable = addEditableFixture().css(
         position: "absolute"
@@ -11,19 +11,18 @@ require ["plugins/snap/snap"], (Snap) ->
       )
       api = $("<div/>")
       api.el = $editable[0]
-      snap = window.SnapEditor.internalPlugins.snap
 
     afterEach ->
       $editable.remove()
 
     describe "#setup", ->
       it "creates the snap divs", ->
-        snap.setup()
-        expect(snap.divs).not.toBeNull()
-        expect(snap.divs.top).not.toBeNull()
-        expect(snap.divs.bottom).not.toBeNull()
-        expect(snap.divs.left).not.toBeNull()
-        expect(snap.divs.right).not.toBeNull()
+        Snap.setup()
+        expect(Snap.divs).not.toBeNull()
+        expect(Snap.divs.top).not.toBeNull()
+        expect(Snap.divs.bottom).not.toBeNull()
+        expect(Snap.divs.left).not.toBeNull()
+        expect(Snap.divs.right).not.toBeNull()
 
     describe "#getSnappedStyles", ->
       it "returns the styles of the snap divs after snapping so that they surround the element", ->
@@ -37,7 +36,7 @@ require ["plugins/snap/snap"], (Snap) ->
         documentSize =
           x: 1000
           y: 3000
-        styles = snap.getSnappedStyles(elCoords, documentSize)
+        styles = Snap.getSnappedStyles(elCoords, documentSize)
 
         expect(styles.top.left).toEqual(50)
         expect(styles.top.width).toEqual(500)
@@ -67,7 +66,7 @@ require ["plugins/snap/snap"], (Snap) ->
           right: 900
           width: 800
           height: 1000
-        styles = snap.getUnsnappedStyles(documentSize, portCoords)
+        styles = Snap.getUnsnappedStyles(documentSize, portCoords)
 
         expect(styles.top.left).toEqual(100)
         expect(styles.top.width).toEqual(800)

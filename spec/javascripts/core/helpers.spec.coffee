@@ -361,7 +361,7 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
 
     describe "#displayShortcut", ->
       it "generates the proper display shortcut", ->
-        expect(Helpers.displayShortcut("ctrl.shift.t")).toEqual("Ctrl+Shift+T")
+        expect(Helpers.displayShortcut("ctrl+shift+t")).toEqual("Ctrl+Shift+T")
 
     describe "#normalize", ->
       it "normalizes an email", ->

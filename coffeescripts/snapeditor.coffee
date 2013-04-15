@@ -5,8 +5,19 @@
 require ["jquery.custom", "snapeditor.pre", "core/browser", "core/editor.in_place", "core/editor.form", "core/editor.unsupported"], (($, Pre, Browser, InPlaceEditor, FormEditor, UnsupportedEditor) ->
   # NOTE: Most of the SnapEditor stuff is in snapeditor.pre.coffee. This is so
   # that the other modules have access to the SnapEditor object.
-  $.extend(window.SnapEditor,
-    InPlace: if Browser.isSupported then InPlaceEditor else UnsupportedEditor
-    Form: if Browser.isSupported then FormEditor else UnsupportedEditor
-  )
+
+  # Save the configs as we'll replace SnapEditor.InPlace and SnapEditor.Form.
+  inPlaceConfig = SnapEditor.InPlace.config
+  formConfig = SnapEditor.Form.config
+
+  # Check for support.
+  InPlaceEditor = FormEditor = UnsupportedEditor unless Browser.isSupported
+
+  # Replace the previous objects.
+  SnapEditor.InPlace = InPlaceEditor
+  SnapEditor.Form = FormEditor
+
+  # Re-add the configs.
+  SnapEditor.InPlace.config = inPlaceConfig
+  SnapEditor.Form.config = formConfig
 ), null, true

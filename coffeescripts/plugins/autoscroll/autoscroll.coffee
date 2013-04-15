@@ -1,11 +1,7 @@
 # TODO: Autoscroll is not working right now when you hold down the shift key
 # while selecting.
 define ["jquery.custom"], ($) ->
-  window.SnapEditor.internalPlugins.autoscroll =
-    events:
-      activate: (e) -> e.api.on("snapeditor.keyup", e.api.plugins.autoscroll.autoscroll)
-      deactivate: (e) -> e.api.off("snapeditor.keyup", e.api.plugins.autoscroll.autoscroll)
-
+  autoscroll =
     autoscroll: (e) ->
       margins = top: 50, bottom: 50
       api = e.api
@@ -22,3 +18,10 @@ define ["jquery.custom"], ($) ->
         api.win.scrollTo(scroll.x, topLine)
       else if bottomLine > scroll.y
         api.win.scrollTo(scroll.x, bottomLine)
+
+  SnapEditor.behaviours.autoscroll =
+    onActivate: (e) -> e.api.on("snapeditor.keyup", autoscroll.autoscroll)
+    onDeactivate: (e) -> e.api.off("snapeditor.keyup", autoscroll.autoscroll)
+
+  # autoscroll is returned for testing purposes.
+  return autoscroll

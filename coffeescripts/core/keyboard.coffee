@@ -63,5 +63,3 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       if fn
         e.preventDefault()
         fn()
-
-  return Keyboard

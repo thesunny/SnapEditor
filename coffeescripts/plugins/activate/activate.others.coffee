@@ -7,20 +7,16 @@ define ["jquery.custom"], ($) ->
       # Add the events directly to the element instead of using SnapEditor
       # events because the Activate plugin is the one that starts off the
       # SnapEditor events.
-      data = api: api
-      $(api.el).one("mousedown", data, @onmousedown)
-      $(api.el).one("mouseup", data, @onmouseup)
+      self = this
+      $(api.el).one("mousedown", (e) -> self.onmousedown(e, api))
+      $(api.el).one("mouseup", (e) -> self.onmouseup(e, api))
 
-    onmousedown: (e) ->
-      api = e.data.api
-      plugin = api.plugins.activate
-      plugin.click(api) unless plugin.isLink(e.target)
+    onmousedown: (e, api) ->
+      @click(api) unless @isLink(e.target)
 
-    onmouseup: (e) ->
+    onmouseup: (e, api) ->
       target = e.target
-      api = e.data.api
-      plugin = api.plugins.activate
-      unless plugin.isLink(target)
+      unless @isLink(target)
         # NOTE: Clicking on an image to activate the editor for the very first
         # time causes some problems. In Webkit, it does not create a range
         # immediately. Not even after a mouseup. If we delay for 100ms, then
@@ -33,5 +29,5 @@ define ["jquery.custom"], ($) ->
         # leaving it in. We leave it in for Gecko for consistency.
         #
         api.select(target) if $(target).tagName() == 'img'
-        plugin.activate(api)
+        @activate(api)
   }

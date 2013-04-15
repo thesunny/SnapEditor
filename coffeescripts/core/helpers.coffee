@@ -219,14 +219,18 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     capitalize: (string) ->
       string.replace(/\b[a-z]/g, (match) -> match.toUpperCase())
 
+    # Uncapitalize the string.
+    uncapitalize: (string) ->
+      string.replace(/\b[A-Z]/g, (match) -> match.toLowerCase())
+
     # Changes a string from camel case to snake case.
     # e.g. "someMadeUpName" -> "some_made_up_name"
     camelToSnake: (string) ->
-      string.replace(/[A-Z]/g, (match) -> "_" + match.toLowerCase())
+      Helpers.uncapitalize(string).replace(/[A-Z]/g, (match) -> "_" + match.toLowerCase())
 
-    # Changes ctrl.shift.a to Ctrl+Shift+A.
+    # Changes ctrl+shift+a to Ctrl+Shift+A.
     displayShortcut: (shortcut) ->
-      $.map(shortcut.split("."), (s) -> Helpers.capitalize(s)).join("+")
+      $.map(shortcut.split("+"), (s) -> Helpers.capitalize(s)).join("+")
 
     # Normalizes the URL.
     normalizeURL: (url) ->

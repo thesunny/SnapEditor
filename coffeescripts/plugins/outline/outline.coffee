@@ -1,8 +1,5 @@
 define ["jquery.custom"], ($) ->
-  window.SnapEditor.internalPlugins.outline =
-    events:
-      pluginsReady: (e) -> e.api.plugins.outline.setup(e.api)
-
+  outline =
     setup: (api) ->
       self = this
       el = api.el
@@ -89,3 +86,6 @@ define ["jquery.custom"], ($) ->
           left: coords.left + coords.width + 1
           height: coords.height + 2
       }
+
+  SnapEditor.behaviours.outline =
+    onPluginsReady: (e) -> outline.setup(e.api)
