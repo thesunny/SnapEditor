@@ -11,7 +11,6 @@ if isIE
         api = $("<div/>")
         api.el = $("<div/>")[0]
         api.select = ->
-        api.plugins = activate: activate
 
       describe "#addActivateEvents", ->
         it "adds mouseup events", ->
@@ -33,9 +32,7 @@ if isIE
       describe "#onmouseup", ->
         event = null
         beforeEach ->
-          event =
-            data: api: api
-            target: $("<div/>")[0]
+          event = target: $("<div/>")[0]
 
         describe "target is not a link", ->
           it "selects the target when the target is an image", ->
@@ -44,13 +41,13 @@ if isIE
             spyOn(api, "select")
 
             event.target = $("<img/>")[0]
-            activate.onmouseup(event)
+            activate.onmouseup(event, api)
             expect(api.select).toHaveBeenCalledWith(event.target)
 
           it "triggers click.activate and activates the editor", ->
             spyOn(activate, "click")
             spyOn(activate, "activate")
-            activate.onmouseup(event)
+            activate.onmouseup(event, api)
             expect(activate.click).toHaveBeenCalled()
             expect(activate.activate).toHaveBeenCalled()
 
@@ -59,6 +56,6 @@ if isIE
             spyOn(activate, "isLink").andReturn(true)
             spyOn(activate, "click")
             spyOn(activate, "activate")
-            activate.onmouseup(event)
+            activate.onmouseup(event, api)
             expect(activate.click).not.toHaveBeenCalled()
             expect(activate.activate).not.toHaveBeenCalled()

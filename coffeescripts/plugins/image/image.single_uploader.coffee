@@ -28,7 +28,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser"], (J, $, Browser) 
 
     getKeyboardShortcuts: ->
       return {
-        "ctrl.g": "insert_image"
+        "ctrl+g": "insert_image"
       }
 
     generateDialog: (ui) ->

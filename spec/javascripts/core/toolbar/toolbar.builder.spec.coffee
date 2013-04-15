@@ -19,7 +19,7 @@ require ["jquery.custom", "core/toolbar/toolbar.builder"], ($, Builder) ->
     describe "#addItem", ->
       beforeEach ->
         spyOn(options.api, "addKeyboardShortcut")
-        options.api.commands =
+        SnapEditor.commands =
             item:
               text: "Item"
               action: ->
@@ -58,15 +58,15 @@ require ["jquery.custom", "core/toolbar/toolbar.builder"], ($, Builder) ->
           expect($li.length).toEqual(1)
           $a = $li.find("a")
           expect($a.hasClass("item")).toBeTruthy()
-          expect($a.attr("title")).toEqual(options.api.commands.item.text)
+          expect($a.attr("title")).toEqual(SnapEditor.commands.item.text)
 
         it "adds the action", ->
-          spyOn(options.api.commands.item, "action")
+          spyOn(SnapEditor.commands.item, "action")
           Builder.addItem($content, "item", options)
           e = $.Event("item")
           e.api = options.api
           options.api.trigger(e)
-          expect(options.api.commands.item.action).toHaveBeenCalled()
+          expect(SnapEditor.commands.item.action).toHaveBeenCalled()
 
         it "adds the keyboard shortcut", ->
           Builder.addItem($content, "item", options)
@@ -96,12 +96,12 @@ require ["jquery.custom", "core/toolbar/toolbar.builder"], ($, Builder) ->
           expect(constructed).toBeTruthy()
 
         it "adds its own action", ->
-          spyOn(options.api.commands.menu, "action")
+          spyOn(SnapEditor.commands.menu, "action")
           Builder.addItem($content, "menu", options)
           e = $.Event("menu")
           e.api = options.api
           options.api.trigger(e)
-          expect(options.api.commands.menu.action).not.toHaveBeenCalled()
+          expect(SnapEditor.commands.menu.action).not.toHaveBeenCalled()
           expect(shown).toBeTruthy()
 
         it "adds the menu to the content's menu list", ->

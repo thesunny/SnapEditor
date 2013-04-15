@@ -33,7 +33,7 @@ require ["core/helpers/helpers.keyboard"], (Keyboard) ->
     describe "#normalizeKeys", ->
       it "separates out the special keys from the key", ->
         spyOn(Keyboard, "buildKey").andReturn("key")
-        expect(Keyboard.normalizeKeys("ctrl.shift.alt.a")).toEqual("key")
+        expect(Keyboard.normalizeKeys("ctrl+shift+alt+a")).toEqual("key")
         expect(Keyboard.buildKey).toHaveBeenCalledWith("a", ["ctrl", "shift", "alt"])
 
     describe "#buildKey", ->
@@ -41,7 +41,7 @@ require ["core/helpers/helpers.keyboard"], (Keyboard) ->
         expect(Keyboard.buildKey("a")).toEqual("a")
 
       it "combines the special key with the key", ->
-        expect(Keyboard.buildKey("a", ["ctrl"])).toEqual("ctrl.a")
+        expect(Keyboard.buildKey("a", ["ctrl"])).toEqual("ctrl+a")
 
       it "combines the sorted special keys with the key", ->
-        expect(Keyboard.buildKey("a", ["shift", "ctrl"])).toEqual("ctrl.shift.a")
+        expect(Keyboard.buildKey("a", ["shift", "ctrl"])).toEqual("ctrl+shift+a")

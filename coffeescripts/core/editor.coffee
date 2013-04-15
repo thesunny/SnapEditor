@@ -38,8 +38,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @execCommand = new ExecCommand(this)
 
       # Deal with new plugins.
-      @setupPlugins()
-      @setupCommands()
+      @setupBehaviours()
 
       # Delegate Public API functions.
       @delegatePublicAPIFunctions()
@@ -56,40 +55,29 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @trigger("snapeditor.plugins_ready")
 
     prepareConfig: ->
-      @config.toolbar or= @defaults.toolbar
-      @config.plugins = @defaults.plugins.concat(@config.plugins or [])
+      @config.commands or= @defaults.commands
+      @config.behaviours or= @defaults.behaviours
       @config.lang = SnapEditor.lang
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
       @config.cleaner.ignore or= @defaults.cleaner.ignore
+      @config.eraseHandler or= {}
+      @config.eraseHandler.delete or= @defaults.eraseHandler.delete
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
       @config.atomic.selectors = [".#{@config.atomic.classname}"]
-      @config.eraseHandler or= {}
-      @config.eraseHandler.delete or= @defaults.eraseHandler.delete
 
       # Add the atomic classname to the cleaner's ignore list.
       @config.cleaner.ignore = @config.cleaner.ignore.concat(@config.atomic.selectors)
       # Add the atomic selectors to the erase handler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
-    # Creates the plugins object and attaches the relevant events.
-    setupPlugins: ->
-      allPlugins = SnapEditor.getAllPlugins()
-      @plugins = {}
-      for name in @config.plugins
-        plugin = allPlugins[name]
-        throw "Plugin does not exist: #{name}" unless plugin
-        @plugins[name] = plugin
-        for key, fn of plugin.events or {}
-          @on("snapeditor.#{Helpers.camelToSnake(key)}", fn)
-
-    # Creates the commands object including the ones in the plugins.
-    setupCommands: ->
-      @commands = SnapEditor.getAllCommands()
-      for name, plugin of @plugins
-        for key, command of plugin.commands or {}
-          @commands[key] = command
+    setupBehaviours: ->
+      for name in @config.behaviours
+        behaviour = SnapEditor.behaviours[name]
+        throw "Behaviour does not exist: #{name}" unless behaviour
+        for event, fn of behaviour
+          @on("snapeditor.#{Helpers.camelToSnake(event.replace(/^on/, ""))}", fn)
 
     domEvents: [
       "mouseover"

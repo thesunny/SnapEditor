@@ -1,10 +1,5 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
-  window.SnapEditor.internalPlugins.emptyHandler =
-    events:
-      activate: (e) -> e.api.plugins.emptyHandler.activate(e.api)
-      deactivate: (e) -> e.api.plugins.emptyHandler.deactivate()
-      cleanerFinished: (e) -> e.api.plugins.emptyHandler.onCleanerFinished(e.api)
-
+  emptyHandler =
     activate: (@api) ->
       self = this
       @onkeyupHandler = -> (e) -> self.onkeyup(e)
@@ -41,3 +36,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       block = $(@api.getDefaultBlock()).html(Helpers.zeroWidthNoBreakSpace)[0]
       @api.el.appendChild(block)
       @api.selectEndOfElement(block) if @api.isValid()
+
+  SnapEditor.behaviours.emptyHandler =
+      onActivate: (e) -> emptyHandler.activate(e.api)
+      onDeactivate: (e) -> emptyHandler.deactivate()
+      onCleanerFinished: (e) -> emptyHandler.onCleanerFinished(e.api)
+
+  # emptyHandler is returned for testing purposes.
+  return emptyHandler

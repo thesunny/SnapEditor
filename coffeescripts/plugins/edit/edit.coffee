@@ -3,11 +3,7 @@
 # the browser unless the user allows it through his/her preferences. Therefore,
 # this needs to be manually tested.
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
-  window.SnapEditor.internalPlugins.edit =
-    events:
-      activate: (e) -> e.api.plugins.edit.activate(e.api)
-      deactivate: (e) -> e.api.plugins.edit.deactivate()
-
+  edit =
     activate: (@api) ->
       self = this
       @onkeydownHandler = (e) -> self.onkeydown(e)
@@ -26,7 +22,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     onkeydown: (e) ->
       keys = Helpers.keysOf(e)
       switch keys
-        when "ctrl.v"
+        when "ctrl+v"
           @pasteOccurred = true
           # On paste, we want to save the start of the selection. We don't care
           # about the end of the selection yet.
@@ -34,14 +30,14 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
           # We take the parent's sibling because it is possible that the parent
           # gets deleted along with the paste.
           @pasteStartParent = startParent and startParent.previousSibling
-        when "ctr.x"
+        when "ctr+x"
           @cutOccurred = true
 
     onkeyup: (e) ->
       keys = Helpers.keysOf(e)
       switch keys
-        when "ctrl.v", "v" then @paste()
-        when "ctrl.x", "x" then @cut()
+        when "ctrl+v", "v" then @paste()
+        when "ctrl+x", "x" then @cut()
 
     cut: ->
       if @cutOccurred
@@ -61,3 +57,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         pasteEndParent = @api.getParentElement((el) -> Helpers.isBlock(el)) or @api.el.lastChild
         @api.clean(pasteStartParent, pasteEndParent)
         @pasteStartParent = null
+
+  SnapEditor.behaviours.edit =
+    onActivate: (e) -> edit.activate(e.api)
+    onDeactivate: (e) -> edit.deactivate()

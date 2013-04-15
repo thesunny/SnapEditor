@@ -1,9 +1,5 @@
 define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/editable.others", "plugins/editable/editable.ie"], ($, Browser, Helpers, Others, IE) ->
-  window.SnapEditor.internalPlugins.editable =
-    events:
-      activateClick: (e) -> e.api.plugins.editable.start(e.api)
-      deactivate: (e) -> e.api.plugins.editable.deactivate(e.api)
-
+  editable =
     # Turn on editing in the div. This includes preserving the caret position
     # as editing is turned on in all browsers.
     #
@@ -21,4 +17,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/edita
     deactivateBrowser: (api) ->
       # Overridden by browser specific implementation.
 
-  Helpers.extend(window.SnapEditor.internalPlugins.editable, if Browser.isIE then IE else Others)
+  SnapEditor.behaviours.editable =
+    onActivateClick: (e) -> editable.start(e.api)
+    onDeactivate: (e) -> editable.deactivate(e.api)
+
+  Helpers.extend(editable, if Browser.isIE then IE else Others)

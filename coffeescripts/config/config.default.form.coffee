@@ -1,7 +1,4 @@
 define [
   "config/config.default"
 ], (Defaults) ->
-  return {
-    build: ->
-      Defaults.build()
-  }
+  SnapEditor.Form.config = $.extend({}, SnapEditor.config)

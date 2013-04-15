@@ -37,7 +37,7 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       ).appendTo(@$iframeContainer)
 
     finishConstructor: (el, config) =>
-      FormEditor.__super__.constructor.call(this, el, Defaults.build(), config)
+      FormEditor.__super__.constructor.call(this, el, SnapEditor.Form.config, config)
 
     # Perform the actual initialization of the editor.
     init: (el) =>

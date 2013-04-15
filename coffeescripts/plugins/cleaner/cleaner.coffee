@@ -1,18 +1,5 @@
 define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], ($, Helpers, Normalizer) ->
-  window.SnapEditor.internalPlugins.cleaner =
-    events:
-      pluginsReady: (e) ->
-        plugin = e.api.plugins.cleaner
-        plugin.api = e.api
-        plugin.clean(e.api.el.firstChild, e.api.el.lastChild)
-      activate: (e) ->
-        plugin = e.api.plugins.cleaner
-        plugin.api = e.api
-        plugin.keepRange(-> @clean(@api.el.firstChild, @api.el.lastChild))
-      clean: (e, args...) ->
-        plugin = e.api.plugins.cleaner
-        plugin.clean.apply(plugin, args)
-
+  cleaner =
     # Given a range, it saves the range, performs the clean up, then
     # repositions the range.
     # Given a startNode and endNode, it cleans up between and including
@@ -69,3 +56,16 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
         self.api.unselect()
         fn.apply(self, [startNode, endNode])
       )
+
+  SnapEditor.behaviours.cleaner =
+    onPluginsReady: (e) ->
+      cleaner.api = e.api
+      cleaner.clean(e.api.el.firstChild, e.api.el.lastChild)
+    onActivate: (e) ->
+      cleaner.api = e.api
+      cleaner.keepRange(-> @clean(@api.el.firstChild, @api.el.lastChild))
+    onClean: (e, args...) ->
+      cleaner.clean.apply(cleaner, args)
+
+  # cleaner is returned for testing purposes.
+  return cleaner

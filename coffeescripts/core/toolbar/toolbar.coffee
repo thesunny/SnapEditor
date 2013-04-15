@@ -14,7 +14,7 @@
 #
 # Optional keys:
 # * html - html for menu items
-# * shortcut - keyboard shortcut with '.' as the delimiter
+# * shortcut - keyboard shortcut with '+' as the delimiter
 # * items - array of commands for a submenu
 #
 # == Buttons/Menu Items
@@ -37,11 +37,11 @@
 #
 # The shortcut is included in the title in parentheses and modified for
 # displaying.
-#   shortcut: ctrl.b
+#   shortcut: ctrl+b
 #   title: Bold (Ctrl+B)
 #
 # The shortcut is included in the menu item and modified for displaying.
-#   shortcut: ctrl.b
+#   shortcut: ctrl+b
 #   menu item: Bold     Ctrl+B
 #
 # == Action
@@ -79,12 +79,12 @@
 #   },
 #   bold: {
 #     text: "Bold",
-#     shortcut: "ctrl.b",
+#     shortcut: "ctrl+b",
 #     action: function (e) { e.api.bold(); }
 #   },
 #   italic: {
 #     text: "Italic",
-#     shortcut: "ctrl.i",
+#     shortcut: "ctrl+i",
 #     action: function (e) { e.api.italic(); }
 #   },
 #   styleBlock: {
@@ -94,12 +94,12 @@
 #   },
 #   h1: {
 #     text: "H1",
-#     shortcut: "ctrl.alt.1",
+#     shortcut: "ctrl+alt+1",
 #     action: function (e) { e.api.h1(); }
 #   },
 #   h2: {
 #     text: "H2",
-#     shortcut: "ctrl.alt.2",
+#     shortcut: "ctrl+alt+2",
 #     action: function (e) { e.api.h2(); }
 #   }
 # };
@@ -173,7 +173,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
       """
 
     setup: ->
-      @$toolbar = Builder.build(@api.config.toolbar.items,
+      @$toolbar = Builder.build(@api.config.commands,
         api: @api
         templates:
           container: @toolbarTemplate

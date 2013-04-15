@@ -16,11 +16,7 @@
 # This is unexpected behaviour. We should expect "Some text" to be styled as h1.
 # <h1>This is a header Some text</h1>
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
-  window.SnapEditor.internalPlugins.eraseHandler =
-    events:
-      activate: (e) -> e.api.plugins.eraseHandler.activate(e.api)
-      deactivate: (e) -> e.api.plugins.eraseHandler.deactivate()
-
+  eraseHandler =
     activate: (@api) ->
       self = this
       @onkeydownHandler = (e) -> self.onkeydown(e)
@@ -111,3 +107,10 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
             deleted = true
       )
       deleted
+
+  SnapEditor.behaviours.eraseHandler =
+    onActivate: (e) -> eraseHandler.activate(e.api)
+    onDeactivate: (e) -> eraseHandler.deactivate()
+
+  # eraseHandler is returned for testing purposes.
+  return eraseHandler

@@ -8,7 +8,10 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
       version: "1.6.0"
       lang: LangEn
       commands: {}
+      behaviours: {}
       plugins: {}
+      InPlace: {}
+      Form: {}
       Dialog: Dialog
       debug: false
 
@@ -17,8 +20,6 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
       #
 
       insertedStyles: {}
-      internalCommands: {}
-      internalPlugins: {}
 
       # Inserts the given styles into the head of the document.
       # The id is used to ensure duplicate styles are not added.
@@ -26,28 +27,6 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
         unless @insertedStyles[id]
           Helpers.insertStyles(styles)
           @insertedStyles[id] = true
-
-      getAllCommands: ->
-        unless @allCommands
-          @allCommands = {}
-          # TODO: The below is commented out as each SnapEditor instance
-          # determines which plugin commands to add. Leaving this here for now
-          # just in case. Remove once we know for sure we don't need it.
-          #for name, plugin of @internalPlugins
-            #@allCommands[key] = command for key, command of plugin.commands || {}
-          #for name, plugin of @plugins
-            #for key, command of plugin.commands || {}
-              #@allCommands[key] = command
-          $.extend(@allCommands, @internalCommands)
-          $.extend(@allCommands, @commands)
-        @allCommands
-
-      getAllPlugins: ->
-        unless @allPlugins
-          @allPlugins = {}
-          $.extend(@allPlugins, @internalPlugins)
-          $.extend(@allPlugins, @plugins)
-        @allPlugins
 
       getPath: ->
         unless @path
