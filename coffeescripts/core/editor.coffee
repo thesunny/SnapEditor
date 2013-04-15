@@ -55,7 +55,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @trigger("snapeditor.plugins_ready")
 
     prepareConfig: ->
-      @config.commands or= @defaults.commands
+      @config.buttons or= @defaults.buttons
       @config.behaviours or= @defaults.behaviours
       @config.lang = SnapEditor.lang
       @config.cleaner or= {}

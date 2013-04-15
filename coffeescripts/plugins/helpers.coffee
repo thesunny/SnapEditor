@@ -3,8 +3,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # Options:
     # * html
     # * langKey
-    createCommand: (command, shortcut, actionHandler, options = {}) ->
-      text = SnapEditor.lang[options.langKey or command]
+    createButton: (button, shortcut, actionHandler, options = {}) ->
+      text = SnapEditor.lang[options.langKey or button]
       cmd =
         text: text
         action: actionHandler
@@ -12,6 +12,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       cmd.html = options.html
       cmd
 
-    createStyles: (command, x) ->
-      ".snapeditor_toolbar .snapeditor_toolbar_icon_#{Helpers.camelToSnake(command)} { background-position: #{x}px 0; }"
+    createStyles: (button, x) ->
+      ".snapeditor_toolbar .snapeditor_toolbar_icon_#{Helpers.camelToSnake(button)} { background-position: #{x}px 0; }"
   )

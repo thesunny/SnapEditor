@@ -7,7 +7,7 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
 
       version: "1.6.0"
       lang: LangEn
-      commands: {}
+      buttons: {}
       behaviours: {}
       plugins: {}
       InPlace: {}

@@ -1,33 +1,31 @@
 # = Toolbar API
 #
-# == Commands
+# == Buttons
 #
-# All buttons are viewed as commands. Commands can be defined in two ways.
-# 1. As part of the SnapEditor.commands/internalCommands array.
-# 2. As part of the commands array in a plugin of the
-#    SnapEditor.plugins/internalPlugins array.
+# Buttons can be defined in the global SnapEditor.buttons object.
 #
 # Mandatory keys:
 # * text - the title for the button and the text for the menu item if html is
 #   not specified
-# * action - a function to handle the action (optional if items is specified)
+# * action - a function or string to handle the action (optional if items is
+#   specified)
 #
 # Optional keys:
 # * html - html for menu items
 # * shortcut - keyboard shortcut with '+' as the delimiter
-# * items - array of commands for a submenu
+# * items - array of buttons for a submenu
 #
 # == Buttons/Menu Items
 #
 # === Classes
 #
-# The button's class is built from the snake case of the corresponding command.
-#   snapeditor_toolbar_icon_<snake case of the command>
+# The button's class is built from the snake case of the corresponding button.
+#   snapeditor_toolbar_icon_<snake case of the button>
 #
-# The menu's class is built from the snake case of the corresponding command.
-#   snapeditor_toolbar_menu_<snake case of the command>
+# The menu's class is built from the snake case of the corresponding button.
+#   snapeditor_toolbar_menu_<snake case of the button>
 #
-# The menu items do not have specific classes because the command developer
+# The menu items do not have specific classes because the button developer
 # has full control over the HTML inside the menu item.
 #
 # == Shortcut
@@ -56,8 +54,8 @@
 #
 # == Submenus
 #
-# To add submenus, specify the items array and populate it with commands.
-#   items: ["Bold", "Italic"]
+# To add submenus, specify the items array and populate it with buttons.
+#   items: ["bold", "italic"]
 #
 # Menu items will automatically have a right triangle to indicate the
 # availability of a submenu.
@@ -67,7 +65,7 @@
 #
 # Example
 #
-# SnapEditor.commands = {
+# SnapEditor.buttons = {
 #   style: {
 #     text: "Style",
 #     items: ["styleInline", "styleBlock"]
@@ -173,7 +171,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
       """
 
     setup: ->
-      @$toolbar = Builder.build(@api.config.commands,
+      @$toolbar = Builder.build(@api.config.buttons,
         api: @api
         templates:
           container: @toolbarTemplate
@@ -181,9 +179,9 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
           divider: @dividerTemplate
         menu:
           class: Menu
-        itemBuilder: ($container, item, command) ->
-          title = command.text
-          title += " (#{Helpers.displayShortcut(command.shortcut)})" if command.shortcut
+        itemBuilder: ($container, item, button) ->
+          title = button.text
+          title += " (#{Helpers.displayShortcut(button.shortcut)})" if button.shortcut
           $container.
             addClass("snapeditor_toolbar_icon_#{Helpers.camelToSnake(item)}").
             attr("title", title).

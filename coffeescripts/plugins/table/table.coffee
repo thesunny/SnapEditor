@@ -269,18 +269,18 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
           $siblingCell = $siblingRow.find("td, th")[position]()
       return $siblingCell[0] or null
 
-  $.extend(SnapEditor.commands,
+  $.extend(SnapEditor.buttons,
     table:
       text: SnapEditor.lang.table
       items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable"]
-    insertTable: Helpers.createCommand("insertTable", "", (-> table.insertTable()), langKey: "tableInsert")
-    addRowAbove: Helpers.createCommand("addRowAbove", "ctrl+shift+enter", Helpers.pass(table.addRow, true, table), langKey: "tableAddRowAbove")
-    addRowBelow: Helpers.createCommand("addRowBelow", "ctrl+enter", Helpers.pass(table.addRow, false, table), langKey: "tableAddRowBelow")
-    deleteRow: Helpers.createCommand("deleteRow", "", (-> table.deleteRow()), langKey: "tableDeleteRow")
-    addColumnLeft: Helpers.createCommand("addColumnLeft", "ctrl+shift+m", Helpers.pass(table.addColumn, true, table), langKey: "tableAddColumnLeft")
-    addColumnRight: Helpers.createCommand("addColumnRight", "ctrl+m", Helpers.pass(table.addColumn, false, table), langKey: "tableAddColumnRight")
-    deleteColumn: Helpers.createCommand("deleteColumn", "", (-> table.deleteColumn()), langKey: "tableDeleteColumn")
-    deleteTable: Helpers.createCommand("deleteTable", "", (-> table.deleteTable()), langKey: "tableDelete")
+    insertTable: Helpers.createButton("insertTable", "", (-> table.insertTable()), langKey: "tableInsert")
+    addRowAbove: Helpers.createButton("addRowAbove", "ctrl+shift+enter", Helpers.pass(table.addRow, true, table), langKey: "tableAddRowAbove")
+    addRowBelow: Helpers.createButton("addRowBelow", "ctrl+enter", Helpers.pass(table.addRow, false, table), langKey: "tableAddRowBelow")
+    deleteRow: Helpers.createButton("deleteRow", "", (-> table.deleteRow()), langKey: "tableDeleteRow")
+    addColumnLeft: Helpers.createButton("addColumnLeft", "ctrl+shift+m", Helpers.pass(table.addColumn, true, table), langKey: "tableAddColumnLeft")
+    addColumnRight: Helpers.createButton("addColumnRight", "ctrl+m", Helpers.pass(table.addColumn, false, table), langKey: "tableAddColumnRight")
+    deleteColumn: Helpers.createButton("deleteColumn", "", (-> table.deleteColumn()), langKey: "tableDeleteColumn")
+    deleteTable: Helpers.createButton("deleteTable", "", (-> table.deleteTable()), langKey: "tableDelete")
   )
 
   SnapEditor.behaviours.table =

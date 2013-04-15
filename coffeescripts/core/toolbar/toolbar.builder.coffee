@@ -39,24 +39,24 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       if item == "|"
         $(options.templates.divider).appendTo($content)
       else
-        # Make sure the command has been defined.
-        command = SnapEditor.commands[item]
-        throw "Command does not exist: #{item}. Commands are case sensitive." unless command
-        throw "Missing text for command #{item}." unless command.text
-        throw "Missing action for command #{item}." unless command.action or command.items
+        # Make sure the button has been defined.
+        button = SnapEditor.buttons[item]
+        throw "Button does not exist: #{item}. Buttons are case sensitive." unless button
+        throw "Missing text for button #{item}." unless button.text
+        throw "Missing action for button #{item}." unless button.action or button.items
         # Add the button.
         $item = $(options.templates.item).appendTo($content)
-        options.itemBuilder($item.find("a"), item, command)
+        options.itemBuilder($item.find("a"), item, button)
         actionHandler = (e) ->
           # If this is a final action that doesn't trigger another menu, let
           # others know so they can close their menus.
           e.api.trigger("snapeditor.toolbar_final_action")
-          command.action(e)
+          button.action(e)
         # If there are items, we need to create a dropdown. We ignore the
-        # action given by the command. Instead, the action should trigger the
+        # action given by the button. Instead, the action should trigger the
         # dropdown.
-        if command.items
-          menu = new options.menu.class(options.api, $item, command.items, options.menu.options)
+        if button.items
+          menu = new options.menu.class(options.api, $item, button.items, options.menu.options)
           menu.$menu.addClass("snapeditor_toolbar_menu_#{Helpers.camelToSnake(item)}")
           actionHandler = (e) ->
             # If the menu is not a flyout (i.e. a dropdown) and is already
@@ -77,5 +77,5 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           e.api.win.focus() if Browser.isWebkit
           actionHandler(e)
         )
-        options.api.addKeyboardShortcut(command.shortcut, -> options.api.trigger(item)) if command.shortcut
+        options.api.addKeyboardShortcut(button.shortcut, -> options.api.trigger(item)) if button.shortcut
   }

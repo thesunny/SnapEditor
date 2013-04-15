@@ -10,7 +10,7 @@ define ["jquery.custom", "plugins/helpers", "plugins/image/image.upload_dialog"]
       # in for consistency.
       e.api.select($el[0]) if $el.tagName() == "img"
 
-  SnapEditor.commands.image = Helpers.createCommand("image", "ctrl+g", (e) -> image.showDialog(e.api))
+  SnapEditor.buttons.image = Helpers.createButton("image", "ctrl+g", (e) -> image.showDialog(e.api))
 
   SnapEditor.behaviours.image =
     onActivate: (e) -> $(e.api.el).on("mousedown", image.selectImage)

@@ -4,7 +4,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.d
       if api.isValid()
         @dialog or= new Dialog()
         @dialog.show(api)
-  SnapEditor.commands.link = Helpers.createCommand("link", "ctrl+k", (e) -> link.showDialog(e.api))
+  SnapEditor.buttons.link = Helpers.createButton("link", "ctrl+k", (e) -> link.showDialog(e.api))
 
   styles = """
     .snapeditor_dialog .link_form .field_container {
