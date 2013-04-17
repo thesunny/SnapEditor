@@ -76,8 +76,10 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       for name in @config.behaviours
         behaviour = SnapEditor.behaviours[name]
         throw "Behaviour does not exist: #{name}" unless behaviour
-        for event, fn of behaviour
-          @on("snapeditor.#{Helpers.camelToSnake(event.replace(/^on/, ""))}", fn)
+        for event, action of behaviour
+          actionFn = action
+          actionFn = SnapEditor.actions[action] if typeof action == "string"
+          @on("snapeditor.#{Helpers.camelToSnake(event.replace(/^on/, ""))}", actionFn)
 
     domEvents: [
       "mouseover"
@@ -305,6 +307,21 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     flashAsset: (filename) ->
       @assets.flash(filename)
+
+    #
+    # ACTIONS
+    #
+
+    # Executes the action corresponding.
+    # If a function is given, executes the function.
+    # If a string is given, finds the corresponding action and executes it.
+    # By convention, the first argument of args should be a SnapEditor event
+    # object.
+    execAction: (action, args...) ->
+      actionFn = action
+      actionFn = SnapEditor.actions[action] if typeof action == "string"
+      throw "Action does not exist: #{action}" unless actionFn
+      actionFn.apply(@win, args)
 
     #
     # RANGE

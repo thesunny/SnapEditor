@@ -22,6 +22,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # WHITELIST
         "isAllowed", "getReplacement",
         "getDefaultBlock", "getNext",
+        # ACTIONS
+        "execAction",
         # RANGE
         "getRange", "getBlankRange",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",

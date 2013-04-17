@@ -51,7 +51,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           # If this is a final action that doesn't trigger another menu, let
           # others know so they can close their menus.
           e.api.trigger("snapeditor.toolbar_final_action")
-          button.action(e)
+          e.api.execAction(button.action, e)
         # If there are items, we need to create a dropdown. We ignore the
         # action given by the button. Instead, the action should trigger the
         # dropdown.
