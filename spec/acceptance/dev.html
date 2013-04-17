@@ -31,6 +31,9 @@
       h1 {
         text-decoration: underline;
       }
+
+      .snapeditor_toolbar_icon_hi {
+      }
     </style>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
@@ -41,6 +44,20 @@
     <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       SnapEditor.debug = true;
+      SnapEditor.actions.hi = function (e) {
+        console.log(e);
+      };
+      SnapEditor.behaviours.hi = {
+        onMousedown: "hi",
+        onMouseup: function (e) {
+          console.log("MOUSEUP", e);
+        }
+      }
+      SnapEditor.buttons.hi = {
+        text: "Hi",
+        action: "hi"
+      }
+      SnapEditor.config.behaviours.push("hi")
 
       //var secureResourceId = "secure/123";
       var insecureDirectory = "insecure/123";
@@ -87,7 +104,7 @@
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
         //snap: false,
-        commands: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment"],
+        buttons: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi"],
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
