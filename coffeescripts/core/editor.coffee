@@ -28,7 +28,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @doc = Helpers.getDocument(@el)
       @win = Helpers.getWindow(@el)
 
-      # Setup the config.
+      # Prepare the config.
       @prepareConfig()
 
       # Create needed objects.
@@ -37,8 +37,9 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)
 
-      # Deal with new plugins.
-      @setupBehaviours()
+      # Deal with plugins.
+      @includeBehaviours()
+      @includeShortcuts()
 
       # Delegate Public API functions.
       @delegatePublicAPIFunctions()
@@ -57,6 +58,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     prepareConfig: ->
       @config.buttons or= @defaults.buttons
       @config.behaviours or= @defaults.behaviours
+      @config.shortcuts or= @defaults.shortcuts
       @config.lang = SnapEditor.lang
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
@@ -72,7 +74,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # Add the atomic selectors to the erase handler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
-    setupBehaviours: ->
+    includeBehaviours: ->
       for name in @config.behaviours
         behaviour = SnapEditor.behaviours[name]
         throw "Behaviour does not exist: #{name}" unless behaviour
@@ -80,6 +82,21 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
           actionFn = action
           actionFn = SnapEditor.actions[action] if typeof action == "string"
           @on("snapeditor.#{Helpers.camelToSnake(event.replace(/^on/, ""))}", actionFn)
+
+    includeShortcuts: ->
+      for name in @config.shortcuts
+        shortcut = SnapEditor.shortcuts[name]
+        throw "Shortcut doe not exist: #{name}" unless shortcut
+        throw "Shortcut is missing a key: #{name}" unless shortcut.key
+        throw "Shortcut is missing an action: #{name}" unless shortcut.action
+        # The generateActionFn() is required due to scoping issues.
+        self = this
+        generateActionFn = (action) ->
+          ->
+            e = $.Event("snapeditor.shortcut")
+            e.api = self.api
+            self.api.execAction(action, e)
+        @addKeyboardShortcut(shortcut.key, generateActionFn(shortcut.action))
 
     domEvents: [
       "mouseover"
