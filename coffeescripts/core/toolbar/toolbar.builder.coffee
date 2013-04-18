@@ -69,7 +69,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
               m.hide(e) for m in $content.menus
               menu.show()
           $content.menus.push(menu)
-        options.api.on(item, (e) =>
+        options.api.on(item, (e) ->
           # In Webkit, after the toolbar is clicked, the focus hops to the parent
           # window. We need to refocus it back into the iframe. Focusing breaks IE
           # and kills the range so the focus is only for Webkit. It does not affect

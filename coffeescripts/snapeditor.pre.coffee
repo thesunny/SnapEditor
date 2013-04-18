@@ -9,6 +9,7 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
       lang: LangEn
       buttons: {}
       behaviours: {}
+      shortcuts: {}
       actions: {}
       InPlace: {}
       Form: {}

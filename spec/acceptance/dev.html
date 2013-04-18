@@ -45,7 +45,7 @@
     <script type="text/javascript" charset="utf-8">
       SnapEditor.debug = true;
       SnapEditor.actions.hi = function (e) {
-        console.log(e);
+        console.log("HI", e);
       };
       SnapEditor.behaviours.hi = {
         onMousedown: "hi",
@@ -57,7 +57,20 @@
         text: "Hi",
         action: "hi"
       }
-      SnapEditor.config.behaviours.push("hi")
+      SnapEditor.shortcuts.hi = {
+        key: "ctrl+d",
+        action: function (e) {
+          console.log("SHORTCUT CTRL+D", e);
+        }
+      }
+      SnapEditor.shortcuts.bye = {
+        key: "ctrl+h",
+        action: "hi"
+      }
+
+      SnapEditor.InPlace.config.behaviours.push("hi")
+      SnapEditor.config.shortcuts.push("hi")
+      SnapEditor.config.shortcuts.push("bye")
 
       //var secureResourceId = "secure/123";
       var insecureDirectory = "insecure/123";
