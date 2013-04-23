@@ -10,19 +10,15 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
 
     onkeyup: (e) ->
       key = Helpers.keyOf(e)
-      if (key == 'delete' or key == 'backspace') and @isEmpty()
+      if (key == 'delete' or key == 'backspace') and Helpers.isEmpty(@api.el)
         @deleteAll()
 
     # After the cleaner has finished, insert the default block if the editor is
     # empty.
     onCleanerFinished: (@api) ->
-      if @isEmpty()
+      if Helpers.isEmpty(@api.el)
         $(@api.el).empty()
         @insertDefaultBlock()
-
-    # Returns true if the editor has no text. False otherwise.
-    isEmpty: ->
-      $(@api.el).text().replace(/[\n\r\t ]/g, "").length == 0
 
     # Removes all content and appends the default block. It then places the
     # selection at the end of the block.
