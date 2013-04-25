@@ -6,7 +6,7 @@ define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.f
     # Perform the actual initialization of the editor.
     init: (el) =>
       super(el)
-      @toolbar = new Toolbar(@api)
+      @toolbar = new Toolbar(this)
 
     prepareConfig: ->
       super()

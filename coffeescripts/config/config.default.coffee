@@ -34,9 +34,6 @@ define [
       "autoscroll"
       "atomic"
       "edit"
-      "list"
-      "table"
-      "image"
     ]
     shortcuts: []
     cleaner:

@@ -2,7 +2,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
   return {
     # Options:
     # * items
-    # * api
+    # * editor
     # * templates
     #   * container
     #   * item
@@ -27,7 +27,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       $container
 
     # Options:
-    # * api
+    # * editor
     # * templates
     #   * item
     #   * divider
@@ -56,7 +56,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         # action given by the button. Instead, the action should trigger the
         # dropdown.
         if button.items
-          menu = new options.menu.class(options.api, $item, button.items, options.menu.options)
+          menu = new options.menu.class(options.editor, $item, button.items, options.menu.options)
           menu.$menu.addClass("snapeditor_toolbar_menu_#{Helpers.camelToSnake(item)}")
           actionHandler = (e) ->
             # If the menu is not a flyout (i.e. a dropdown) and is already
@@ -69,7 +69,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
               m.hide(e) for m in $content.menus
               menu.show()
           $content.menus.push(menu)
-        options.api.on(item, (e) ->
+        options.editor.on(item, (e) ->
           # In Webkit, after the toolbar is clicked, the focus hops to the parent
           # window. We need to refocus it back into the iframe. Focusing breaks IE
           # and kills the range so the focus is only for Webkit. It does not affect
@@ -77,5 +77,4 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           e.api.win.focus() if Browser.isWebkit
           actionHandler(e)
         )
-        options.api.addKeyboardShortcut(button.shortcut, -> options.api.trigger(item)) if button.shortcut
   }

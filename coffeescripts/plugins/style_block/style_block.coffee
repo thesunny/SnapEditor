@@ -1,17 +1,25 @@
 define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
-  getHTML = (i) -> "<span class=\"snapeditor_style_block_h#{i}\">#{SnapEditor.lang["h#{i}"]}</span>"
   format = (e) -> e.api.clean() if e.api.formatBlock(e.type)
+  SnapEditor.actions.p = format
+  SnapEditor.actions.h1 = format
+  SnapEditor.actions.h2 = format
+  SnapEditor.actions.h3 = format
+  SnapEditor.actions.h4 = format
+  SnapEditor.actions.h5 = format
+  SnapEditor.actions.h6 = format
+
+  getHTML = (i) -> "<span class=\"snapeditor_style_block_h#{i}\">#{SnapEditor.lang["h#{i}"]}</span>"
   $.extend(SnapEditor.buttons,
     styleBlock:
       text: SnapEditor.lang.styleBlock
       items: ["p", "h1", "h2", "h3", "h4", "h5", "h6"]
-    p: Helpers.createButton("p", "ctrl+alt+0", format)
-    h1: Helpers.createButton("h1", "ctrl+alt+1", format, html: getHTML(1))
-    h2: Helpers.createButton("h2", "ctrl+alt+2", format, html: getHTML(2))
-    h3: Helpers.createButton("h3", "ctrl+alt+3", format, html: getHTML(3))
-    h4: Helpers.createButton("h4", "ctrl+alt+4", format, html: getHTML(4))
-    h5: Helpers.createButton("h5", "ctrl+alt+5", format, html: getHTML(5))
-    h6: Helpers.createButton("h6", "ctrl+alt+6", format, html: getHTML(6))
+    p: Helpers.createButton("p", "ctrl+alt+0")
+    h1: Helpers.createButton("h1", "ctrl+alt+1", html: getHTML(1))
+    h2: Helpers.createButton("h2", "ctrl+alt+2", html: getHTML(2))
+    h3: Helpers.createButton("h3", "ctrl+alt+3", html: getHTML(3))
+    h4: Helpers.createButton("h4", "ctrl+alt+4", html: getHTML(4))
+    h5: Helpers.createButton("h5", "ctrl+alt+5", html: getHTML(5))
+    h6: Helpers.createButton("h6", "ctrl+alt+6", html: getHTML(6))
   )
 
   styles = """

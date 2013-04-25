@@ -268,19 +268,28 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
           position = if direction == "next" then "first" else "last"
           $siblingCell = $siblingRow.find("td, th")[position]()
       return $siblingCell[0] or null
+  SnapEditor.actions.insertTable = -> table.insertTable()
+  SnapEditor.actions.addRowAbove = Helpers.pass(table.addRow, true, table)
+  SnapEditor.actions.addRowBelow = Helpers.pass(table.addRow, false, table)
+  SnapEditor.actions.deleteRow = -> table.deleteRow()
+  SnapEditor.actions.addColumnLeft = Helpers.pass(table.addColumn, true, table)
+  SnapEditor.actions.addColumnRight = Helpers.pass(table.addColumn, false, table)
+  SnapEditor.actions.deleteColumn = -> table.deleteColumn()
+  SnapEditor.actions.deleteTable = -> table.deleteTable()
 
+  includeBehaviours = (e) -> e.api.config.behaviours.push("table")
   $.extend(SnapEditor.buttons,
     table:
       text: SnapEditor.lang.table
       items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable"]
-    insertTable: Helpers.createButton("insertTable", "", (-> table.insertTable()), langKey: "tableInsert")
-    addRowAbove: Helpers.createButton("addRowAbove", "ctrl+shift+enter", Helpers.pass(table.addRow, true, table), langKey: "tableAddRowAbove")
-    addRowBelow: Helpers.createButton("addRowBelow", "ctrl+enter", Helpers.pass(table.addRow, false, table), langKey: "tableAddRowBelow")
-    deleteRow: Helpers.createButton("deleteRow", "", (-> table.deleteRow()), langKey: "tableDeleteRow")
-    addColumnLeft: Helpers.createButton("addColumnLeft", "ctrl+shift+m", Helpers.pass(table.addColumn, true, table), langKey: "tableAddColumnLeft")
-    addColumnRight: Helpers.createButton("addColumnRight", "ctrl+m", Helpers.pass(table.addColumn, false, table), langKey: "tableAddColumnRight")
-    deleteColumn: Helpers.createButton("deleteColumn", "", (-> table.deleteColumn()), langKey: "tableDeleteColumn")
-    deleteTable: Helpers.createButton("deleteTable", "", (-> table.deleteTable()), langKey: "tableDelete")
+    insertTable: Helpers.createButton("insertTable", "", langKey: "tableInsert", onInclude: includeBehaviours)
+    addRowAbove: Helpers.createButton("addRowAbove", "ctrl+shift+enter", langKey: "tableAddRowAbove", onInclude: includeBehaviours)
+    addRowBelow: Helpers.createButton("addRowBelow", "ctrl+enter", langKey: "tableAddRowBelow", onInclude: includeBehaviours)
+    deleteRow: Helpers.createButton("deleteRow", "", langKey: "tableDeleteRow", onInclude: includeBehaviours)
+    addColumnLeft: Helpers.createButton("addColumnLeft", "ctrl+shift+m", langKey: "tableAddColumnLeft", onInclude: includeBehaviours)
+    addColumnRight: Helpers.createButton("addColumnRight", "ctrl+m", langKey: "tableAddColumnRight", onInclude: includeBehaviours)
+    deleteColumn: Helpers.createButton("deleteColumn", "", langKey: "tableDeleteColumn", onInclude: includeBehaviours)
+    deleteTable: Helpers.createButton("deleteTable", "", langKey: "tableDelete", onInclude: includeBehaviours)
   )
 
   SnapEditor.behaviours.table =

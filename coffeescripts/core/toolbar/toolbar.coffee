@@ -104,7 +104,7 @@
 
 define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/toolbar/toolbar.menu", "core/data_action_handler"], ($, Helpers, Builder, Menu, DataActionHandler) ->
   class Toolbar
-    constructor: (@api) ->
+    constructor: (@editor) ->
 
     toolbarTemplate: """
       <div class="snapeditor_toolbar snapeditor_toolbar_component snapeditor_ignore_deactivate">
@@ -149,7 +149,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
           cursor: pointer;
           text-decoration: none;
           outline: none;
-          background-image: url(#{@api.imageAsset("snapeditor_toolbar.png")});
+          background-image: url(#{@editor.imageAsset("snapeditor_toolbar.png")});
           background-repeat: no-repeat;
         }
 
@@ -171,8 +171,9 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
       """
 
     setup: ->
-      @$toolbar = Builder.build(@api.config.buttons,
-        api: @api
+      editor = @editor
+      @$toolbar = Builder.build(@editor.config.buttons,
+        editor: @editor
         templates:
           container: @toolbarTemplate
           item: @itemTemplate
@@ -181,11 +182,12 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
           class: Menu
         itemBuilder: ($container, item, button) ->
           title = button.text
-          title += " (#{Helpers.displayShortcut(button.shortcut)})" if button.shortcut
+          shortcut = editor.actionShortcuts[button.action] if typeof button.action == "string"
+          title += " (#{Helpers.displayShortcut(shortcut)})" if shortcut
           $container.
             addClass("snapeditor_toolbar_icon_#{Helpers.camelToSnake(item)}").
             attr("title", title).
             attr("data-action", item)
       )
-      @api.insertStyles("snapeditor_toolbar", @getCSS())
-      @dataActionHandler = new DataActionHandler(@$toolbar, @api)
+      @editor.insertStyles("snapeditor_toolbar", @getCSS())
+      @dataActionHandler = new DataActionHandler(@$toolbar, @editor.api)
