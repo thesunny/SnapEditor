@@ -398,3 +398,7 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
 
       it "normalizes a domain", ->
         expect(Helpers.normalizeURL("snapeditor.com")).toEqual("http://snapeditor.com")
+
+    describe "#uniqueArray", ->
+      it "returns an unique array", ->
+        expect(Helpers.uniqueArray(["a", "b", "c", "a", "a", "b", "d", "e", "c"])).toEqual(["a", "b", "c", "d", "e"])

@@ -9,12 +9,17 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         if startItem and endItem
           e.preventDefault()
           e.api.trigger(if keys == "tab" then "indent" else "outdent")
+  SnapEditor.actions.orderedList = list.insert
+  SnapEditor.actions.unorderedList = list.insert
+  SnapEditor.actions.indent = list.dent
+  SnapEditor.actions.outdent = list.dent
 
+  includeBehaviours = (e) -> e.api.config.behaviours.push("list")
   $.extend(SnapEditor.buttons,
-    orderedList: Helpers.createButton("orderedList", "ctrl+shift+8", list.insert)
-    unorderedList: Helpers.createButton("unorderedList", "ctrl+shift+7", list.insert)
-    indent: Helpers.createButton("indent", "", list.dent)
-    outdent: Helpers.createButton("outdent", "", list.dent)
+    orderedList: Helpers.createButton("orderedList", "ctrl+shift+8", onInclude: includeBehaviours)
+    unorderedList: Helpers.createButton("unorderedList", "ctrl+shift+7", onInclude: includeBehaviours)
+    indent: Helpers.createButton("indent", "", onInclude: includeBehaviours)
+    outdent: Helpers.createButton("outdent", "", onInclude: includeBehaviours)
   )
 
   SnapEditor.behaviours.list =

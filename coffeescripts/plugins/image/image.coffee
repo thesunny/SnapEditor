@@ -9,8 +9,9 @@ define ["jquery.custom", "plugins/helpers", "plugins/image/image.upload_dialog"]
       # we manually select it. This does not break other browsers so it is left
       # in for consistency.
       e.api.select($el[0]) if $el.tagName() == "img"
+  SnapEditor.actions.image = (e) -> image.showDialog(e.api)
 
-  SnapEditor.buttons.image = Helpers.createButton("image", "ctrl+g", (e) -> image.showDialog(e.api))
+  SnapEditor.buttons.image = Helpers.createButton("image", "ctrl+g", onInclude: (e) -> e.api.config.behaviours.push("image"))
 
   SnapEditor.behaviours.image =
     onActivate: (e) -> $(e.api.el).on("mousedown", image.selectImage)

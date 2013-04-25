@@ -257,6 +257,21 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
           # Normalize path.
           normalizedUrl = "http://#{url}" unless url.charAt(0) == "/"
       normalizedUrl
+
+    #
+    # Arrays
+    #
+
+    # Returns only unique values in the array. Only works for primitive data
+    # types.
+    uniqueArray: (array) ->
+      unique = {}
+      uArray = []
+      for a in array
+        continue if unique[a]
+        uArray.push(a)
+        unique[a] = true
+      uArray
   }
 
   $.extend(Helpers, Keyboard)

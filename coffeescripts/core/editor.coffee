@@ -37,15 +37,16 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)
 
+      # Instantiate the API.
+      @api = new API(this)
+
       # Deal with plugins.
+      @includeButtons()
       @includeBehaviours()
       @includeShortcuts()
 
       # Delegate Public API functions.
       @delegatePublicAPIFunctions()
-
-      # Instantiate the API.
-      @api = new API(this)
 
       # The default is to deactivate immediately. However, to accommodate
       # plugins such as the Save plugin, this can be disabled and handled in a
@@ -56,15 +57,17 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @trigger("snapeditor.plugins_ready")
 
     prepareConfig: ->
-      @config.buttons or= @defaults.buttons
-      @config.behaviours or= @defaults.behaviours
-      @config.shortcuts or= @defaults.shortcuts
-      @config.lang = SnapEditor.lang
+      # We use slice and extend to clone arrays and objects so that they
+      # aren't shared between editors.
+      @config.buttons or= @defaults.buttons.slice(0)
+      @config.behaviours or= @defaults.behaviours.slice(0)
+      @config.shortcuts or= @defaults.shortcuts.slice(0)
+      @config.lang = $.extend({}, SnapEditor.lang)
       @config.cleaner or= {}
-      @config.cleaner.whitelist or = @defaults.cleaner.whitelist
-      @config.cleaner.ignore or= @defaults.cleaner.ignore
+      @config.cleaner.whitelist or = $.extend({}, @defaults.cleaner.whitelist)
+      @config.cleaner.ignore or= @defaults.cleaner.ignore.slice(0)
       @config.eraseHandler or= {}
-      @config.eraseHandler.delete or= @defaults.eraseHandler.delete
+      @config.eraseHandler.delete or= @defaults.eraseHandler.delete.slice(0)
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
       @config.atomic.selectors = [".#{@config.atomic.classname}"]
@@ -74,7 +77,18 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # Add the atomic selectors to the erase handler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
+    includeButtons: ->
+      @includeButton(name) for name in @config.buttons
+
+    includeButton: (name) ->
+      unless name == "|"
+        button = SnapEditor.buttons[name]
+        throw "Button does not exist: #{name}" unless button
+        button.onInclude(api: @api) if button.onInclude
+        @includeButton(name) for name in button.items or []
+
     includeBehaviours: ->
+      @config.behaviours = Helpers.uniqueArray(@config.behaviours)
       for name in @config.behaviours
         behaviour = SnapEditor.behaviours[name]
         throw "Behaviour does not exist: #{name}" unless behaviour
@@ -84,6 +98,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
           @on("snapeditor.#{Helpers.camelToSnake(event.replace(/^on/, ""))}", actionFn)
 
     includeShortcuts: ->
+      @actionShortcuts = {}
+      @config.shortcuts = Helpers.uniqueArray(@config.shortcuts)
       for name in @config.shortcuts
         shortcut = SnapEditor.shortcuts[name]
         throw "Shortcut doe not exist: #{name}" unless shortcut
@@ -93,10 +109,13 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         self = this
         generateActionFn = (action) ->
           ->
-            e = $.Event("snapeditor.shortcut")
+            e = $.Event(action)
             e.api = self.api
             self.api.execAction(action, e)
         @addKeyboardShortcut(shortcut.key, generateActionFn(shortcut.action))
+        # If the shortcut action is a string, relate the shortcut to an action
+        # if available.
+        @actionShortcuts[shortcut.action] = shortcut.key if typeof shortcut.action == "string"
 
     domEvents: [
       "mouseover"

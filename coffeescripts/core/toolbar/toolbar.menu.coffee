@@ -2,7 +2,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
   class Menu
     # Options:
     # * flyOut: default false
-    constructor: (@api, @$relEl, @items, @options = {}) ->
+    constructor: (@editor, @$relEl, @items, @options = {}) ->
       @setup()
 
     menuTemplate: """
@@ -95,15 +95,16 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
         }
 
         .snapeditor_toolbar_menu_arrow {
-          background-image: url(#{@api.imageAsset("triangle_right.png")});
+          background-image: url(#{@editor.imageAsset("triangle_right.png")});
           width: 16px;
           height: 16px;
         }
       """
 
     setup: ->
+      editor = @editor
       @$menu = Builder.build(@items,
-        api: @api
+        editor: @editor
         templates:
           container: @menuTemplate
           item: @itemTemplate
@@ -114,7 +115,8 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
             flyOut: true
         itemBuilder: ($container, item, button) ->
           title = button.text
-          title += " (#{Helpers.displayShortcut(button.shortcut)})" if button.shortcut
+          shortcut = editor.actionShortcuts[button.action] if typeof button.action == "string"
+          title += " (#{Helpers.displayShortcut(shortcut)})" if shortcut
           $container.
             attr("title", title).
             attr("data-action", item)
@@ -127,8 +129,8 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
             $item.text(button.text)
 
           # Handle shortcut.
-          if button.shortcut
-            $shortcut = $container.find(".snapeditor_toolbar_menu_shortcut").text(Helpers.displayShortcut(button.shortcut))
+          if shortcut
+            $container.find(".snapeditor_toolbar_menu_shortcut").text(Helpers.displayShortcut(shortcut))
 
           # Handle submenu.
           if button.items
@@ -136,8 +138,8 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
             $arrowContainer = $container.find(".snapeditor_toolbar_menu_arrow_container")
             $arrow = $("<div/>").addClass("snapeditor_toolbar_menu_arrow").appendTo($arrowContainer)
       ).hide().appendTo("body")
-      @api.insertStyles("snapeditor_toolbar_menu", @getCSS())
-      @dataActionHandler = new DataActionHandler(@$menu, @api, mouseover: true)
+      @editor.insertStyles("snapeditor_toolbar_menu", @getCSS())
+      @dataActionHandler = new DataActionHandler(@$menu, @editor.api, mouseover: true)
       @$menu.on("mouseover", @mouseover)
 
     documentMousedown: (e) =>
@@ -158,7 +160,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
     show: =>
       unless @shown
         @dataActionHandler.activate()
-        @api.on(
+        @editor.on(
           "snapeditor.toolbar_final_action": @hide
           "snapeditor.document_mousedown": @documentMousedown
         )
@@ -170,7 +172,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
 
     hide: =>
       if @shown
-        @api.off(
+        @editor.off(
           "snapeditor.toolbar_final_action": @hide
           "snapeditor.document_mousedown": @documentMousedown
         )

@@ -42,7 +42,7 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
     # Perform the actual initialization of the editor.
     init: (el) =>
       super(el)
-      @toolbar = new Toolbar(@api)
+      @toolbar = new Toolbar(this)
       @formize(@toolbar.$toolbar)
       @$el.blur(@updateTextarea)
       @insertStyles("snapeditor_form", @css)

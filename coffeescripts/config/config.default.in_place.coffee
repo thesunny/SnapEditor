@@ -11,5 +11,4 @@ define [
   SnapEditor.InPlace.config.behaviours = SnapEditor.InPlace.config.behaviours.concat([
     "snap"
     "outline"
-    "save"
   ])

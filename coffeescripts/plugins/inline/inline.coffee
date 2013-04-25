@@ -1,12 +1,19 @@
 define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
-  format = (e) -> e.api.clean() if e.api.formatInline(e.type)
+  formatInline = (e) -> e.api.clean() if e.api.formatInline(e.type)
+  SnapEditor.actions.bold = formatInline
+  SnapEditor.actions.italic = formatInline
+  SnapEditor.actions.underline = formatInline
+  SnapEditor.actions.subscript = formatInline
+  SnapEditor.actions.superscript = formatInline
+  SnapEditor.actions.strikethrough = formatInline
+
   $.extend(SnapEditor.buttons,
-    bold: Helpers.createButton("bold", "ctrl+b", format)
-    italic: Helpers.createButton("italic", "ctrl+i", format)
-    underline: Helpers.createButton("underline", "ctrl+u", format)
-    subscript: Helpers.createButton("subscript", "ctrl+shift+-", format)
-    superscript: Helpers.createButton("superscript", "ctrl+shift+=", format)
-    strikethrough: Helpers.createButton("strikethrough", "ctrl+-", format)
+    bold: Helpers.createButton("bold", "ctrl+b")
+    italic: Helpers.createButton("italic", "ctrl+i")
+    underline: Helpers.createButton("underline", "ctrl+u")
+    subscript: Helpers.createButton("subscript", "ctrl+shift+-")
+    superscript: Helpers.createButton("superscript", "ctrl+shift+=")
+    strikethrough: Helpers.createButton("strikethrough", "ctrl+-")
   )
 
   styles = ""
