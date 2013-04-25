@@ -88,6 +88,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         @includeButton(name) for name in button.items or []
 
     includeBehaviours: ->
+      @config.behaviours = Helpers.uniqueArray(@config.behaviours)
       for name in @config.behaviours
         behaviour = SnapEditor.behaviours[name]
         throw "Behaviour does not exist: #{name}" unless behaviour
@@ -98,6 +99,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     includeShortcuts: ->
       @actionShortcuts = {}
+      @config.shortcuts = Helpers.uniqueArray(@config.shortcuts)
       for name in @config.shortcuts
         shortcut = SnapEditor.shortcuts[name]
         throw "Shortcut doe not exist: #{name}" unless shortcut
