@@ -57,15 +57,17 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @trigger("snapeditor.plugins_ready")
 
     prepareConfig: ->
-      @config.buttons or= @defaults.buttons
-      @config.behaviours or= @defaults.behaviours
-      @config.shortcuts or= @defaults.shortcuts
-      @config.lang = SnapEditor.lang
+      # We use slice and extend to clone arrays and objects so that they
+      # aren't shared between editors.
+      @config.buttons or= @defaults.buttons.slice(0)
+      @config.behaviours or= @defaults.behaviours.slice(0)
+      @config.shortcuts or= @defaults.shortcuts.slice(0)
+      @config.lang = $.extend({}, SnapEditor.lang)
       @config.cleaner or= {}
-      @config.cleaner.whitelist or = @defaults.cleaner.whitelist
-      @config.cleaner.ignore or= @defaults.cleaner.ignore
+      @config.cleaner.whitelist or = $.extend({}, @defaults.cleaner.whitelist)
+      @config.cleaner.ignore or= @defaults.cleaner.ignore.slice(0)
       @config.eraseHandler or= {}
-      @config.eraseHandler.delete or= @defaults.eraseHandler.delete
+      @config.eraseHandler.delete or= @defaults.eraseHandler.delete.slice(0)
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
       @config.atomic.selectors = [".#{@config.atomic.classname}"]
