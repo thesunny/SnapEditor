@@ -57,6 +57,23 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
           expect(testValue).toBeTruthy()
           expect($("#div").length).toEqual(0)
 
+    describe "#isEmpty", ->
+      $el = null
+      beforeEach ->
+        $el = $("<div/>")
+
+      it "returns false if there is an image", ->
+        $el.html("<img/>")
+        expect(Helpers.isEmpty($el[0])).toBeFalsy()
+
+      it "returns false when there is content", ->
+        $el.html("<p>  \n</p>   \n\r\n#{Helpers.zeroWidthNoBreakSpace} <div>hello</div>   ")
+        expect(Helpers.isEmpty($el[0])).toBeFalsy()
+
+      it "returns true when there is only whitepsace", ->
+        $el.html("<p>  \n</p>   \n\r\n#{Helpers.zeroWidthNoBreakSpace}   ")
+        expect(Helpers.isEmpty($el[0])).toBeTruthy()
+
     describe "#nodesFrom", ->
       $div = null
       beforeEach ->

@@ -51,6 +51,15 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         $container.remove()
       return isBlock
 
+    # Returns true if the el is empty. False otherwise.
+    isEmpty: (el) ->
+      $el = $(el)
+        # Check for any HTML tags that take up space. Currently only images
+        # take up space. If there are, we are not at the end.
+      return false if $el.find("img").length > 0
+      # Check for empty text.
+      !!$el.text().match(@emptyRegExp)
+
     # Returns an array of the nodes between and including startNode and endNode.
     # This assumes the startNode and endNode have the same parent.
     nodesFrom: (startNode, endNode) ->
