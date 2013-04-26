@@ -109,5 +109,3 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
     isCursorInOverlapSpace: ->
       cursorPositionInEl = @cursorPosition() - @elCoords().top
       cursorPositionInEl < @overlapSpaceFromElTop()
-
-  return Displayer
