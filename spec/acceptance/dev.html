@@ -138,7 +138,18 @@
           return "OMG! ERROR!";
         }
       });
-
+      var insecureInPlace3 = new SnapEditor.InPlace("insecure_in_place3", {
+        path: "/spec/acceptance/assets",
+        snap: false,
+        imageServer: {
+          uploadUrl: insecureUploadUrl,
+          publicUrl: insecurePublicUrl,
+          directory: insecureDirectory
+        },
+        onSave: function (html) {
+          return true;
+        }
+      });
       /*
       var success = function (data, text, xhr) { console.log(data); };
       var error = function (xhr, text, error) { console.log(text); };
@@ -453,6 +464,8 @@
       </div>
       <div id="insecure_in_place2" class="in_place">
         <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+      </div>
+      <div id="insecure_in_place3" class="in_place">
       </div>
       <!--<div class="buttons">-->
         <!--<button class="server_sync">Sync</button>-->
