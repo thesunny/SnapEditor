@@ -63,7 +63,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
       cleaner.clean(e.api.el.firstChild, e.api.el.lastChild)
     onActivate: (e) ->
       cleaner.api = e.api
-      cleaner.keepRange(-> @clean(@api.el.firstChild, @api.el.lastChild))
+      cleaner.clean(e.api.el.firstChild, e.api.el.lastChild)
     onClean: (e, args...) ->
       cleaner.clean.apply(cleaner, args)
 
