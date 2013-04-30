@@ -26,13 +26,16 @@ define ["jquery.custom"], ($) ->
       self = this
       @resizeHandler = -> self.update(el)
       $(window).on("resize", @resizeHandler)
+      @shown = true
 
     hide: ->
-      @outlines.top.hide()
-      @outlines.bottom.hide()
-      @outlines.left.hide()
-      @outlines.right.hide()
-      $(window).off("resize", @resizeHandler)
+      if @shown
+        @outlines.top.hide()
+        @outlines.bottom.hide()
+        @outlines.left.hide()
+        @outlines.right.hide()
+        $(window).off("resize", @resizeHandler)
+        @shown = false
 
     update: (el) ->
       styles = @getStyles(el)
