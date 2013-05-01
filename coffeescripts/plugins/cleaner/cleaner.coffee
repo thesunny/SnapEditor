@@ -63,7 +63,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
       cleaner.clean(e.api.el.firstChild, e.api.el.lastChild)
     onActivate: (e) ->
       cleaner.api = e.api
-      cleaner.clean(e.api.el.firstChild, e.api.el.lastChild)
+      # keepRange() is used because onActivate, the cursor position must be
+      # preserved after cleaning.
+      cleaner.keepRange(-> @clean(@api.el.firstChild, @api.el.lastChild))
     onClean: (e, args...) ->
       cleaner.clean.apply(cleaner, args)
 

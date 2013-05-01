@@ -9,6 +9,7 @@ require ["jquery.custom", "plugins/empty_handler/empty_handler", "core/helpers",
         getDefaultBlock: -> $("<p/>")
         getBlankRange: -> new Range($editable[0])
         isValid: -> true
+        find: -> []
       Helpers.delegate(Handler.api, "getBlankRange()", "selectEndOfElement")
 
     afterEach ->

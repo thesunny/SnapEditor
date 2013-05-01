@@ -16,22 +16,26 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # After the cleaner has finished, insert the default block if the editor is
     # empty.
     onCleanerFinished: (@api) ->
-      if Helpers.isEmpty(@api.el)
-        $(@api.el).empty()
-        @insertDefaultBlock()
+      @deleteAll() if Helpers.isEmpty(@api.el)
 
     # Removes all content and appends the default block. It then places the
     # selection at the end of the block.
     deleteAll: ->
+      # Keep track of the cursor position.
+      start = @api.find("#RANGE_START")[0]
+      end = @api.find("#RANGE_END")[0]
       $(@api.el).empty()
-      @insertDefaultBlock()
-
-    # Insert the default block into the editor and place the selection at the
-    # end of the block.
-    insertDefaultBlock: ->
       block = $(@api.getDefaultBlock()).html(Helpers.zeroWidthNoBreakSpace)[0]
       @api.el.appendChild(block)
-      @api.selectEndOfElement(block) if @api.isValid()
+      if start and end
+        # If the cursor position is being preserved, make sure to add them
+        # back in.
+        block.appendChild(start)
+        block.appendChild(end)
+      else
+        # If no cursor position is being preserved, set the selection to the
+        # end of the block if the range is currently valid.
+        @api.selectEndOfElement(block) if @api.isValid()
 
   SnapEditor.behaviours.emptyHandler =
       onActivate: (e) -> emptyHandler.activate(e.api)
