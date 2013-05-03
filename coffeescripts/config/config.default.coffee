@@ -74,6 +74,7 @@ define [
         "Range End": "span#RANGE_END"
         # Images
         "Image": "img[src, width, height]"
+        "Image Range": "img#RANGE_IMAGE[src, width, height]"
         # Defaults
         "*": "Paragraph"
         "strong": "Bold"
