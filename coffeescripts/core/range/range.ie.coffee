@@ -235,6 +235,7 @@ define ["core/helpers"], (Helpers) ->
         isImage = @isImageSelected()
         if isImage
           image = @range.item(0)
+          $(image).attr("id", "RANGE_IMAGE")
           startElement = image
           endElement = image
         else
@@ -251,7 +252,7 @@ define ["core/helpers"], (Helpers) ->
         fn(startElement, endElement)
         # Refind the start and end in case the function had modified them.
         if isImage
-          @range = @constructor.getRangeFromElement(image)
+          @range = @constructor.getRangeFromElement(@find("#RANGE_IMAGE")[0])
         else
           $start = @find("#RANGE_START")
           $end = @find("#RANGE_END")

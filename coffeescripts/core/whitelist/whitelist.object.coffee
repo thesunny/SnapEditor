@@ -49,16 +49,23 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
     # Ignores id and class.
     attributesAllowed: (el) ->
       for attr in el.attributes
-        # IE7 loads the attributes array with both user and browser defined
-        # attributes. Luckily, there is a specified field which will be false
-        # for browser defined attributes which we can skip.
-        # IE8 does not load all browser defined attributes. Just some. For
-        # example, <a> has a "shape" attribute. We use the same technique.
-        continue if attr.name == "id" or attr.name == "class" or ((Browser.isIE7 or Browser.isIE8) and !attr.specified)
+        continue if @attributeAllowedByDefault(el, attr)
         return false unless @attrs[attr.name]
-        # If there are values are restricted, make sure they are all allowed.
+        # If the values are restricted, make sure they are all allowed.
         return false if @values[attr.name] and !@valuesAllowed(attr.name, attr.value)
       return true
+
+    # If the attribute is an id or class, it is automatically allowed.
+    # IE7 loads the attributes array with both user and browser defined
+    # attributes. Luckily, there is a specified field which will be false
+    # for browser defined attributes which we can skip.
+    # IE8 does not load all browser defined attributes. Just some. For
+    # example, <a> has a "shape" attribute. We use the same technique.
+    # In IE7/8, images, once loaded, have a completed attribute.
+    # Unfortunately, attr.specified is true for this attribute even though it
+    # is not user defined. Hence, we look for it specifically.
+    attributeAllowedByDefault: (el, attr) ->
+      attr.name == "id" or attr.name == "class" or ((Browser.isIE7 or Browser.isIE8) and (!attr.specified or ($(el).tagName() == "img" and attr.name == "complete")))
 
     valuesAllowed: (attr, vals) ->
       if attr == "style"
