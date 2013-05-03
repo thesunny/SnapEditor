@@ -163,5 +163,3 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
         when "br" then blacklisted = $el.hasClass("Apple-interchange-newline")
         when "span" then blacklisted = $el.hasClass("Apple-style-span") or $el.hasClass("Apple-tab-span")
       return blacklisted
-
-  return Normalizer
