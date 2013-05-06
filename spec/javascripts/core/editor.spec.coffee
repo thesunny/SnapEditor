@@ -35,10 +35,6 @@ require ["jquery.custom", "core/editor", "core/helpers", "core/range"], ($, Edit
         $editable.html("<p>this is just a test</p><p>yes it is</p>")
         expect(clean(editor.getContents())).toEqual("<p>this is just a test</p><p>yes it is</p>")
 
-      it "removes any zero width no break spaces", ->
-        $editable.html("<p>Hello, there #{Helpers.zeroWidthNoBreakSpace}are zero width no #{Helpers.zeroWidthNoBreakSpace}break spaces in#{Helpers.zeroWidthNoBreakSpace} here!")
-        expect(editor.getContents().match(Helpers.zeroWidthNoBreakSpaceUnicode)).toBeNull()
-
     describe "#getRange", ->
       $table = $td = null
       beforeEach ->
