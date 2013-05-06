@@ -288,9 +288,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     getContents: ->
       # Clean the content before returning it.
       @clean(@el.firstChild, @el.lastChild)
-      # TODO: Remove this once we know we don't need it anymore.
-      #regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
-      #@$el.html().replace(regexp, "")
       @$el.html()
 
     # Sets the contents of the editor and cleans it.
