@@ -1,3 +1,4 @@
+if(typeof SnapEditor === "undefined") { SnapEditor = {}; }
 SnapEditor.lang = {
   "bold": "Bold",
   "italic": "Italic",
