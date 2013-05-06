@@ -61,7 +61,7 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
 
     discard: ->
       @getPromptDialog().hide()
-      @api.setContents(@originalHTML)
+      @api.el.innerHTML = @originalHTML
       @api.deactivate()
 
     #
