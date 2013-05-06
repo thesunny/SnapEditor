@@ -69,7 +69,7 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
     #
 
     setOriginalHTML: ->
-      @originalHTML = @api.getContents()
+      @originalHTML = @api.el.innerHTML
 
     unsetOriginalHTML: ->
       @originalHTML = null
@@ -90,8 +90,10 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
   )
 
   SnapEditor.behaviours.save =
-    onActivate: (e) -> e.api.disableImmediateDeactivate() if e.api.config.onSave
-    onReady: (e) -> save.activate(e.api) if e.api.config.onSave
+    onBeforeActivate: (e) ->
+      if e.api.config.onSave
+        e.api.disableImmediateDeactivate()
+        save.activate(e.api)
     onTryDeactivate: (e) -> save.exit() if e.api.config.onSave
     onDeactivate: (e) -> save.deactivate() if e.api.config.onSave
 
