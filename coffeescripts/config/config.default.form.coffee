@@ -1,4 +1,5 @@
 define [
+  "jquery.custom",
   "config/config.default"
-], (Defaults) ->
+], ($, Defaults) ->
   SnapEditor.Form.config = $.extend({}, SnapEditor.config)
