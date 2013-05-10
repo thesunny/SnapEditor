@@ -5,7 +5,7 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
     # PUBLIC
     #
 
-    version: "1.7.1"
+    version: "1.7.2"
     lang: window.SnapEditor.lang or LangEn
     buttons: {}
     behaviours: {}
