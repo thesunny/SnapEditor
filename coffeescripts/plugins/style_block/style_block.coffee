@@ -30,7 +30,7 @@ define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
     .snapeditor_style_block_h4 { margin: 0; padding: 0; font-size: 140%; }
     .snapeditor_style_block_h5 { margin: 0; padding: 0; font-size: 120%; }
     .snapeditor_style_block_h6 { margin: 0; padding: 0; font-size: 110%; }
-  """ + Helpers.createStyles("styleBlock", 6 * -26)
-  for button, i in ["h1", "h2", "h3", "h4", "h5", "h6"]
-    styles += Helpers.createStyles(button, (i + 7) * -26) # sprite position * step
+  """ + Helpers.createStyles("styleBlock", 29 * -26)
+  for button, i in ["p", "h1", "h2", "h3", "h4", "h5", "h6"]
+    styles += Helpers.createStyles(button, (i + 6) * -26) # sprite position * step
   SnapEditor.insertStyles("plugins_style_block", styles)
