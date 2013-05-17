@@ -4,7 +4,9 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     # CONSTANTS
     #
 
+    # Used when dealing with HTML like in innerHTML.
     zeroWidthNoBreakSpace: "&#65279;"
+    # Used when dealing with text like in regex or textnodes.
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
 
     buttons: {

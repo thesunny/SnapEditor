@@ -284,11 +284,13 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     # CONTENTS
     #
 
-    # Returns the contents of the editor after cleaning.
+    # Returns the contents of the editor after cleaning and changing unicode
+    # zero-width no-break spaces to HTML entities.
     getContents: ->
       # Clean the content before returning it.
       @clean(@el.firstChild, @el.lastChild)
-      @$el.html()
+      regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
+      @$el.html().replace(regexp, Helpers.zeroWidthNoBreakSpace)
 
     # Sets the contents of the editor and cleans it.
     setContents: (html) ->
