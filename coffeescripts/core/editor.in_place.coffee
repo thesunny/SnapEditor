@@ -11,4 +11,4 @@ define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.f
     prepareConfig: ->
       super()
       @config.snap = @defaults.snap if typeof @config.snap == "undefined"
-      @config.buttons = @config.buttons.concat(["|", "save", "exit"]) if @config.onSave
+      @config.buttons = @config.buttons.concat(["|", "save", "discard"]) if @config.onSave

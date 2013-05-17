@@ -36,7 +36,6 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
         @promptDialog = new PromptDialog()
         @promptDialog.on(
           save: (e) -> save.save()
-          resume: (e) -> save.resume()
           discard: (e) -> save.discard()
         )
       @promptDialog
@@ -54,13 +53,8 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
         @getErrorDialog().show(@api, result)
       else
         @api.deactivate()
-      @getPromptDialog().hide()
-
-    resume: ->
-      @getPromptDialog().hide()
 
     discard: ->
-      @getPromptDialog().hide()
       @api.el.innerHTML = @originalHTML
       @api.deactivate()
 
@@ -80,7 +74,7 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
     isEdited: ->
       @api.getContents() != @originalHTML
   SnapEditor.actions.save = -> save.save()
-  SnapEditor.actions.exit = -> save.exit()
+  SnapEditor.actions.discard = -> save.discard()
 
   includeBehaviours = (e) -> e.api.config.behaviours.push("save")
   $.extend(SnapEditor.buttons,
@@ -89,7 +83,7 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
     # event does not get triggered. However, the esc keyup event does
     # trigger. Unfortunately, the target is the body and not the element
     # itself. Removing the shortcut until a solution can be found.
-    exit: Helpers.createButton("exit", "", onInclude: includeBehaviours)
+    discard: Helpers.createButton("discard", "", onInclude: includeBehaviours)
   )
 
   SnapEditor.behaviours.save =
@@ -118,5 +112,5 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
       text-decoration: none;
       color: #46a7b0;
     }
-  """ + Helpers.createStyles("save", 26 * -26) + Helpers.createStyles("exit", 27 * -26)
+  """ + Helpers.createStyles("save", 26 * -26) + Helpers.createStyles("discard", 27 * -26)
   SnapEditor.insertStyles("save", styles)

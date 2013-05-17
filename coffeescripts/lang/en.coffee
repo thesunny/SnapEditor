@@ -51,7 +51,7 @@ define [], ->
     "imageUploadTitle": "Upload New Image"
     "print": "Print"
     "save": "Save"
-    "exit": "Exit"
+    "discard": "Discard"
     "saveTitle": "Save/Cancel"
     "saveExitMessage": "Are you sure you want to exit the editor?"
     "saveSaveButton": "Save Changes & Exit"
