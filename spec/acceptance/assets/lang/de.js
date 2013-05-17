@@ -51,7 +51,7 @@ SnapEditor.lang = {
   "imageUploadTitle": "Neues Bild hochladen",
   "print": "Drucken",
   "save": "Speichern",
-  "exit": "Beenden",
+  "discard": "Verwerfen",
   "saveTitle": "Speichern/Abbrechen",
   "saveExitMessage": "Sind sie sicher, dass Sie den Editor verlassen möchten?",
   "saveSaveButton": "Speichern & Beenden",
