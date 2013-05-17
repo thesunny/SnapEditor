@@ -69,7 +69,10 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
     #
 
     setOriginalHTML: ->
-      @originalHTML = @api.el.innerHTML
+      # Unicode zero-width no-break spaces are changed to HTML entities to
+      # match api.getContents().
+      regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
+      @originalHTML = @api.el.innerHTML.replace(regexp, Helpers.zeroWidthNoBreakSpace)
 
     unsetOriginalHTML: ->
       @originalHTML = null
