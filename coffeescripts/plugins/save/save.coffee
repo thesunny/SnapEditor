@@ -21,9 +21,12 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
       # An empty return does not affect other browsers.
       return
 
-    exit: ->
+    tryDeactivate: (e) ->
       if @isEdited()
-        @getPromptDialog().show(@api)
+        if @api.config.onUnsavedChanges
+          @api.config.onUnsavedChanges(e)
+        else
+          @getPromptDialog().show(@api)
       else
         @api.deactivate()
 
@@ -48,7 +51,9 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
     #
 
     save: ->
-      result = @api.save()
+      result = "onSave config was never defined."
+      result = @api.config.onSave(@api.getContents()) if @api.config.onSave
+      result
       if typeof result == "string"
         @getErrorDialog().show(@api, result)
       else
@@ -76,21 +81,20 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
   SnapEditor.actions.save = -> save.save()
   SnapEditor.actions.discard = -> save.discard()
 
-  includeBehaviours = (e) -> e.api.config.behaviours.push("save")
+  include = (e) ->
+    e.api.config.behaviours.push("save")
+    e.api.config.onTryDeactivate or= (e) -> save.tryDeactivate(e)
   $.extend(SnapEditor.buttons,
-    save: Helpers.createButton("save", "ctrl+s", onInclude: includeBehaviours)
+    save: Helpers.createButton("save", "ctrl+s", onInclude: include)
     # TODO: In Chrome, when an element is contenteditable, the esc keydown
     # event does not get triggered. However, the esc keyup event does
     # trigger. Unfortunately, the target is the body and not the element
     # itself. Removing the shortcut until a solution can be found.
-    discard: Helpers.createButton("discard", "", onInclude: includeBehaviours)
+    discard: Helpers.createButton("discard", "", onInclude: include)
   )
 
   SnapEditor.behaviours.save =
-    onBeforeActivate: (e) ->
-      if e.api.config.onSave
-        e.api.disableImmediateDeactivate()
-        save.activate(e.api)
+    onBeforeActivate: (e) -> save.activate(e.api) if e.api.config.onSave
     onTryDeactivate: (e) -> save.exit() if e.api.config.onSave
     onDeactivate: (e) -> save.deactivate() if e.api.config.onSave
 

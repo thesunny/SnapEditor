@@ -147,6 +147,11 @@
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
         },
+        onUnsavedChanges: function(e) {
+          console.log(e);
+          console.log("HERE");
+          console.log(e.api.execAction("save"));
+        },
         onSave: function (html) {
           return true;
         }

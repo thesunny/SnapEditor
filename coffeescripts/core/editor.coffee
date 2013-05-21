@@ -48,10 +48,9 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # Delegate Public API functions.
       @delegatePublicAPIFunctions()
 
-      # The default is to deactivate immediately. However, to accommodate
-      # plugins such as the Save plugin, this can be disabled and handled in a
-      # customized way. Use #disableImmediateDeactivate.
-      @on("snapeditor.try_deactivate", @deactivate)
+      # We set the onTryDeactivate default here to give every one else a
+      # chance to set it first (namely the plugin).
+      @config.onTryDeactivate or= @deactivate
 
       # Ready.
       @trigger("snapeditor.plugins_ready")
@@ -253,13 +252,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @trigger("snapeditor.activate")
       @trigger("snapeditor.ready")
 
-    # Try to deactivate the editor.
     tryDeactivate: ->
-      @trigger("snapeditor.try_deactivate")
-
-    # Disable the immediate deactivation of the editor.
-    disableImmediateDeactivate: ->
-      @off("snapeditor.try_deactivate", @deactivate)
+      @api.config.onTryDeactivate(api: @api)
 
     # Deactivate the editor.
     deactivate: =>
@@ -273,12 +267,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     # Clean the editor.
     clean: ->
       @trigger("snapeditor.clean", arguments)
-
-    # Save the contents of the editor.
-    save: ->
-      saved = "No save callback defined."
-      saved = @config.onSave(@getContents()) if @config.onSave
-      saved
 
     #
     # CONTENTS
