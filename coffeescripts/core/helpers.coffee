@@ -132,17 +132,14 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
       $(style).appendTo("head")
 
     # Transforms the given coords so that they are relative to the outer
-    # window. The target is a node in the same window the coords are currently
-    # relative to.
+    # window.
     #
     # coords can be of 2 types:
     # 1. { x: <int>, y: <int> }
     # 2. { top: <int>, bottom: <int>, left: <int>, right: <int> }
-    transformCoordinatesRelativeToOuter: (coords, target) ->
-      # Nothing to transform since the target is part of the outer window.
-      return coords if @getDocument(target) == document
-      iframeScroll = $(@getWindow(target)).getScroll()
-      iframeCoords = $(Helpers.getParentIFrame(target)).getCoordinates()
+    transformCoordinatesRelativeToOuter: (coords, iframe) ->
+      iframeScroll = $(iframe.win).getScroll()
+      iframeCoords = $(iframe).getCoordinates()
       # Since the coords are relative to the iframe window, we need to
       # translate them so they are relative to the viewport of the iframe and
       # then add on the coordinates of the iframe.
