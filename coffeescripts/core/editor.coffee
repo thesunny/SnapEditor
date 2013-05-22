@@ -173,13 +173,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     addCustomDataToEvent: (e) ->
       e.api = @api
       if e.pageX
-        coords = Helpers.transformCoordinatesRelativeToOuter(
-          x: e.pageX
-          y: e.pageY
-          e.target
-        )
-        e.outerPageX = coords.x
-        e.outerPageY = coords.y
+        e.outerPageX = e.pageX
+        e.outerPageY = e.pageY
 
     # Attaches the given event handlers to the given events on all documents on
     # the page.
@@ -191,10 +186,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       args = arguments
       $document = $(document)
       $document.on.apply($document, args)
-      $("iframe").each(->
-        $doc = $(this.contentWindow.document)
-        $doc.on.apply($doc, args)
-      )
 
     # Detaches events from all documents on the page.
     # Given an event handler, detaches only the given event handler.
@@ -208,17 +199,31 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       args = arguments
       $document = $(document)
       $document.off.apply($document, args)
+
+    addIFrameShims: (ignoreIFrame) ->
+      @iframeShims = []
+      self = this
       $("iframe").each(->
-        $doc = $(this.contentWindow.document)
-        $doc.off.apply($doc, args)
+        unless this == ignoreIFrame
+          coords = $(this).getCoordinates()
+          self.iframeShims.push($("<div/>").css(
+            position: "absolute"
+            top: coords.top
+            left: coords.left
+            width: coords.width
+            height: coords.height
+            zIndex: parseInt($(this).css("zIndex")) + 1
+          ).appendTo("body"))
       )
 
     attachDOMEvents: ->
       @$el.on(event, @handleDOMEvent) for event in @domEvents
+      @addIFrameShims()
       @onDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
     detachDOMEvents: ->
       @$el.off(event, @handleDOMEvent) for event in @domEvents
+      $shim.remove() for $shim in @iframeShims
       @offDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
     ############################################################################
@@ -380,7 +385,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     getCoordinates: (range) ->
       range or= @getRange()
       coords = range.getCoordinates()
-      coords.outer = $.extend({}, Helpers.transformCoordinatesRelativeToOuter(coords, @el))
       coords
 
   Helpers.include(Editor, Events)

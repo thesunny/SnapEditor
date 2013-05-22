@@ -80,4 +80,24 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
         @$textarea.val(newContents)
         @oldContents = newContents
 
-  return FormEditor
+    addCustomDataToEvent: (e) ->
+      super(e)
+      # If mouse coordinates are set and the target came from inside the
+      # iframe, then we need to adjust the outerPage coordinates.
+      if e.pageX and Helpers.getDocument(e.target) != document
+        coords = Helpers.transformCoordinatesRelativeToOuter(
+          x: e.outerPageX
+          y: e.outerPageY
+          @iframe
+        )
+        e.outerPageX = coords.x
+        e.outerPageY = coords.y
+
+    addIFrameShims: ->
+      super(@iframe)
+
+    getCoordinates: (range) ->
+      coords = super(range)
+      # Make sure the coordinates are relative to the outside document.
+      coords.outer = $.extend({}, Helpers.transformCoordinatesRelativeToOuter(coords, @iframe))
+      coords

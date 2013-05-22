@@ -198,9 +198,6 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
         $div = $("<div/>").appendTo($editable)
 
       describe "mouseCoords", ->
-        it "returns the same coordinates when there is no iframe", ->
-          expect(Helpers.transformCoordinatesRelativeToOuter(mouseCoords, $div[0])).toBe(mouseCoords)
-
         it "returns the translated coordinates when there is an iframe", ->
           spyOn(Helpers, "getDocument").andReturn("doc")
           spyOn($.fn, "getScroll").andReturn(x: 5, y: 10)
@@ -215,9 +212,6 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
           expect(outerCoords.y).toEqual(191)
 
       describe "elCoords", ->
-        it "returns the same coordinates when there is no iframe", ->
-          expect(Helpers.transformCoordinatesRelativeToOuter(elCoords, $div[0])).toBe(elCoords)
-
         it "returns the translated coordinates when there is an iframe", ->
           spyOn(Helpers, "getDocument").andReturn("doc")
           spyOn($.fn, "getScroll").andReturn(x: 5, y: 10)
