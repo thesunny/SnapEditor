@@ -121,8 +121,8 @@
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
         },
-        onSave: function (html) {
-          console.log(html);
+        onSave: function (e) {
+          console.log(e.api.getContents());
           return "OMG! ERROR!";
         }
       });
@@ -134,8 +134,8 @@
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
         },
-        onSave: function (html) {
-          console.log(html);
+        onSave: function (e) {
+          console.log(e.api.getContents());
           return "OMG! ERROR!";
         }
       });
@@ -152,7 +152,7 @@
           console.log("HERE");
           console.log(e.api.execAction("save"));
         },
-        onSave: function (html) {
+        onSave: function (e) {
           return true;
         }
       });
