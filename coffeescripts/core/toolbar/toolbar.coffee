@@ -1,33 +1,31 @@
 # = Toolbar API
 #
-# == Commands
+# == Buttons
 #
-# All buttons are viewed as commands. Commands can be defined in two ways.
-# 1. As part of the SnapEditor.commands/internalCommands array.
-# 2. As part of the commands array in a plugin of the
-#    SnapEditor.plugins/internalPlugins array.
+# Buttons can be defined in the global SnapEditor.buttons object.
 #
 # Mandatory keys:
 # * text - the title for the button and the text for the menu item if html is
 #   not specified
-# * action - a function to handle the action (optional if items is specified)
+# * action - a function or string to handle the action (optional if items is
+#   specified)
 #
 # Optional keys:
 # * html - html for menu items
-# * shortcut - keyboard shortcut with '.' as the delimiter
-# * items - array of commands for a submenu
+# * shortcut - keyboard shortcut with '+' as the delimiter
+# * items - array of buttons for a submenu
 #
 # == Buttons/Menu Items
 #
 # === Classes
 #
-# The button's class is built from the snake case of the corresponding command.
-#   snapeditor_toolbar_icon_<snake case of the command>
+# The button's class is built from the snake case of the corresponding button.
+#   snapeditor_toolbar_icon_<snake case of the button>
 #
-# The menu's class is built from the snake case of the corresponding command.
-#   snapeditor_toolbar_menu_<snake case of the command>
+# The menu's class is built from the snake case of the corresponding button.
+#   snapeditor_toolbar_menu_<snake case of the button>
 #
-# The menu items do not have specific classes because the command developer
+# The menu items do not have specific classes because the button developer
 # has full control over the HTML inside the menu item.
 #
 # == Shortcut
@@ -37,11 +35,11 @@
 #
 # The shortcut is included in the title in parentheses and modified for
 # displaying.
-#   shortcut: ctrl.b
+#   shortcut: ctrl+b
 #   title: Bold (Ctrl+B)
 #
 # The shortcut is included in the menu item and modified for displaying.
-#   shortcut: ctrl.b
+#   shortcut: ctrl+b
 #   menu item: Bold     Ctrl+B
 #
 # == Action
@@ -56,8 +54,8 @@
 #
 # == Submenus
 #
-# To add submenus, specify the items array and populate it with commands.
-#   items: ["Bold", "Italic"]
+# To add submenus, specify the items array and populate it with buttons.
+#   items: ["bold", "italic"]
 #
 # Menu items will automatically have a right triangle to indicate the
 # availability of a submenu.
@@ -67,7 +65,7 @@
 #
 # Example
 #
-# SnapEditor.commands = {
+# SnapEditor.buttons = {
 #   style: {
 #     text: "Style",
 #     items: ["styleInline", "styleBlock"]
@@ -79,12 +77,12 @@
 #   },
 #   bold: {
 #     text: "Bold",
-#     shortcut: "ctrl.b",
+#     shortcut: "ctrl+b",
 #     action: function (e) { e.api.bold(); }
 #   },
 #   italic: {
 #     text: "Italic",
-#     shortcut: "ctrl.i",
+#     shortcut: "ctrl+i",
 #     action: function (e) { e.api.italic(); }
 #   },
 #   styleBlock: {
@@ -94,19 +92,19 @@
 #   },
 #   h1: {
 #     text: "H1",
-#     shortcut: "ctrl.alt.1",
+#     shortcut: "ctrl+alt+1",
 #     action: function (e) { e.api.h1(); }
 #   },
 #   h2: {
 #     text: "H2",
-#     shortcut: "ctrl.alt.2",
+#     shortcut: "ctrl+alt+2",
 #     action: function (e) { e.api.h2(); }
 #   }
 # };
 
 define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/toolbar/toolbar.menu", "core/data_action_handler"], ($, Helpers, Builder, Menu, DataActionHandler) ->
   class Toolbar
-    constructor: (@api) ->
+    constructor: (@editor) ->
 
     toolbarTemplate: """
       <div class="snapeditor_toolbar snapeditor_toolbar_component snapeditor_ignore_deactivate">
@@ -151,7 +149,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
           cursor: pointer;
           text-decoration: none;
           outline: none;
-          background-image: url(#{@api.imageAsset("snapeditor_toolbar.png")});
+          background-image: url(#{@editor.imageAsset("snapeditor_toolbar.png")});
           background-repeat: no-repeat;
         }
 
@@ -173,21 +171,23 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
       """
 
     setup: ->
-      @$toolbar = Builder.build(@api.config.toolbar.items,
-        api: @api
+      editor = @editor
+      @$toolbar = Builder.build(@editor.config.buttons,
+        editor: @editor
         templates:
           container: @toolbarTemplate
           item: @itemTemplate
           divider: @dividerTemplate
         menu:
           class: Menu
-        itemBuilder: ($container, item, command) ->
-          title = command.text
-          title += " (#{Helpers.displayShortcut(command.shortcut)})" if command.shortcut
+        itemBuilder: ($container, item, button) ->
+          title = button.text
+          shortcut = editor.actionShortcuts[button.action] if typeof button.action == "string"
+          title += " (#{Helpers.displayShortcut(shortcut)})" if shortcut
           $container.
             addClass("snapeditor_toolbar_icon_#{Helpers.camelToSnake(item)}").
             attr("title", title).
             attr("data-action", item)
       )
-      @api.insertStyles("snapeditor_toolbar", @getCSS())
-      @dataActionHandler = new DataActionHandler(@$toolbar, @api)
+      @editor.insertStyles("snapeditor_toolbar", @getCSS())
+      @dataActionHandler = new DataActionHandler(@$toolbar, @editor.api)

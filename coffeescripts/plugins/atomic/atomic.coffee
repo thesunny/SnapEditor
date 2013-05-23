@@ -1,10 +1,5 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
-  window.SnapEditor.internalPlugins.atomic =
-    events:
-      activate: (e) -> e.api.plugins.atomic.activate(e.api)
-      deactivate: (e) -> e.api.plugins.atomic.deactivate()
-      ready: (e) -> e.api.plugins.atomic.mouseup()
-
+  atomic =
     activate: (@api) ->
       self = this
       @keyupHandler = (e) -> self.keyup(e)
@@ -115,3 +110,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
             range.moveBoundary("StartToEnd", @getSibling("previous", startEl)) if startEl
             range.moveBoundary("EndToStart", @getSibling("next", endEl)) if endEl
         range.select()
+
+  SnapEditor.behaviours.atomic =
+    onActivate: (e) -> atomic.activate(e.api)
+    onDeactivate: (e) -> atomic.deactivate()
+    onReady: (e) -> atomic.mouseup()
+
+  # atomic is returned for testing purposes.
+  return atomic

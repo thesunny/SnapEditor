@@ -1,6 +1,6 @@
 define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core/browser"], ($, Styles, Browser) ->
   class Displayer
-    constructor: (toolbar, el, @api) ->
+    constructor: (toolbar, el, @editor) ->
       @$toolbar = $(toolbar)
       @$el = $(el)
       @shown = false
@@ -63,7 +63,7 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
 
     # Grabs the position of the top of the cursor.
     cursorPosition: ->
-      @api.getCoordinates().top
+      @editor.getCoordinates().top
 
     # Place the toolbar at the top of the el 
     positionAtTop: ->
@@ -109,5 +109,3 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
     isCursorInOverlapSpace: ->
       cursorPositionInEl = @cursorPosition() - @elCoords().top
       cursorPositionInEl < @overlapSpaceFromElTop()
-
-  return Displayer

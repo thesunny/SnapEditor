@@ -1,22 +1,5 @@
 define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browser) ->
-  window.SnapEditor.internalPlugins.table =
-    events:
-      activate: (e) -> e.api.plugins.table.activate(e.api)
-      deactivate: (e) -> e.api.plugins.table.deactivate()
-
-    commands:
-      table:
-        text: window.SnapEditor.lang.table
-        items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable"]
-      insertTable: Helpers.createCommand("insertTable", "", ((e) -> e.api.plugins.table.insertTable()), langKey: "tableInsert")
-      addRowAbove: Helpers.createCommand("addRowAbove", "ctrl.shift.enter", ((e) -> e.api.plugins.table.addRow(true)), langKey: "tableAddRowAbove")
-      addRowBelow: Helpers.createCommand("addRowBelow", "ctrl.enter", ((e) -> e.api.plugins.table.addRow(false)), langKey: "tableAddRowBelow")
-      deleteRow: Helpers.createCommand("deleteRow", "", ((e) -> e.api.plugins.table.deleteRow()), langKey: "tableDeleteRow")
-      addColumnLeft: Helpers.createCommand("addColumnLeft", "ctrl.shift.m", ((e) -> e.api.plugins.table.addColumn(true)), langKey: "tableAddColumnLeft")
-      addColumnRight: Helpers.createCommand("addColumnRight", "ctrl.m", ((e) -> e.api.plugins.table.addColumn(false)), langKey: "tableAddColumnRight")
-      deleteColumn: Helpers.createCommand("deleteColumn", "", ((e) -> e.api.plugins.table.deleteColumn()), langKey: "tableDeleteColumn")
-      deleteTable: Helpers.createCommand("deleteTable", "", ((e) -> e.api.plugins.table.deleteTable()), langKey: "tableDelete")
-
+  table =
     activate: (@api) ->
       self = this
       @handleKeydownHandler = (e) -> self.handleKeydown(e)
@@ -248,7 +231,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
 
     handleKeydown: (e) ->
       keys = Helpers.keysOf(e)
-      if keys == "tab" or keys == "shift.tab"
+      if keys == "tab" or keys == "shift+tab"
         cell = @getCell()
         if cell
           e.preventDefault()
@@ -285,5 +268,35 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
           position = if direction == "next" then "first" else "last"
           $siblingCell = $siblingRow.find("td, th")[position]()
       return $siblingCell[0] or null
+  SnapEditor.actions.insertTable = -> table.insertTable()
+  SnapEditor.actions.addRowAbove = Helpers.pass(table.addRow, true, table)
+  SnapEditor.actions.addRowBelow = Helpers.pass(table.addRow, false, table)
+  SnapEditor.actions.deleteRow = -> table.deleteRow()
+  SnapEditor.actions.addColumnLeft = Helpers.pass(table.addColumn, true, table)
+  SnapEditor.actions.addColumnRight = Helpers.pass(table.addColumn, false, table)
+  SnapEditor.actions.deleteColumn = -> table.deleteColumn()
+  SnapEditor.actions.deleteTable = -> table.deleteTable()
 
-  window.SnapEditor.insertStyles("plugins_table", Helpers.createStyles("table", 22 * -26))
+  includeBehaviours = (e) -> e.api.config.behaviours.push("table")
+  $.extend(SnapEditor.buttons,
+    table:
+      text: SnapEditor.lang.table
+      items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable"]
+    insertTable: Helpers.createButton("insertTable", "", langKey: "tableInsert", onInclude: includeBehaviours)
+    addRowAbove: Helpers.createButton("addRowAbove", "ctrl+shift+enter", langKey: "tableAddRowAbove", onInclude: includeBehaviours)
+    addRowBelow: Helpers.createButton("addRowBelow", "ctrl+enter", langKey: "tableAddRowBelow", onInclude: includeBehaviours)
+    deleteRow: Helpers.createButton("deleteRow", "", langKey: "tableDeleteRow", onInclude: includeBehaviours)
+    addColumnLeft: Helpers.createButton("addColumnLeft", "ctrl+shift+m", langKey: "tableAddColumnLeft", onInclude: includeBehaviours)
+    addColumnRight: Helpers.createButton("addColumnRight", "ctrl+m", langKey: "tableAddColumnRight", onInclude: includeBehaviours)
+    deleteColumn: Helpers.createButton("deleteColumn", "", langKey: "tableDeleteColumn", onInclude: includeBehaviours)
+    deleteTable: Helpers.createButton("deleteTable", "", langKey: "tableDelete", onInclude: includeBehaviours)
+  )
+
+  SnapEditor.behaviours.table =
+    onActivate: (e) -> table.activate(e.api)
+    onDeactivate: -> table.deactivate()
+
+  SnapEditor.insertStyles("plugins_table", Helpers.createStyles("table", 22 * -26))
+
+  # table is returned for testing purposes.
+  return table

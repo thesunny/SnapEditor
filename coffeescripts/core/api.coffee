@@ -5,13 +5,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       @doc = @editor.doc
       @win = @editor.win
       @config = @editor.config
-      @plugins = @editor.plugins
-      @commands = @editor.commands
       Helpers.delegate(this, "editor",
         # EVENTS
         "on", "off", "trigger",
-        "activate", "tryDeactivate", "disableImmediateDeactivate", "deactivate",
-        "update", "clean", "save",
+        "activate", "tryDeactivate", "deactivate",
+        "update", "clean",
         # CONTENTS
         "getContents", "setContents",
         # DOM
@@ -26,6 +24,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "getDefaultBlock", "getNext",
         # WIDGETS
         "createWidget",
+        # ACTIONS
+        "execAction",
         # RANGE
         "getRange", "getBlankRange",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",

@@ -70,13 +70,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       isStartOfElement: (el) ->
         range = @cloneRange()
         range.setStartBefore(el)
-        contents = $("<div/>").html(range.cloneContents())
-        # Check for any HTML tags that take up space. Currently only images
-        # take up space. If there are, we are not at the end.
-        return false if contents.find("img").length > 0
-        # Check for empty text.
-        startText = contents.text()
-        !!startText.match(Helpers.emptyRegExp)
+        $contents = $("<div/>").html(range.cloneContents())
+        Helpers.isEmpty($contents)
 
       # Returns true if the current range is at the end of the given element.
       # We are at end of the element if there are no width-generating
@@ -96,13 +91,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       isEndOfElement: (el) ->
         range = @cloneRange()
         range.setEndAfter(el)
-        contents = $("<div/>").html(range.cloneContents())
-        # Check for any HTML tags that take up space. Currently only images
-        # take up space. If there are, we are not at the end.
-        return false if contents.find("img").length > 0
-        # Check for empty text.
-        endText = contents.text()
-        !!endText.match(Helpers.emptyRegExp)
+        $contents = $("<div/>").html(range.cloneContents())
+        Helpers.isEmpty($contents)
 
       # Get immediate parent element.
       getImmediateParentElement: ->

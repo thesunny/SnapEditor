@@ -1,19 +1,5 @@
-define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prompt_dialog", "plugins/save/save.error_dialog"], ($, Browser, Helpers, PromptDialog, ErrorDialog) ->
-  window.SnapEditor.internalPlugins.save =
-    events:
-      activate: (e) -> e.api.disableImmediateDeactivate() if e.api.config.onSave
-      ready: (e) -> e.api.plugins.save.activate(e.api) if e.api.config.onSave
-      tryDeactivate: (e) -> e.api.plugins.save.exit() if e.api.config.onSave
-      deactivate: (e) -> e.api.plugins.save.deactivate() if e.api.config.onSave
-
-    commands:
-      save: Helpers.createCommand("save", "ctrl.s", (e) -> e.api.plugins.save.save())
-      # TODO: In Chrome, when an element is contenteditable, the esc keydown
-      # event does not get triggered. However, the esc keyup event does
-      # trigger. Unfortunately, the target is the body and not the element
-      # itself. Removing the shortcut until a solution can be found.
-      exit: Helpers.createCommand("exit", "", (e) -> e.api.plugins.save.exit())
-
+define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plugins/save/save.error_dialog"], ($, Helpers, PromptDialog, ErrorDialog) ->
+  save =
     #
     # PLUGIN EVENT HANDLERS
     #
@@ -35,9 +21,12 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prom
       # An empty return does not affect other browsers.
       return
 
-    exit: ->
+    tryDeactivate: (e) ->
       if @isEdited()
-        @getPromptDialog().show(@api)
+        if @api.config.onUnsavedChanges
+          @api.config.onUnsavedChanges(e)
+        else
+          @getPromptDialog().show(@api)
       else
         @api.deactivate()
 
@@ -49,9 +38,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prom
       unless @promptDialog
         @promptDialog = new PromptDialog()
         @promptDialog.on(
-          save: (e) -> e.api.plugins.save.save()
-          resume: (e) -> e.api.plugins.save.resume()
-          discard: (e) -> e.api.plugins.save.discard()
+          save: (e) -> save.save()
+          discard: (e) -> save.discard()
         )
       @promptDialog
 
@@ -63,19 +51,16 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prom
     #
 
     save: ->
-      result = @api.save()
+      result = "onSave config was never defined."
+      result = @api.config.onSave(@api.getContents()) if @api.config.onSave
+      result
       if typeof result == "string"
         @getErrorDialog().show(@api, result)
       else
         @api.deactivate()
-      @getPromptDialog().hide()
-
-    resume: ->
-      @getPromptDialog().hide()
 
     discard: ->
-      @getPromptDialog().hide()
-      @api.setContents(@originalHTML)
+      @api.el.innerHTML = @originalHTML
       @api.deactivate()
 
     #
@@ -83,13 +68,35 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prom
     #
 
     setOriginalHTML: ->
-      @originalHTML = @api.getContents()
+      # Unicode zero-width no-break spaces are changed to HTML entities to
+      # match api.getContents().
+      regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
+      @originalHTML = $.trim(@api.el.innerHTML.replace(regexp, Helpers.zeroWidthNoBreakSpace))
 
     unsetOriginalHTML: ->
       @originalHTML = null
 
     isEdited: ->
       @api.getContents() != @originalHTML
+  SnapEditor.actions.save = -> save.save()
+  SnapEditor.actions.discard = -> save.discard()
+
+  include = (e) ->
+    e.api.config.behaviours.push("save")
+    e.api.config.onTryDeactivate or= (e) -> save.tryDeactivate(e)
+  $.extend(SnapEditor.buttons,
+    save: Helpers.createButton("save", "ctrl+s", onInclude: include)
+    # TODO: In Chrome, when an element is contenteditable, the esc keydown
+    # event does not get triggered. However, the esc keyup event does
+    # trigger. Unfortunately, the target is the body and not the element
+    # itself. Removing the shortcut until a solution can be found.
+    discard: Helpers.createButton("discard", "", onInclude: include)
+  )
+
+  SnapEditor.behaviours.save =
+    onBeforeActivate: (e) -> save.activate(e.api) if e.api.config.onSave
+    onTryDeactivate: (e) -> save.exit() if e.api.config.onSave
+    onDeactivate: (e) -> save.deactivate() if e.api.config.onSave
 
   styles = """
     .save_dialog .buttons {
@@ -109,5 +116,5 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/save/save.prom
       text-decoration: none;
       color: #46a7b0;
     }
-  """ + Helpers.createStyles("save", 26 * -26) + Helpers.createStyles("exit", 27 * -26)
-  window.SnapEditor.insertStyles("save", styles)
+  """ + Helpers.createStyles("save", 26 * -26) + Helpers.createStyles("discard", 27 * -26)
+  SnapEditor.insertStyles("save", styles)

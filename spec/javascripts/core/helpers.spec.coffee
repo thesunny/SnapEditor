@@ -57,6 +57,23 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
           expect(testValue).toBeTruthy()
           expect($("#div").length).toEqual(0)
 
+    describe "#isEmpty", ->
+      $el = null
+      beforeEach ->
+        $el = $("<div/>")
+
+      it "returns false if there is an image", ->
+        $el.html("<img/>")
+        expect(Helpers.isEmpty($el[0])).toBeFalsy()
+
+      it "returns false when there is content", ->
+        $el.html("<p>  \n</p>   \n\r\n#{Helpers.zeroWidthNoBreakSpace} <div>hello</div>   ")
+        expect(Helpers.isEmpty($el[0])).toBeFalsy()
+
+      it "returns true when there is only whitepsace", ->
+        $el.html("<p>  \n</p>   \n\r\n#{Helpers.zeroWidthNoBreakSpace}   ")
+        expect(Helpers.isEmpty($el[0])).toBeTruthy()
+
     describe "#nodesFrom", ->
       $div = null
       beforeEach ->
@@ -181,9 +198,6 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
         $div = $("<div/>").appendTo($editable)
 
       describe "mouseCoords", ->
-        it "returns the same coordinates when there is no iframe", ->
-          expect(Helpers.transformCoordinatesRelativeToOuter(mouseCoords, $div[0])).toBe(mouseCoords)
-
         it "returns the translated coordinates when there is an iframe", ->
           spyOn(Helpers, "getDocument").andReturn("doc")
           spyOn($.fn, "getScroll").andReturn(x: 5, y: 10)
@@ -198,9 +212,6 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
           expect(outerCoords.y).toEqual(191)
 
       describe "elCoords", ->
-        it "returns the same coordinates when there is no iframe", ->
-          expect(Helpers.transformCoordinatesRelativeToOuter(elCoords, $div[0])).toBe(elCoords)
-
         it "returns the translated coordinates when there is an iframe", ->
           spyOn(Helpers, "getDocument").andReturn("doc")
           spyOn($.fn, "getScroll").andReturn(x: 5, y: 10)
@@ -361,7 +372,7 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
 
     describe "#displayShortcut", ->
       it "generates the proper display shortcut", ->
-        expect(Helpers.displayShortcut("ctrl.shift.t")).toEqual("Ctrl+Shift+T")
+        expect(Helpers.displayShortcut("ctrl+shift+t")).toEqual("Ctrl+Shift+T")
 
     describe "#normalize", ->
       it "normalizes an email", ->
@@ -381,3 +392,7 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
 
       it "normalizes a domain", ->
         expect(Helpers.normalizeURL("snapeditor.com")).toEqual("http://snapeditor.com")
+
+    describe "#uniqueArray", ->
+      it "returns an unique array", ->
+        expect(Helpers.uniqueArray(["a", "b", "c", "a", "a", "b", "d", "e", "c"])).toEqual(["a", "b", "c", "d", "e"])

@@ -1,10 +1,5 @@
 define ["jquery.custom"], ($) ->
-  window.SnapEditor.internalPlugins.deactivate =
-    events:
-      pluginsReady: (e) -> $(e.api.el).addClass(e.api.plugins.deactivate.classname)
-      activate: (e) -> e.api.plugins.deactivate.activate(e.api)
-      deactivate: (e) -> e.api.plugins.deactivate.deactivate()
-
+  deactivate =
     classname: "snapeditor_ignore_deactivate"
 
     activate: (@api) ->
@@ -34,3 +29,8 @@ define ["jquery.custom"], ($) ->
 
     isIgnore: (el) ->
       $(el).closest(".#{@classname}").length > 0
+
+  SnapEditor.behaviours.deactivate =
+    onPluginsReady: (e) -> $(e.api.el).addClass(deactivate.classname)
+    onActivate: (e) -> deactivate.activate(e.api)
+    onDeactivate: (e) -> deactivate.deactivate()

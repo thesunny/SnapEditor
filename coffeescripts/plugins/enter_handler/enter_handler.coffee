@@ -1,9 +1,5 @@
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
-  window.SnapEditor.internalPlugins.enterHandler =
-    events:
-      activate: (e) -> e.api.plugins.enterHandler.activate(e.api)
-      deactivate: (e) -> e.api.plugins.enterHandler.deactivate(e.api)
-
+  enterHandler =
     activate: (@api) ->
       self = this
       @onkeydownHandler = (e) -> self.onkeydown(e)
@@ -69,3 +65,10 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
             $first.html("&nbsp;")
           $span.remove()
         )
+
+  SnapEditor.behaviours.enterHandler =
+    onActivate: (e) -> enterHandler.activate(e.api)
+    onDeactivate: (e) -> enterHandler.deactivate()
+
+  # enterHandler is returned for tesing purposes.
+  return enterHandler

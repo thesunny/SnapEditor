@@ -46,13 +46,13 @@ define ["core/browser"], (Browser) ->
     # Given a string of special keys and key, returns the normalized string
     # key.
     normalizeKeys: (key) ->
-      keys = key.split('.')
+      keys = key.split('+')
       char = keys.pop()
       @buildKey(char, keys)
 
     # Sorts the special keys and joins the special keys and key using the
     # delimiter.
-    buildKey: (key, specialKeys=[], delim='.') ->
+    buildKey: (key, specialKeys=[], delim='+') ->
       keys = specialKeys.sort()
       keys.push(key)
       keys.join(delim)

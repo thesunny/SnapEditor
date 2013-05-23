@@ -1,10 +1,5 @@
 define ["jquery.custom"], ($) ->
-  window.SnapEditor.internalPlugins.snap =
-    events:
-      activate: (e) -> e.api.plugins.snap.snap(e.api) if e.api.config.snap
-      deactivate: (e) -> e.api.plugins.snap.unsnap() if e.api.config.snap
-      cleanerFinished: (e) -> e.api.plugins.snap.update() if e.api.config.snap
-
+  snap =
     # Start the snap.
     snap: (@api) ->
       @activated = true
@@ -159,3 +154,11 @@ define ["jquery.custom"], ($) ->
       elCoord.width += padding.left + padding.right
       elCoord.height += padding.top + padding.bottom
       return elCoord
+
+  SnapEditor.behaviours.snap =
+    onActivate: (e) -> snap.snap(e.api) if e.api.config.snap
+    onDeactivate: (e) -> snap.unsnap() if e.api.config.snap
+    onCleanerFinished: (e) -> snap.update() if e.api.config.snap
+
+  # snap is returned for testing purposes.
+  return snap

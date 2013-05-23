@@ -1,3 +1,4 @@
+if(typeof SnapEditor === "undefined") { SnapEditor = {}; }
 SnapEditor.lang = {
   "bold": "Bold",
   "italic": "Italic",
@@ -50,7 +51,7 @@ SnapEditor.lang = {
   "imageUploadTitle": "Upload New Image",
   "print": "Print",
   "save": "Save",
-  "exit": "Exit",
+  "discard": "Discard",
   "saveTitle": "Save/Cancel",
   "saveExitMessage": "Are you sure you want to exit the editor?",
   "saveSaveButton": "Save Changes & Exit",
@@ -58,12 +59,6 @@ SnapEditor.lang = {
   "saveDiscardChanges": "discard changes",
   "saveErrorTitle": "Save/Cancel Error",
   "saveLeavePageMessage": "You have unsaved edits.",
-  "cut": "Cut",
-  "cutMessage": "Please use CTRL+X (or Command if you're on a Mac)",
-  "copy": "Copy",
-  "copyMessage": "Please use CTRL+C (or Command if you're on a Mac)",
-  "paste": "Paste",
-  "pasteMessage": "Please use CTRL+V (or Command if you're on a Mac)",
   "formOk": "OK",
   "formCancel": "Cancel",
   "formErrorMessage": "Please fix the following errors:"

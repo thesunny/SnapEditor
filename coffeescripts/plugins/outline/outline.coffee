@@ -1,8 +1,5 @@
 define ["jquery.custom"], ($) ->
-  window.SnapEditor.internalPlugins.outline =
-    events:
-      pluginsReady: (e) -> e.api.plugins.outline.setup(e.api)
-
+  outline =
     setup: (api) ->
       self = this
       el = api.el
@@ -29,13 +26,16 @@ define ["jquery.custom"], ($) ->
       self = this
       @resizeHandler = -> self.update(el)
       $(window).on("resize", @resizeHandler)
+      @shown = true
 
     hide: ->
-      @outlines.top.hide()
-      @outlines.bottom.hide()
-      @outlines.left.hide()
-      @outlines.right.hide()
-      $(window).off("resize", @resizeHandler)
+      if @shown
+        @outlines.top.hide()
+        @outlines.bottom.hide()
+        @outlines.left.hide()
+        @outlines.right.hide()
+        $(window).off("resize", @resizeHandler)
+        @shown = false
 
     update: (el) ->
       styles = @getStyles(el)
@@ -89,3 +89,6 @@ define ["jquery.custom"], ($) ->
           left: coords.left + coords.width + 1
           height: coords.height + 2
       }
+
+  SnapEditor.behaviours.outline =
+    onPluginsReady: (e) -> outline.setup(e.api)

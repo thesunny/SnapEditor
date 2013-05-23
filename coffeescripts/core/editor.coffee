@@ -28,7 +28,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @doc = Helpers.getDocument(@el)
       @win = Helpers.getWindow(@el)
 
-      # Setup the config.
+      # Prepare the config.
       @prepareConfig()
 
       # Create needed objects.
@@ -38,36 +38,39 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @execCommand = new ExecCommand(this)
       @widgetsManager = new WidgetsManager(this, @config.widget.classname)
 
-      # Deal with new plugins.
-      @setupPlugins()
-      @setupCommands()
+      # Instantiate the API.
+      @api = new API(this)
+
+      # Deal with plugins.
+      @includeButtons()
+      @includeBehaviours()
+      @includeShortcuts()
 
       # Delegate Public API functions.
       @delegatePublicAPIFunctions()
 
-      # Instantiate the API.
-      @api = new API(this)
-
-      # The default is to deactivate immediately. However, to accommodate
-      # plugins such as the Save plugin, this can be disabled and handled in a
-      # customized way. Use #disableImmediateDeactivate.
-      @on("snapeditor.try_deactivate", @deactivate)
+      # We set the onTryDeactivate default here to give every one else a
+      # chance to set it first (namely the plugin).
+      @config.onTryDeactivate or= @deactivate
 
       # Ready.
       @trigger("snapeditor.plugins_ready")
 
     prepareConfig: ->
-      @config.toolbar or= @defaults.toolbar
-      @config.plugins = @defaults.plugins.concat(@config.plugins or [])
-      @config.lang = SnapEditor.lang
+      # We use slice and extend to clone arrays and objects so that they
+      # aren't shared between editors.
+      @config.buttons or= @defaults.buttons.slice(0)
+      @config.behaviours or= @defaults.behaviours.slice(0)
+      @config.shortcuts or= @defaults.shortcuts.slice(0)
+      @config.lang = $.extend({}, SnapEditor.lang)
       @config.cleaner or= {}
-      @config.cleaner.whitelist or = @defaults.cleaner.whitelist
-      @config.cleaner.ignore or= @defaults.cleaner.ignore
+      @config.cleaner.whitelist or = $.extend({}, @defaults.cleaner.whitelist)
+      @config.cleaner.ignore or= @defaults.cleaner.ignore.slice(0)
+      @config.eraseHandler or= {}
+      @config.eraseHandler.delete or= @defaults.eraseHandler.delete.slice(0)
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
       @config.atomic.selectors = [".#{@config.atomic.classname}"]
-      @config.eraseHandler or= {}
-      @config.eraseHandler.delete or= @defaults.eraseHandler.delete
       @config.widget or= {}
       @config.widget.classname or= @defaults.widget.classname
 
@@ -78,24 +81,45 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # Add selectors to the eraseHandler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
+    includeButtons: ->
+      @includeButton(name) for name in @config.buttons
 
-    # Creates the plugins object and attaches the relevant events.
-    setupPlugins: ->
-      allPlugins = SnapEditor.getAllPlugins()
-      @plugins = {}
-      for name in @config.plugins
-        plugin = allPlugins[name]
-        throw "Plugin does not exist: #{name}" unless plugin
-        @plugins[name] = plugin
-        for key, fn of plugin.events or {}
-          @on("snapeditor.#{Helpers.camelToSnake(key)}", fn)
+    includeButton: (name) ->
+      unless name == "|"
+        button = SnapEditor.buttons[name]
+        throw "Button does not exist: #{name}" unless button
+        button.onInclude(api: @api) if button.onInclude
+        @includeButton(name) for name in button.items or []
 
-    # Creates the commands object including the ones in the plugins.
-    setupCommands: ->
-      @commands = SnapEditor.getAllCommands()
-      for name, plugin of @plugins
-        for key, command of plugin.commands or {}
-          @commands[key] = command
+    includeBehaviours: ->
+      @config.behaviours = Helpers.uniqueArray(@config.behaviours)
+      for name in @config.behaviours
+        behaviour = SnapEditor.behaviours[name]
+        throw "Behaviour does not exist: #{name}" unless behaviour
+        for event, action of behaviour
+          actionFn = action
+          actionFn = SnapEditor.actions[action] if typeof action == "string"
+          @on("snapeditor.#{Helpers.camelToSnake(event.replace(/^on/, ""))}", actionFn)
+
+    includeShortcuts: ->
+      @actionShortcuts = {}
+      @config.shortcuts = Helpers.uniqueArray(@config.shortcuts)
+      for name in @config.shortcuts
+        shortcut = SnapEditor.shortcuts[name]
+        throw "Shortcut doe not exist: #{name}" unless shortcut
+        throw "Shortcut is missing a key: #{name}" unless shortcut.key
+        throw "Shortcut is missing an action: #{name}" unless shortcut.action
+        # The generateActionFn() is required due to scoping issues.
+        self = this
+        generateActionFn = (action) ->
+          ->
+            e = $.Event(action)
+            e.api = self.api
+            self.api.execAction(action, e)
+        @addKeyboardShortcut(shortcut.key, generateActionFn(shortcut.action))
+        # If the shortcut action is a string, relate the shortcut to an action
+        # if available.
+        @actionShortcuts[shortcut.action] = shortcut.key if typeof shortcut.action == "string"
 
     domEvents: [
       "mouseover"
@@ -154,13 +178,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     addCustomDataToEvent: (e) ->
       e.api = @api
       if e.pageX
-        coords = Helpers.transformCoordinatesRelativeToOuter(
-          x: e.pageX
-          y: e.pageY
-          e.target
-        )
-        e.outerPageX = coords.x
-        e.outerPageY = coords.y
+        e.outerPageX = e.pageX
+        e.outerPageY = e.pageY
 
     # Attaches the given event handlers to the given events on all documents on
     # the page.
@@ -172,10 +191,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       args = arguments
       $document = $(document)
       $document.on.apply($document, args)
-      $("iframe").each(->
-        $doc = $(this.contentWindow.document)
-        $doc.on.apply($doc, args)
-      )
 
     # Detaches events from all documents on the page.
     # Given an event handler, detaches only the given event handler.
@@ -189,17 +204,31 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       args = arguments
       $document = $(document)
       $document.off.apply($document, args)
+
+    addIFrameShims: (ignoreIFrame) ->
+      @iframeShims = []
+      self = this
       $("iframe").each(->
-        $doc = $(this.contentWindow.document)
-        $doc.off.apply($doc, args)
+        unless this == ignoreIFrame
+          coords = $(this).getCoordinates()
+          self.iframeShims.push($("<div/>").css(
+            position: "absolute"
+            top: coords.top
+            left: coords.left
+            width: coords.width
+            height: coords.height
+            zIndex: parseInt($(this).css("zIndex")) + 1
+          ).appendTo("body"))
       )
 
     attachDOMEvents: ->
       @$el.on(event, @handleDOMEvent) for event in @domEvents
+      @addIFrameShims()
       @onDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
     detachDOMEvents: ->
       @$el.off(event, @handleDOMEvent) for event in @domEvents
+      $shim.remove() for $shim in @iframeShims
       @offDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
     ############################################################################
@@ -230,16 +259,12 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     # Activate the editor.
     activate: ->
       @attachDOMEvents()
+      @trigger("snapeditor.before_activate")
       @trigger("snapeditor.activate")
       @trigger("snapeditor.ready")
 
-    # Try to deactivate the editor.
     tryDeactivate: ->
-      @trigger("snapeditor.try_deactivate")
-
-    # Disable the immediate deactivation of the editor.
-    disableImmediateDeactivate: ->
-      @off("snapeditor.try_deactivate", @deactivate)
+      @api.config.onTryDeactivate(api: @api)
 
     # Deactivate the editor.
     deactivate: =>
@@ -254,22 +279,17 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     clean: ->
       @trigger("snapeditor.clean", arguments)
 
-    # Save the contents of the editor.
-    save: ->
-      saved = "No save callback defined."
-      saved = @config.onSave(@getContents()) if @config.onSave
-      saved
-
     #
     # CONTENTS
     #
 
-    # Returns the contents of the editor after cleaning.
+    # Returns the contents of the editor after cleaning and changing unicode
+    # zero-width no-break spaces to HTML entities.
     getContents: ->
       # Clean the content before returning it.
       @clean(@el.firstChild, @el.lastChild)
       regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
-      @$el.html().replace(regexp, "")
+      @$el.html().replace(regexp, Helpers.zeroWidthNoBreakSpace)
 
     # Sets the contents of the editor and cleans it.
     setContents: (html) ->
@@ -326,6 +346,21 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @assets.flash(filename)
 
     #
+    # ACTIONS
+    #
+
+    # Executes the action corresponding.
+    # If a function is given, executes the function.
+    # If a string is given, finds the corresponding action and executes it.
+    # By convention, the first argument of args should be a SnapEditor event
+    # object.
+    execAction: (action, args...) ->
+      actionFn = action
+      actionFn = SnapEditor.actions[action] if typeof action == "string"
+      throw "Action does not exist: #{action}" unless actionFn
+      actionFn.apply(@win, args)
+
+    #
     # RANGE
     #
 
@@ -356,7 +391,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     getCoordinates: (range) ->
       range or= @getRange()
       coords = range.getCoordinates()
-      coords.outer = $.extend({}, Helpers.transformCoordinatesRelativeToOuter(coords, @el))
       coords
 
   Helpers.include(Editor, Events)

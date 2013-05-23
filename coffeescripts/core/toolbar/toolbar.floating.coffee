@@ -2,8 +2,8 @@ define ["core/toolbar/toolbar", "core/toolbar/toolbar.floating.displayer"], (Too
   class FloatingToolbar extends Toolbar
     constructor: ->
       super(arguments...)
-      @api.on("snapeditor.activate", @show)
-      @api.on("snapeditor.deactivate", @hide)
+      @editor.on("snapeditor.activate", @show)
+      @editor.on("snapeditor.deactivate", @hide)
 
     floatCSS: """
       .snapeditor_toolbar_floating {
@@ -29,9 +29,9 @@ define ["core/toolbar/toolbar", "core/toolbar/toolbar.floating.displayer"], (Too
 
     setup: ->
       super
-      @api.insertStyles("snapeditor_toolbar_floating", @floatCSS)
+      @editor.insertStyles("snapeditor_toolbar_floating", @floatCSS)
       @$toolbar.addClass("snapeditor_toolbar_floating")
-      @displayer = new Displayer(@$toolbar, @api.el, @api)
+      @displayer = new Displayer(@$toolbar, @editor.el, @editor)
       @dataActionHandler.activate()
 
     # Shows the toolbar.
@@ -42,5 +42,3 @@ define ["core/toolbar/toolbar", "core/toolbar/toolbar.floating.displayer"], (Too
     # Hides the toolbar.
     hide: =>
       @displayer.hide() if @$toolbar
-
-  return FloatingToolbar

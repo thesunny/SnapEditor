@@ -13,11 +13,9 @@ define ["core/toolbar/toolbar"], (Toolbar) ->
 
     setup: ->
       super
-      @api.insertStyles("snapeditor_toolbar_static", @staticCSS)
+      @editor.insertStyles("snapeditor_toolbar_static", @staticCSS)
       @$toolbar.addClass("snapeditor_toolbar_static")
 
     # Shows the toolbar.
     show: ->
       @$toolbar.show()
-
-  return StaticToolbar

@@ -98,5 +98,3 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       else
         position: "fixed",
         top: $(window).getSize().y - @floaterSize().y
-
-  return Styles

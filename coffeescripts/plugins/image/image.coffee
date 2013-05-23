@@ -1,10 +1,5 @@
 define ["jquery.custom", "plugins/helpers", "plugins/image/image.upload_dialog"], ($, Helpers, Dialog) ->
-  window.SnapEditor.internalPlugins.image =
-    events:
-      activate: (e) -> $(e.api.el).on("mousedown", e.api.plugins.image.selectImage)
-      deactivate: (e) -> $(e.api.el).off("mousedown", e.api.plugins.image.selectImage)
-    commands:
-      image: Helpers.createCommand("image", "ctrl.g", (e) -> e.api.plugins.image.showDialog(e.api))
+  image =
     showDialog: (api) ->
       @dialog or= new Dialog(api.config.imageServer)
       @dialog.show(api)
@@ -14,10 +9,17 @@ define ["jquery.custom", "plugins/helpers", "plugins/image/image.upload_dialog"]
       # we manually select it. This does not break other browsers so it is left
       # in for consistency.
       e.api.select($el[0]) if $el.tagName() == "img"
+  SnapEditor.actions.image = (e) -> image.showDialog(e.api)
+
+  SnapEditor.buttons.image = Helpers.createButton("image", "ctrl+g", onInclude: (e) -> e.api.config.behaviours.push("image"))
+
+  SnapEditor.behaviours.image =
+    onActivate: (e) -> $(e.api.el).on("mousedown", image.selectImage)
+    onDeactivate: (e) -> $(e.api.el).off("mousedown", image.selectImage)
 
   styles = """
     .snapeditor_dialog .insert_image_form .insert_image_text {
       margin-bottom: 10px;
     }
   """ + Helpers.createStyles("image", 23 * -26)
-  window.SnapEditor.insertStyles("image", styles)
+  SnapEditor.insertStyles("image", styles)

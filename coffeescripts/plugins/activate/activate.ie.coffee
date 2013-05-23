@@ -6,17 +6,14 @@ define ["jquery.custom"], ($) ->
       # Add the events directly to the element instead of using SnapEditor
       # events because the Activate plugin is the one that starts off the
       # SnapEditor events.
-      data = api: api
-      $(api.el).one("mouseup", data, @onmouseup)
+      self = this
+      $(api.el).one("mouseup", (e) -> self.onmouseup(e, api))
 
-    onmouseup: (e) ->
+    onmouseup: (e, api) ->
       target = e.target
-      api = e.data.api
-      plugin = api.plugins.activate
-      api.off("snapeditor.mouseup", plugin.onmouseup)
-      unless plugin.isLink(target)
+      unless @isLink(target)
         isImage = $(target).tagName() == "img"
-        plugin.click(api)
+        @click(api)
         # NOTE: When selecting an image to snap edit in IE, the new Range
         # created is not a controlRange that represents the image. It is a
         # brand new textRange at the top of the editor. For some reason, the
@@ -25,5 +22,5 @@ define ["jquery.custom"], ($) ->
         # was an image, we select it directly rather than reselecting the old
         # range.
         api.select(target) if isImage
-        plugin.activate(api)
+        @activate(api)
   }

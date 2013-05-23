@@ -33,6 +33,7 @@ namespace :prepare do
     mkdir_p "bundle"
     rm_rf "bundle/snapeditor"
     mkdir_p "bundle/snapeditor"
+    mkdir_p "bundle/snapeditor/lang"
     cp "documentation/LICENSE.md", "bundle/snapeditor/."
     cp "documentation/LICENSE.html", "bundle/snapeditor/."
     cp "documentation/README.md", "bundle/snapeditor/."
@@ -40,7 +41,7 @@ namespace :prepare do
     cp "documentation/example.html", "bundle/snapeditor/."
     cp "build/snapeditor.js", "bundle/snapeditor/."
     cp_r "spec/acceptance/assets/images", "bundle/snapeditor/."
-    cp_r "spec/acceptance/assets/lang", "bundle/snapeditor/."
+    cp_r "spec/acceptance/assets/lang/en.js", "bundle/snapeditor/lang/."
     cp_r "spec/acceptance/assets/flash", "bundle/snapeditor"
     # zip usage: zip [options] <zip name without .zip> <directory to zip>
     #   -r: recursive (include subdirectories and files)

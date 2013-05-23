@@ -1,6 +1,6 @@
 require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "core/helpers"], ($, Handler, Range, Helpers) ->
   describe "EraseHandler", ->
-    $editable = $h1 = $p = handler = api = null
+    $editable = $h1 = $p = api = null
     beforeEach ->
       $editable = addEditableFixture()
       $h1 = $("<h1>header heading</h1>").appendTo($editable)
@@ -11,8 +11,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
         select: (el) -> @getRange(el).select()
         config: eraseHandler: delete: [".delete"]
       )
-      handler = window.SnapEditor.internalPlugins.eraseHandler
-      handler.api = api
+      Handler.api = api
       Helpers.delegate(api, "getRange()", "delete", "keepRange", "collapse", "isCollapsed")
 
     afterEach ->
@@ -31,7 +30,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range.collapse(false)
             range.select()
 
-            handler.merge(event)
+            Handler.merge(event)
             expect($editable.html()).toEqual("<h1>header headingsome text</h1>")
 
             range = new Range($editable[0], window)
@@ -47,7 +46,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range.collapse(false)
             range.select()
 
-            handler.merge(event)
+            Handler.merge(event)
             expect($editable.html()).toEqual(html)
 
             range = new Range($editable[0], window)
@@ -62,7 +61,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range.collapse(false)
             range.select()
 
-            handler.merge(event)
+            Handler.merge(event)
             expect($h1.html()).toEqual("header headingitem")
             expect($editable.find("ul").length).toEqual(0)
 
@@ -78,7 +77,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range.collapse(false)
             range.select()
 
-            handler.merge(event)
+            Handler.merge(event)
             expect($editable.find("hr").length).toEqual(0)
 
         describe "backspace", ->
@@ -92,7 +91,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range.collapse(true)
             range.select()
 
-            handler.merge(event)
+            Handler.merge(event)
             expect($editable.html()).toEqual("<h1>header headingsome text</h1>")
 
             range = new Range($editable[0], window)
@@ -108,7 +107,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range.collapse(true)
             range.select()
 
-            handler.merge(event)
+            Handler.merge(event)
             expect($editable.html()).toEqual(html)
 
             range = new Range($editable[0], window)
@@ -124,7 +123,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range.collapse(true)
             range.select()
 
-            handler.merge(event)
+            Handler.merge(event)
             expect($li.html()).toEqual("itemsome text")
             expect($editable.find("p").length).toEqual(0)
 
@@ -140,18 +139,18 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
             range.collapse(true)
             range.select()
 
-            handler.merge(event)
+            Handler.merge(event)
             expect($editable.find("hr").length).toEqual(0)
 
     describe "#shouldDelete", ->
       it "returns true for a <hr>", ->
-        expect(handler.shouldDelete($("<hr/>")[0])).toBeTruthy()
+        expect(Handler.shouldDelete($("<hr/>")[0])).toBeTruthy()
 
       it "returns true for a class to be deleted", ->
-        expect(handler.shouldDelete($("<div>").addClass("delete")[0])).toBeTruthy()
+        expect(Handler.shouldDelete($("<div>").addClass("delete")[0])).toBeTruthy()
 
       it "returns false when it should not be deleted", ->
-        expect(handler.shouldDelete($("<p/>")[0])).toBeFalsy()
+        expect(Handler.shouldDelete($("<p/>")[0])).toBeFalsy()
 
     describe "#delete", ->
       e = null
@@ -161,7 +160,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
 
       it "returns false when the range is collapsed", ->
         spyOn(api, "isCollapsed").andReturn(false)
-        expect(handler.delete(e, "delete")).toBeFalsy()
+        expect(Handler.delete(e, "delete")).toBeFalsy()
 
       describe "delete", ->
         range = null
@@ -179,7 +178,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("element")
             range.collapse(false)
             range.select()
-            expect(handler.delete(e, "delete")).toBeFalsy()
+            expect(Handler.delete(e, "delete")).toBeFalsy()
             expect(e.preventDefault).not.toHaveBeenCalled()
 
           it "does nothing and returns false when the sibling should not be deleted", ->
@@ -192,7 +191,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(false)
             range.select()
-            expect(handler.delete(e, "delete")).toBeFalsy()
+            expect(Handler.delete(e, "delete")).toBeFalsy()
             expect(e.preventDefault).not.toHaveBeenCalled()
 
           it "deletes the element and returns true when the sibling should be deleted", ->
@@ -205,7 +204,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(false)
             range.select()
-            expect(handler.delete(e, "delete")).toBeTruthy()
+            expect(Handler.delete(e, "delete")).toBeTruthy()
             expect(e.preventDefault).toHaveBeenCalled()
             expect($editable.html()).toEqual("text")
 
@@ -220,7 +219,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(false)
             range.select()
-            expect(handler.delete(e, "delete")).toBeFalsy()
+            expect(Handler.delete(e, "delete")).toBeFalsy()
             expect(e.preventDefault).not.toHaveBeenCalled()
 
           it "does nothing and returns false when the parent's sibling should not be deleted", ->
@@ -233,7 +232,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(false)
             range.select()
-            expect(handler.delete(e, "delete")).toBeFalsy()
+            expect(Handler.delete(e, "delete")).toBeFalsy()
             expect(e.preventDefault).not.toHaveBeenCalled()
 
           it "deletes the element and returns true when the parent's sibling should be deleted", ->
@@ -246,7 +245,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(false)
             range.select()
-            expect(handler.delete(e, "delete")).toBeTruthy()
+            expect(Handler.delete(e, "delete")).toBeTruthy()
             expect(e.preventDefault).toHaveBeenCalled()
             expect(clean($editable.html())).toEqual("<div>text</div>")
 
@@ -266,7 +265,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("element")
             range.collapse(true)
             range.select()
-            expect(handler.delete(e, "backspace")).toBeFalsy()
+            expect(Handler.delete(e, "backspace")).toBeFalsy()
             expect(e.preventDefault).not.toHaveBeenCalled()
 
           it "does nothing and returns false when the sibling should be deleted", ->
@@ -282,7 +281,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(true)
             range.select()
-            expect(handler.delete(e, "backspace")).toBeFalsy()
+            expect(Handler.delete(e, "backspace")).toBeFalsy()
             expect(e.preventDefault).not.toHaveBeenCalled()
 
           it "deletes the element and returns true when the sibling should be deleted", ->
@@ -298,7 +297,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(true)
             range.select()
-            expect(handler.delete(e, "backspace")).toBeTruthy()
+            expect(Handler.delete(e, "backspace")).toBeTruthy()
             expect(e.preventDefault).toHaveBeenCalled()
             expect(clean($editable.html())).toEqual("text")
 
@@ -313,7 +312,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(true)
             range.select()
-            expect(handler.delete(e, "backspace")).toBeFalsy()
+            expect(Handler.delete(e, "backspace")).toBeFalsy()
             expect(e.preventDefault).not.toHaveBeenCalled()
 
           it "does nothing and returns false when the parent's sibling should not be deleted", ->
@@ -326,7 +325,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(true)
             range.select()
-            expect(handler.delete(e, "backspace")).toBeFalsy()
+            expect(Handler.delete(e, "backspace")).toBeFalsy()
             expect(e.preventDefault).not.toHaveBeenCalled()
 
           it "deletes the element and returns true when the parent's sibling should be deleted", ->
@@ -339,7 +338,7 @@ require ["jquery.custom", "plugins/erase_handler/erase_handler", "core/range", "
               range.range.findText("text")
             range.collapse(true)
             range.select()
-            expect(handler.delete(e, "backspace")).toBeTruthy()
+            expect(Handler.delete(e, "backspace")).toBeTruthy()
             expect(e.preventDefault).toHaveBeenCalled()
             expect(clean($editable.html())).toEqual("<div>text</div>")
 

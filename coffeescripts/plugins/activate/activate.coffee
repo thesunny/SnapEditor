@@ -1,9 +1,6 @@
 # This plugin controls how the editor will be activated.
 define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activate.others", "plugins/activate/activate.ie"], ($, Browser, Helpers, Others, IE) ->
-  window.SnapEditor.internalPlugins.activate =
-    events:
-      pluginsReady: (e) -> e.api.plugins.activate.addActivateEvents(e.api)
-
+  activate =
     # Handles after a click has occurred.
     #
     # NOTE: This should trigger making @api.$el editable.
@@ -13,14 +10,14 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
     # Activates the editing session.
     activate: (api) ->
       api.activate()
-      api.on("snapeditor.deactivate", @deactivate)
+      self = this
+      @deactivateHandler = (e) -> self.deactivate(api)
+      api.on("snapeditor.deactivate", @deactivateHandler)
 
     # Deactivates the editing session.
-    deactivate: (e) ->
-      api = e.api
-      plugin = api.plugins.activate
-      api.off("snapeditor.deactivate", plugin.deactivate)
-      plugin.addActivateEvents(api)
+    deactivate: (api) ->
+      api.off("snapeditor.deactivate", @deactivateHandler)
+      @addActivateEvents(api)
 
     # True if el is a link or is inside a link. False otherwise.
     #
@@ -32,4 +29,10 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
       $el = $(el)
       $el.tagName() == 'a' or $el.parent('a').length != 0
 
-  Helpers.extend(window.SnapEditor.internalPlugins.activate, if Browser.isIE then IE else Others)
+  SnapEditor.behaviours.activate =
+    onPluginsReady: (e) -> activate.addActivateEvents(e.api)
+
+  Helpers.extend(activate, if Browser.isIE then IE else Others)
+
+  # activate returned for testing purposes.
+  return activate

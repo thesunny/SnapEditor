@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <!--<link rel="stylesheet" href="/spec/javascripts/support/assets/stylesheets/cssreset-min.css" type="text/css" charset="utf-8">-->
     <style type="text/css">
       table {
@@ -41,6 +42,33 @@
     <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       SnapEditor.debug = true;
+      SnapEditor.actions.hi = function (e) {
+        console.log("HI", e);
+      };
+      SnapEditor.behaviours.hi = {
+        onMousedown: "hi",
+        onMouseup: function (e) {
+          console.log("MOUSEUP", e);
+        }
+      }
+      SnapEditor.buttons.hi = {
+        text: "Hi",
+        action: "hi"
+      }
+      SnapEditor.shortcuts.hi = {
+        key: "ctrl+d",
+        action: function (e) {
+          console.log("SHORTCUT CTRL+D", e);
+        }
+      }
+      SnapEditor.shortcuts.bye = {
+        key: "ctrl+h",
+        action: "hi"
+      }
+
+      SnapEditor.InPlace.config.behaviours.push("hi")
+      SnapEditor.config.shortcuts.push("hi")
+      SnapEditor.config.shortcuts.push("bye")
 
       SnapEditor.widgets.graph = {
         create: function (e) {
@@ -150,9 +178,7 @@
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
         //snap: false,
-        toolbar: {
-          items: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "alignment"]
-        },
+        buttons: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi"],
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
@@ -165,10 +191,7 @@
       });
       var insecureInPlace2 = new SnapEditor.InPlace("insecure_in_place2", {
         path: "/spec/acceptance/assets",
-        //snap: false,
-        toolbar: {
-          items: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link"]
-        },
+        snap: false,
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
@@ -179,7 +202,23 @@
           return "OMG! ERROR!";
         }
       });
-
+      var insecureInPlace3 = new SnapEditor.InPlace("insecure_in_place3", {
+        path: "/spec/acceptance/assets",
+        snap: false,
+        imageServer: {
+          uploadUrl: insecureUploadUrl,
+          publicUrl: insecurePublicUrl,
+          directory: insecureDirectory
+        },
+        onUnsavedChanges: function(e) {
+          console.log(e);
+          console.log("HERE");
+          console.log(e.api.execAction("save"));
+        },
+        onSave: function (html) {
+          return true;
+        }
+      });
       /*
       var success = function (data, text, xhr) { console.log(data); };
       var error = function (xhr, text, error) { console.log(text); };
@@ -493,22 +532,10 @@
         <div class="atomic">This is atomic</div>
       </div>
       <div id="insecure_in_place2" class="in_place">
-        <div class="atomic">This is atomic</div>
-        Make me editable!
-        <br/>
-        <p style="text-align: right; background-color: pink">
-          RIGHT HERE!
-        </p>
         <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
-        <p><a href="snapeditor.com">SnapEditor</a></p>
-        <h1>Heading 1</h1>
-        <p><span class="atomic">Atomic span</span>between<span class="atomic">atomic span</span>between<span class="atomic">atomic span</span><span class="atomic">atomic span</span>between<span class="atomic">atomic span</span></p>
-        <div class="atomic">This is atomic</div>
-        <p>More text!</p>
-        <div class="atomic">This is atomic</div>
-        <div class="atomic">This is atomic</div>
-        <p>More text!</p>
-        <div class="atomic">This is atomic</div>
+      </div>
+      <div id="insecure_in_place3" class="in_place">
+        <p>hello</p><p>world</p><p>﻿</p></div>
       </div>
       <!--<div class="buttons">-->
         <!--<button class="server_sync">Sync</button>-->
@@ -516,5 +543,6 @@
         <!--<button class="server_delete">Delete</button>-->
       <!--</div>-->
     </div>
+    <iframe src="http://ycombinator.com"></iframe>
   </body>
 </html>

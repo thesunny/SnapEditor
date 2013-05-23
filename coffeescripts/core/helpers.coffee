@@ -4,7 +4,9 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     # CONSTANTS
     #
 
+    # Used when dealing with HTML like in innerHTML.
     zeroWidthNoBreakSpace: "&#65279;"
+    # Used when dealing with text like in regex or textnodes.
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
 
     buttons: {
@@ -50,6 +52,15 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         $object.detach()
         $container.remove()
       return isBlock
+
+    # Returns true if the el is empty. False otherwise.
+    isEmpty: (el) ->
+      $el = $(el)
+        # Check for any HTML tags that take up space. Currently only images
+        # take up space. If there are, we are not at the end.
+      return false if $el.find("img").length > 0
+      # Check for empty text.
+      !!$el.text().match(@emptyRegExp)
 
     # Returns an array of the nodes between and including startNode and endNode.
     # This assumes the startNode and endNode have the same parent.
@@ -121,17 +132,14 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
       $(style).appendTo("head")
 
     # Transforms the given coords so that they are relative to the outer
-    # window. The target is a node in the same window the coords are currently
-    # relative to.
+    # window.
     #
     # coords can be of 2 types:
     # 1. { x: <int>, y: <int> }
     # 2. { top: <int>, bottom: <int>, left: <int>, right: <int> }
-    transformCoordinatesRelativeToOuter: (coords, target) ->
-      # Nothing to transform since the target is part of the outer window.
-      return coords if @getDocument(target) == document
-      iframeScroll = $(@getWindow(target)).getScroll()
-      iframeCoords = $(Helpers.getParentIFrame(target)).getCoordinates()
+    transformCoordinatesRelativeToOuter: (coords, iframe) ->
+      iframeScroll = $(iframe.win).getScroll()
+      iframeCoords = $(iframe).getCoordinates()
       # Since the coords are relative to the iframe window, we need to
       # translate them so they are relative to the viewport of the iframe and
       # then add on the coordinates of the iframe.
@@ -219,14 +227,18 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     capitalize: (string) ->
       string.replace(/\b[a-z]/g, (match) -> match.toUpperCase())
 
+    # Uncapitalize the string.
+    uncapitalize: (string) ->
+      string.replace(/\b[A-Z]/g, (match) -> match.toLowerCase())
+
     # Changes a string from camel case to snake case.
     # e.g. "someMadeUpName" -> "some_made_up_name"
     camelToSnake: (string) ->
-      string.replace(/[A-Z]/g, (match) -> "_" + match.toLowerCase())
+      Helpers.uncapitalize(string).replace(/[A-Z]/g, (match) -> "_" + match.toLowerCase())
 
-    # Changes ctrl.shift.a to Ctrl+Shift+A.
+    # Changes ctrl+shift+a to Ctrl+Shift+A.
     displayShortcut: (shortcut) ->
-      $.map(shortcut.split("."), (s) -> Helpers.capitalize(s)).join("+")
+      $.map(shortcut.split("+"), (s) -> Helpers.capitalize(s)).join("+")
 
     # Normalizes the URL.
     normalizeURL: (url) ->
@@ -244,6 +256,21 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
           # Normalize path.
           normalizedUrl = "http://#{url}" unless url.charAt(0) == "/"
       normalizedUrl
+
+    #
+    # Arrays
+    #
+
+    # Returns only unique values in the array. Only works for primitive data
+    # types.
+    uniqueArray: (array) ->
+      unique = {}
+      uArray = []
+      for a in array
+        continue if unique[a]
+        uArray.push(a)
+        unique[a] = true
+      uArray
   }
 
   $.extend(Helpers, Keyboard)

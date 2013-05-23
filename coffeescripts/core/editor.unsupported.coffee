@@ -7,5 +7,3 @@ define ["core/browser"], (Browser) ->
 
     getContents: ->
       ""
-
-  return UnsupportedEditor

@@ -1,15 +1,22 @@
 define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
-  window.SnapEditor.internalPlugins.inline =
-    commands:
-      bold: Helpers.createCommand("bold", "ctrl.b", (e) -> e.api.plugins.inline.format(e))
-      italic: Helpers.createCommand("italic", "ctrl.i", (e) -> e.api.plugins.inline.format(e))
-      underline: Helpers.createCommand("underline", "ctr.u", (e) -> e.api.plugins.inline.format(e))
-      subscript: Helpers.createCommand("subscript", "ctrl.shift.-", (e) -> e.api.plugins.inline.format(e))
-      superscript: Helpers.createCommand("superscript", "ctrl.shift.=", (e) -> e.api.plugins.inline.format(e))
-      strikethrough: Helpers.createCommand("strikethrough", "ctrl.-", (e) -> e.api.plugins.inline.format(e))
-    format: (e) -> e.api.clean() if e.api.formatInline(e.type)
+  formatInline = (e) -> e.api.clean() if e.api.formatInline(e.type)
+  SnapEditor.actions.bold = formatInline
+  SnapEditor.actions.italic = formatInline
+  SnapEditor.actions.underline = formatInline
+  SnapEditor.actions.subscript = formatInline
+  SnapEditor.actions.superscript = formatInline
+  SnapEditor.actions.strikethrough = formatInline
+
+  $.extend(SnapEditor.buttons,
+    bold: Helpers.createButton("bold", "ctrl+b")
+    italic: Helpers.createButton("italic", "ctrl+i")
+    underline: Helpers.createButton("underline", "ctrl+u")
+    subscript: Helpers.createButton("subscript", "ctrl+shift+-")
+    superscript: Helpers.createButton("superscript", "ctrl+shift+=")
+    strikethrough: Helpers.createButton("strikethrough", "ctrl+-")
+  )
 
   styles = ""
-  for command, i in ["bold", "italic", "underline", "subscript", "superscript", "strikethrough"]
-    styles += Helpers.createStyles(command, i * -26) # sprite position * step
-  window.SnapEditor.insertStyles("plugins_inline", styles)
+  for button, i in ["bold", "italic", "underline", "subscript", "superscript", "strikethrough"]
+    styles += Helpers.createStyles(button, i * -26) # sprite position * step
+  SnapEditor.insertStyles("plugins_inline", styles)

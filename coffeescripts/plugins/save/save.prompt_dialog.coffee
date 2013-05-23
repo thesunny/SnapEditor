@@ -21,6 +21,18 @@ define ["jquery.custom", "core/helpers", "ui/ui.dialog"], ($, Helpers, Dialog) -
     setup: ->
       unless @$el
         super(title: @api.config.lang.saveTitle, html: @getHTML())
-        @$save = @$el.find(".save").on("click", => @trigger("save"))
-        @$cancel = @$el.find(".cancel").on("click", => @trigger("resume"))
-        @$discard = @$el.find(".discard").on("click", => @trigger("discard"))
+        @$save = @$el.find(".save").on("click", @save)
+        @$cancel = @$el.find(".cancel").on("click", @resume)
+        @$discard = @$el.find(".discard").on("click", @discard)
+
+    save: =>
+      @hide()
+      @trigger("save")
+
+    resume: =>
+      @hide()
+      @trigger("resume")
+
+    discard: =>
+      @hide()
+      @trigger("discard")

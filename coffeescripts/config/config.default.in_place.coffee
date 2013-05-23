@@ -1,18 +1,15 @@
 define [
+  "jquery.custom"
   "config/config.default"
   "plugins/snap/snap"
   "plugins/outline/outline"
   "plugins/save/save"
-], (Defaults, Snap, Outline, Save) ->
-  return {
-    build: ->
-      defaults = Defaults.build()
-      defaults.plugins = defaults.plugins.concat([
-        "snap"
-        "outline"
-        "save"
-      ])
-      defaults.toolbar = defaults.toolbar
-      defaults.snap = true
-      return defaults
-  }
+], ($, Defaults, Snap, Outline, Save) ->
+  SnapEditor.InPlace.config = $.extend(
+    snap: true
+    SnapEditor.config
+  )
+  SnapEditor.InPlace.config.behaviours = SnapEditor.InPlace.config.behaviours.concat([
+    "snap"
+    "outline"
+  ])
