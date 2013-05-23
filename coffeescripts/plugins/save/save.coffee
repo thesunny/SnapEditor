@@ -52,7 +52,7 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
 
     save: ->
       result = "onSave config was never defined."
-      result = @api.config.onSave(api: @api) if @api.config.onSave
+      result = @api.config.onSave(api: @api, html: @api.getContents()) if @api.config.onSave
       result
       if typeof result == "string"
         @getErrorDialog().show(@api, result)
