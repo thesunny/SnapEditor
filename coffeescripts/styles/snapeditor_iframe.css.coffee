@@ -48,6 +48,10 @@ define [], ->
       margin: 0.5em 0 0.75em;
     }
 
+    p:first-child {
+      margin-top: 0;
+    }
+
     ul, ol { margin: 1.12em 0; margin-left: 40px; }
     ol ul, ul ol, ul ul, ol ol { margin-top: 0; margin-bottom: 0; }
     ul { list-style: disc outside none; }
