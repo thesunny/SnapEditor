@@ -112,6 +112,16 @@
           directory: insecureDirectory
         }
       });
+      var insecureForm2 = new SnapEditor.Form("insecure_form2", {
+        path: "/spec/acceptance/assets",
+        stylesheets: [],
+        contentClass: "myClass",
+        imageServer: {
+          uploadUrl: insecureUploadUrl,
+          publicUrl: insecurePublicUrl,
+          directory: insecureDirectory
+        }
+      });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
         //snap: false,
@@ -450,6 +460,11 @@
         </div>
         just maybe not...
         <div class="atomic">This is atomic</div>
+      </textarea>
+      <textarea id="insecure_form2" class="form">
+        <div>
+          Some text
+        </div>
       </textarea>
       <input type="button" value="submit" />
       <div id="insecure_in_place" class="in_place">
