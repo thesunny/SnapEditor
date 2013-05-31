@@ -3,7 +3,7 @@ define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
     printWin = window.open("","_blank","width=1000,height=650,left=400,top=100,menubar=yes,toolbar=no,location=no,scrollbars=yes")
     printWin.document.open()
     printWin.document.write('<!doctype html><html><head><title>SnapEditor Print</title>')
-    $.each(e.api.find("link, style"), ->
+    $(e.api.doc).find("link, style").each( ->
       printWin.document.write(@outerHTML)
     )
     printWin.document.write('</head><body onload="print();">')

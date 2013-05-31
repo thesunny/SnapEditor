@@ -304,7 +304,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     # Shortcut to find elements in the doc. Always returns an array.
     find: (selector) ->
-      $(@doc).find(selector).toArray()
+      @$el.find(selector).toArray()
 
     # Inserts the given styles into the head of the document.
     # The id is used to ensure duplicate styles are not added.
