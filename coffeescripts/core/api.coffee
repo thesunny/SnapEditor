@@ -30,7 +30,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "getParentElement", "getParentElements", "getText", "getCoordinates",
         "collapse", "unselect", "keepRange", "moveBoundary",
         "insert", "surroundContents", "delete",
-        "select", "selectNodeContents", "selectEndOfElement",
+        "select", "selectElementContents", "selectEndOfElement",
         "formatBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )

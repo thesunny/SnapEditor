@@ -14,7 +14,7 @@
         isValid: -> true
         config: atomic: selectors: [".atomic"]
       Helpers.delegate(execCommand.editor, "getRange()", "getParentElement", "getParentElements", "isCollapsed", "unselect", "insert")
-      Helpers.delegate(execCommand.editor, "getBlankRange()", "select", "selectNodeContents", "selectEndOfElement")
+      Helpers.delegate(execCommand.editor, "getBlankRange()", "select", "selectElementContents", "selectEndOfElement")
 
     afterEach ->
       $editable.remove()

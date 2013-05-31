@@ -169,7 +169,7 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         @win.getSelection().removeAllRanges()
 
       # Select the contents of the element.
-      selectNodeContents: (el) ->
+      selectElementContents: (el) ->
         @range.selectNodeContents(el)
         @select()
 

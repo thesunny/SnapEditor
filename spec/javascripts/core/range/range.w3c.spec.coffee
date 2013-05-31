@@ -308,12 +308,12 @@ if hasW3CRanges
               range.unselect()
               expect(selection.rangeCount).toEqual(0)
 
-          describe "#selectNodeContents", ->
+          describe "#selectElementContents", ->
             it "selects the contents of an inline element", ->
               $editable.html("before<b>bold</b>after")
               range = new Range()
               range.range = Range.getBlankRange(win)
-              range.selectNodeContents($editable.find("b")[0])
+              range.selectElementContents($editable.find("b")[0])
 
               actualRange = selection.getRangeAt(0)
               actualRange.deleteContents()
@@ -323,7 +323,7 @@ if hasW3CRanges
               $editable.html("before<div>block</div>after")
               range = new Range()
               range.range = Range.getBlankRange(win)
-              range.selectNodeContents($editable.find("div")[0])
+              range.selectElementContents($editable.find("div")[0])
 
               actualRange = selection.getRangeAt(0)
               actualRange.deleteContents()
@@ -333,7 +333,7 @@ if hasW3CRanges
               $editable.html("before<a>link</a>after")
               range = new Range()
               range.range = Range.getBlankRange(win)
-              range.selectNodeContents($editable.find("a")[0])
+              range.selectElementContents($editable.find("a")[0])
 
               actualRange = selection.getRangeAt(0)
               actualRange.deleteContents()

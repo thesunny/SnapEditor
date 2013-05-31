@@ -240,7 +240,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         "collapse", "unselect", "keepRange", "moveBoundary",
         "insert", "surroundContents", "delete"
       )
-      Helpers.delegate(this, "getBlankRange()", "selectNodeContents", "selectEndOfElement")
+      Helpers.delegate(this, "getBlankRange()", "selectElementContents", "selectEndOfElement")
       Helpers.delegate(this, "execCommand",
         "formatBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"

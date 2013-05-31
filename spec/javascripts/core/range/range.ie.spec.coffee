@@ -310,12 +310,12 @@ unless hasW3CRanges
             range.unselect()
             expect(document.selection.createRange().text).toEqual("")
 
-        describe "#selectNodeContents", ->
+        describe "#selectElementContents", ->
           it "selects the contents of an inline element", ->
             $editable.html("before<b>bold</b>after")
             range = new Range()
             range.range = Range.getBlankRange()
-            range.selectNodeContents($editable.find("b")[0])
+            range.selectElementContents($editable.find("b")[0])
 
             actualRange = document.selection.createRange()
             expect(actualRange.parentElement()).toBe($editable.find("b")[0])
@@ -325,7 +325,7 @@ unless hasW3CRanges
             $editable.html("before<div>block</div>after")
             range = new Range()
             range.range = Range.getBlankRange()
-            range.selectNodeContents($editable.find("div")[0])
+            range.selectElementContents($editable.find("div")[0])
 
             actualRange = document.selection.createRange()
             # IE8 selects the entire block instead of its contents.
@@ -340,7 +340,7 @@ unless hasW3CRanges
             $editable.html("before<a>link</a>after")
             range = new Range()
             range.range = Range.getBlankRange()
-            range.selectNodeContents($editable.find("a")[0])
+            range.selectElementContents($editable.find("a")[0])
 
             actualRange = document.selection.createRange()
             expect(actualRange.parentElement()).toBe($editable.find("a")[0])
