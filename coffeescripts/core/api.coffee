@@ -8,8 +8,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       Helpers.delegate(this, "editor",
         # EVENTS
         "on", "off", "trigger",
-        "activate", "tryDeactivate", "deactivate",
-        "update", "clean",
         # CONTENTS
         "getContents", "setContents",
         # DOM
@@ -23,9 +21,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "isAllowed", "getReplacement",
         "getDefaultBlock", "getNext",
         # ACTIONS
+        "activate", "tryDeactivate", "deactivate",
+        "update", "clean",
         "execAction",
         # RANGE
-        "getRange", "getBlankRange",
+        "getRange",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getParentElement", "getParentElements", "getText", "getCoordinates",
         "collapse", "unselect", "keepRange", "moveBoundary",
