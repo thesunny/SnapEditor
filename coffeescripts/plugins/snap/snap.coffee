@@ -9,13 +9,13 @@ define ["jquery.custom"], ($) ->
       options = @getFxOptions()
       div.css(options.unsnapped[position]) for position, div of @divs
       div.animate(options.snapped[position], duration: "fast") for position, div of @divs
-      @api.on(
-        "snapeditor.keyup": @update
-        "snapeditor.mouseup": @update
-      )
       self = this
-      @resizeHandler = -> self.update()
-      $(window).on("resize", @resizeHandler)
+      @updateHandler = -> self.update()
+      @api.on(
+        "snapeditor.keyup": @updateHandler
+        "snapeditor.mouseup": @updateHandler
+      )
+      $(window).on("resize", @updateHandler)
 
     # Start the unsnap.
     unsnap: ->
@@ -24,10 +24,10 @@ define ["jquery.custom"], ($) ->
         div.css(options.snapped[position]) for position, div of @divs
         div.animate(options.unsnapped[position], duration: "fast", complete: -> $(this).hide()) for position, div of @divs
         @api.off(
-          "snapeditor.keyup": @update
-          "snapeditor.mouseup": @update
+          "snapeditor.keyup": @updateHandler
+          "snapeditor.mouseup": @updateHandler
         )
-        $(window).off("resize", @resizeHandler)
+        $(window).off("resize", @updateHandler)
         @active = false
 
     # Updates the divs in case @$el changed dimensions.
