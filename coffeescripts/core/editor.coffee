@@ -255,7 +255,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       Helpers.delegate(this, "getRange()",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getParentElement", "getParentElements", "getText",
-        "collapse", "unselect", "keepRange", "moveBoundary",
+        "unselect", "keepRange",
         "insert", "surroundContents", "delete"
       )
       Helpers.delegate(this, "getBlankRange()", "selectElementContents", "selectEndOfElement")
@@ -383,6 +383,22 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     # If a selection exists, use #getRange().
     getBlankRange: ->
       new Range(@el)
+
+    # Collapse to the start or end of the current selection.
+    # NOTE: This is not directly delegate to the Range object because it is
+    # slightly different. This will select the range after collapsing.
+    collapse: (start) ->
+      range = @getRange()
+      range.collapse(start)
+      range.select()
+
+    # Moves the selection's boundary to the boundary of the el.
+    # NOTE: This is not directly delegate to the Range object because it is
+    # slightly different. This will select the range after moving.
+    moveBoundary: (boundaries, el) ->
+      range = @getRange()
+      range.moveBoundary(boundaries, el)
+      range.select()
 
     # Select the given arg. If no arg is given, selects the current selection.
     # NOTE: This is not directly delegated to the Range object because it is
