@@ -7,7 +7,11 @@ define ["jquery.custom"], ($) ->
       # events because the Activate plugin is the one that starts off the
       # SnapEditor events.
       self = this
-      $(api.el).one("mouseup", (e) -> self.onmouseup(e, api))
+      @mouseupHandler = (e) -> self.onmouseup(e, api)
+      $(api.el).one("mouseup", @mouseupHandler)
+
+    removeActivateEvents: (api) ->
+      $(api.el).off("mouseup", @mouseupHandler)
 
     onmouseup: (e, api) ->
       target = e.target
@@ -22,5 +26,5 @@ define ["jquery.custom"], ($) ->
         # was an image, we select it directly rather than reselecting the old
         # range.
         api.select(target) if isImage
-        @activate(api)
+        @finishActivate(api)
   }

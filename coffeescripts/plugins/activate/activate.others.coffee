@@ -1,15 +1,21 @@
 define ["jquery.custom"], ($) ->
   return {
     # W3C requires contentEditable to be set after a mousedown in order to
-    # preserve cusor position. However, at this point, a range does not exist.
+    # preserve cursor position. However, at this point, a range does not exist.
     # It exists after a click or mouseup.
     addActivateEvents: (api) ->
       # Add the events directly to the element instead of using SnapEditor
       # events because the Activate plugin is the one that starts off the
       # SnapEditor events.
       self = this
-      $(api.el).one("mousedown", (e) -> self.onmousedown(e, api))
-      $(api.el).one("mouseup", (e) -> self.onmouseup(e, api))
+      @mousedownHandler = (e) -> self.onmousedown(e, api)
+      @mouseupHandler = (e) -> self.onmouseup(e, api)
+      $(api.el).one("mousedown", @mousedownHandler)
+      $(api.el).one("mouseup", @mouseupHandler)
+
+    removeActivateEvents: (api) ->
+      $(api.el).off("mousedown", @mousedownHandler)
+      $(api.el).off("mouseup", @mouseupHandler)
 
     onmousedown: (e, api) ->
       @click(api) unless @isLink(e.target)
@@ -29,5 +35,5 @@ define ["jquery.custom"], ($) ->
         # leaving it in. We leave it in for Gecko for consistency.
         #
         api.select(target) if $(target).tagName() == 'img'
-        @activate(api)
+        @finishActivate(api)
   }

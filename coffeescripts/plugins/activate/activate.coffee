@@ -8,13 +8,16 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
       api.trigger("snapeditor.activate_click")
 
     # Activates the editing session.
-    activate: (api) ->
-      api.activate()
+    finishActivate: (api) ->
+      @removeActivateEvents(api)
+      api.trigger("snapeditor.before_activate")
+      api.trigger("snapeditor.activate")
+      api.trigger("snapeditor.ready")
       self = this
       @deactivateHandler = (e) -> self.deactivate(api)
       api.on("snapeditor.deactivate", @deactivateHandler)
 
-    # Deactivates the editing session.
+    # Prepares for handling activation.
     deactivate: (api) ->
       api.off("snapeditor.deactivate", @deactivateHandler)
       @addActivateEvents(api)
