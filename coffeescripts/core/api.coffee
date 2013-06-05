@@ -8,8 +8,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       Helpers.delegate(this, "editor",
         # EVENTS
         "on", "off", "trigger",
-        "activate", "tryDeactivate", "deactivate",
-        "update", "clean",
         # CONTENTS
         "getContents", "setContents",
         # DOM
@@ -25,14 +23,16 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # WIDGETS
         "createWidget",
         # ACTIONS
+        "activate", "tryDeactivate", "deactivate",
+        "update", "clean",
         "execAction",
         # RANGE
-        "getRange", "getBlankRange",
+        "getRange",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getParentElement", "getParentElements", "getText", "getCoordinates",
         "collapse", "unselect", "keepRange", "moveBoundary",
         "insert", "surroundContents", "delete",
-        "select", "selectNodeContents", "selectEndOfElement",
+        "select", "selectElementContents", "selectEndOfElement",
         "formatBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )

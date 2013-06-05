@@ -175,6 +175,16 @@
           directory: insecureDirectory
         }
       });
+      var insecureForm2 = new SnapEditor.Form("insecure_form2", {
+        path: "/spec/acceptance/assets",
+        stylesheets: [],
+        contentClass: "myClass",
+        imageServer: {
+          uploadUrl: insecureUploadUrl,
+          publicUrl: insecurePublicUrl,
+          directory: insecureDirectory
+        }
+      });
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
         //snap: false,
@@ -184,8 +194,9 @@
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
         },
-        onSave: function (html) {
-          console.log(html);
+        onSave: function (e) {
+          console.log(e.html);
+          console.log(e.api.getContents());
           return "OMG! ERROR!";
         }
       });
@@ -197,8 +208,9 @@
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
         },
-        onSave: function (html) {
-          console.log(html);
+        onSave: function (e) {
+          console.log(e.html);
+          console.log(e.api.getContents());
           return "OMG! ERROR!";
         }
       });
@@ -215,7 +227,7 @@
           console.log("HERE");
           console.log(e.api.execAction("save"));
         },
-        onSave: function (html) {
+        onSave: function (e) {
           return true;
         }
       });
@@ -511,6 +523,11 @@
         </div>
         just maybe not...
         <div class="atomic">This is atomic</div>
+      </textarea>
+      <textarea id="insecure_form2" class="form">
+        <div>
+          Some text
+        </div>
       </textarea>
       <input type="button" value="submit" />
       <div id="insecure_in_place" class="in_place">

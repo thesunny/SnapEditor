@@ -220,6 +220,23 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
             zIndex: parseInt($(this).css("zIndex")) + 1
           ).appendTo("body"))
       )
+      # In IE, a div over an iframe doesn't block out the iframe. The div does
+      # indeed overlay the iframe, but you can still click through the div
+      # into the iframe. A background must be set to prevent this. However, if
+      # a solid background is set, you can't see the contents of the iframe
+      # anymore. Hence, we make the background transparent.
+      # Unfortunately, we could not add this code in the above call to
+      # each(). When the filter was applied to the first div, all subsequent
+      # calls to getCoordinates() returned the top of the window as the top
+      # coordinate. This positioned all subsequent divs in the wrong place. To
+      # avoid this, we apply the filter after positioning the divs.
+      if Browser.isIE
+        for $shim in @iframeShims
+          $shim.css(
+            backgroundColor: "white"
+            filter: "alpha(opacity=1)" # IE8/9
+            opacity: 0.01 # IE10
+          )
 
     attachDOMEvents: ->
       @$el.on(event, @handleDOMEvent) for event in @domEvents
@@ -245,7 +262,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         "collapse", "unselect", "keepRange", "moveBoundary",
         "insert", "surroundContents", "delete"
       )
-      Helpers.delegate(this, "getBlankRange()", "selectNodeContents", "selectEndOfElement")
+      Helpers.delegate(this, "getBlankRange()", "selectElementContents", "selectEndOfElement")
       Helpers.delegate(this, "execCommand",
         "formatBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
@@ -310,7 +327,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     # Shortcut to find elements in the doc. Always returns an array.
     find: (selector) ->
-      $(@doc).find(selector).toArray()
+      @$el.find(selector).toArray()
 
     # Inserts the given styles into the head of the document.
     # The id is used to ensure duplicate styles are not added.

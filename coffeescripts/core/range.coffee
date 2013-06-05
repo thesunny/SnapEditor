@@ -26,7 +26,7 @@
 # collapse(start): collapse range to start or end (returns this)
 # select([range]): selects the given range or itself
 # unselect(): unselects the range
-# selectNodeContents(el): selects the contents of the el
+# selectElementContents(el): selects the contents of the el
 # selectEndOfElement(el): selects the inside of the end of el
 # keepRange(fn): saves the range, calls the function, reinstates the range
 # moveBoundary(boundaries, el): moves a boundary to the start/end of the el
@@ -97,6 +97,7 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # QUERY RANGE STATE FUNCTIONS
     #
 
+    # Is the range valid.
     isValid: ->
       # Invalid if there is no range.
       return false unless @range
@@ -127,6 +128,7 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
       throw "#isEndOfElement() needs to be overridden with a browser specific implementation"
 
     # Get the coordinates of the range.
+    # Returns { top, bottom, left, right }
     #
     # NOTE:
     # Each browser has a different implementation to return the coordinates.
@@ -160,12 +162,12 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # The final solution implements a solution for each browser and leverages
     # the tools available to each browser and takes into consideration the
     # quirks each browser exhibits.
-    # Note that the final solution for Firefox does not return left and right
-    # coordinates.
     getCoordinates: ->
       throw "#getCoordinates() needs to be overridden with a browser specific implementation"
 
     # Finds the first parent element from the range that matches the argument.
+    # If the range is not collapsed, it starts the search at the common
+    # ancestor element.
     # The match can be a function or a CSS pattern like "a[name=mainlink]". If
     # you want to escape the lookup early, throw Range.EDITOR_ESCAPE_ERROR in
     # the function.
@@ -236,8 +238,8 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
       throw "#unselect() needs to be overridden with a browser specific implementation"
 
     # Select the contents of the element.
-    selectNodeContents: (el) ->
-      throw "#selectNodeContents() needs to be overridden with a browser specific implementation"
+    selectElementContents: (el) ->
+      throw "#selectElementContents() needs to be overridden with a browser specific implementation"
 
     # Move selection to the inside of the end of the element.
     selectEndOfElement: (el) ->

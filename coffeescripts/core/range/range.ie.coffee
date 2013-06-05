@@ -172,7 +172,7 @@ define ["core/helpers"], (Helpers) ->
       # Select the contents of the element.
       # NOTE: IE8 cannot select the contents when the element is a block. It
       # selects the entire block. IE7 is fine.
-      selectNodeContents: (el) ->
+      selectElementContents: (el) ->
         @range.moveToElementText(el)
         @select()
 

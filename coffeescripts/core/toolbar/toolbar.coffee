@@ -129,7 +129,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
           list-style: none;
           margin: 0;
           padding: 0;
-          height: 33px;
+          height: 34px;
         }
 
         .snapeditor_toolbar li {
@@ -144,8 +144,8 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
           border: 1px solid transparent;
           margin: 0;
           padding: 0;
-          width: 25px;
-          height: 25px;
+          width: 26px;
+          height: 26px;
           cursor: pointer;
           text-decoration: none;
           outline: none;
@@ -166,7 +166,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
           margin: 0;
           padding: 0;
           width: 1px;
-          height: 31px;
+          height: 34px;
         }
       """
 

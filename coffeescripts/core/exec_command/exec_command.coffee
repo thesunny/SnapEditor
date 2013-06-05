@@ -141,7 +141,7 @@ define ["jquery.custom", "core/exec_command/exec_command.gecko", "core/browser",
       # If the selection starts or ends inside a link, we change the
       # selection to select the link so that "createLink" modifies the link.
       [startParent, endParent] = @editor.getParentElements("a")
-      @editor.selectNodeContents(startParent || endParent) if startParent || endParent
+      @editor.selectElementContents(startParent || endParent) if startParent || endParent
 
       # When the range is collapsed, the "createLink" execCommand does nothing.
       # A selection must be made in order for "createLink" to insert a link.
