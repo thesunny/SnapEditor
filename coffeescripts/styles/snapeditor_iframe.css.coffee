@@ -2,6 +2,10 @@ define [], ->
   """
     /* GENERAL */
 
+    * {
+      outline: none;
+    }
+
     body {
       font-family: Arial, Helvetica, sans-serif;
       font-size: 14px;
