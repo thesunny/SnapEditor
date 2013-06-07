@@ -18,6 +18,7 @@ define ["jquery.custom"], ($) ->
         "snapeditor.document_mousedown": @setDeactivateHandler
         "snapeditor.document_mouseup": @tryDeactivateHandler
       )
+      @api.trigger("snapeditor.deactivate")
 
     setDeactivate: (e) ->
       @isDeactivate = true unless @isIgnore(e.target)
@@ -30,7 +31,9 @@ define ["jquery.custom"], ($) ->
     isIgnore: (el) ->
       $(el).closest(".#{@classname}").length > 0
 
+  SnapEditor.actions.deactivate = (e) ->
+    deactivate.deactivate()
+
   SnapEditor.behaviours.deactivate =
     onPluginsReady: (e) -> $(e.api.el).addClass(deactivate.classname)
     onActivate: (e) -> deactivate.activate(e.api)
-    onDeactivate: (e) -> deactivate.deactivate()

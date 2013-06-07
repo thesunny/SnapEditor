@@ -22,5 +22,5 @@ define ["jquery.custom"], ($) ->
         # was an image, we select it directly rather than reselecting the old
         # range.
         api.select(target) if isImage
-        @activate(api)
+        @finishActivate(api)
   }

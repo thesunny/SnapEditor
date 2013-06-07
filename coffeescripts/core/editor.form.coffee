@@ -64,7 +64,14 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       # sticks out a few pixels.
       @$iframeContainer.css(height: textareaCoords.height - toolbarCoords.height)
       # Swap.
-      @$textarea.hide()
+      # Don't hide the textarea. If we hide the textarea, we can't tab into
+      # it. Instead, just move it off the page. When the focus is given to the
+      # textarea, activate the editor.
+      @$textarea.css(
+        position: "absolute"
+        top: 0
+        left: -9999
+      ).focus(=> @api.activate())
       @$container.show()
 
     css: """
