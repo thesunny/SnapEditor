@@ -8,14 +8,8 @@ define ["jquery.custom"], ($) ->
       # events because the Activate plugin is the one that starts off the
       # SnapEditor events.
       self = this
-      @mousedownHandler = (e) -> self.onmousedown(e, api)
-      @mouseupHandler = (e) -> self.onmouseup(e, api)
-      $(api.el).one("mousedown", @mousedownHandler)
-      $(api.el).one("mouseup", @mouseupHandler)
-
-    removeActivateEvents: (api) ->
-      $(api.el).off("mousedown", @mousedownHandler)
-      $(api.el).off("mouseup", @mouseupHandler)
+      $(api.el).one("mousedown", (e) -> self.onmousedown(e, api))
+      $(api.el).one("mouseup", (e) -> self.onmouseup(e, api))
 
     onmousedown: (e, api) ->
       @click(api) unless @isLink(e.target)

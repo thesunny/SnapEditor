@@ -9,7 +9,10 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
 
     # Activates the editing session.
     finishActivate: (api) ->
-      @removeActivateEvents(api)
+      # Ensure that something is selected. This is mainly for IE8.
+      unless api.isValid()
+        api.selectElementContents(api.el)
+        api.collapse(true)
       api.trigger("snapeditor.before_activate")
       api.trigger("snapeditor.activate")
       api.trigger("snapeditor.ready")
@@ -31,6 +34,23 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
     isLink: (el) ->
       $el = $(el)
       $el.tagName() == 'a' or $el.parent('a').length != 0
+
+  SnapEditor.actions.activate = (e) ->
+    api = e.api
+    # This is required for all browsers. A range must be set before kicking
+    # off the mousedown/mouseup.
+    api.selectElementContents(api.el)
+    api.collapse(true)
+    $(api.el).trigger("mousedown")
+    $(api.el).trigger("mouseup")
+    # In Webkit, without focus(), activating inside an iframe doesn't work.
+    # Both win.focus() and el.focus() work in Webkit.
+    # In Gecko, without focus() activating doesn't work in any scenario.
+    # win.focus() does not work but win.el() does in Gecko.
+    # Hence, the solution is to use el.focus().
+    # Note that calling focus() earlier doesn't work either. It must be after
+    # the mouseup call.
+    api.el.focus()
 
   SnapEditor.behaviours.activate =
     onPluginsReady: (e) -> activate.addActivateEvents(e.api)
