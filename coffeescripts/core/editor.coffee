@@ -40,6 +40,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # Instantiate the API.
       @api = new API(this)
       @api.on("snapeditor.activate", @attachDOMEvents)
+      @api.on("snapeditor.deactivate", @detachDOMEvents)
 
       # Deal with plugins.
       @includeButtons()
@@ -239,7 +240,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @addIFrameShims()
       @onDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
-    detachDOMEvents: ->
+    detachDOMEvents: =>
       @$el.off(event, @handleDOMEvent) for event in @domEvents
       $shim.remove() for $shim in @iframeShims
       @offDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
@@ -277,8 +278,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     # Deactivate the editor.
     deactivate: =>
-      @detachDOMEvents()
-      @trigger("snapeditor.deactivate")
+      @execAction("deactivate", api: @api)
 
     # Update the editor.
     update: ->
