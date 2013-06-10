@@ -152,7 +152,7 @@ define ["jquery.custom", "core/widget/widget.event", "core/iframe"], ($, WidgetE
       @widgetEvent.load(@$el)
       # TODO: Include modified mouse coordinates.
       @widgetEvent.domEvent = e
-      @widget.edit(@widgetEvent)
+      @widget.onEdit(@widgetEvent)
 
     remove: (e) =>
       @$buttons.hide()

@@ -71,14 +71,14 @@
       SnapEditor.config.shortcuts.push("bye")
 
       SnapEditor.widgets.graph = {
-        create: function (e) {
+        onCreate: function (e) {
           this.e = e;
           this.save("1,2,200");
           /* Commenting out for quickness.
           this.displayPopup();
           */
         },
-        edit: function (e) {
+        onEdit: function (e) {
           this.e = e;
           this.save("1,2,200");
           /* Commenting out for quickness.

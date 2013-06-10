@@ -9,11 +9,11 @@ define ["jquery.custom", "core/widget/widget.event", "core/widget/widget.overlay
       throw "insertWidget(): widget type does not exist - #{type}" unless widget
 
       # Set the default onRemove function if it doesn't exist.
-      widget.remove or= (e) -> e.remove()
+      widget.onRemove or= (e) -> e.remove()
 
       event = @createEvent(type)
       args.unshift(event)
-      widget.create.apply(widget, args)
+      widget.onCreate.apply(widget, args)
 
     createEvent: (type, el = null) ->
       widgetEvent = new WidgetEvent(type, @classname, @api, WidgetOverlay)
