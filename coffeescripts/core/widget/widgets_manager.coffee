@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/widget/widget.event", "core/widget/widget.overlay"], ($, WidgetEvent, WidgetOverlay) ->
+define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overlay"], ($, WidgetObject, WidgetOverlay) ->
   class WidgetsManager
     constructor: (@api, @classname) ->
       @api.on("snapeditor.activate", @activate)
@@ -9,16 +9,19 @@ define ["jquery.custom", "core/widget/widget.event", "core/widget/widget.overlay
       throw "insertWidget(): widget type does not exist - #{type}" unless widget
 
       # Set the default onRemove function if it doesn't exist.
-      widget.onRemove or= (e) -> e.remove()
+      widget.onRemove or= (e) -> e.widget.remove()
 
-      event = @createEvent(type)
+      widgetObject = @createWidgetObject(type)
+      event =
+        api: @api
+        widget: widgetObject
       args.unshift(event)
       widget.onCreate.apply(widget, args)
 
-    createEvent: (type, el = null) ->
-      widgetEvent = new WidgetEvent(type, @classname, @api, WidgetOverlay)
-      widgetEvent.load(el) if el
-      widgetEvent
+    createWidgetObject: (type, el = null) ->
+      widgetObject = new WidgetObject(type, @classname, @api, WidgetOverlay)
+      widgetObject.load(el) if el
+      widgetObject
 
     activate: =>
       @setup()

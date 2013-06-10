@@ -127,9 +127,9 @@
           /* Commenting out for quickness.
           this.popup.hide();
           */
-          this.e.json.data = data;
-          this.e.html = $("<div>hello world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.json.data)).html();
-          this.e.save();
+          this.e.widget.json.data = data;
+          this.e.widget.html = $("<div>hello world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.widget.json.data)).html();
+          this.e.widget.save();
         }
       };
 

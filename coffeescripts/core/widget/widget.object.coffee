@@ -2,11 +2,10 @@
 # NOTE: json2 does not follow AMD. The J is needed to swallow up the undefined
 # given by json2.
 define ["../../../lib/json2", "jquery.custom"], (J, $) ->
-  class WidgetEvent
+  class WidgetObject
     constructor: (@type, @classname, @api, @overlayClass) ->
       @json = {}
       @html = ""
-      @domEvent = null
       # Save the range.
       @range = @api.getRange()
 

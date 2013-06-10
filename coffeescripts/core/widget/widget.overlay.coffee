@@ -43,14 +43,14 @@
 #   </div>
 #   <p>Widget content</p>
 # </div>
-define ["jquery.custom", "core/widget/widget.event", "core/iframe"], ($, WidgetEvent, IFrame) ->
+define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, WidgetObject, IFrame) ->
   class WidgetOverlay
     constructor: (el, @classname, @api) ->
       @$el = $(el)
       @type = @$el.attr("data-type")
       @widget = SnapEditor.widgets[@type]
       throw "WidgetOverlay: widget type does not exist - #{@type}" unless @widget
-      @widgetEvent = new WidgetEvent(@type, @classname, @api, WidgetOverlay)
+      @widgetObject = new WidgetObject(@type, @classname, @api, WidgetOverlay)
 
     insert: ->
       @$el.css("position", "relative")
@@ -149,13 +149,20 @@ define ["jquery.custom", "core/widget/widget.event", "core/iframe"], ($, WidgetE
 
     edit: (e) =>
       @$buttons.hide()
-      @widgetEvent.load(@$el)
+      @widgetObject.load(@$el)
       # TODO: Include modified mouse coordinates.
-      @widgetEvent.domEvent = e
-      @widget.onEdit(@widgetEvent)
+      @widget.onEdit(
+        api: @api
+        widget: @widgetObject
+        domEvent: e
+      )
 
     remove: (e) =>
       @$buttons.hide()
-      @widgetEvent.load(@$el)
-      @widgetEvent.domEvent = e
-      @widget.remove(@widgetEvent)
+      @widgetObject.load(@$el)
+      # TODO: Include modified mouse coordinates.
+      @widget.onRemove(
+        api: @api
+        widget: @widgetObject
+        domEvent: e
+      )
