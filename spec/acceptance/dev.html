@@ -422,6 +422,7 @@
     <!--</div>-->
     <div class="insecure">
       <h1>Insecure</h1>
+      <input type="button" value="activate" onclick="insecureForm.api.activate()" />
       <textarea id="insecure_form" class="form">
         <p>some text at the beginning</p>
         <p>some text at the beginning</p>
@@ -530,6 +531,7 @@
         </div>
       </textarea>
       <input type="button" value="submit" />
+      <input type="button" value="activate" onclick="insecureInPlace.api.activate()" />
       <div id="insecure_in_place" class="in_place">
         <div class="atomic">This is atomic</div>
         Make me editable!
@@ -553,7 +555,6 @@
       </div>
       <div id="insecure_in_place3" class="in_place">
         <p>hello</p><p>world</p><p>﻿</p></div>
-      </div>
       <!--<div class="buttons">-->
         <!--<button class="server_sync">Sync</button>-->
         <!--<button class="server_list">List</button>-->
