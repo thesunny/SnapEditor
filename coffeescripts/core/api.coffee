@@ -21,7 +21,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "isAllowed", "getReplacement",
         "getDefaultBlock", "getNext",
         # WIDGETS
-        "createWidget",
+        "insertWidget",
         # ACTIONS
         "activate", "tryDeactivate", "deactivate",
         "update", "clean",

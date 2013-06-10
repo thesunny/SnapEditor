@@ -47,5 +47,3 @@ define ["../../../lib/json2", "jquery.custom"], (J, $) ->
       @range.delete()
       @range.insert($el[0])
       @$el = $(@api.find("#INSERT_WIDGET")).removeAttr("id")
-
-  return WidgetEvent

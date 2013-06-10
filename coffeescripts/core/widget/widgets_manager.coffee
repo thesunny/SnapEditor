@@ -4,9 +4,9 @@ define ["jquery.custom", "core/widget/widget.event", "core/widget/widget.overlay
       @api.on("snapeditor.activate", @activate)
       @api.on("snapeditor.deactivate", @deactivate)
 
-    createWidget: (type, args = []) ->
+    insertWidget: (type, args = []) ->
       widget = SnapEditor.widgets[type]
-      throw "createWidget(): widget type does not exist - #{type}" unless widget
+      throw "insertWidget(): widget type does not exist - #{type}" unless widget
 
       # Set the default onRemove function if it doesn't exist.
       widget.remove or= (e) -> e.remove()
@@ -44,5 +44,3 @@ define ["jquery.custom", "core/widget/widget.event", "core/widget/widget.overlay
     teardownWidget: (el) =>
       $(el).css("position", "")
       $(el).find("#{@classname}_overlay").remove()
-
-  return WidgetsManager

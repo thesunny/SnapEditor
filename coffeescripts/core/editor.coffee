@@ -269,7 +269,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         "formatBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )
-      Helpers.delegate(this, "widgetsManager", "createWidget")
+      Helpers.delegate(this, "widgetsManager", "insertWidget")
 
     #
     # EVENTS
