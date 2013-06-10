@@ -133,11 +133,11 @@ define ["jquery.custom", "core/widget/widget.event", "core/iframe"], ($, WidgetE
     mouseup: (e) =>
       sibling = @$el.prev()[0]
       if sibling
-        @api.selectNodeContents(sibling)
+        @api.selectElementContents(sibling)
         @api.collapse(true)
       else
         sibling = @$el.next()[0]
-        @api.selectNodeContents(sibling)
+        @api.selectElementContents(sibling)
         @api.collapse(false)
       @edit(e) unless($(e.target).parent(".#{@classname}_buttons")[0])
 
