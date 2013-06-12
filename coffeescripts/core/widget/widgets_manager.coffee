@@ -4,7 +4,11 @@ define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overla
       @api.on("snapeditor.activate", @activate)
       @api.on("snapeditor.deactivate", @deactivate)
 
-    insertWidget: (type, args = []) ->
+    # The first argument is the type.
+    # All other arguments are extra arguments to be passed to the onCreate().
+    insertWidget: ->
+      type = arguments[0]
+      args = [].slice.apply(arguments, [1])
       widget = SnapEditor.widgets[type]
       throw "insertWidget(): widget type does not exist - #{type}" unless widget
 
@@ -15,6 +19,7 @@ define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overla
       event =
         api: @api
         widget: widgetObject
+        domEvent: args.pop()
       args.unshift(event)
       widget.onCreate.apply(widget, args)
 
