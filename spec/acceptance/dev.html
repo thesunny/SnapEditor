@@ -70,23 +70,31 @@
       SnapEditor.config.shortcuts.push("hi")
       SnapEditor.config.shortcuts.push("bye")
 
+      SnapEditor.buttons.graph = {
+        text: "Graph",
+        action: function (e) {
+          e.api.insertWidget("graph", e);
+        }
+      }
       SnapEditor.widgets.graph = {
         onCreate: function (e) {
           this.e = e;
-          this.save("1,2,200");
-          /* Commenting out for quickness.
+          //this.save("1,2,200");
           this.displayPopup();
-          */
         },
         onEdit: function (e) {
           this.e = e;
-          this.save("1,2,200");
-          /* Commenting out for quickness.
+          //this.save("1,2,200");
           this.displayPopup();
-          console.log(this.e.json.data);
-          this.popup.find("input[name=data]").val(this.e.json.data);
-          */
+          console.log(this.e.widget.json.data);
+          this.popup.find("input[name=data]").val(this.e.widget.json.data);
         },
+        /*
+        onRemove: function (e) {
+          console.log("REMOVE");
+          e.widget.remove();
+        },
+        */
         displayPopup: function () {
           this.setupPopup();
           this.popup.show();
@@ -124,9 +132,7 @@
         heights: [5, 50, 100, 150, 200],
         counter: 0,
         save: function (data) {
-          /* Commenting out for quickness.
           this.popup.hide();
-          */
           this.e.widget.json.data = data;
           this.e.widget.html = $("<div>hello world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.widget.json.data)).html();
           this.e.widget.save();
@@ -177,6 +183,7 @@
       });
       var insecureForm2 = new SnapEditor.Form("insecure_form2", {
         path: "/spec/acceptance/assets",
+        buttons: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph"],
         stylesheets: [],
         contentClass: "myClass",
         imageServer: {
@@ -188,7 +195,7 @@
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
         //snap: false,
-        buttons: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi"],
+        buttons: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph"],
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
