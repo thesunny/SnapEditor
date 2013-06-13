@@ -5,13 +5,12 @@ unless isIE
       beforeEach ->
         activate =
           click: ->
-          activate: ->
+          finishActivate: ->
           isLink: -> false
         Helpers.extend(activate, Others)
         api = $("<div/>")
         api.el = $("<div/>")[0]
         api.select = ->
-        api.plugins = activate: activate
 
       describe "#addActivateEvents", ->
         it "adds mousedown and mouseup events", ->
@@ -60,24 +59,24 @@ unless isIE
 
         it "selects the target if an image is clicked", ->
           spyOn(api, "select")
-          spyOn(activate, "activate")
+          spyOn(activate, "finishActivate")
           event.target = $("<img/>")[0]
           activate.onmouseup(event, api)
           expect(api.select).toHaveBeenCalledWith(event.target)
 
         it "does not select the target if an image is not clicked", ->
           spyOn(api, "select")
-          spyOn(activate, "activate")
+          spyOn(activate, "finishActivate")
           activate.onmouseup(event, api)
           expect(api.select).not.toHaveBeenCalled()
 
         it "activates the editor when the target is not a link", ->
-          spyOn(activate, "activate")
+          spyOn(activate, "finishActivate")
           activate.onmouseup(event)
-          expect(activate.activate).toHaveBeenCalled()
+          expect(activate.finishActivate).toHaveBeenCalled()
 
         it "does nothing when the target is a link", ->
           spyOn(activate, "isLink").andReturn(true)
-          spyOn(activate, "activate")
+          spyOn(activate, "finishActivate")
           activate.onmouseup(event, api)
-          expect(activate.activate).not.toHaveBeenCalled()
+          expect(activate.finishActivate).not.toHaveBeenCalled()
