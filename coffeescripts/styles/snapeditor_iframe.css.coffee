@@ -81,6 +81,14 @@ define [], ->
       font-style: italic;
     }
 
+    sup {
+      vertical-align: super;
+    }
+
+    sub {
+      vertical-align: sub;
+    }
+
     code {
       font-family: monospace;
     }
