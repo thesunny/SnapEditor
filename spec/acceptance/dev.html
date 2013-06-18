@@ -78,11 +78,13 @@
       }
       SnapEditor.widgets.graph = {
         onCreate: function (e) {
+          console.log(e);
           this.e = e;
           //this.save("1,2,200");
           this.displayPopup();
         },
         onEdit: function (e) {
+          console.log(e);
           this.e = e;
           //this.save("1,2,200");
           this.displayPopup();

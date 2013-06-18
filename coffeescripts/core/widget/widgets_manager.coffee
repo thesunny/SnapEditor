@@ -1,8 +1,8 @@
 define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overlay"], ($, WidgetObject, WidgetOverlay) ->
   class WidgetsManager
-    constructor: (@api, @classname) ->
-      @api.on("snapeditor.activate", @activate)
-      @api.on("snapeditor.deactivate", @deactivate)
+    constructor: (@editor, @classname) ->
+      @editor.on("snapeditor.activate", @activate)
+      @editor.on("snapeditor.deactivate", @deactivate)
 
     # The first argument is the type.
     # All other arguments are extra arguments to be passed to the onCreate().
@@ -20,7 +20,7 @@ define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overla
       # If no event was passed through, create a new event with the api and
       # widget attribute.
       event = $.extend(
-        api: @api
+        api: @editor.api
         widget: @createWidgetObject(type)
         args.shift()
       )
@@ -28,30 +28,30 @@ define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overla
       widget.onCreate.apply(widget, args)
 
     createWidgetObject: (type, el = null) ->
-      widgetObject = new WidgetObject(type, @classname, @api, WidgetOverlay)
+      widgetObject = new WidgetObject(type, @classname, @editor.api, WidgetOverlay)
       widgetObject.load(el) if el
       widgetObject
 
     activate: =>
       @setup()
-      @api.on("snapeditor.beforeGetContent", @teardown)
-      @api.on("snapeditor.afterGetContent", @setup)
+      @editor.on("snapeditor.beforeGetContent", @teardown)
+      @editor.on("snapeditor.afterGetContent", @setup)
 
     deactivate: =>
       @teardown()
-      @api.off("snapeditor.beforeGetContent", @teardown)
-      @api.off("snapeditor.afterGetContent", @setup)
+      @editor.off("snapeditor.beforeGetContent", @teardown)
+      @editor.off("snapeditor.afterGetContent", @setup)
 
     setup: =>
       setupWidget = @setupWidget
-      $(@api.find(".#{@classname}")).each(-> setupWidget(this))
+      $(@editor.find(".#{@classname}")).each(-> setupWidget(this))
 
     setupWidget: (el) =>
-      (new WidgetOverlay(el, @classname, @api)).insert()
+      (new WidgetOverlay(el, @classname, @editor)).insert()
 
     teardown: =>
       teardownWidget = @teardownWidget
-      $(@api.find(".#{@classname}")).each(-> teardownWidget(this))
+      $(@editor.find(".#{@classname}")).each(-> teardownWidget(this))
 
     teardownWidget: (el) =>
       $(el).css("position", "")

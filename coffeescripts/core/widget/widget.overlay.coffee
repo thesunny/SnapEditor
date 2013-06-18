@@ -45,12 +45,12 @@
 # </div>
 define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, WidgetObject, IFrame) ->
   class WidgetOverlay
-    constructor: (el, @classname, @api) ->
+    constructor: (el, @classname, @editor) ->
       @$el = $(el)
       @type = @$el.attr("data-type")
       @widget = SnapEditor.widgets[@type]
       throw "WidgetOverlay: widget type does not exist - #{@type}" unless @widget
-      @widgetObject = new WidgetObject(@type, @classname, @api, WidgetOverlay)
+      @widgetObject = new WidgetObject(@type, @classname, @editor.api, WidgetOverlay)
 
     insert: ->
       @$el.css("position", "relative")
@@ -133,12 +133,12 @@ define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, Widget
     mouseup: (e) =>
       sibling = @$el.prev()[0]
       if sibling
-        @api.selectElementContents(sibling)
-        @api.collapse(true)
+        @editor.selectElementContents(sibling)
+        @editor.collapse(true)
       else
         sibling = @$el.next()[0]
-        @api.selectElementContents(sibling)
-        @api.collapse(false)
+        @editor.selectElementContents(sibling)
+        @editor.collapse(false)
       @edit(e) unless($(e.target).parent(".#{@classname}_buttons")[0])
 
     mouseover: (e) =>
@@ -150,9 +150,8 @@ define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, Widget
     edit: (e) =>
       @$buttons.hide()
       @widgetObject.load(@$el)
-      # TODO: Include modified mouse coordinates.
       @widget.onEdit(
-        api: @api
+        api: @editor.api
         widget: @widgetObject
         domEvent: e
       )
@@ -160,9 +159,8 @@ define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, Widget
     remove: (e) =>
       @$buttons.hide()
       @widgetObject.load(@$el)
-      # TODO: Include modified mouse coordinates.
       @widget.onRemove(
-        api: @api
+        api: @editor.api
         widget: @widgetObject
         domEvent: e
       )
