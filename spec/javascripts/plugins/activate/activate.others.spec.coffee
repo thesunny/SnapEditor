@@ -5,6 +5,7 @@ unless isIE
       beforeEach ->
         activate =
           click: ->
+          shouldActivate: -> true
           finishActivate: ->
           isLink: -> false
         Helpers.extend(activate, Others)
@@ -13,26 +14,33 @@ unless isIE
         api.select = ->
 
       describe "#addActivateEvents", ->
-        it "adds mousedown and mouseup events", ->
+        it "adds mousedown, click, and mouseup events", ->
           spyOn(activate, "onmousedown")
+          spyOn(activate, "click")
           spyOn(activate, "onmouseup")
           activate.addActivateEvents(api)
           $(api.el).trigger("mousedown")
+          $(api.el).trigger("click")
           $(api.el).trigger("mouseup")
           expect(activate.onmousedown).toHaveBeenCalled()
+          expect(activate.click).toHaveBeenCalled()
           expect(activate.onmouseup).toHaveBeenCalled()
 
-        it "listens to mousedown and mouseup only once", ->
+        it "listens to mousedown, click, and mouseup only once", ->
           spyOn(activate, "onmousedown").andCallThrough()
+          spyOn(activate, "click").andCallThrough()
           spyOn(activate, "onmouseup").andCallThrough()
           activate.addActivateEvents(api)
 
           $(api.el).trigger("mousedown")
+          $(api.el).trigger("click")
           $(api.el).trigger("mouseup")
           $(api.el).trigger("mousedown")
+          $(api.el).trigger("click")
           $(api.el).trigger("mouseup")
 
           expect(activate.onmousedown.callCount).toEqual(1)
+          expect(activate.click.callCount).toEqual(1)
           expect(activate.onmouseup.callCount).toEqual(1)
 
       describe "#onmousedown", ->
@@ -40,17 +48,17 @@ unless isIE
         beforeEach ->
           event = target: "target"
 
-        it "triggers click.activate when the target is not a link", ->
+        it "triggers snapeditor.activate_click when the target is not a link", ->
           activate.isLink = (el) -> false
-          spyOn(activate, "click")
+          spyOn(api, "trigger")
           activate.onmousedown(event, api)
-          expect(activate.click).toHaveBeenCalled()
+          expect(api.trigger).toHaveBeenCalledWith("snapeditor.activate_click")
 
         it "does nothing when the target is a link", ->
-          spyOn(activate, "isLink").andReturn(true)
-          spyOn(activate, "click")
+          spyOn(activate, "shouldActivate").andReturn(false)
+          spyOn(api, "trigger")
           activate.onmousedown(event, api)
-          expect(activate.click).not.toHaveBeenCalled()
+          expect(api.trigger).not.toHaveBeenCalled()
 
       describe "#onmouseup", ->
         event = null
@@ -76,7 +84,7 @@ unless isIE
           expect(activate.finishActivate).toHaveBeenCalled()
 
         it "does nothing when the target is a link", ->
-          spyOn(activate, "isLink").andReturn(true)
+          spyOn(activate, "shouldActivate").andReturn(false)
           spyOn(activate, "finishActivate")
           activate.onmouseup(event, api)
           expect(activate.finishActivate).not.toHaveBeenCalled()
