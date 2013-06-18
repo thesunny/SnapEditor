@@ -5,6 +5,7 @@ if isIE
       beforeEach ->
         activate =
           click: ->
+          shouldActivate: -> true
           finishActivate: ->
           isLink: -> false
         Helpers.extend(activate, IE)
@@ -44,15 +45,16 @@ if isIE
             activate.onmouseup(event, api)
             expect(api.select).toHaveBeenCalledWith(event.target)
 
-          it "triggers click.activate and activates the editor", ->
-            spyOn(activate, "click")
+          it "triggers snapeditor.activate_click and activates the editor", ->
+            spyOn(api, "trigger")
             spyOn(activate, "finishActivate")
             activate.onmouseup(event, api)
-            expect(activate.click).toHaveBeenCalled()
+            expect(api.trigger).toHaveBeenCalledWith("snapeditor.activate_click")
             expect(activate.finishActivate).toHaveBeenCalled()
 
         describe "target is a link", ->
           it "does nothing", ->
+            spyOn(activate, "shouldActivate").andReturn(false)
             spyOn(activate, "isLink").andReturn(true)
             spyOn(activate, "click")
             spyOn(activate, "finishActivate")

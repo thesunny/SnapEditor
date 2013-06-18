@@ -12,12 +12,6 @@ require ["jquery.custom", "plugins/activate/activate"], ($, Activate) ->
       it "includes browser specific functions", ->
         expect(-> Activate.addActivateEvents(api)).not.toThrow()
 
-    describe "#click", ->
-      it "triggers snapeditor.activate_click", ->
-        spyOn(api, "trigger")
-        Activate.click(api)
-        expect(api.trigger).toHaveBeenCalledWith("snapeditor.activate_click")
-
     describe "#finishActivate", ->
       it "triggers the activation sequence", ->
         spyOn(api, "trigger")
