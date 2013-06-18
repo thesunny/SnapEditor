@@ -70,6 +70,10 @@
       SnapEditor.config.shortcuts.push("hi")
       SnapEditor.config.shortcuts.push("bye")
 
+      SnapEditor.buttons.form = {
+        items: ["bold", "italic", "|", "styleBlock", "table"]
+      };
+
       //var secureResourceId = "secure/123";
       var insecureDirectory = "insecure/123";
       //var secureUrl = "/snapimage_api_secure";
@@ -116,6 +120,7 @@
         path: "/spec/acceptance/assets",
         stylesheets: [],
         contentClass: "myClass",
+        toolbar: "form",
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
@@ -125,17 +130,19 @@
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
         //snap: false,
-        buttons: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi"],
+        toolbar: {
+          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi"]
+        },
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
-        },
+        }/*,
         onSave: function (e) {
           console.log(e.html);
           console.log(e.api.getContents());
           return "OMG! ERROR!";
-        }
+        }*/
       });
       var insecureInPlace2 = new SnapEditor.InPlace("insecure_in_place2", {
         path: "/spec/acceptance/assets",

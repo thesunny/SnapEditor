@@ -60,7 +60,12 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     prepareConfig: ->
       # We use slice and extend to clone arrays and objects so that they
       # aren't shared between editors.
-      @config.buttons or= @defaults.buttons.slice(0)
+      @config.toolbar or= @defaults.toolbar
+      if typeof @config.toolbar == "string"
+        button = SnapEditor.buttons[@config.toolbar]
+        throw "Button has not been defined: #{@config.toolbar}" unless button
+        throw "Button must have items in order to be used as a toolbar: #{@config.toolbar}" unless button.items
+        @config.toolbar = items: button.items.slice(0)
       @config.behaviours or= @defaults.behaviours.slice(0)
       @config.shortcuts or= @defaults.shortcuts.slice(0)
       @config.lang = $.extend({}, SnapEditor.lang)
@@ -79,7 +84,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
     includeButtons: ->
-      @includeButton(name) for name in @config.buttons
+      @includeButton(name) for name in @config.toolbar.items
 
     includeButton: (name) ->
       unless name == "|"

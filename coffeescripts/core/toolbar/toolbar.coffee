@@ -172,7 +172,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/t
 
     setup: ->
       editor = @editor
-      @$toolbar = Builder.build(@editor.config.buttons,
+      @$toolbar = Builder.build(@editor.config.toolbar.items,
         editor: @editor
         templates:
           container: @toolbarTemplate

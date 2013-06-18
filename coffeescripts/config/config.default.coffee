@@ -19,10 +19,12 @@ define [
   "plugins/horizontal_rule/horizontal_rule"
   "plugins/print/print"
 ], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Inline, StyleBlock, Align, List, Link, Table, Image, HorizontalRule, Print) ->
-  SnapEditor.config =
-    buttons: [
+  SnapEditor.buttons.toolbar =
+    items: [
       "styleBlock", "|", "bold", "italic", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "link", "table", "image"
     ]
+  SnapEditor.config =
+    toolbar: "toolbar"
     behaviours: [
       "activate"
       "deactivate"
