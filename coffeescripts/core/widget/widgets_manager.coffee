@@ -15,11 +15,15 @@ define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overla
       # Set the default onRemove function if it doesn't exist.
       widget.onRemove or= (e) -> e.widget.remove()
 
-      widgetObject = @createWidgetObject(type)
-      event =
+      # If an event was passed through the arguments, "clone" it and add the
+      # widget attribute.
+      # If no event was passed through, create a new event with the api and
+      # widget attribute.
+      event = $.extend(
         api: @api
-        widget: widgetObject
-        domEvent: args.pop()
+        widget: @createWidgetObject(type)
+        args.shift()
+      )
       args.unshift(event)
       widget.onCreate.apply(widget, args)
 
