@@ -45,12 +45,12 @@
 # </div>
 define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, WidgetObject, IFrame) ->
   class WidgetOverlay
-    constructor: (el, @classname, @editor) ->
+    constructor: (el, @classname, @api) ->
       @$el = $(el)
       @type = @$el.attr("data-type")
       @widget = SnapEditor.widgets[@type]
       throw "WidgetOverlay: widget type does not exist - #{@type}" unless @widget
-      @widgetObject = new WidgetObject(@type, @classname, @editor.api, WidgetOverlay)
+      @widgetObject = new WidgetObject(@type, @classname, @api, WidgetOverlay)
 
     insert: ->
       @$el.css("position", "relative")
@@ -133,12 +133,12 @@ define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, Widget
     mouseup: (e) =>
       sibling = @$el.prev()[0]
       if sibling
-        @editor.selectElementContents(sibling)
-        @editor.collapse(true)
+        @api.selectElementContents(sibling)
+        @api.collapse(true)
       else
         sibling = @$el.next()[0]
-        @editor.selectElementContents(sibling)
-        @editor.collapse(false)
+        @api.selectElementContents(sibling)
+        @api.collapse(false)
       @edit(e) unless($(e.target).parent(".#{@classname}_buttons")[0])
 
     mouseover: (e) =>
@@ -151,7 +151,7 @@ define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, Widget
       @$buttons.hide()
       @widgetObject.load(@$el)
       @widget.onEdit(
-        api: @editor.api
+        api: @api
         widget: @widgetObject
         domEvent: e
       )
@@ -160,7 +160,7 @@ define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, Widget
       @$buttons.hide()
       @widgetObject.load(@$el)
       @widget.onRemove(
-        api: @editor.api
+        api: @api
         widget: @widgetObject
         domEvent: e
       )

@@ -5,7 +5,9 @@ require ["jquery", "core/toolbar/toolbar.floating.displayer"], ($, Displayer) ->
       $container = $("<div/>").prependTo("body")
       $el = $("<div>text</div>").appendTo($container)
       $toolbar = $('<div style="display:none">toolbar</div>').appendTo($container)
-      displayer = new Displayer($toolbar, $el)
+      editor = $("<div/>")
+      editor.isValid = -> true
+      displayer = new Displayer($toolbar, $el, editor)
 
     afterEach ->
       $container.remove()
@@ -32,4 +34,8 @@ require ["jquery", "core/toolbar/toolbar.floating.displayer"], ($, Displayer) ->
         spyOn(displayer, "cursorPosition").andReturn(160)
         spyOn(displayer, "elCoords").andReturn({ top: 100 })
         spyOn(displayer, "overlapSpaceFromElTop").andReturn(50)
+        expect(displayer.isCursorInOverlapSpace()).toBeFalsy()
+
+      it "returns false when there is no cursor", ->
+        spyOn(displayer.editor, "isValid").andReturn(false)
         expect(displayer.isCursorInOverlapSpace()).toBeFalsy()

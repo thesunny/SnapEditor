@@ -30,7 +30,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       @handleRange(direction) if direction
 
     mouseup: ->
-      @handleRange("mouse")
+      @handleRange("mouse") if @api.isValid()
 
     getCSSelectors: ->
       ["hr"].concat(@api.config.atomic.selectors).join(",")

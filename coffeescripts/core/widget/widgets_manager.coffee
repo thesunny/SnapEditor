@@ -47,7 +47,7 @@ define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overla
       $(@editor.find(".#{@classname}")).each(-> setupWidget(this))
 
     setupWidget: (el) =>
-      (new WidgetOverlay(el, @classname, @editor)).insert()
+      (new WidgetOverlay(el, @classname, @editor.api)).insert()
 
     teardown: =>
       teardownWidget = @teardownWidget

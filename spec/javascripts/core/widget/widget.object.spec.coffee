@@ -1,5 +1,5 @@
-require ["jquery.custom", "core/widget/widget.event", "core/range", "core/helpers"], ($, WidgetEvent, Range, Helpers) ->
-  describe "WidgetEvent", ->
+require ["jquery.custom", "core/widget/widget.object", "core/range", "core/helpers"], ($, WidgetObject, Range, Helpers) ->
+  describe "WidgetObject", ->
     describe "#insertEl", ->
       $editable = $start = api = range = null
       beforeEach ->
@@ -20,8 +20,8 @@ require ["jquery.custom", "core/widget/widget.event", "core/range", "core/helper
         else
           range.range.findText("tart")
         range.collapse(true).select()
-        widgetEvent = new WidgetEvent("test", "widget", api)
-        widgetEvent.insertEl()
+        widgetObject = new WidgetObject("test", "widget", api)
+        widgetObject.insertEl()
         expect(clean($start.html())).toEqual("s<div class=widget contenteditable=false></div>tart")
 
       it "inserts the element at the selection", ->
@@ -31,8 +31,8 @@ require ["jquery.custom", "core/widget/widget.event", "core/range", "core/helper
         else
           range.range.findText("tar")
         range.select()
-        widgetEvent = new WidgetEvent("test", "widget", api)
-        widgetEvent.insertEl()
+        widgetObject = new WidgetObject("test", "widget", api)
+        widgetObject.insertEl()
         expect(clean($start.html())).toEqual("s<div class=widget contenteditable=false></div>t")
 
       it "sets the element", ->
@@ -41,6 +41,6 @@ require ["jquery.custom", "core/widget/widget.event", "core/range", "core/helper
         else
           range.range.findText("tart")
         range.collapse().select()
-        widgetEvent = new WidgetEvent("test", "widget", api)
-        widgetEvent.insertEl()
+        widgetObject = new WidgetObject("test", "widget", api)
+        widgetObject.insertEl()
         expect(clean($start.html())).toEqual("s<div class=widget contenteditable=false></div>tart")

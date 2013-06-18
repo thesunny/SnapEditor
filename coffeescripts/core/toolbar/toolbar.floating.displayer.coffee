@@ -107,5 +107,6 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
     # top. 
     # Returns true if the cursor is in this space.
     isCursorInOverlapSpace: ->
+      return false unless @editor.isValid()
       cursorPositionInEl = @cursorPosition() - @elCoords().top
       cursorPositionInEl < @overlapSpaceFromElTop()
