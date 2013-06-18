@@ -1,11 +1,8 @@
 # This plugin controls how the editor will be activated.
 define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activate.others", "plugins/activate/activate.ie"], ($, Browser, Helpers, Others, IE) ->
   activate =
-    # Handles after a click has occurred.
-    #
-    # NOTE: This should trigger making @api.$el editable.
-    click: (api) ->
-      api.trigger("snapeditor.activate_click")
+    click: (e, api) ->
+      e.preventDefault() if @shouldActivate(api, e.target)
 
     # Activates the editing session.
     finishActivate: (api) ->
@@ -34,6 +31,9 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
     isLink: (el) ->
       $el = $(el)
       $el.tagName() == 'a' or $el.parent('a').length != 0
+
+    shouldActivate: (api, el) ->
+      api.config.activateByLinks || !@isLink(el)
 
   SnapEditor.actions.activate = (e) ->
     api = e.api

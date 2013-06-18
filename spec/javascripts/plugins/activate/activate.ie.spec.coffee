@@ -5,7 +5,7 @@ if isIE
       beforeEach ->
         activate =
           click: ->
-          activate: ->
+          finishActivate: ->
           isLink: -> false
         Helpers.extend(activate, IE)
         api = $("<div/>")
@@ -37,7 +37,7 @@ if isIE
         describe "target is not a link", ->
           it "selects the target when the target is an image", ->
             spyOn(activate, "click")
-            spyOn(activate, "activate")
+            spyOn(activate, "finishActivate")
             spyOn(api, "select")
 
             event.target = $("<img/>")[0]
@@ -46,16 +46,16 @@ if isIE
 
           it "triggers click.activate and activates the editor", ->
             spyOn(activate, "click")
-            spyOn(activate, "activate")
+            spyOn(activate, "finishActivate")
             activate.onmouseup(event, api)
             expect(activate.click).toHaveBeenCalled()
-            expect(activate.activate).toHaveBeenCalled()
+            expect(activate.finishActivate).toHaveBeenCalled()
 
         describe "target is a link", ->
           it "does nothing", ->
             spyOn(activate, "isLink").andReturn(true)
             spyOn(activate, "click")
-            spyOn(activate, "activate")
+            spyOn(activate, "finishActivate")
             activate.onmouseup(event, api)
             expect(activate.click).not.toHaveBeenCalled()
-            expect(activate.activate).not.toHaveBeenCalled()
+            expect(activate.finishActivate).not.toHaveBeenCalled()

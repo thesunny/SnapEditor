@@ -9,14 +9,16 @@ define ["jquery.custom"], ($) ->
       # SnapEditor events.
       self = this
       $(api.el).one("mousedown", (e) -> self.onmousedown(e, api))
+      $(api.el).one("click", (e) -> self.click(e, api))
       $(api.el).one("mouseup", (e) -> self.onmouseup(e, api))
 
     onmousedown: (e, api) ->
-      @click(api) unless @isLink(e.target)
+      # NOTE: This should trigger making @api.$el editable.
+      api.trigger("snapeditor.activate_click") if @shouldActivate(api, e.target)
 
     onmouseup: (e, api) ->
       target = e.target
-      unless @isLink(target)
+      if @shouldActivate(api, target)
         # NOTE: Clicking on an image to activate the editor for the very first
         # time causes some problems. In Webkit, it does not create a range
         # immediately. Not even after a mouseup. If we delay for 100ms, then

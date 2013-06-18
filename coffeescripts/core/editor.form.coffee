@@ -47,6 +47,10 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       @$el.blur(@updateTextarea)
       @insertStyles("snapeditor_form", @css)
 
+    prepareConfig: ->
+      super()
+      @config.activateByLinks = @defaults.activateByLinks
+
     formize: (toolbar) ->
       $toolbar = $(toolbar)
       textareaCoords = @$textarea.getCoordinates()

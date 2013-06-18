@@ -2,4 +2,6 @@ define [
   "jquery.custom",
   "config/config.default"
 ], ($, Defaults) ->
-  SnapEditor.Form.config = $.extend({}, SnapEditor.config)
+  SnapEditor.Form.config = $.extend({
+    activateByLinks: true
+  }, SnapEditor.config)
