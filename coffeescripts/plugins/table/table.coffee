@@ -243,31 +243,13 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
     # cell - current cell
     # next - true to move to next cell, false to move to previous cell
     moveToSiblingCell: (cell, next) ->
-      siblingCell = @findSiblingCell(cell, next)
+      siblingCell = @getSiblingCell(cell, next)
       if siblingCell
         @api.selectEndOfElement(siblingCell)
       else
         # Add a row if we are at the bottom and we want the next sibling.
         @addRow(false) if next
 
-    # Find the sibling cell. Returns null if none is found.
-    # Arguments:
-    # cell - current cell
-    # next - true to find next cell, false to find previous cell
-    findSiblingCell: (cell, next) ->
-      $cell = $(cell)
-      direction = if next then "next" else "prev"
-      # Find the immediate sibling.
-      $siblingCell = $cell[direction]("td, th")
-      # If there is no immediate sibling, go to the sibling row.
-      if $siblingCell.length == 0
-        $parentRow = $cell.parent("tr")
-        $siblingRow = $parentRow[direction]("tr")
-        # If there is a sibling row, grab the sibling cell from the sibling row.
-        if $siblingRow.length > 0
-          position = if direction == "next" then "first" else "last"
-          $siblingCell = $siblingRow.find("td, th")[position]()
-      return $siblingCell[0] or null
   SnapEditor.actions.insertTable = -> table.insertTable()
   SnapEditor.actions.addRowAbove = Helpers.pass(table.addRow, true, table)
   SnapEditor.actions.addRowBelow = Helpers.pass(table.addRow, false, table)

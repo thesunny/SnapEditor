@@ -17,18 +17,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
     cleanup: (startNode, endNode) ->
       if startNode and endNode
         el = @api.el
-        startTopNode = @expandTopNode(@findTopNode(el, startNode), true)
-        endTopNode = @expandTopNode(@findTopNode(el, endNode), false)
+        startTopNode = @expandTopNode(Helpers.getTopNode(startNode, el), true)
+        endTopNode = @expandTopNode(Helpers.getTopNode(endNode, el), false)
         new Normalizer(@api, @api.config.cleaner.ignore).normalize(startTopNode, endTopNode)
-
-    # Runs up the parent chain and returns the node at the top.
-    findTopNode: (stopNode, node) ->
-      topNode = node
-      parent = topNode.parentNode
-      while parent != stopNode
-        topNode = parent
-        parent = topNode.parentNode
-      return topNode
 
     # If the node is an inline node, it either looks backwards or forwards
     # until it hits a block or the end. It then returns the node before the

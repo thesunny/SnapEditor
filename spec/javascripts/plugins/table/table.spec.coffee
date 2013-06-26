@@ -402,30 +402,3 @@ require ["plugins/table/table", "core/helpers", "core/range"], (Table, Helpers, 
     describe "#eachCellInCol", ->
       it "calls the function for each cell in the column and binds it to the cell", ->
         Table.eachCellInCol($table.find("td")[0], -> expect($(this).hasClass("1")).toBeTruthy())
-
-    describe "#findSiblingCell", ->
-      describe "next", ->
-        it "returns the immediate sibling when there is one", ->
-          sibling = Table.findSiblingCell($table.find(".1").first(), true)
-          expect(sibling.innerHTML).toEqual("h2")
-
-        it "returns the first cell in the next row when there is no immediate sibling", ->
-          sibling = Table.findSiblingCell($table.find(".2").first(), true)
-          expect(sibling.innerHTML).toEqual("1.1")
-
-        it "returns null when there is no sibling", ->
-          sibling = Table.findSiblingCell($table.find(".2").last(), true)
-          expect(sibling).toBeNull()
-
-      describe "previous", ->
-        it "returns the immediate sibling when there is one", ->
-          sibling = Table.findSiblingCell($table.find(".2").last(), false)
-          expect(sibling.innerHTML).toEqual("2.1")
-
-        it "returns the last cell in the previous row when there is no immediate sibling", ->
-          sibling = Table.findSiblingCell($table.find(".1").last(), false)
-          expect(sibling.innerHTML).toEqual("1.2")
-
-        it "returns null when there is no sibling", ->
-          sibling = Table.findSiblingCell($table.find(".1").first(), false)
-          expect(sibling).toBeNull()

@@ -128,6 +128,57 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
           sibling = Helpers.getSibling("next", $span[0], $editable[0], (node) -> false)
           expect(sibling).toBeNull()
 
+    describe "#getSiblingCell", ->
+      $table = null
+      beforeEach ->
+        $table = $("
+          <table>
+            <tbody>
+              <tr class='first'><th class='1'>h1</th><th class='2'>h2</th></tr>
+              <tr class='middle'><td class='1'>1.1</td><td class='2'>1.2</td></tr>
+              <tr class='last'><td class='1'>2.1</td><td td class='2'>2.2</td></tr>
+            </tbody>
+          </table>
+        ").appendTo($editable)
+
+      describe "next", ->
+        it "returns the immediate sibling when there is one", ->
+          sibling = Helpers.getSiblingCell($table.find(".1").first(), true)
+          expect(sibling.innerHTML).toEqual("h2")
+
+        it "returns the first cell in the next row when there is no immediate sibling", ->
+          sibling = Helpers.getSiblingCell($table.find(".2").first(), true)
+          expect(sibling.innerHTML).toEqual("1.1")
+
+        it "returns null when there is no sibling", ->
+          sibling = Helpers.getSiblingCell($table.find(".2").last(), true)
+          expect(sibling).toBeNull()
+
+      describe "previous", ->
+        it "returns the immediate sibling when there is one", ->
+          sibling = Helpers.getSiblingCell($table.find(".2").last(), false)
+          expect(sibling.innerHTML).toEqual("2.1")
+
+        it "returns the last cell in the previous row when there is no immediate sibling", ->
+          sibling = Helpers.getSiblingCell($table.find(".1").last(), false)
+          expect(sibling.innerHTML).toEqual("1.2")
+
+        it "returns null when there is no sibling", ->
+          sibling = Helpers.getSiblingCell($table.find(".1").first(), false)
+          expect(sibling).toBeNull()
+
+    describe "#getTopNode", ->
+      beforeEach ->
+        $editable.html("this <b>must</b> be a test<div>or <i>maybe</i> not</div>")
+
+      it "looks up the parent chain and returns the textnode at the top", ->
+        node = Helpers.getTopNode($editable[0].childNodes[0], $editable[0])
+        expect(node).toBe($editable[0].childNodes[0])
+
+      it "looks up the parent chain and returns the element at the top", ->
+        node = Helpers.getTopNode($editable.find("i")[0], $editable[0])
+        expect(node).toBe($editable.find("div")[0])
+
     describe "#getDocument", ->
       it "returns this document when the element is in this document", ->
         expect(Helpers.getDocument($editable[0])).toBe(document)
