@@ -31,6 +31,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "collapse", "unselect", "keepRange", "moveBoundary",
         "insert", "surroundContents", "delete",
         "select", "selectElementContents", "selectEndOfElement",
-        "formatBlock", "formatInline", "align", "indent", "outdent",
+        "styleBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )

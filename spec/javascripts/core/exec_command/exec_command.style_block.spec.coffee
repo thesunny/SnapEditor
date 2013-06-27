@@ -7,6 +7,60 @@ require ["jquery.custom", "core/exec_command/exec_command.style_block"], ($, Sty
     afterEach ->
       $editable.remove()
 
+    describe "#isCompatible", ->
+      describe "paragraph tags", ->
+        it "returns true for paragraph elements", ->
+          expect(StyleBlock.isCompatible("h1", $("<p/>")[0])).toBeTruthy()
+          expect(StyleBlock.isCompatible("h1", $("<h1/>")[0])).toBeTruthy()
+          expect(StyleBlock.isCompatible("h1", $("<h2/>")[0])).toBeTruthy()
+
+        it "returns false for non-paragraph elements", ->
+          expect(StyleBlock.isCompatible("h1", $("<table/>")[0])).toBeFalsy()
+          expect(StyleBlock.isCompatible("h1", $("<li/>")[0])).toBeFalsy()
+
+      describe "table tags", ->
+        it "returns true for table elements", ->
+          expect(StyleBlock.isCompatible("tr", $("<table/>")[0])).toBeTruthy()
+          expect(StyleBlock.isCompatible("tr", $("<tr/>")[0])).toBeTruthy()
+          expect(StyleBlock.isCompatible("tr", $("<td/>")[0])).toBeTruthy()
+
+        it "returns false for non-table elements", ->
+          expect(StyleBlock.isCompatible("tr", $("<p/>")[0])).toBeFalsy()
+          expect(StyleBlock.isCompatible("tr", $("<li/>")[0])).toBeFalsy()
+
+    describe "#styleParagraph", ->
+      it "replaces the element with the new tag", ->
+        $editable.html("<p>style me</p>")
+        StyleBlock.styleParagraph($editable.find("p")[0], "h1", [])
+        expect(clean($editable.html())).toEqual("<h1>style me</h1>")
+
+      it "replaces the styles", ->
+        $editable.html('<h1 class="replace me">style me</h1>')
+        StyleBlock.styleParagraph($editable.find("h1")[0], "h1", ["with", "something", "else"])
+        expect(clean($editable.html())).toEqual("<h1 class=with something else>style me</h1>")
+
+    describe "#styleTable", ->
+      td = null
+      beforeEach ->
+        $editable.html("<table><tr><td>style me</td></tr></table>")
+        td = $editable.find("td")[0]
+
+      it "styles a cell", ->
+        StyleBlock.styleTable(td, "td", ["new", "style"])
+        expect($editable.find("td").hasClass("new")).toBeTruthy()
+        expect($editable.find("td").hasClass("style")).toBeTruthy()
+
+      it "styles a row", ->
+        StyleBlock.styleTable(td, "tr", ["new", "style"])
+        expect($editable.find("tr").hasClass("new")).toBeTruthy()
+        expect($editable.find("tr").hasClass("style")).toBeTruthy()
+
+      it "styles a table", ->
+        StyleBlock.styleTable(td, "table", ["new", "style"])
+        expect($editable.find("table").hasClass("new")).toBeTruthy()
+        expect($editable.find("table").hasClass("style")).toBeTruthy()
+
+
     describe "#getElementsBetween", ->
       it "returns only a single element", ->
         $editable.html("<p>paragraph</p>")

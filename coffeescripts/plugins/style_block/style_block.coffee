@@ -1,5 +1,5 @@
 define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
-  format = (e) -> e.api.clean() if e.api.formatBlock(e.type)
+  format = (e) -> e.api.clean() if e.api.styleBlock(e.type)
   SnapEditor.actions.p = format
   SnapEditor.actions.h1 = format
   SnapEditor.actions.h2 = format

@@ -13,20 +13,53 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     style: (style, editor) ->
       styles = style.split(".")
       tag = styles.shift()
-      # TODO: What happens if everything is selected.
-      [startParentEl, endParentEl] = @editor.getParentElements(blockTags.join(","))
+      [startParentEl, endParentEl] = editor.getParentElements(blockTags.join(","))
+      # start/endParentEl can be null if we're selecting the first/last
+      # element.
+      startParentEl ||= $(editor.el).children().first()[0]
+      endParentEl ||= $(editor.el).children().last()[0]
       els = @getElementsBetween(startParentEl, endParentEl, editor.el)
-      @styleElement(el, tag, styles) for el in els
+      self = this
+      styled = false
+      editor.keepRange(->
+        styled = self.styleElement(el, tag, styles) || styled for el in els
+      )
+      styled
 
+    # Arguments:
+    # el - element to style
+    # tag - new tag
+    # styles - array of class names
     styleElement: (el, tag, styles) ->
+      styled = false
+      if @isCompatible(tag, el)
+        styled = true
+        if $.inArray(tag, paragraphTags) != -1
+          @styleParagraph(el, tag, styles)
+        else
+          @styleTable(el, tag, styles)
+      styled
 
     isCompatible: (tag, el) ->
       compatible = false
-      if paragraphTags.indexOf(tag) != -1
-        compatible = paragraphTags.indexOf($(el).tagName()) != -1
-      else if tableTags.indexOf(tag) != -1
-        compatible = tableTags.indexOf($(el).tagName()) != -1
+      if $.inArray(tag, paragraphTags) != -1
+        compatible = $.inArray($(el).tagName(), paragraphTags) != -1
+      else if $.inArray(tag, tableTags) != -1
+        compatible = $.inArray($(el).tagName(), tableTags) != -1
       compatible
+
+    styleParagraph: (el, tag, styles) ->
+      styledEl = el
+      # If the el does not have the same tag, replace it with the correct tag.
+      unless $(el).tagName() == tag
+        styledEl = $("<#{tag}/>")[0]
+        styledEl.insertBefore(el.childNodes[0], null) while el.childNodes[0]
+        $(el).replaceWith(styledEl)
+      $(styledEl).removeAttr("class").addClass(styles.join(" "))
+
+    styleTable: (el, tag, styles) ->
+      styledEl = $(el).closest(tag)
+      $(styledEl).removeAttr("class").addClass(styles.join(" "))
 
     # Returns all the top level elements between and including startEl and
     # endEl. This accounts for starting and ending in a table.

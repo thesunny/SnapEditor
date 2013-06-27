@@ -266,7 +266,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       )
       Helpers.delegate(this, "getBlankRange()", "selectElementContents", "selectEndOfElement")
       Helpers.delegate(this, "execCommand",
-        "formatBlock", "formatInline", "align", "indent", "outdent",
+        "styleBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )
 
