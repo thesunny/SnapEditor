@@ -65,12 +65,6 @@ define [
         # HR
         "HR": "hr"
         # Inlines
-        "Bold": "b"
-        "Italic": "i"
-        "Underline": "u"
-        "Subscript": "sub"
-        "Superscript": "sup"
-        "Strikethrough": "del"
         "Link": "a[href, target]"
         "Range Start": "span#RANGE_START"
         "Range End": "span#RANGE_END"
@@ -79,9 +73,6 @@ define [
         "Image Range": "img#RANGE_IMAGE[src, width, height]"
         # Defaults
         "*": "Paragraph"
-        "strong": "Bold"
-        "em": "Italic"
-        "strike": "Strikethrough"
       ignore: []
     eraseHandler:
       delete: []
