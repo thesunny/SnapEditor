@@ -3,6 +3,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # Options:
     # * html
     # * langKey
+    # * onInclude
     createButton: (button, shortcut, options = {}) ->
       text = SnapEditor.lang[options.langKey or button]
       cmd =

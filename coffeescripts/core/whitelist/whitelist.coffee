@@ -2,11 +2,26 @@
 # * tag: tag name
 # * classes: an array of classes
 # * next: object of what should come after when hitting enter
-define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], ($, Helpers, Generator) ->
+define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"], ($, Helpers, Whitelists) ->
   class Whitelist
     constructor: (@whitelist) ->
-      @generator = new Generator(@whitelist)
-      Helpers.delegate(this, "generator", "getDefaults", "getWhitelistByLabel", "getWhitelistByTag")
+      @whitelists = new Whitelists(@whitelist)
+
+    # Add a new rule to the whitelist.
+    add: ->
+      switch arguments.length
+        when 1
+          throw "Expected a map object" unless $.isPlainObject(arguments[0])
+          @add(key, rule) for own key, rule of arguments[0]
+        when 2
+          @whitelists.add(arguments[0], arguments[1])
+        else
+          throw "Wrong number of arguments to Whitelist#add"
+
+    # Get the default element for the given key.
+    getDefaultFor: (key, doc) ->
+      def = @whitelists.getByDefault(key)
+      def and def.getElement(doc)
 
     # Returns true if the el is whitelisted. False otherwise.
     isAllowed: (el) ->
@@ -17,22 +32,25 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
     getReplacement: (el) ->
       $el = $(el)
       tag = $el.tagName()
-      replacement = @getDefaults()[tag] or null
-      replacement = @getReplacementFromWhitelistByTag(tag) unless replacement
+      replacement = @whitelists.getByDefault(tag) or null
+      replacement = @getReplacementByTag(tag) unless replacement
       return replacement and replacement.getElement(Helpers.getDocument(el), el)
 
     # Finds the element that should be after the given el.
     getNext: (el) ->
-      next = @getDefaults()["*"]
+      next = @whitelists.getByDefault("*")
       throw "The whitelist is missing a '*' default" unless next
       match = @match(el)
-      next = match.next if match and match.next
+      next = @whitelists.getByLabel(match.next) if match and match.next
       return next.getElement(Helpers.getDocument(el))
 
     # Finds the object that matches the given el or else returns null.
     match: (el) ->
       match = null
-      list = @getWhitelistByTag()[$(el).tagName()]
+      list = @whitelists.getByTag($(el).tagName())
+      if $(el).tagName() == "td"
+        console.log el
+        console.log list
       if list
         for obj in list
           if obj.matches(el)
@@ -42,8 +60,8 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.generator"], 
 
     # Finds the first object without an id.
     # Returns null if no object can be found.
-    getReplacementFromWhitelistByTag: (tag) ->
-      list = @getWhitelistByTag()[tag]
+    getReplacementByTag: (tag) ->
+      list = @whitelists.getByTag(tag)
       return null unless list
       replacement = null
       for obj in list

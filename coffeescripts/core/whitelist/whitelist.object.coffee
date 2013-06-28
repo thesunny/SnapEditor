@@ -76,5 +76,3 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
         return true
       else
         throw "Whitelist: Values for #{attr} are unsupported. Only values for the style attribute can be checked."
-
-  return WhitelistObject

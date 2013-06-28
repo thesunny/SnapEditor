@@ -74,6 +74,13 @@
         items: ["bold", "italic", "|", "styleBlock", "table"]
       };
 
+      SnapEditor.buttons.styleTd = {
+      text: "Style TD",
+        action: function (e) {
+          e.api.styleBlock("td.highlight.awesome");
+        }
+      };
+
       //var secureResourceId = "secure/123";
       var insecureDirectory = "insecure/123";
       //var secureUrl = "/snapimage_api_secure";
@@ -109,6 +116,7 @@
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
         stylesheets: [],
+        toolbar: { items: ["styleTd"] },
         contentClass: "myClass",
         imageServer: {
           uploadUrl: insecureUploadUrl,
