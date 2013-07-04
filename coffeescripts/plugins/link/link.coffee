@@ -6,7 +6,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.d
         @dialog.show(api)
   SnapEditor.actions.link = (e) -> link.showDialog(e.api)
 
-  SnapEditor.buttons.link = Helpers.createButton("link", "ctrl+k")
+  SnapEditor.buttons.link = Helpers.createButton("link", "ctrl+k", onInclude: (e) -> e.api.addWhitelistRule("Link", "a[href, target]"))
 
   styles = """
     .snapeditor_dialog .link_form .field_container {

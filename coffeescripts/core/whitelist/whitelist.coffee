@@ -34,6 +34,7 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"],
       tag = $el.tagName()
       replacement = @whitelists.getByDefault(tag) or null
       replacement = @getReplacementByTag(tag) unless replacement
+      replacement = @whitelists.getByDefault("*") if !replacement and Helpers.isBlock(el)
       return replacement and replacement.getElement(Helpers.getDocument(el), el)
 
     # Finds the element that should be after the given el.
@@ -48,9 +49,6 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"],
     match: (el) ->
       match = null
       list = @whitelists.getByTag($(el).tagName())
-      if $(el).tagName() == "td"
-        console.log el
-        console.log list
       if list
         for obj in list
           if obj.matches(el)

@@ -84,15 +84,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
               # Normalize the children first.
               innerBlockFound = @normalizeNodes(node.firstChild, node.lastChild)
 
-              if isBlock and !innerBlockFound and !replacement and node.firstChild
-                # If there are children and all the children are inline nodes
-                # and no replacement was found for the block, we cannot just
-                # flatten the outer block as this would cause dangling inline
-                # nodes. Hence, we replace the outer block with the default block.
-                $(node).replaceElementWith(@api.getDefaultBlock())
-              else if innerBlockFound or !replacement
-                # If inner blocks were found or there is no replacement, flatten
-                # the outer element.
+              if innerBlockFound or !replacement or (isBlock and !node.firstChild)
+                # If inner blocks were found, there is no inline replacement,
+                # or the block is empty, flatten the outer element.
 
                 # The first and last children may have changed after the call to
                 # @normalizeNodes. Hence, we grab them here instead of earlier in
@@ -146,7 +140,8 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
     # If the node is an element and is on the whitelist, return the node.
     # If the node is a not on the whitelist and a replacement can be found,
     # replace the node with the replacement and return it.
-    # Otherwise, return null.
+    # Otherwise, return null (null should only be returned if the node is on
+    # the blacklist or is inline with no replacement).
     checkWhitelist: (node) ->
       return node unless Helpers.isElement(node)
       return node if @api.isAllowed(node)

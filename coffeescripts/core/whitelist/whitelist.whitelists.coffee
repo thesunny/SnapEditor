@@ -28,11 +28,14 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
 
     add: (key, rule) ->
       if @isLabel(key)
+        prevObj = @byLabel[key]
         obj = @parse(rule)
         @byLabel[key] = obj
         # Add to the whitelist by tag.
-        @byTag[obj.tag] = [] unless @byTag[obj.tag]
+        @byTag[obj.tag] or= []
         @byTag[obj.tag].push(obj)
+        # Remove the previous object if there was one.
+        @byTag[prevObj.tag].splice($.inArray(prevObj, @byTag[prevObj.tag]), 1) if prevObj
       else
         throw "Whitelist default '#{key}: #{rule}' must reference a label" unless @isLabel(rule)
         @defaults[key] = rule

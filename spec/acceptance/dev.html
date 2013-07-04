@@ -376,6 +376,7 @@
       <h1>Insecure</h1>
       <input type="button" value="activate" onclick="insecureForm.api.activate()" />
       <textarea id="insecure_form" class="form">
+        <address>some address<p>here's a block</p></address>
         <p>some text at the beginning</p>
         <p>some text at the beginning</p>
         <div class="atomic">This is atomic</div>
@@ -447,6 +448,9 @@
             </tr>
           </tbody>
         </table>
+        <ul>
+          <li>hi</li>
+        </ul>
 
         <p>
           <h1>
@@ -495,6 +499,37 @@
         <p><a href="snapeditor.com">SnapEditor</a></p>
         <h1>Heading 1</h1>
         <p><span class="atomic">Atomic span</span>between<span class="atomic">atomic span</span>between<span class="atomic">atomic span</span><span class="atomic">atomic span</span>between<span class="atomic">atomic span</span></p>
+        <ul>
+          <li>This</li>
+          <li>is</li>
+          <li>a</li>
+          <li>list</li>
+          <li>
+            This will have a
+            <p>block in it</p>
+          </li>
+          <li>
+            <p>more stuff</p>
+            <table>
+              <tbody>
+                <tr><th>Header</th></tr>
+                <tr><td>Data</td></tr>
+                <tr>
+                  <td>
+                    <div class="atomic">This is atomic</div>
+                    Data
+                    <p>another</p>
+                    text
+                    <ul>
+                      <li>first</li>
+                      <li>second</li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+        </ul>
         <div class="atomic">This is atomic</div>
         <p>More text!</p>
         <div class="atomic">This is atomic</div>

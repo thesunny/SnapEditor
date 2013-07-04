@@ -39,7 +39,12 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         expect($replacement.tagName()).toEqual("h1")
         expect($replacement.attr("class")).toEqual("title")
 
-      it "returns null when there is no replacement for the tag", ->
+      it "returns the default block when there is no replacement for the block tag", ->
+        $replacement = $(whitelist.getReplacement($("<p/>").appendTo($editable)[0]))
+        expect($replacement.tagName()).toEqual("div")
+        expect($replacement.attr("class")).toEqual("normal")
+
+      it "returns null when there is no replacement for the inline tag", ->
         expect(whitelist.getReplacement($("<span/>").appendTo($editable)[0])).toBeNull()
 
     describe "#getNext", ->

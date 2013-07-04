@@ -54,6 +54,15 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
         expect(list.p[0].tag).toEqual("p")
         expect(list.p[0].classes).toEqual("")
 
+      it "handles duplicate labels", ->
+        prevObj = whitelists.byLabel["Title"]
+        whitelists.add("Title", "p.title")
+        expect(whitelists.byLabel["Title"].tag).toEqual("p")
+        expect(whitelists.byLabel["Title"].classes).toEqual("title")
+        expect(whitelists.byLabel["Title"].next).not.toBeDefined()
+        expect($.inArray(whitelists.byLabel["Title"], whitelists.byTag["p"])).toBeGreaterThan(-1)
+        expect($.inArray(prevObj, whitelists.byTag["h1"])).toEqual(-1)
+
     describe "#isLabel", ->
       it "returns true when the label starts with a capital", ->
         expect(whitelists.isLabel("Normal")).toBeTruthy()

@@ -141,6 +141,7 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
       $("iframe").filter(-> this.contentWindow.document == doc)[0] or null
 
     # Replace the given node with its children.
+    # If there are no children, the node is simply removed.
     replaceWithChildren: (node) ->
       parent = node.parentNode
       parent.insertBefore(node.childNodes[0], node) while node.childNodes[0]

@@ -50,10 +50,6 @@ define [
         "Heading 4": "h4[style=(text-align)] > Paragraph"
         "Heading 5": "h5[style=(text-align)] > Paragraph"
         "Heading 6": "h6[style=(text-align)] > Paragraph"
-        # Lists
-        "Unordered List": "ul"
-        "Ordered List": "ol"
-        "List Item": "li > List Item"
         # Tables
         "Table": "table"
         "Table Body": "tbody"
@@ -62,14 +58,9 @@ define [
         "Table Cell": "td[style=(text-align)] > BR"
         # BR
         "BR": "br"
-        # HR
-        "HR": "hr"
-        # Inlines
-        "Link": "a[href, target]"
+        # Range
         "Range Start": "span#RANGE_START"
         "Range End": "span#RANGE_END"
-        # Images
-        "Image": "img[src, width, height]"
         "Image Range": "img#RANGE_IMAGE[src, width, height]"
         # Defaults
         "*": "Paragraph"
