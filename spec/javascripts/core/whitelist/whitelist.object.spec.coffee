@@ -5,6 +5,92 @@ require ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObjec
         obj = new WhitelistObject("p", null, ["normal", "highlighted"])
         expect(obj.classes).toEqual("highlighted normal")
 
+    describe "#addClasses", ->
+      obj = null
+      beforeEach ->
+        obj = new WhitelistObject("p", null, ["normal", "highlighted"])
+
+      it "adds the string of classes", ->
+        obj.addClasses("just testing")
+        expect(obj.classes).toEqual("highlighted just normal testing")
+
+      it "adds the array of classes", ->
+        obj.addClasses(["just", "testing"])
+        expect(obj.classes).toEqual("highlighted just normal testing")
+
+      it "removes duplicates", ->
+        obj.addClasses("just normal")
+        expect(obj.classes).toEqual("highlighted just normal")
+
+    describe "#addAttributes", ->
+      obj = null
+      beforeEach ->
+        obj = new WhitelistObject("p", null, [], ["width", "height"])
+
+      it "adds the array of attributes", ->
+        obj.addAttributes(["style", "selected"])
+        expect(obj.attrs["width"]).toBeTruthy()
+        expect(obj.attrs["height"]).toBeTruthy()
+        expect(obj.attrs["style"]).toBeTruthy()
+        expect(obj.attrs["selected"]).toBeTruthy()
+
+      it "adds the object of attributes", ->
+        obj.addAttributes(style: true, selected: true)
+        expect(obj.attrs["width"]).toBeTruthy()
+        expect(obj.attrs["height"]).toBeTruthy()
+        expect(obj.attrs["style"]).toBeTruthy()
+        expect(obj.attrs["selected"]).toBeTruthy()
+
+      it "removes duplicates", ->
+        obj.addAttributes(["style", "width"])
+        expect(obj.attrs["width"]).toBeTruthy()
+        expect(obj.attrs["height"]).toBeTruthy()
+        expect(obj.attrs["style"]).toBeTruthy()
+
+    describe "#addValues", ->
+      obj = null
+      beforeEach ->
+        obj = new WhitelistObject("p", null, [], [], styles: ["width", "height"])
+
+      it "adds the object of arrays of values", ->
+        obj.addValues(
+          testing: ["one", "two"]
+          styles: ["font-size"]
+        )
+        expect(obj.values.testing).toBeDefined()
+        expect(obj.values.testing.one).toBeTruthy()
+        expect(obj.values.testing.two).toBeTruthy()
+        expect(obj.values.styles.width).toBeTruthy()
+        expect(obj.values.styles.height).toBeTruthy()
+        expect(obj.values.styles["font-size"]).toBeTruthy()
+
+      it "adds the object of objects of values", ->
+        obj.addValues(
+          testing:
+            one: true
+            two: true
+          styles:
+            "font-size": true
+        )
+        expect(obj.values.testing).toBeDefined()
+        expect(obj.values.testing.one).toBeTruthy()
+        expect(obj.values.testing.two).toBeTruthy()
+        expect(obj.values.styles.width).toBeTruthy()
+        expect(obj.values.styles.height).toBeTruthy()
+        expect(obj.values.styles["font-size"]).toBeTruthy()
+
+      it "removes duplicates", ->
+        obj.addValues(
+          testing: ["one", "two"]
+          styles: ["font-size", "width"]
+        )
+        expect(obj.values.testing).toBeDefined()
+        expect(obj.values.testing.one).toBeTruthy()
+        expect(obj.values.testing.two).toBeTruthy()
+        expect(obj.values.styles.width).toBeTruthy()
+        expect(obj.values.styles.height).toBeTruthy()
+        expect(obj.values.styles["font-size"]).toBeTruthy()
+
     describe "#getElement", ->
       it "builds an element with the given tag and no classes and attributes", ->
         obj = new WhitelistObject("p", null, [], [])

@@ -63,6 +63,19 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
         expect($.inArray(whitelists.byLabel["Title"], whitelists.byTag["p"])).toBeGreaterThan(-1)
         expect($.inArray(prevObj, whitelists.byTag["h1"])).toEqual(-1)
 
+    describe "#addGeneralRule", ->
+      beforeEach ->
+        whitelists.addGeneralRule(".general[style=(text-align)]", ["h1", "li"])
+
+      it "adds the rule to the general list", ->
+        expect(whitelists.general.h1.length).toEqual(1)
+        expect(whitelists.general.h1[0].tag).toEqual("")
+        expect(whitelists.general.h1[0].classes).toEqual("general")
+        expect(whitelists.general.h1[0].attrs.style).toBeTruthy()
+        expect(whitelists.general.h1[0].values.style["text-align"]).toBeTruthy()
+        expect(whitelists.general.li.length).toEqual(1)
+        expect(whitelists.general.li[0]).toBe(whitelists.general.h1[0])
+
     describe "#isLabel", ->
       it "returns true when the label starts with a capital", ->
         expect(whitelists.isLabel("Normal")).toBeTruthy()
@@ -103,9 +116,25 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
         expect(obj.attrs).toEqual([])
         expect(obj.next).toBeUndefined()
 
+      it "parses just a class", ->
+        obj = whitelists.parse(".normal")
+        expect(obj.tag).toEqual("")
+        expect(obj.id).toBeNull()
+        expect(obj.classes).toEqual("normal")
+        expect(obj.attrs).toEqual([])
+        expect(obj.next).toBeUndefined()
+
       it "parses attributes", ->
         obj = whitelists.parse("p[width,height]")
         expect(obj.tag).toEqual("p")
+        expect(obj.id).toBeNull()
+        expect(obj.classes).toEqual("")
+        expect(obj.attrs).toEqual(width: true, height: true)
+        expect(obj.next).toBeUndefined()
+
+      it "parses just attributes", ->
+        obj = whitelists.parse("[width,height]")
+        expect(obj.tag).toEqual("")
         expect(obj.id).toBeNull()
         expect(obj.classes).toEqual("")
         expect(obj.attrs).toEqual(width: true, height: true)
@@ -122,6 +151,19 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
             background: true
             "text-align": true
         )
+
+      it "parses classes, attributes, and values together", ->
+        obj = whitelists.parse(".normal.highlighted[width,height,style=(background|text-align)]")
+        expect(obj.tag).toEqual("")
+        expect(obj.id).toBeNull()
+        expect(obj.classes).toEqual("highlighted normal")
+        expect(obj.attrs).toEqual(width: true, height: true, style: true)
+        expect(obj.values).toEqual(
+          style:
+            background: true
+            "text-align": true
+        )
+        expect(obj.next).toBeUndefined()
 
       it "parses the id, classes, attributes, and values together", ->
         obj = whitelists.parse("p#special.normal.highlighted[width,height, style=(background|text-align)]")

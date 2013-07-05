@@ -116,7 +116,7 @@
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
         stylesheets: [],
-        toolbar: { items: ["styleTd"] },
+        toolbar: { items: ["styleTd", "p", "h3"] },
         contentClass: "myClass",
         imageServer: {
           uploadUrl: insecureUploadUrl,
@@ -377,7 +377,7 @@
       <input type="button" value="activate" onclick="insecureForm.api.activate()" />
       <textarea id="insecure_form" class="form">
         <address>some address<p>here's a block</p></address>
-        <p>some text at the beginning</p>
+        <p>some <span>text</span> at the beginning</p>
         <p>some text at the beginning</p>
         <div class="atomic">This is atomic</div>
         <h4>Heading 4</h4>
@@ -532,6 +532,24 @@
         </ul>
         <div class="atomic">This is atomic</div>
         <p>More text!</p>
+        <table>
+          <tbody>
+            <tr><th>Header</th></tr>
+            <tr><td>Data</td></tr>
+            <tr>
+              <td>
+                <div class="atomic">This is atomic</div>
+                Data
+                <p>another</p>
+                text
+                <ul>
+                  <li>first</li>
+                  <li>second</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <div class="atomic">This is atomic</div>
         <div class="atomic">This is atomic</div>
         <p>More text!</p>

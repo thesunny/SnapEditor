@@ -18,6 +18,9 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"],
         else
           throw "Wrong number of arguments to Whitelist#add"
 
+    addGeneralRule: (rule, tags) ->
+      @whitelists.addGeneralRule(rule, tags)
+
     # Get the default element for the given key.
     getDefaultFor: (key, doc) ->
       def = @whitelists.getByDefault(key)

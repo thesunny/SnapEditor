@@ -18,7 +18,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # ASSETS
         "imageAsset", "flashAsset",
         # WHITELIST
-        "addWhitelistRule",
+        "addWhitelistRule", "addWhitelistGeneralRule",
         "isAllowed", "getReplacement",
         "getDefaultBlock", "getNext",
         # ACTIONS

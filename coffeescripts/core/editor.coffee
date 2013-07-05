@@ -352,6 +352,12 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     addWhitelistRule: ->
       @whitelist.add.apply(@whitelist, arguments)
 
+    # Arguments:
+    # rule - whitelist rule
+    # tags - array of tags
+    addWhitelistGeneralRule: ->
+      @whitelist.addGeneralRule.apply(@whitelist, arguments)
+
     # Gets the default block from the whitelist.
     getDefaultBlock: ->
       @whitelist.getDefaultFor("*", @doc)

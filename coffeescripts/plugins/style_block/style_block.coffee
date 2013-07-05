@@ -14,12 +14,12 @@ define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
       text: SnapEditor.lang.styleBlock
       items: ["p", "h1", "h2", "h3", "h4", "h5", "h6"]
     p: Helpers.createButton("p", "ctrl+alt+0")
-    h1: Helpers.createButton("h1", "ctrl+alt+1", html: getHTML(1))
-    h2: Helpers.createButton("h2", "ctrl+alt+2", html: getHTML(2))
-    h3: Helpers.createButton("h3", "ctrl+alt+3", html: getHTML(3))
-    h4: Helpers.createButton("h4", "ctrl+alt+4", html: getHTML(4))
-    h5: Helpers.createButton("h5", "ctrl+alt+5", html: getHTML(5))
-    h6: Helpers.createButton("h6", "ctrl+alt+6", html: getHTML(6))
+    h1: Helpers.createButton("h1", "ctrl+alt+1", html: getHTML(1), onInclude: (e) -> e.api.addWhitelistRule("Heading 1", "h1 > Paragraph"))
+    h2: Helpers.createButton("h2", "ctrl+alt+2", html: getHTML(2), onInclude: (e) -> e.api.addWhitelistRule("Heading 2", "h2 > Paragraph"))
+    h3: Helpers.createButton("h3", "ctrl+alt+3", html: getHTML(3), onInclude: (e) -> e.api.addWhitelistRule("Heading 3", "h3 > Paragraph"))
+    h4: Helpers.createButton("h4", "ctrl+alt+4", html: getHTML(4), onInclude: (e) -> e.api.addWhitelistRule("Heading 4", "h4 > Paragraph"))
+    h5: Helpers.createButton("h5", "ctrl+alt+5", html: getHTML(5), onInclude: (e) -> e.api.addWhitelistRule("Heading 5", "h5 > Paragraph"))
+    h6: Helpers.createButton("h6", "ctrl+alt+6", html: getHTML(6), onInclude: (e) -> e.api.addWhitelistRule("Heading 6", "h6 > Paragraph"))
   )
 
   styles = """

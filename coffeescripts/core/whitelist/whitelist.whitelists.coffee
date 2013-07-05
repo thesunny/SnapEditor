@@ -4,14 +4,13 @@
 # * byTag
 #
 # The values are stored as Whitelist.Objects.
-#
-# All labels are dereferenced to their objects.
 define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject) ->
   class Whitelists
     constructor: (whitelist) ->
-      @defaults = {}
-      @byLabel = {}
-      @byTag = {}
+      @defaults = {} # { *: "label", tag: "label" }
+      @byLabel = {} # { "label": Whitelist.Object }
+      @byTag = {} # { "tag": [Whitelist.Object, Whitelist.Object] }
+      @general = {} # { "tag": [Whitelist.Object, Whitelist.Object] }
       @add(key, rule) for key, rule of whitelist
 
     # Returns a Whitelist.Object.
@@ -26,10 +25,14 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
     getByTag: (tag) ->
       @byTag[tag]
 
+    # Add a rule to the whitelists.
+    # key - label, tag, or *
+    # rule - whitelist rule
     add: (key, rule) ->
       if @isLabel(key)
         prevObj = @byLabel[key]
         obj = @parse(rule)
+        obj.merge(generalObj) for generalObj in @general[obj.tag] or []
         @byLabel[key] = obj
         # Add to the whitelist by tag.
         @byTag[obj.tag] or= []
@@ -39,6 +42,18 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
       else
         throw "Whitelist default '#{key}: #{rule}' must reference a label" unless @isLabel(rule)
         @defaults[key] = rule
+
+    # Adds a general rule that will be applied to all the given tags.
+    # rule - whtielist rule
+    # tags - an array of tags to attach the rule to
+    addGeneralRule: (rule, tags) ->
+      obj = @parse(rule)
+      for tag in tags
+        # Add the new whitelist object.
+        @general[tag] or= []
+        @general[tag].push(obj)
+        # Add the rule to all existing whitelist objects.
+        tagObj.merge(obj) for tagObj in @byTag[tag] or []
 
     isLabel: (label) ->
       !!label.match(/^[A-Z0-9]/)

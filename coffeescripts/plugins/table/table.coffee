@@ -243,7 +243,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
     # cell - current cell
     # next - true to move to next cell, false to move to previous cell
     moveToSiblingCell: (cell, next) ->
-      siblingCell = @getSiblingCell(cell, next)
+      siblingCell = Helpers.getSiblingCell(cell, next)
       if siblingCell
         @api.selectEndOfElement(siblingCell)
       else
@@ -264,7 +264,16 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
     table:
       text: SnapEditor.lang.table
       items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable"]
-    insertTable: Helpers.createButton("insertTable", "", langKey: "tableInsert", onInclude: includeBehaviours)
+    insertTable: Helpers.createButton("insertTable", "", langKey: "tableInsert", onInclude: (e) ->
+      includeBehaviours(e)
+      e.api.addWhitelistRule(
+        "Table": "table"
+        "Table Body": "tbody"
+        "Table Row": "tr"
+        "Table Header": "th > BR"
+        "Table Cell": "td > BR"
+      )
+    )
     addRowAbove: Helpers.createButton("addRowAbove", "ctrl+shift+enter", langKey: "tableAddRowAbove", onInclude: includeBehaviours)
     addRowBelow: Helpers.createButton("addRowBelow", "ctrl+enter", langKey: "tableAddRowBelow", onInclude: includeBehaviours)
     deleteRow: Helpers.createButton("deleteRow", "", langKey: "tableDeleteRow", onInclude: includeBehaviours)

@@ -41,21 +41,8 @@ define [
     cleaner:
       whitelist:
         # Blocks
-        "Paragraph": "p[style=(text-align)] > Paragraph"
-        "Div": "div[style=(text-align)] > Div"
-        # Headings
-        "Heading 1": "h1[style=(text-align)] > Paragraph"
-        "Heading 2": "h2[style=(text-align)] > Paragraph"
-        "Heading 3": "h3[style=(text-align)] > Paragraph"
-        "Heading 4": "h4[style=(text-align)] > Paragraph"
-        "Heading 5": "h5[style=(text-align)] > Paragraph"
-        "Heading 6": "h6[style=(text-align)] > Paragraph"
-        # Tables
-        "Table": "table"
-        "Table Body": "tbody"
-        "Table Row": "tr"
-        "Table Header": "th[style=(text-align)] > BR"
-        "Table Cell": "td[style=(text-align)] > BR"
+        "Paragraph": "p > Paragraph"
+        "Div": "div > Div"
         # BR
         "BR": "br"
         # Range

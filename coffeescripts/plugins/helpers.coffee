@@ -9,13 +9,13 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       cmd =
         text: text
         action: button
-      if shortcut.length > 0
-        cmd.onInclude = (e) ->
+      cmd.onInclude = (e) ->
+        if shortcut.length > 0
           SnapEditor.shortcuts[button] =
             key: shortcut
             action: button
           e.api.config.shortcuts.push(button)
-          options.onInclude(e) if options.onInclude
+        options.onInclude(e) if options.onInclude
       cmd.html = options.html
       cmd
 
