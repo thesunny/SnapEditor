@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, API) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, API, ToolbarButton) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -62,10 +62,11 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # aren't shared between editors.
       @config.toolbar or= @defaults.toolbar
       if typeof @config.toolbar == "string"
+        buttonName = @config.toolbar
         button = SnapEditor.buttons[@config.toolbar]
         throw "Button has not been defined: #{@config.toolbar}" unless button
         throw "Button must have items in order to be used as a toolbar: #{@config.toolbar}" unless button.items
-        @config.toolbar = items: button.items.slice(0)
+      @config.toolbar = new ToolbarButton(buttonName or "snapeditor_anonymous_toolbar", button or @config.toolbar)
       @config.behaviours or= @defaults.behaviours.slice(0)
       @config.shortcuts or= @defaults.shortcuts.slice(0)
       @config.lang = $.extend({}, SnapEditor.lang)

@@ -1,5 +1,5 @@
 define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, Browser, Keyboard) ->
-  Helpers = {
+  Helpers =
     #
     # CONSTANTS
     #
@@ -9,11 +9,10 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     # Used when dealing with text like in regex or textnodes.
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
 
-    buttons: {
+    buttons:
       left: 1
       middle: 2
       right: 3
-    }
 
     # This is a hash of the different node types.
     #
@@ -300,7 +299,6 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         uArray.push(a)
         unique[a] = true
       uArray
-  }
 
   $.extend(Helpers, Keyboard)
 

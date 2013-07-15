@@ -74,12 +74,30 @@
         items: ["bold", "italic", "|", "styleBlock", "table"]
       };
 
+      SnapEditor.buttons.multiLevel1 = {
+        text: "MultiLevel1",
+        items: ["p", "h1", "multiLevel2", "h2"]
+      }
+      SnapEditor.buttons.multiLevel2 = {
+        text: "MultiLevel2",
+        items: ["p", "h1", "h2"]
+      }
+
+      /*
       SnapEditor.buttons.styleTd = {
-      text: "Style TD",
+        text: "Style TD",
         action: function (e) {
           e.api.styleBlock("td.highlight.awesome");
+        },
+        onInclude: function (e) {
+          e.api.addWhitelistRule("StyleTd", "td.highlight.awesome");
         }
       };
+      */
+      SnapEditor.addStyleButton({
+        text: "Style TD",
+        selector: "td.highlight.awesome"
+      });
 
       //var secureResourceId = "secure/123";
       var insecureDirectory = "insecure/123";
@@ -116,7 +134,7 @@
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
         stylesheets: [],
-        toolbar: { items: ["styleTd", "p", "h3"] },
+        toolbar: { items: ["styleBlock", "table", "td.highlight.awesome", "p", "h3"] },
         contentClass: "myClass",
         imageServer: {
           uploadUrl: insecureUploadUrl,
@@ -139,7 +157,7 @@
         path: "/spec/acceptance/assets",
         //snap: false,
         toolbar: {
-          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi"]
+          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "multiLevel1"]
         },
         imageServer: {
           uploadUrl: insecureUploadUrl,

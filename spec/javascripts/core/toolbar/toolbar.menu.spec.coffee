@@ -1,49 +1,89 @@
-require ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu"], ($, Helpers, Menu) ->
+require ["jquery.custom", "core/toolbar/toolbar.menu"], ($, Menu) ->
   describe "Toolbar.Menu", ->
     menu = null
     beforeEach ->
-      spyOn(Menu.prototype, "setup").andCallFake(-> @$menu = $("<div/>"))
-      menu = new Menu({}, $("<div/>"), [])
+      class TestMenu extends Menu
+        getItemTemplate: -> "<li><a></a></li>"
+        getDividerTemplate: -> '<li class="divider"></li>'
+        getSubmenuClass: -> TestMenu
+        buildItem: ($container, button) ->
+          $container.addClass(button.name).attr("title", button.text)
 
-    describe "#getDropDownStyles", ->
+      menu = new TestMenu({}, { editor: $("<div/>") })
+      menu.options.editor.win = window
+      menu.options.editor.execAction = ->
+      menu.$el = $("<div/>")
+      menu.$content = $("<ul/>")
+
+    describe "#addItem", ->
       beforeEach ->
-        spyOn(menu.$relEl, "getCoordinates").andReturn(
-          top: 100
-          bottom: 200
-          left: 300
-          right: 350
-        )
-        spyOn(Helpers, "getWindowBoundary").andReturn(
-          top: 0
-          bottom: 250
-          left: 0
-          right: 400
-        )
-        spyOn(menu.$menu, "getSize")
+        SnapEditor.buttons =
+            item:
+              text: "Item"
+              action: ->
+            noText:
+              action: ->
+            noAction:
+              text: "Test"
+            noShortcut:
+              text: "Item"
+              action: ->
+            menu:
+              text: "Menu"
+              action: ->
+              items: ["1", "2"]
 
-      describe "below", ->
-        it "fits", ->
-          menu.$menu.getSize.andReturn(x: 5, y: 5)
-          expect(menu.getDropDownStyles()).toEqual(top: 200, left: 300)
+      it "throws an error when the button doesn't exist", ->
+        expect(-> menu.addItem("fail")).toThrow()
 
-        it "doesn't fit to the right", ->
-          menu.$menu.getSize.andReturn(x: 200, y: 5)
-          expect(menu.getDropDownStyles()).toEqual(top: 200, left: 200)
+      it "throws an error when there is no text", ->
+        expect(-> menu.addItem("noText")).toThrow()
 
-      describe "above", ->
-        it "fits", ->
-          menu.$menu.getSize.andReturn(x: 5, y: 75)
-          expect(menu.getDropDownStyles()).toEqual(top: 25, left: 300)
+      it "throws an error when there is no action or items", ->
+        expect(-> menu.addItem("noAction")).toThrow()
 
-        it "doesn't fit to the right", ->
-          menu.$menu.getSize.andReturn(x: 200, y: 75)
-          expect(menu.getDropDownStyles()).toEqual(top: 25, left: 200)
+      describe "item", ->
+        it "add a divider", ->
+          menu.addItem("|")
+          expect(menu.$content.find(".divider").length).toEqual(1)
 
-      describe "side", ->
-        it "fits", ->
-          menu.$menu.getSize.andReturn(x: 5, y: 100)
-          expect(menu.getDropDownStyles()).toEqual(top: 0, left: 300)
+        it "adds an item", ->
+          menu.addItem("item")
+          $li = menu.$content.find("li")
+          expect($li.length).toEqual(1)
+          $a = $li.find("a")
+          expect($a.hasClass("item")).toBeTruthy()
+          expect($a.attr("title")).toEqual(SnapEditor.buttons.item.text)
 
-        it "doesn't fit to the right", ->
-          menu.$menu.getSize.andReturn(x: 200, y: 150)
-          expect(menu.getDropDownStyles()).toEqual(top: 0, left: 100)
+        it "adds the action", ->
+          spyOn(menu.options.editor, "execAction")
+          menu.addItem("item")
+          e = $.Event("item")
+          e.api = menu.options.editor
+          menu.options.editor.trigger(e)
+          expect(menu.options.editor.execAction).toHaveBeenCalledWith(SnapEditor.buttons.item.action, e)
+
+      describe "menu", ->
+        constructed = null
+        beforeEach ->
+          constructed = false
+          class Submenu extends Menu
+            constructor: (@button, @options) ->
+              constructed = true
+            isSubmenu: true
+          spyOn(menu, "getSubmenuClass").andReturn(Submenu)
+
+        it "creates a submenu", ->
+          menu.addItem("menu")
+          expect(constructed).toBeTruthy()
+
+        it "gets the action handler using the submenu", ->
+          spyOn(menu, "getActionHandler")
+          menu.addItem("menu")
+          expect(menu.getActionHandler.mostRecentCall.args.length).toEqual(2)
+          expect(menu.getActionHandler.mostRecentCall.args[1]).not.toBeNull()
+          expect(menu.getActionHandler.mostRecentCall.args[1].isSubmenu).toBeTruthy()
+
+        it "adds the submenu to the submenus list", ->
+          menu.addItem("menu")
+          expect(menu.submenus.length).toEqual(1)

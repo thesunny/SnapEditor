@@ -6,9 +6,9 @@ define ["core/editor", "config/config.default.in_place", "core/toolbar/toolbar.f
     # Perform the actual initialization of the editor.
     init: (el) =>
       super(el)
-      @toolbar = new Toolbar(this)
+      @toolbar = new Toolbar(@config.toolbar, editor: this)
 
     prepareConfig: ->
-      super()
+      super
       @config.snap = @defaults.snap if typeof @config.snap == "undefined"
-      @config.toolbar.items = @config.toolbar.items.concat(["|", "save", "discard"]) if @config.onSave
+      @config.toolbar.addItems(["|", "save", "discard"]) if @config.onSave

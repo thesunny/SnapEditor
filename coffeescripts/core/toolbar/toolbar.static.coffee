@@ -1,9 +1,8 @@
-define ["core/toolbar/toolbar"], (Toolbar) ->
+define ["core/toolbar/toolbar.menu.toolbar"], (Toolbar) ->
   class StaticToolbar extends Toolbar
     constructor: ->
       super(arguments...)
-      @setup()
-      @$toolbar.hide().appendTo("body")
+      @show()
 
     staticCSS: """
       .snapeditor_toolbar_static {
@@ -12,10 +11,7 @@ define ["core/toolbar/toolbar"], (Toolbar) ->
     """
 
     setup: ->
-      super
-      @editor.insertStyles("snapeditor_toolbar_static", @staticCSS)
-      @$toolbar.addClass("snapeditor_toolbar_static")
-
-    # Shows the toolbar.
-    show: ->
-      @$toolbar.show()
+      unless @$el
+        super
+        @options.editor.insertStyles("snapeditor_toolbar_static", @staticCSS)
+        @$el.addClass("snapeditor_toolbar_static")
