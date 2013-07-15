@@ -11,6 +11,7 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
       @byLabel = {} # { "label": Whitelist.Object }
       @byTag = {} # { "tag": [Whitelist.Object, Whitelist.Object] }
       @general = {} # { "tag": [Whitelist.Object, Whitelist.Object] }
+      @generalStrings = {} # { "tag": ["rule", "rule"] }
       @add(key, rule) for key, rule of whitelist
 
     # Returns a Whitelist.Object.
@@ -49,11 +50,14 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
     addGeneralRule: (rule, tags) ->
       obj = @parse(rule)
       for tag in tags
-        # Add the new whitelist object.
-        @general[tag] or= []
-        @general[tag].push(obj)
-        # Add the rule to all existing whitelist objects.
-        tagObj.merge(obj) for tagObj in @byTag[tag] or []
+        # Add the new whitelist object if the rule isn't already added.
+        @generalStrings[tag] or= []
+        if $.inArray(rule, @generalStrings[tag]) == -1
+          @generalStrings[tag].push(rule)
+          @general[tag] or= []
+          @general[tag].push(obj)
+          # Add the rule to all existing whitelist objects.
+          tagObj.merge(obj) for tagObj in @byTag[tag] or []
 
     isLabel: (label) ->
       !!label.match(/^[A-Z0-9]/)

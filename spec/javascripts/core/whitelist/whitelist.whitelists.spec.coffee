@@ -76,6 +76,17 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
         expect(whitelists.general.li.length).toEqual(1)
         expect(whitelists.general.li[0]).toBe(whitelists.general.h1[0])
 
+      it "doesn't add duplicates", ->
+        whitelists.addGeneralRule(".general[style=(text-align)]", ["h1", "li", "td"])
+        expect(whitelists.general.h1.length).toEqual(1)
+        expect(whitelists.general.li.length).toEqual(1)
+        expect(whitelists.general.td.length).toEqual(1)
+        expect(whitelists.general.td[0]).not.toBe(whitelists.general.h1[0])
+        expect(whitelists.general.td[0].tag).toEqual("")
+        expect(whitelists.general.td[0].classes).toEqual("general")
+        expect(whitelists.general.td[0].attrs.style).toBeTruthy()
+        expect(whitelists.general.td[0].values.style["text-align"]).toBeTruthy()
+
     describe "#isLabel", ->
       it "returns true when the label starts with a capital", ->
         expect(whitelists.isLabel("Normal")).toBeTruthy()
