@@ -16,6 +16,33 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
     Dialog: Dialog
     debug: false
 
+    addStyleButton: (button) ->
+      throw "The style button #{button.selector} is already defined." if SnapEditor.buttons[button.selector]
+
+      tags =
+        p: "style-block"
+        div: "style-block"
+        h1: "style-block"
+        h2: "style-block"
+        h3: "style-block"
+        h4: "style-block"
+        h5: "style-block"
+        h6: "style-block"
+        table: "style-table"
+        tr: "style-table-row"
+        th: "style-table-cell"
+        td: "style-table-cell"
+
+      SnapEditor.buttons[button.selector] =
+        text: button.text
+        html: button.html
+        action: (e) -> e.api.styleBlock(button.selector)
+        onInclude: (e) -> e.api.addWhitelistRule(Helpers.capitalize(button.selector), button.selector)
+        tags: ["style", tags[button.selector.split(".")[0]]]
+
+    addStyleButtons: (buttons) ->
+      @addStyleButton(button) for button in buttons
+
     #
     # PRIVATE
     #
