@@ -1,5 +1,5 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
-  paragraphTags = ["p", "h1", "h2", "h3", "h4", "h5", "h6"]
+  paragraphTags = ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6"]
   listTags = ["ul, ol, li"]
   tableTags = ["table", "tr", "th", "td"]
   blockTags = paragraphTags.concat(listTags).concat(tableTags)
