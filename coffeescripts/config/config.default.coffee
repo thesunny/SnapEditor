@@ -42,7 +42,6 @@ define [
       whitelist:
         # Blocks
         "Paragraph": "p > Paragraph"
-        "Div": "div > Div"
         # BR
         "BR": "br"
         # Range
