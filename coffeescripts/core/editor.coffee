@@ -63,10 +63,10 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @config.toolbar or= @defaults.toolbar
       if typeof @config.toolbar == "string"
         buttonName = @config.toolbar
-        button = SnapEditor.buttons[@config.toolbar]
-        throw "Button has not been defined: #{@config.toolbar}" unless button
-        throw "Button must have items in order to be used as a toolbar: #{@config.toolbar}" unless button.items
-      @config.toolbar = new ToolbarButton(buttonName or "snapeditor_anonymous_toolbar", button or @config.toolbar)
+        buttonOptions = SnapEditor.buttons[@config.toolbar]
+        throw "Button has not been defined: #{@config.toolbar}" unless buttonOptions
+        throw "Button must have items in order to be used as a toolbar: #{@config.toolbar}" unless buttonOptions.items
+      @config.toolbar = new ToolbarButton(buttonName or "snapeditor_anonymous_toolbar", buttonOptions or @config.toolbar)
       @config.behaviours or= @defaults.behaviours.slice(0)
       @config.shortcuts or= @defaults.shortcuts.slice(0)
       @config.lang = $.extend({}, SnapEditor.lang)
@@ -85,14 +85,15 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
     includeButtons: ->
-      @includeButton(name) for name in @config.toolbar.items
+      @includeButton(name) for name in @config.toolbar.items()
 
     includeButton: (name) ->
       unless name == "|"
-        button = SnapEditor.buttons[name]
-        throw "Button does not exist: #{name}" unless button
-        button.onInclude(api: @api) if button.onInclude
-        @includeButton(name) for name in button.items or []
+        buttonOptions = SnapEditor.buttons[name]
+        throw "Button does not exist: #{name}" unless buttonOptions
+        button = new ToolbarButton(name, buttonOptions)
+        button.onInclude(api: @api)
+        @includeButton(name) for name in button.items(api: @api)
 
     includeBehaviours: ->
       @config.behaviours = Helpers.uniqueArray(@config.behaviours)

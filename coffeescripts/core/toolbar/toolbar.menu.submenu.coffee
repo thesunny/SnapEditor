@@ -132,7 +132,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu", "core/data
         $container.find(".snapeditor_toolbar_menu_shortcut").text(Helpers.displayShortcut(shortcut))
 
       # Handle submenu.
-      if button.items
+      if button.items(api: @options.editor.api).length > 0
         $container.attr("data-mouseover", true)
         $arrowContainer = $container.find(".snapeditor_toolbar_menu_arrow_container")
         $arrow = $("<div/>").addClass("snapeditor_toolbar_menu_arrow").appendTo($arrowContainer)

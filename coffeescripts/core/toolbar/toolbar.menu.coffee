@@ -157,6 +157,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
       unless @$el
         @$el = $(@getMenuTemplate()).hide().appendTo("body")
         @$content = @$el.find("ul")
+        @addItems()
         @options.editor.insertStyles(@getCSSKey(), @getCSS())
         @dataActionHandler = @getDataActionHandler()
 
@@ -166,8 +167,6 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
     show: =>
       unless @shown
         @setup()
-        @button.onOpen() if @button.onOpen
-        @addItems()
         @dataActionHandler.activate()
         @$el.css(@getStyles()).show()
         @shown = true
@@ -192,18 +191,15 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
       @currentItems.join() != @button.items.join()
 
     addItems: ->
-      if @isDifferentItems()
-        @$content.empty()
-        @submenus = []
-        @addItem(item) for item in @button.items
-        @currentItems = @button.items
-        # IE7 and IE8 destroy the range when it is collapsed and the toolbar is
-        # clicked. In order to prevent this, we set unselectable to on for every
-        # element in the toolbar.
-        # IE9/10 does not work properly without unselectable set to on.
-        if Browser.isIE
-          @$el.find("*").each(-> $(this).attr("unselectable", "on"))
-          @$el.attr("unselectable", "on")
+      @submenus = []
+      @addItem(item) for item in @button.items(api: @options.editor.api)
+      # IE7 and IE8 destroy the range when it is collapsed and the toolbar is
+      # clicked. In order to prevent this, we set unselectable to on for every
+      # element in the toolbar.
+      # IE9/10 does not work properly without unselectable set to on.
+      if Browser.isIE
+        @$el.find("*").each(-> $(this).attr("unselectable", "on"))
+        @$el.attr("unselectable", "on")
 
     addItem: (item) ->
       if item == "|"
@@ -221,7 +217,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
         # If there are items, we need to create a dropdown. We ignore the
         # action given by the button. Instead, the action should trigger the
         # dropdown.
-        if button.items
+        if button.items(api: @options.editor.api).length > 0
           klass = @getSubmenuClass()
           submenu = new klass(button, editor: @options.editor, relEl: $item)
           @submenus.push(submenu)

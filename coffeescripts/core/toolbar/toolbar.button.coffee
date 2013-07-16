@@ -6,14 +6,25 @@ define ["jquery.custom"], ($) ->
     # html - used for submenus
     # action - a function to execute or a key to SnapEditor.actions (ignored
     #   if items is defined)
-    # items - array of SnapEditor.buttons
+    # items - array of SnapEditor.buttons or function that returns an array of
+    #   SnapEditor.buttons
     # onInclude - a function to execute when the button is included
-    # onOpen - a function to execute when the button is opened
     constructor: (@name, options) ->
       $.extend(this, options)
       @cleanName = @name.replace(/\./g, "_")
-      @items = @items.slice(0) if @items
+      # If items is an array, change it to a function that returns the array.
+      if $.type(@items) == "array"
+        # We duplicate the array so that we don't modify the original one.
+        items = @items.slice(0)
+        @items = -> items
+
+    # Default items.
+    items: -> []
+
+    # Default onInclude function.
+    onInclude: (e) ->
 
     # items - array of strings
-    addItems: (items) ->
-      @items.concat(items)
+    appendItems: (items) ->
+      oldItems = @items
+      @items = (e) -> oldItems(e).concat(items)
