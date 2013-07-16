@@ -226,7 +226,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
           submenu = new klass(button, editor: @options.editor, relEl: $item)
           @submenus.push(submenu)
         actionHandler = @getActionHandler(button, submenu)
-        @options.editor.on(item, (e) ->
+        @options.editor.on(button.cleanName, (e) ->
           # In Webkit, after the toolbar is clicked, the focus hops to the parent
           # window. We need to refocus it back into the iframe. Focusing breaks IE
           # and kills the range so the focus is only for Webkit. It does not affect

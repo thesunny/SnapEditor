@@ -85,6 +85,6 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu", "core/tool
       shortcut = @options.editor.actionShortcuts[button.action] if typeof button.action == "string"
       title += " (#{Helpers.displayShortcut(shortcut)})" if shortcut
       $container.
-        addClass("snapeditor_toolbar_icon_#{Helpers.camelToSnake(button.name)}").
+        addClass("snapeditor_toolbar_icon_#{Helpers.camelToSnake(button.cleanName)}").
         attr("title", title).
-        attr("data-action", button.name)
+        attr("data-action", button.cleanName)

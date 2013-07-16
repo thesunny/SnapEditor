@@ -9,7 +9,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu", "core/data
 
     getMenuTemplate: ->
       """
-        <div class="snapeditor_toolbar_menu snapeditor_toolbar_component snapeditor_ignore_deactivate snapeditor_toolbar_menu_#{Helpers.camelToSnake(@button.name)}">
+        <div class="snapeditor_toolbar_menu snapeditor_toolbar_component snapeditor_ignore_deactivate snapeditor_toolbar_menu_#{Helpers.camelToSnake(@button.cleanName)}">
           <ul></ul>
         </div>
       """
@@ -118,7 +118,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu", "core/data
       title += " (#{Helpers.displayShortcut(shortcut)})" if shortcut
       $container.
         attr("title", title).
-        attr("data-action", button.name)
+        attr("data-action", button.cleanName)
 
       # Handle item.
       $item = $container.find(".snapeditor_toolbar_menu_item")

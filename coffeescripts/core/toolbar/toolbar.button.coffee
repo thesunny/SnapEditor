@@ -11,6 +11,7 @@ define ["jquery.custom"], ($) ->
     # onOpen - a function to execute when the button is opened
     constructor: (@name, options) ->
       $.extend(this, options)
+      @cleanName = @name.replace(/\./g, "_")
       @items = @items.slice(0) if @items
 
     # items - array of strings
