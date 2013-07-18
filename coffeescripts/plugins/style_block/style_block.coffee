@@ -1,26 +1,15 @@
 define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
-  format = (e) -> e.api.clean() if e.api.styleBlock(e.type)
-  SnapEditor.actions.p = format
-  SnapEditor.actions.h1 = format
-  SnapEditor.actions.h2 = format
-  SnapEditor.actions.h3 = format
-  SnapEditor.actions.h4 = format
-  SnapEditor.actions.h5 = format
-  SnapEditor.actions.h6 = format
-
   getHTML = (i) -> "<span class=\"snapeditor_style_block_h#{i}\">#{SnapEditor.lang["h#{i}"]}</span>"
-  $.extend(SnapEditor.buttons,
-    styleBlock:
-      text: SnapEditor.lang.styleBlock
-      items: ["p", "h1", "h2", "h3", "h4", "h5", "h6"]
-    p: Helpers.createButton("p", "ctrl+alt+0")
-    h1: Helpers.createButton("h1", "ctrl+alt+1", html: getHTML(1), onInclude: (e) -> e.api.addWhitelistRule("Heading 1", "h1 > Paragraph"))
-    h2: Helpers.createButton("h2", "ctrl+alt+2", html: getHTML(2), onInclude: (e) -> e.api.addWhitelistRule("Heading 2", "h2 > Paragraph"))
-    h3: Helpers.createButton("h3", "ctrl+alt+3", html: getHTML(3), onInclude: (e) -> e.api.addWhitelistRule("Heading 3", "h3 > Paragraph"))
-    h4: Helpers.createButton("h4", "ctrl+alt+4", html: getHTML(4), onInclude: (e) -> e.api.addWhitelistRule("Heading 4", "h4 > Paragraph"))
-    h5: Helpers.createButton("h5", "ctrl+alt+5", html: getHTML(5), onInclude: (e) -> e.api.addWhitelistRule("Heading 5", "h5 > Paragraph"))
-    h6: Helpers.createButton("h6", "ctrl+alt+6", html: getHTML(6), onInclude: (e) -> e.api.addWhitelistRule("Heading 6", "h6 > Paragraph"))
+  SnapEditor.addStyleButtons(
+    p: text: SnapEditor.lang.p, shortcut: "ctrl+alt+0"
+    h1: text: SnapEditor.lang.h1, html: getHTML(1), shortcut: "ctrl+alt+1"
+    h2: text: SnapEditor.lang.h2, html: getHTML(2), shortcut: "ctrl+alt+2"
+    h3: text: SnapEditor.lang.h3, html: getHTML(3), shortcut: "ctrl+alt+3"
+    h4: text: SnapEditor.lang.h4, html: getHTML(4), shortcut: "ctrl+alt+4"
+    h5: text: SnapEditor.lang.h5, html: getHTML(5), shortcut: "ctrl+alt+5"
+    h6: text: SnapEditor.lang.h6, html: getHTML(6), shortcut: "ctrl+alt+6"
   )
+  SnapEditor.addStyleList("styleBlock", SnapEditor.lang.styleBlock, "style-block")
 
   styles = """
     div.snapeditor_toolbar_menu_style_block { width: 275px; }

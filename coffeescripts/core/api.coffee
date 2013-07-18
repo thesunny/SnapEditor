@@ -17,6 +17,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "addKeyboardShortcut", "removeKeyboardShortcut",
         # ASSETS
         "imageAsset", "flashAsset",
+        # BUTTONS
+        "getStyleButtonsByTag",
         # WHITELIST
         "addWhitelistRule", "addWhitelistGeneralRule",
         "isAllowed", "getReplacement",

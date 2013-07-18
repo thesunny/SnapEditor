@@ -16,8 +16,14 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
     Dialog: Dialog
     debug: false
 
-    addStyleButton: (button) ->
-      throw "The style button #{button.selector} is already defined." if SnapEditor.buttons[button.selector]
+    # Arguments
+    # * selector - CSS selector that will be applied
+    # * style - object
+    #   * text
+    #   * html
+    #   * shortcut
+    addStyleButton: (selector, style) ->
+      throw "The style button #{selector} is already defined." if SnapEditor.buttons[selector]
 
       tags =
         p: "style-block"
@@ -33,15 +39,35 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
         th: "style-table-cell"
         td: "style-table-cell"
 
-      SnapEditor.buttons[button.selector] =
-        text: button.text
-        html: button.html
-        action: (e) -> e.api.styleBlock(button.selector)
-        onInclude: (e) -> e.api.addWhitelistRule(Helpers.capitalize(button.selector), button.selector)
-        tags: ["style", tags[button.selector.split(".")[0]]]
+      SnapEditor.actions[selector] = (e) -> e.api.styleBlock(selector)
+      SnapEditor.buttons[selector] =
+        text: style.text
+        html: style.html
+        action: selector
+        onInclude: (e) ->
+          e.api.addWhitelistRule(Helpers.capitalize(selector), selector)
+          if style.shortcut
+            SnapEditor.shortcuts[selector] =
+              key: style.shortcut
+              action: selector
+            e.api.config.shortcuts.push(selector)
+        tags: ["style", tags[selector.split(".")[0]]]
 
-    addStyleButtons: (buttons) ->
-      @addStyleButton(button) for button in buttons
+    addStyleButtons: (styles) ->
+      @addStyleButton(selector, style) for own selector, style of styles
+
+    addStyleList: (name, text, tags) ->
+      tags = $.makeArray(tags)
+      SnapEditor.buttons[name] =
+        text: text
+        items: (e) ->
+          items = []
+          for tag in tags
+            items = items.concat(e.api.getStyleButtonsByTag(tag))
+            items.push("|")
+          # Pop the last "|"
+          items.pop()
+          items
 
     #
     # PRIVATE

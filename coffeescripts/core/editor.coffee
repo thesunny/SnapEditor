@@ -43,6 +43,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @api.on("snapeditor.deactivate", @detachDOMEvents)
 
       # Deal with plugins.
+      @includeStyles()
       @includeButtons()
       @includeBehaviours()
       @includeShortcuts()
@@ -60,6 +61,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     prepareConfig: ->
       # We use slice and extend to clone arrays and objects so that they
       # aren't shared between editors.
+      @config.styles or= @defaults.styles.slice(0)
       @config.toolbar or= @defaults.toolbar
       if typeof @config.toolbar == "string"
         buttonName = @config.toolbar
@@ -83,6 +85,13 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @config.cleaner.ignore = @config.cleaner.ignore.concat(@config.atomic.selectors)
       # Add the atomic selectors to the erase handler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
+
+    includeStyles: ->
+      @styleButtons = {}
+      @includeStyle(selector) for selector in @config.styles
+
+    includeStyle: (selector) ->
+      @styleButtons[selector] = SnapEditor.buttons[selector] or throw "Style does not exist: #{selector}"
 
     includeButtons: ->
       @includeButton(name) for name in @config.toolbar.items()
@@ -342,6 +351,18 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     removeKeyboardShortcut: (key) ->
       @keyboard.remove(key)
+
+    #
+    # BUTTONS
+    #
+
+    # Returns an array of button strings where the button contains the given
+    # tag.
+    getStyleButtonsByTag: (tag) ->
+      buttons = []
+      for own selector, button of @styleButtons
+        buttons.push(selector) if button.tags and $.inArray(tag, button.tags) > -1
+      buttons
 
     #
     # WHITELIST
