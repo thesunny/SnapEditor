@@ -192,7 +192,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
 
     addItems: ->
       @submenus = []
-      @addItem(item) for item in @button.items(api: @options.editor.api)
+      @addItem(item) for item in @button.getItems(api: @options.editor.api)
       # IE7 and IE8 destroy the range when it is collapsed and the toolbar is
       # clicked. In order to prevent this, we set unselectable to on for every
       # element in the toolbar.
@@ -217,7 +217,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
         # If there are items, we need to create a dropdown. We ignore the
         # action given by the button. Instead, the action should trigger the
         # dropdown.
-        if button.items(api: @options.editor.api).length > 0
+        if button.getItems(api: @options.editor.api).length > 0
           klass = @getSubmenuClass()
           submenu = new klass(button, editor: @options.editor, relEl: $item)
           @submenus.push(submenu)

@@ -94,7 +94,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @styleButtons[selector] = SnapEditor.buttons[selector] or throw "Style does not exist: #{selector}"
 
     includeButtons: ->
-      @includeButton(name) for name in @config.toolbar.items()
+      @includeButton(name) for name in @config.toolbar.getItems(api: @api)
 
     includeButton: (name) ->
       unless name == "|"
@@ -102,7 +102,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         throw "Button does not exist: #{name}" unless buttonOptions
         button = new ToolbarButton(name, buttonOptions)
         button.onInclude(api: @api)
-        @includeButton(name) for name in button.items(api: @api)
+        @includeButton(name) for name in button.getItems(api: @api)
 
     includeBehaviours: ->
       @config.behaviours = Helpers.uniqueArray(@config.behaviours)

@@ -19,10 +19,12 @@ define ["jquery.custom"], ($) ->
         @items = -> items
 
     # Default items.
-    items: -> []
+    items: (e) ->
+      []
 
-    # Default onInclude function.
-    onInclude: (e) ->
+    # A nicer alias for items().
+    getItems: (e) ->
+      @items(e)
 
     # items - array of strings
     appendItems: (items) ->
