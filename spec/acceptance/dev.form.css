@@ -1,0 +1,33 @@
+* {
+  outline: none;
+}
+
+table {
+  font-size: 100%;
+  border-spacing: 2px;
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+table, th, td { border: 1px solid #5c5c5c; }
+
+h1.special {
+  color: #0a569d;
+}
+
+table.special, table.special td, table.special th {
+  border: none;
+}
+
+table.highlight, table.highlight td, table.highlight th {
+  border-color: #f9b512;
+}
+
+td.special {
+  font-family: monospace;
+}
+
+td.highlight {
+  background-color: #ffe9fb;
+}

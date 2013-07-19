@@ -96,6 +96,12 @@
       */
 
       SnapEditor.addStyleButton("h1.special", { text: "H1 Special" });
+      SnapEditor.addStyleButton("table.special", { text: "Table Special" });
+      SnapEditor.addStyleButton("table.highlight", { text: "Table Highlight" });
+      SnapEditor.addStyleButton("tr.special", { text: "TR Special" });
+      SnapEditor.addStyleButton("tr.highlight", { text: "TR Highlight" });
+      SnapEditor.addStyleButton("td.special", { text: "TD Special" });
+      SnapEditor.addStyleButton("td.highlight", { text: "TD Highlight"});
 
       //var secureResourceId = "secure/123";
       var insecureDirectory = "insecure/123";
@@ -131,8 +137,8 @@
       */
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
-        stylesheets: [],
-        styles: ["p", "h1", "h1.special"],
+        stylesheets: ["/spec/acceptance/dev.form.css"],
+        styles: ["p", "h1", "h1.special", "table.special", "table.highlight", "tr.special", "td.highlight", "td.special"],
         toolbar: { items: ["styleBlock", "table", "p", "h3"] },
         contentClass: "myClass",
         imageServer: {
