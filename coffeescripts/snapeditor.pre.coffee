@@ -21,7 +21,7 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
     # * style - object
     #   * text
     #   * html
-    #   * shortcut
+    #   * shortcut - only for internal plugin use
     addStyleButton: (selector, style) ->
       throw "The style button #{selector} is already defined." if SnapEditor.buttons[selector]
 
@@ -68,6 +68,8 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
           # Pop the last "|"
           items.pop()
           items
+        onRender: (e) ->
+          e.button.state.visible = e.button.getItems(e).length > 1
 
     #
     # PRIVATE

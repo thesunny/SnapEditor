@@ -107,8 +107,8 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
     # Options:
     # * editor
     constructor: (@button, @options) ->
+      @buttons = []
       @submenus = []
-      @currentItems = []
 
     getMenuTemplate: ->
       throw "#getMenuTemplate() must be overridden"
@@ -168,6 +168,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
       unless @shown
         @setup()
         @dataActionHandler.activate()
+        @renderButtons()
         @$el.css(@getStyles()).show()
         @shown = true
       # Prevent the if statement from above from returning false and stopping
@@ -187,11 +188,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
     hideSubmenus: ->
       menu.hide() for menu in @submenus
 
-    isDifferentItems: ->
-      @currentItems.join() != @button.items.join()
-
     addItems: ->
-      @submenus = []
       @addItem(item) for item in @button.getItems(api: @options.editor.api)
       # IE7 and IE8 destroy the range when it is collapsed and the toolbar is
       # clicked. In order to prevent this, we set unselectable to on for every
@@ -212,14 +209,14 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
         throw "Missing action for button #{item}." unless buttonOptions.action or buttonOptions.items
         button = new Button(item, buttonOptions)
         # Add the button.
-        $item = $(@getItemTemplate()).appendTo(@$content)
-        @buildItem($item.find("a"), button)
+        button.setEl($(@getItemTemplate()).appendTo(@$content))
+        @buildItem(button.getEl().find("a"), button)
         # If there are items, we need to create a dropdown. We ignore the
         # action given by the button. Instead, the action should trigger the
         # dropdown.
         if button.getItems(api: @options.editor.api).length > 0
           klass = @getSubmenuClass()
-          submenu = new klass(button, editor: @options.editor, relEl: $item)
+          submenu = new klass(button, editor: @options.editor, relEl: button.getEl())
           @submenus.push(submenu)
         actionHandler = @getActionHandler(button, submenu)
         @options.editor.on(button.cleanName, (e) ->
@@ -230,3 +227,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
           e.api.win.focus() if Browser.isWebkit
           actionHandler(e)
         )
+        @buttons.push(button)
+
+    renderButtons: ->
+      button.render(@options.editor.api) for button in @buttons

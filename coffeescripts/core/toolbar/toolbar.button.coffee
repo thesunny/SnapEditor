@@ -10,6 +10,10 @@ define ["jquery.custom"], ($) ->
     #   SnapEditor.buttons
     # onInclude - a function to execute when the button is included
     constructor: (@name, options) ->
+      @state =
+        visible: true
+        #selected: false
+        #enabled: true
       $.extend(this, options)
       @cleanName = @name.replace(/\./g, "_")
       # If items is an array, change it to a function that returns the array.
@@ -30,3 +34,22 @@ define ["jquery.custom"], ($) ->
     appendItems: (items) ->
       oldItems = @items
       @items = (e) -> oldItems(e).concat(items)
+
+    # Default onInclude function.
+    onInclude: (e) ->
+
+    # Default onRender function.
+    onRender: (e) ->
+
+    render: (api) ->
+      @onRender(api: api, button: this)
+      if @state.visible
+        @getEl().show()
+      else
+        @getEl().hide()
+
+    setEl: (el) ->
+      @$el = $(el)
+
+    getEl: ->
+      @$el
