@@ -21,6 +21,7 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
     # * style - object
     #   * text
     #   * html
+    #   * newline - only for non-TD/TH
     #   * shortcut - only for internal plugin use
     addStyleButton: (selector, style) ->
       throw "The style button #{selector} is already defined." if SnapEditor.buttons[selector]
@@ -45,7 +46,13 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
         html: style.html
         action: selector
         onInclude: (e) ->
-          e.api.addWhitelistRule(Helpers.capitalize(selector), selector)
+          tag = selector.split(".").shift()
+          rule = selector
+          if $.inArray(tag, ["td", "th"]) > -1
+            rule += " > BR"
+          else if style.newline
+            rule += " > #{style.newline}"
+          e.api.addWhitelistRule(Helpers.capitalize(selector), rule)
           if style.shortcut
             SnapEditor.shortcuts[selector] =
               key: style.shortcut
