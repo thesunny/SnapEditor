@@ -4,7 +4,7 @@
 # * byTag
 #
 # The values are stored as Whitelist.Objects.
-define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject) ->
+define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.object"], ($, Helpers, WhitelistObject) ->
   class Whitelists
     constructor: (whitelist) ->
       @defaults = {} # { *: "label", tag: "label" }
@@ -79,5 +79,8 @@ define ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObject
           # Use [0..-2] to remove the trailing ')'.
           values[attr] = ($.trim(s) for s in v[0..-2].split("|")) if v
           attr
-      throw "Whitelist next '#{rule}' must reference a label" if next and !@isLabel(next)
+      if next and !@isLabel(next)
+        nextRule = next
+        next = Helpers.capitalize(next)
+        @add(next, nextRule)
       new WhitelistObject(tag, id, classes, attrs, values, next)

@@ -189,8 +189,11 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
         )
         expect(obj.next).toBeUndefined()
 
-      it "throws an error when next is not a label", ->
-        expect(-> whitelists.parse("p > div")).toThrow()
+      it "adds a new label when next is not a label", ->
+        obj = whitelists.parse("p > div")
+        expect(obj.tag).toEqual("p")
+        expect(obj.next).toEqual("Div")
+        expect(whitelists.byLabel.Div).toBeDefined()
 
       it "parses a next label", ->
         obj = whitelists.parse("p > Block")
