@@ -263,7 +263,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
   $.extend(SnapEditor.buttons,
     table:
       text: SnapEditor.lang.table
-      items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable"]
+      items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable", "|", "styleTable", "styleRow", "styleCell"]
     insertTable: Helpers.createButton("insertTable", "", langKey: "tableInsert", onInclude: (e) ->
       includeBehaviours(e)
       e.api.addWhitelistRule(
@@ -282,6 +282,9 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
     deleteColumn: Helpers.createButton("deleteColumn", "", langKey: "tableDeleteColumn", onInclude: includeBehaviours)
     deleteTable: Helpers.createButton("deleteTable", "", langKey: "tableDelete", onInclude: includeBehaviours)
   )
+  SnapEditor.addStyleList("styleTable", SnapEditor.lang.styleTable, "style-table")
+  SnapEditor.addStyleList("styleRow", SnapEditor.lang.styleRow, "style-table-row")
+  SnapEditor.addStyleList("styleCell", SnapEditor.lang.styleCell, "style-table-cell")
 
   SnapEditor.behaviours.table =
     onActivate: (e) -> table.activate(e.api)
