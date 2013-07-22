@@ -266,12 +266,14 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
       items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable", "|", "styleTable", "styleRow", "styleCell"]
     insertTable: Helpers.createButton("insertTable", "", langKey: "tableInsert", onInclude: (e) ->
       includeBehaviours(e)
-      e.api.addWhitelistRule(
-        "Table": "table"
-        "Table Body": "tbody"
-        "Table Row": "tr"
-        "Table Header": "th > BR"
-        "Table Cell": "td > BR"
+      e.api.on("snapeditor.plugins_ready", (e) ->
+        e.api.addWhitelistRule(
+          table: e.api.getStyleButtonsByTag("style-table")[0] or "table"
+          "Table Body": "tbody"
+          tr: e.api.getStyleButtonsByTag("style-table-row")[0] or "tr"
+          "Table Header": "th > BR"
+          td: (e.api.getStyleButtonsByTag("style-table-cell")[0] or "td") + " > BR"
+        )
       )
     )
     addRowAbove: Helpers.createButton("addRowAbove", "ctrl+shift+enter", langKey: "tableAddRowAbove", onInclude: includeBehaviours)

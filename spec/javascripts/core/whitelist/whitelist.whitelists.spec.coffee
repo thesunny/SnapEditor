@@ -10,6 +10,7 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
         "Highlighted List Item": "li.highlight.focus > Highlighted List Item"
         Normal: "p"
         "li": "Highlighted List Item"
+        "b": "b"
         "*": "Normal"
       )
 
@@ -17,6 +18,7 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
       it "generates the defaults", ->
         defaults = whitelists.defaults
         expect(defaults.li).toEqual("Highlighted List Item")
+        expect(defaults.b).toEqual("B")
         expect(defaults["*"]).toEqual("Normal")
 
       it "generates the whitelist by label", ->
@@ -35,6 +37,7 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
         expect(list["Highlighted List Item"].tag).toEqual("li")
         expect(list["Highlighted List Item"].classes).toEqual("focus highlight")
         expect(list["Highlighted List Item"].next).toEqual("Highlighted List Item")
+        expect(list.B.tag).toEqual("b")
         expect(list.Normal.tag).toEqual("p")
         expect(list.Normal.classes).toEqual("")
 
@@ -51,6 +54,7 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
         expect(list.h1[2].next).toEqual("Normal")
         expect(list.ul[0].tag).toEqual("ul")
         expect(list.ul[0].classes).toEqual("")
+        expect(list.b[0].tag).toEqual("b")
         expect(list.p[0].tag).toEqual("p")
         expect(list.p[0].classes).toEqual("")
 

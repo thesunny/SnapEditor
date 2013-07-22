@@ -47,6 +47,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @includeButtons()
       @includeBehaviours()
       @includeShortcuts()
+      @includeWhitelistDefaults()
 
       # Delegate Public API functions.
       @delegatePublicAPIFunctions()
@@ -133,6 +134,9 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         # If the shortcut action is a string, relate the shortcut to an action
         # if available.
         @actionShortcuts[shortcut.action] = shortcut.key if typeof shortcut.action == "string"
+
+    includeWhitelistDefaults: ->
+      @addWhitelistRule("*", @getStyleButtonsByTag("style-block")[0] or "p > p")
 
     domEvents: [
       "mouseover"

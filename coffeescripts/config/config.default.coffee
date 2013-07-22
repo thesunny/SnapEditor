@@ -41,16 +41,12 @@ define [
     styles: ["p", "h1", "h2", "h3", "h4", "h5", "h6"]
     cleaner:
       whitelist:
-        # Blocks
-        "Paragraph": "p > Paragraph"
         # BR
         "BR": "br"
         # Range
         "Range Start": "span#RANGE_START"
         "Range End": "span#RANGE_END"
         "Image Range": "img#RANGE_IMAGE[src, width, height]"
-        # Defaults
-        "*": "Paragraph"
       ignore: []
     eraseHandler:
       delete: []

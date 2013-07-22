@@ -33,6 +33,7 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.object"], ($,
       if @isLabel(key)
         prevObj = @byLabel[key]
         obj = @parse(rule)
+        # Add general rules.
         obj.merge(generalObj) for generalObj in @general[obj.tag] or []
         @byLabel[key] = obj
         # Add to the whitelist by tag.
@@ -41,8 +42,12 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.object"], ($,
         # Remove the previous object if there was one.
         @byTag[prevObj.tag].splice($.inArray(prevObj, @byTag[prevObj.tag]), 1) if prevObj
       else
-        throw "Whitelist default '#{key}: #{rule}' must reference a label" unless @isLabel(rule)
-        @defaults[key] = rule
+        if @isLabel(rule)
+          @defaults[key] = rule
+        else
+          label = Helpers.capitalize(rule)
+          @add(label, rule)
+          @defaults[key] = label
 
     # Adds a general rule that will be applied to all the given tags.
     # rule - whtielist rule
