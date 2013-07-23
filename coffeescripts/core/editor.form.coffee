@@ -53,20 +53,20 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
 
     formize: (toolbar) ->
       $toolbar = $(toolbar)
-      textareaCoords = @$textarea.getCoordinates()
-      toolbarCoords = $toolbar.measure(-> @getCoordinates())
+      textareaSize = $.extend(@$textarea.getSize(), x: @config.width, y: @config.height)
+      toolbarSize = $toolbar.measure(-> @getSize())
       # Setup the container.
       @$container.css(
-        width: textareaCoords.width
-        height: textareaCoords.height
+        width: textareaSize.x
+        height: textareaSize.y
       )
       # Add the toolbar.
       @$container.prepend($toolbar)
       # Setup the iframe.
-      $(@iframe).css(height: textareaCoords.height - toolbarCoords.height)
+      $(@iframe).css(height: textareaSize.y - toolbarSize.y)
       # Set the height of the iframe container because if we don't do this, it
       # sticks out a few pixels.
-      @$iframeContainer.css(height: textareaCoords.height - toolbarCoords.height)
+      @$iframeContainer.css(height: textareaSize.y - toolbarSize.y)
       # Swap.
       # Don't hide the textarea. If we hide the textarea, we can't tab into
       # it. Instead, just move it off the page. When the focus is given to the
