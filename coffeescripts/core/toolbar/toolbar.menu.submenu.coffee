@@ -109,6 +109,9 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu", "core/data
         }
       """
 
+    getStyles: ->
+      {}
+
     getDataActionHandler: ->
       new DataActionHandler(@$el, @options.editor.api, mouseover: true)
 
@@ -145,8 +148,11 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu", "core/data
     show: =>
       unless @shown
         super
+        @resizeToFit()
+        @$el.css(@getStyles())
         @options.editor.on(
           "snapeditor.toolbar_final_action": @hide
+          "snapeditor.mousedown": @hide
           "snapeditor.document_mousedown": @documentMousedown
         )
       # Prevent the if statement from above from returning false and stopping
@@ -158,11 +164,26 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu", "core/data
         super
         @options.editor.on(
           "snapeditor.toolbar_final_action": @hide
+          "snapeditor.mousedown": @hide
           "snapeditor.document_mousedown": @documentMousedown
         )
       # Prevent the if statement from above from returning false and stopping
       # propagation.
       return true
+
+    resizeToFit: ->
+      # The content fits so reset to defaults.
+      @$content.css(
+        height: "auto"
+        overflow: "visible"
+      )
+      winSize = $(window).getSize()
+      if @$content.getSize().y > winSize.y
+        # Resize the content to fit inside the window and add a scrollbar.
+        @$content.css(
+          height: winSize.y - 10
+          overflow: "auto"
+        )
 
     documentMousedown: (e) =>
       @hide() if $(e.target).closest(".snapeditor_toolbar_component").length == 0

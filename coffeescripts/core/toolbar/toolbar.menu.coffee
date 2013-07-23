@@ -125,9 +125,6 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
     getCSS: ->
       throw "#getCSS() must be overridden"
 
-    getStyles: ->
-      {}
-
     getDataActionHandler: ->
       new DataActionHandler(@$el, @options.editor.api)
 
@@ -169,7 +166,7 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
         @setup()
         @dataActionHandler.activate()
         @renderButtons()
-        @$el.css(@getStyles()).show()
+        @$el.show()
         @shown = true
       # Prevent the if statement from above from returning false and stopping
       # propagation.
