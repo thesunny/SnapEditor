@@ -11,7 +11,9 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     #   * toolbar: toolbar config that replaces the default one
     #   * whitelist: object specifying the whitelist
     #   * onSave: callback for saving (return true or error message)
-    constructor: (el, @defaults, @config = {}) ->
+    constructor: (el, defaults, config = {}) ->
+      @defaults = Helpers.deepClone(defaults)
+      @config = Helpers.deepClone(config)
       # Delay the initialization of the editor until the document is ready.
       $(Helpers.pass(@init, [el], this))
 
@@ -60,9 +62,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @trigger("snapeditor.plugins_ready")
 
     prepareConfig: ->
-      # We use slice and extend to clone arrays and objects so that they
-      # aren't shared between editors.
-      @config.styles or= @defaults.styles.slice(0)
+      @config.styles or= @defaults.styles
       @config.toolbar or= @defaults.toolbar
       if typeof @config.toolbar == "string"
         buttonName = @config.toolbar
@@ -70,14 +70,14 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         throw "Button has not been defined: #{@config.toolbar}" unless buttonOptions
         throw "Button must have items in order to be used as a toolbar: #{@config.toolbar}" unless buttonOptions.items
       @config.toolbar = new ToolbarButton(buttonName or "snapeditor_anonymous_toolbar", buttonOptions or @config.toolbar)
-      @config.behaviours or= @defaults.behaviours.slice(0)
-      @config.shortcuts or= @defaults.shortcuts.slice(0)
+      @config.behaviours or= @defaults.behaviours
+      @config.shortcuts or= @defaults.shortcuts
       @config.lang = $.extend({}, SnapEditor.lang)
       @config.cleaner or= {}
-      @config.cleaner.whitelist or = $.extend({}, @defaults.cleaner.whitelist)
-      @config.cleaner.ignore or= @defaults.cleaner.ignore.slice(0)
+      @config.cleaner.whitelist or = @defaults.cleaner.whitelist
+      @config.cleaner.ignore or= @defaults.cleaner.ignore
       @config.eraseHandler or= {}
-      @config.eraseHandler.delete or= @defaults.eraseHandler.delete.slice(0)
+      @config.eraseHandler.delete or= @defaults.eraseHandler.delete
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
       @config.atomic.selectors = [".#{@config.atomic.classname}"]

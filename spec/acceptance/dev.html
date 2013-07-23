@@ -213,6 +213,24 @@
           return true;
         }
       });
+
+      var inPlaceConfig = {
+        toolbar: {
+          items: ["p"]
+        },
+        path: "/spec/acceptance/assets",
+        imageServer: {
+          uploadUrl: insecureUploadUrl,
+          publicUrl: insecurePublicUrl,
+          directory: insecureDirectory
+        },
+        onSave: function (e) {
+          return true;
+        }
+      };
+      var insecureInPlace4 = new SnapEditor.InPlace("insecure_in_place4", inPlaceConfig);
+      var insecureInPlace5 = new SnapEditor.InPlace("insecure_in_place5", inPlaceConfig);
+      var insecureInPlace6 = new SnapEditor.InPlace("insecure_in_place6", inPlaceConfig);
       /*
       var success = function (data, text, xhr) { console.log(data); };
       var error = function (xhr, text, error) { console.log(text); };
@@ -597,5 +615,18 @@
       <!--</div>-->
     </div>
     <iframe src="http://ycombinator.com"></iframe>
+    <div id="insecure_in_place4">
+      <p>text</p>
+    </div>
+    <div id="insecure_in_place5">
+      <p>text</p>
+    </div>
+    <div id="insecure_in_place6">
+      <p>text</p>
+      <p>text</p>
+      <p>text</p>
+      <p>text</p>
+      <p>text</p>
+    </div>
   </body>
 </html>
