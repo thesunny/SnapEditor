@@ -42,8 +42,8 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
     # Perform the actual initialization of the editor.
     init: (el) =>
       super(el)
-      @toolbar = new Toolbar(this)
-      @formize(@toolbar.$toolbar)
+      @toolbar = new Toolbar(@config.toolbar, editor: this)
+      @formize(@toolbar.$el)
       @$el.blur(@updateTextarea)
       @insertStyles("snapeditor_form", @css)
 
@@ -61,7 +61,7 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
         height: textareaCoords.height
       )
       # Add the toolbar.
-      @$container.prepend($toolbar.show())
+      @$container.prepend($toolbar)
       # Setup the iframe.
       $(@iframe).css(height: textareaCoords.height - toolbarCoords.height)
       # Set the height of the iframe container because if we don't do this, it

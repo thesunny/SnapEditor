@@ -8,18 +8,6 @@ require ["jquery.custom", "plugins/cleaner/cleaner"], ($, Cleaner) ->
     afterEach ->
       $editable.remove()
 
-    describe "#findTopNode", ->
-      beforeEach ->
-        $editable.html("this <b>must</b> be a test<div>or <i>maybe</i> not</div>")
-
-      it "looks up the parent chain and returns the textnode at the top", ->
-        node = Cleaner.findTopNode($editable[0], $editable[0].childNodes[0])
-        expect(node).toBe($editable[0].childNodes[0])
-
-      it "looks up the parent chain and returns the element at the top", ->
-        node = Cleaner.findTopNode($editable[0], $editable.find("i")[0])
-        expect(node).toBe($editable.find("div")[0])
-
     describe "#expandTopNode", ->
       it "returns the node given a block node", ->
         $editable.html("this <div>is a block</div> yo")

@@ -1,10 +1,11 @@
-define ["jquery.custom", "core/browser"], ($, Browser) ->
+define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   class WhitelistObject
     # Arguments:
     # * tag - the tagname of the element
     # * id - the id of the element
     # * classes - an array of classnames
     # * attrs - an array of allowed attribute names
+    # * values - object { attr1: [val1, val2] }
     # * next - the whitelist object that should be inserted on enter
     constructor: (@tag, @id = null, @classes = [], attrs = [], values = {}, @next) ->
       @classes = @classes.sort().join(" ")
@@ -14,6 +15,42 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
       for attr, vals of values
         @values[attr] = {}
         @values[attr][val] = true for val in vals
+
+    # Adds the given classes.
+    # classes can either be a space separated string or an array.
+    # All duplicates are removed.
+    addClasses: (classes) ->
+      @classes += " #{$.makeArray(classes).join(" ")}"
+      @classes = Helpers.uniqueArray(@classes.split(" ")).sort().join(" ")
+
+    # Adds the attributes.
+    # attrs can either be an array of attributes or an object of the form:
+    # { attr1: true, attr2: true }
+    # All duplicates are removed
+    addAttributes: (attrs) ->
+      if $.type(attrs) == "array"
+        @attrs[attr] = true for attr in attrs
+      else
+        $.extend(@attrs, attrs)
+
+    # Adds the object of values.
+    # The object can be of either form:
+    # { attr1: [value1, value2, value3] }
+    # { attr1: { value1: true, value2: true, value3: true } }
+    addValues: (values) ->
+      for attr, vals of values
+        @values[attr] or= {}
+        if $.type(vals) == "array"
+          @values[attr][val] = true for val in vals
+        else
+          $.extend(@values[attr], vals)
+
+    # Takes a Whitelist.Object and merges it in with thie one.
+    # Only classes, attributes, and values are merged.
+    merge: (obj) ->
+      @addClasses(obj.classes)
+      @addAttributes(obj.attrs)
+      @addValues(obj.values)
 
     # If a template is given, the allowed attributes are copied.
     getElement: (doc, templateEl) ->
@@ -76,5 +113,3 @@ define ["jquery.custom", "core/browser"], ($, Browser) ->
         return true
       else
         throw "Whitelist: Values for #{attr} are unsupported. Only values for the style attribute can be checked."
-
-  return WhitelistObject

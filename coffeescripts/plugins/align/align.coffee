@@ -9,10 +9,14 @@ define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
     alignment:
       text: SnapEditor.lang.alignment
       items: ["alignLeft", "alignCentre", "alignRight", "alignJustify"]
-    alignLeft: Helpers.createButton("alignLeft", "ctrl+l")
-    alignCentre: Helpers.createButton("alignCentre", "ctrl+e")
-    alignRight: Helpers.createButton("alignRight", "ctrl+r")
-    alignJustify: Helpers.createButton("alignJustify", "ctrl+j")
+    alignLeft: Helpers.createButton("alignLeft", "ctrl+l", onInclude: (e) ->
+      e.api.addWhitelistGeneralRule("[style=(text-align)]", ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "th", "td"]))
+    alignCentre: Helpers.createButton("alignCentre", "ctrl+e", onInclude: (e) ->
+      e.api.addWhitelistGeneralRule("[style=(text-align)]", ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "th", "td"]))
+    alignRight: Helpers.createButton("alignRight", "ctrl+r", onInclude: (e) ->
+      e.api.addWhitelistGeneralRule("[style=(text-align)]", ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "th", "td"]))
+    alignJustify: Helpers.createButton("alignJustify", "ctrl+j", onInclude: (e) ->
+      e.api.addWhitelistGeneralRule("[style=(text-align)]", ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "th", "td"]))
   )
 
   styles = "div.snapeditor_toolbar_menu_alignment { width: 220px; }"

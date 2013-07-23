@@ -25,12 +25,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       # If the block is special, we need to replace the block with the
       # appropriate descendants.
       switch $block.tagName()
-        when "ol", "ul" then selector = "li"
-        when "table" then selector = "th, td"
+        when "ol", "ul" then $els = $block.children()
+        when "table" then $els = $block.find("th, td")
         else return Helpers.replaceWithChildren(block)
-      # Find all the elements and place their contents before the parent,
-      # separated by the template.
-      $els = $block.find(selector)
+      # Place all the contents of the elements before the parent, separated by
+      # the template.
       for i in [0..$els.length-1]
         el = $els[i]
         $block.before(el.childNodes[0]) while el.childNodes[0]

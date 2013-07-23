@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/exec_command/exec_command.gecko", "core/browser", "core/helpers"], ($, Gecko, Browser, Helpers) ->
+define ["jquery.custom", "core/exec_command/exec_command.gecko", "core/browser", "core/helpers", "core/exec_command/exec_command.style_block"], ($, Gecko, Browser, Helpers, StyleBlock) ->
   class ExecCommand
     constructor: (@editor) ->
 
@@ -15,18 +15,11 @@ define ["jquery.custom", "core/exec_command/exec_command.gecko", "core/browser",
       @exec(cmd, value) if valid
       return valid
 
-    # Formats the block with the given tag.
-    # Returns true if the command was allowed. False otherwise.
-    formatBlock: (tag) ->
-      # TODO-SH:
-      # In Chrome, formatting a block with a p tag removes any span formatting
-      # like bold and italic. May have to create a special version just for
-      # webkit (Chrome and Safari).
-
-      allowed = @allowFormatBlock()
-      # IE required the angled brackets around the tag or it fails
-      @exec("formatblock", "<#{tag}>") if allowed
-      allowed
+    # Styles the block with the given style.
+    # Style consists of a tag followed by classes delimited by '.'.
+    # e.g. h1.title.xlarge
+    styleBlock: (style) ->
+      StyleBlock.style(style, @editor)
 
     # Formats the selection with the given tag.
     # Returns true if the command was allowed. False otherwise.

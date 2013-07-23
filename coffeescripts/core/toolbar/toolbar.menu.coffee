@@ -1,170 +1,172 @@
-define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/data_action_handler"], ($, Helpers, Builder, DataActionHandler) ->
+# = Toolbar API
+#
+# == Buttons
+#
+# Buttons can be defined in the global SnapEditor.buttons object.
+#
+# Mandatory keys:
+# * text - the title for the button and the text for the menu item if html is
+#   not specified
+# * action - a function or string to handle the action (optional if items is
+#   specified)
+#
+# Optional keys:
+# * html - html for menu items
+# * shortcut - keyboard shortcut with '+' as the delimiter
+# * items - array of buttons for a submenu
+#
+# == Buttons/Menu Items
+#
+# === Classes
+#
+# The button's class is built from the snake case of the corresponding button.
+#   snapeditor_toolbar_icon_<snake case of the button>
+#
+# The menu's class is built from the snake case of the corresponding button.
+#   snapeditor_toolbar_menu_<snake case of the button>
+#
+# The menu items do not have specific classes because the button developer
+# has full control over the HTML inside the menu item.
+#
+# == Shortcut
+#
+# When specified, the action function will be triggered when the shortcut is
+# pressed.
+#
+# The shortcut is included in the title in parentheses and modified for
+# displaying.
+#   shortcut: ctrl+b
+#   title: Bold (Ctrl+B)
+#
+# The shortcut is included in the menu item and modified for displaying.
+#   shortcut: ctrl+b
+#   menu item: Bold     Ctrl+B
+#
+# == Action
+#
+# When buttons and menu items that don't have submenus are clicked, they
+# trigger the corresponding action.
+#
+# The action function has one argument: an action event.
+#
+# The action event contains access to the SnapEditor API.
+#   e.api
+#
+# == Submenus
+#
+# To add submenus, specify the items array and populate it with buttons.
+#   items: ["bold", "italic"]
+#
+# Menu items will automatically have a right triangle to indicate the
+# availability of a submenu.
+#
+# There are no limits to submenus, but we don't recommend more than 2 levels
+# deep.
+#
+# Example
+#
+# SnapEditor.buttons = {
+#   style: {
+#     text: "Style",
+#     items: ["styleInline", "styleBlock"]
+#   },
+#   styleInline: {
+#     text: "Style Inline",
+#     html: '<span class="important">Style Inline</span>',
+#     items: ["bold", "italic"]
+#   },
+#   bold: {
+#     text: "Bold",
+#     shortcut: "ctrl+b",
+#     action: function (e) { e.api.bold(); }
+#   },
+#   italic: {
+#     text: "Italic",
+#     shortcut: "ctrl+i",
+#     action: function (e) { e.api.italic(); }
+#   },
+#   styleBlock: {
+#     text: "Style Block",
+#     html: '<span class="important">Style Block</span>',
+#     items: ["h1", "h2"]
+#   },
+#   h1: {
+#     text: "H1",
+#     shortcut: "ctrl+alt+1",
+#     action: function (e) { e.api.h1(); }
+#   },
+#   h2: {
+#     text: "H2",
+#     shortcut: "ctrl+alt+2",
+#     action: function (e) { e.api.h2(); }
+#   }
+# };
+
+define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handler", "core/toolbar/toolbar.button"], ($, Helpers, Browser, DataActionHandler, Button) ->
   class Menu
     # Options:
-    # * flyOut: default false
-    constructor: (@editor, @$relEl, @items, @options = {}) ->
-      @setup()
+    # * editor
+    constructor: (@button, @options) ->
+      @buttons = []
+      @submenus = []
 
-    menuTemplate: """
-      <div class="snapeditor_toolbar_menu snapeditor_toolbar_component snapeditor_ignore_deactivate">
-        <ul></ul>
-      </div>
-    """
+    getMenuTemplate: ->
+      throw "#getMenuTemplate() must be overridden"
 
-    itemTemplate: """
-      <li>
-        <a href="javascript:void(null);" tabindex="-1">
-          <table>
-            <tr>
-              <td class="snapeditor_toolbar_menu_item"></td>
-              <td class="snapeditor_toolbar_menu_shortcut"></td>
-              <td class="snapeditor_toolbar_menu_arrow_container"></td>
-            </tr>
-          </table>
-        </a>
-      </li>
-    """
+    getItemTemplate: ->
+      throw "#getItemTemplate() must be overridden"
 
-    dividerTemplate: '<li class="snapeditor_toolbar_menu_divider"></li>'
+    getDividerTemplate: ->
+      throw "#getDividerTemplate() must be overridden"
+
+    getCSSKey: ->
+      throw "#getCSSKey() must be overridden"
 
     getCSS: ->
-      """
-        .snapeditor_toolbar_menu {
-          position: absolute;
-          z-index: 201;
-          width: 300px;
-          font-size: 14px;
-          font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;
-        }
+      throw "#getCSS() must be overridden"
 
-        .snapeditor_toolbar_menu ul {
-          background: #ffffff;
-          border: 1px solid #dddddd;
-          box-shadow: 0 6px 3px -3px #dddddd;
-          list-style: none;
-          margin: 0;
-          padding: 0;
-        }
+    getDataActionHandler: ->
+      new DataActionHandler(@$el, @options.editor.api)
 
-        .snapeditor_toolbar_menu .snapeditor_toolbar_menu_divider {
-          background-color: #dddddd;
-          width: 100%;
-          height: 1px;
-        }
+    getSubmenuClass: ->
+      throw "#getSubmenuClass() must be overridden"
 
-        .snapeditor_toolbar_menu li {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-        }
+    getActionHandler: (button, submenu = null) ->
+      self = this
+      (e) ->
+        if submenu
+          self.showSubmenu(submenu, e)
+        else
+          # If this is a final action that doesn't trigger another menu, let
+          # others know so they can close their menus.
+          e.api.trigger("snapeditor.toolbar_final_action")
+          e.api.execAction(button.action, e)
 
-        .snapeditor_toolbar_menu li a {
-          color: #1e1e1e;
-          display: block;
-          margin: 0;
-          padding: 6px 5px 6px 12px;
-          cursor: pointer;
-          text-decoration: none;
-          outline: none;
-        }
+    showSubmenu: (submenu, e) ->
+      # Hide all the other menus before showing this one.
+      sm.hide(e) for sm in @submenus
+      submenu.show()
 
-        .snapeditor_toolbar_menu li a:hover {
-          background-color: #dce2ef;
-        }
-
-        .snapeditor_toolbar_menu table, .snapeditor_toolbar_menu th, .snapeditor_toolbar_menu td {
-          border: none;
-          margin: 0;
-          padding: 0;
-        }
-
-        .snapeditor_toolbar_menu table {
-          width: 100%;
-          margin: 0;
-          padding: 0;
-        }
-
-        .snapeditor_toolbar_menu_shortcut {
-          color: #666666;
-          text-align: right;
-          width: 100px;
-        }
-
-        .snapeditor_toolbar_menu_arrow_container {
-          width: 16px;
-        }
-
-        .snapeditor_toolbar_menu_arrow {
-          background-image: url(#{@editor.imageAsset("triangle_right.png")});
-          width: 16px;
-          height: 16px;
-        }
-      """
+    buildItem: ($container, button) ->
+      throw "#buildItem() must be overridden"
 
     setup: ->
-      editor = @editor
-      @$menu = Builder.build(@items,
-        editor: @editor
-        templates:
-          container: @menuTemplate
-          item: @itemTemplate
-          divider: @dividerTemplate
-        menu:
-          class: Menu
-          options:
-            flyOut: true
-        itemBuilder: ($container, item, button) ->
-          title = button.text
-          shortcut = editor.actionShortcuts[button.action] if typeof button.action == "string"
-          title += " (#{Helpers.displayShortcut(shortcut)})" if shortcut
-          $container.
-            attr("title", title).
-            attr("data-action", item)
-
-          # Handle item.
-          $item = $container.find(".snapeditor_toolbar_menu_item")
-          if button.html
-            $item.html(button.html)
-          else
-            $item.text(button.text)
-
-          # Handle shortcut.
-          if shortcut
-            $container.find(".snapeditor_toolbar_menu_shortcut").text(Helpers.displayShortcut(shortcut))
-
-          # Handle submenu.
-          if button.items
-            $container.attr("data-mouseover", true)
-            $arrowContainer = $container.find(".snapeditor_toolbar_menu_arrow_container")
-            $arrow = $("<div/>").addClass("snapeditor_toolbar_menu_arrow").appendTo($arrowContainer)
-      ).hide().appendTo("body")
-      @editor.insertStyles("snapeditor_toolbar_menu", @getCSS())
-      @dataActionHandler = new DataActionHandler(@$menu, @editor.api, mouseover: true)
-      @$menu.on("mouseover", @mouseover)
-
-    documentMousedown: (e) =>
-      @hide() if $(e.target).closest(".snapeditor_toolbar_component").length == 0
-      # Prevent the if statement from above from returning false and stopping
-      # propagation.
-      return true
-
-    mouseover: (e) =>
-      @hideSubmenus() if $(e.target).closest("li").length > 0
-      # Prevent the if statement from above from returning false and stopping
-      # propagation.
-      return true
+      unless @$el
+        @$el = $(@getMenuTemplate()).hide().appendTo("body")
+        @$content = @$el.find("ul")
+        @addItems()
+        @options.editor.insertStyles(@getCSSKey(), @getCSS())
+        @dataActionHandler = @getDataActionHandler()
 
     isShown: ->
       @shown
 
     show: =>
       unless @shown
+        @setup()
         @dataActionHandler.activate()
-        @editor.on(
-          "snapeditor.toolbar_final_action": @hide
-          "snapeditor.document_mousedown": @documentMousedown
-        )
-        @$menu.css(@getStyles(@options.flyOut)).show()
+        @renderButtons()
+        @$el.show()
         @shown = true
       # Prevent the if statement from above from returning false and stopping
       # propagation.
@@ -172,103 +174,57 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.builder", "core/d
 
     hide: =>
       if @shown
-        @editor.off(
-          "snapeditor.toolbar_final_action": @hide
-          "snapeditor.document_mousedown": @documentMousedown
-        )
+        @setup()
         @hideSubmenus()
-        @$menu.hide()
+        @$el.hide()
         @shown = false
       # Prevent the if statement from above from returning false and stopping
       # propagation.
       return true
 
     hideSubmenus: ->
-      menu.hide() for menu in @$menu.menus
+      menu.hide() for menu in @submenus
 
-    getStyles: (flyOut) ->
-      relCoords = @$relEl.getCoordinates(true)
-      if flyOut
-        styles = @getFlyOutStyles()
+    addItems: ->
+      @addItem(item) for item in @button.getItems(api: @options.editor.api)
+      # IE7 and IE8 destroy the range when it is collapsed and the toolbar is
+      # clicked. In order to prevent this, we set unselectable to on for every
+      # element in the toolbar.
+      # IE9/10 does not work properly without unselectable set to on.
+      if Browser.isIE
+        @$el.find("*").each(-> $(this).attr("unselectable", "on"))
+        @$el.attr("unselectable", "on")
+
+    addItem: (item) ->
+      if item == "|"
+        $(@getDividerTemplate()).appendTo(@$content)
       else
-        styles = @getDropDownStyles()
-      styles
+        # Make sure the button has been defined.
+        buttonOptions = SnapEditor.buttons[item]
+        throw "Button does not exist: #{item}. Buttons are case sensitive." unless buttonOptions
+        throw "Missing text for button #{item}." unless buttonOptions.text
+        throw "Missing action for button #{item}." unless buttonOptions.action or buttonOptions.items
+        button = new Button(item, buttonOptions)
+        # Add the button.
+        button.setEl($(@getItemTemplate()).appendTo(@$content))
+        @buildItem(button.getEl().find("a"), button)
+        # If there are items, we need to create a dropdown. We ignore the
+        # action given by the button. Instead, the action should trigger the
+        # dropdown.
+        if button.getItems(api: @options.editor.api).length > 0
+          klass = @getSubmenuClass()
+          submenu = new klass(button, editor: @options.editor, relEl: button.getEl())
+          @submenus.push(submenu)
+        actionHandler = @getActionHandler(button, submenu)
+        @options.editor.on(button.cleanName, (e) ->
+          # In Webkit, after the toolbar is clicked, the focus hops to the parent
+          # window. We need to refocus it back into the iframe. Focusing breaks IE
+          # and kills the range so the focus is only for Webkit. It does not affect
+          # Firefox.
+          e.api.win.focus() if Browser.isWebkit
+          actionHandler(e)
+        )
+        @buttons.push(button)
 
-    # The entire idea here is that we don't want to cover the button. Hence,
-    # we try to position below, above, right then left.
-    getDropDownStyles: () ->
-      relCoords = @$relEl.getCoordinates(true)
-      menuSize = @$menu.getSize(true, true)
-      windowBoundary = Helpers.getWindowBoundary()
-
-      fitsVertically = true
-      styles = {}
-      # Fit vertically first.
-      if relCoords.bottom + menuSize.y <= windowBoundary.bottom
-        # Fits below.
-        styles.top = relCoords.bottom
-      else
-        # Doesn't fit below.
-        if relCoords.top - menuSize.y >= windowBoundary.top
-          # Fits above.
-          styles.top = relCoords.top - menuSize.y
-        else
-          # Doesn't fit above.
-          styles.top = windowBoundary.top
-          fitsVertically = false
-      # Then fit horizontally.
-      if fitsVertically
-        # If the dropdown fits vertically, align the left side of the submenu
-        # with the left side of the button, or align the right side of the
-        # submenu with the right side of the window.
-        left = relCoords.left
-        right = windowBoundary.right
-      else
-        # If the dropdown doesn't fit vertically, align the left side of the
-        # submenu with the right side of the button, or align the right side
-        # of the submenu with the left side of the button.
-        left = relCoords.right
-        right = relCoords.left
-
-      if left + menuSize.x <= windowBoundary.right
-        # Fits to the right.
-        styles.left = left
-      else
-        # Doesn't fit to the right.
-        # We ignore it if it doesn't fit to the left because that's just
-        # ridiculous.
-        styles.left = right - menuSize.x
-
-      styles
-
-    # The entire idea here is to try to show the entire flyout to the right,
-    # then left, while keeping it vertically in view.
-    getFlyOutStyles: ->
-      relCoords = @$relEl.getCoordinates(true)
-      menuSize = @$menu.getSize(true, true)
-      windowSize = $(window).getSize()
-      windowScroll = $(window).getScroll()
-      windowBoundary = Helpers.getWindowBoundary()
-
-      styles = {}
-      # Fit horizontally first.
-      if relCoords.right + menuSize.x <= windowBoundary.right
-        # Fits to the right.
-        styles.left = relCoords.right
-      else
-        # Doesn't fit to the right.
-        styles.left = relCoords.left - menuSize.x
-      # Then fit vertically.
-      if relCoords.top + menuSize.y <= windowBoundary.bottom
-        # Fits below.
-        styles.top = relCoords.top
-      else
-        # Doesn't fit below.
-        if relCoords.bottom - menuSize.y >= windowBoundary.top
-          # Fits above.
-          styles.top = relCoords.bottom - menuSize.y
-        else
-          # Doesn't fit above.
-          styles.top = windowBoundary.top
-
-      styles
+    renderButtons: ->
+      button.render(@options.editor.api) for button in @buttons

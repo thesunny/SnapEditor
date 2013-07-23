@@ -243,31 +243,13 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
     # cell - current cell
     # next - true to move to next cell, false to move to previous cell
     moveToSiblingCell: (cell, next) ->
-      siblingCell = @findSiblingCell(cell, next)
+      siblingCell = Helpers.getSiblingCell(cell, next)
       if siblingCell
         @api.selectEndOfElement(siblingCell)
       else
         # Add a row if we are at the bottom and we want the next sibling.
         @addRow(false) if next
 
-    # Find the sibling cell. Returns null if none is found.
-    # Arguments:
-    # cell - current cell
-    # next - true to find next cell, false to find previous cell
-    findSiblingCell: (cell, next) ->
-      $cell = $(cell)
-      direction = if next then "next" else "prev"
-      # Find the immediate sibling.
-      $siblingCell = $cell[direction]("td, th")
-      # If there is no immediate sibling, go to the sibling row.
-      if $siblingCell.length == 0
-        $parentRow = $cell.parent("tr")
-        $siblingRow = $parentRow[direction]("tr")
-        # If there is a sibling row, grab the sibling cell from the sibling row.
-        if $siblingRow.length > 0
-          position = if direction == "next" then "first" else "last"
-          $siblingCell = $siblingRow.find("td, th")[position]()
-      return $siblingCell[0] or null
   SnapEditor.actions.insertTable = -> table.insertTable()
   SnapEditor.actions.addRowAbove = Helpers.pass(table.addRow, true, table)
   SnapEditor.actions.addRowBelow = Helpers.pass(table.addRow, false, table)
@@ -281,8 +263,19 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
   $.extend(SnapEditor.buttons,
     table:
       text: SnapEditor.lang.table
-      items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable"]
-    insertTable: Helpers.createButton("insertTable", "", langKey: "tableInsert", onInclude: includeBehaviours)
+      items: ["insertTable", "|", "addRowAbove", "addRowBelow", "deleteRow", "|", "addColumnLeft", "addColumnRight", "deleteColumn", "|", "deleteTable", "|", "styleTable", "styleRow", "styleCell"]
+    insertTable: Helpers.createButton("insertTable", "", langKey: "tableInsert", onInclude: (e) ->
+      includeBehaviours(e)
+      e.api.on("snapeditor.plugins_ready", (e) ->
+        e.api.addWhitelistRule(
+          table: e.api.getStyleButtonsByTag("style-table")[0] or "table"
+          "Table Body": "tbody"
+          tr: e.api.getStyleButtonsByTag("style-table-row")[0] or "tr"
+          "Table Header": "th > BR"
+          td: (e.api.getStyleButtonsByTag("style-table-cell")[0] or "td") + " > BR"
+        )
+      )
+    )
     addRowAbove: Helpers.createButton("addRowAbove", "ctrl+shift+enter", langKey: "tableAddRowAbove", onInclude: includeBehaviours)
     addRowBelow: Helpers.createButton("addRowBelow", "ctrl+enter", langKey: "tableAddRowBelow", onInclude: includeBehaviours)
     deleteRow: Helpers.createButton("deleteRow", "", langKey: "tableDeleteRow", onInclude: includeBehaviours)
@@ -291,6 +284,9 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
     deleteColumn: Helpers.createButton("deleteColumn", "", langKey: "tableDeleteColumn", onInclude: includeBehaviours)
     deleteTable: Helpers.createButton("deleteTable", "", langKey: "tableDelete", onInclude: includeBehaviours)
   )
+  SnapEditor.addStyleList("styleTable", SnapEditor.lang.styleTable, "style-table")
+  SnapEditor.addStyleList("styleRow", SnapEditor.lang.styleRow, "style-table-row")
+  SnapEditor.addStyleList("styleCell", SnapEditor.lang.styleCell, "style-table-cell")
 
   SnapEditor.behaviours.table =
     onActivate: (e) -> table.activate(e.api)

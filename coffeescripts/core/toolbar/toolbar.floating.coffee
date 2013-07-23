@@ -1,9 +1,9 @@
-define ["core/toolbar/toolbar", "core/toolbar/toolbar.floating.displayer"], (Toolbar, Displayer) ->
+define ["core/toolbar/toolbar.menu.toolbar", "core/toolbar/toolbar.floating.displayer"], (Toolbar, Displayer) ->
   class FloatingToolbar extends Toolbar
     constructor: ->
       super(arguments...)
-      @editor.on("snapeditor.activate", @show)
-      @editor.on("snapeditor.deactivate", @hide)
+      @options.editor.on("snapeditor.activate", @show)
+      @options.editor.on("snapeditor.deactivate", @hide)
 
     floatCSS: """
       .snapeditor_toolbar_floating {
@@ -28,17 +28,26 @@ define ["core/toolbar/toolbar", "core/toolbar/toolbar.floating.displayer"], (Too
     """
 
     setup: ->
-      super
-      @editor.insertStyles("snapeditor_toolbar_floating", @floatCSS)
-      @$toolbar.addClass("snapeditor_toolbar_floating")
-      @displayer = new Displayer(@$toolbar, @editor.el, @editor)
-      @dataActionHandler.activate()
+      unless @$el
+        super
+        @options.editor.insertStyles("snapeditor_toolbar_floating", @floatCSS)
+        @$el.addClass("snapeditor_toolbar_floating")
+        @displayer = new Displayer(@$el, @options.editor.el, @options.editor)
 
     # Shows the toolbar.
     show: =>
-      @setup() unless @$toolbar
-      @displayer.show()
+      unless @shown
+        super
+        @displayer.show()
+      # Prevent the if statement from above from returning false and stopping
+      # propagation.
+      return true
 
     # Hides the toolbar.
     hide: =>
-      @displayer.hide() if @$toolbar
+      if @shown
+        super
+        @displayer.hide()
+      # Prevent the if statement from above from returning false and stopping
+      # propagation.
+      return true

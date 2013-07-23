@@ -17,6 +17,68 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
     Dialog: Dialog
     debug: false
 
+    # Arguments
+    # * selector - CSS selector that will be applied
+    # * style - object
+    #   * text
+    #   * html
+    #   * newline - only for non-TD/TH
+    #   * shortcut - only for internal plugin use
+    addStyleButton: (selector, style) ->
+      throw "The style button #{selector} is already defined." if SnapEditor.buttons[selector]
+
+      tags =
+        p: "style-block"
+        div: "style-block"
+        h1: "style-block"
+        h2: "style-block"
+        h3: "style-block"
+        h4: "style-block"
+        h5: "style-block"
+        h6: "style-block"
+        table: "style-table"
+        tr: "style-table-row"
+        th: "style-table-cell"
+        td: "style-table-cell"
+
+      SnapEditor.actions[selector] = (e) -> e.api.styleBlock(selector)
+      SnapEditor.buttons[selector] =
+        text: style.text
+        html: style.html
+        action: selector
+        onInclude: (e) ->
+          tag = selector.split(".").shift()
+          rule = selector
+          if $.inArray(tag, ["td", "th"]) > -1
+            rule += " > BR"
+          else if style.newline
+            rule += " > #{style.newline}"
+          e.api.addWhitelistRule(Helpers.capitalize(selector), rule)
+          if style.shortcut
+            SnapEditor.shortcuts[selector] =
+              key: style.shortcut
+              action: selector
+            e.api.config.shortcuts.push(selector)
+        tags: ["style", tags[selector.split(".")[0]]]
+
+    addStyleButtons: (styles) ->
+      @addStyleButton(selector, style) for own selector, style of styles
+
+    addStyleList: (name, text, tags) ->
+      tags = $.makeArray(tags)
+      SnapEditor.buttons[name] =
+        text: text
+        items: (e) ->
+          items = []
+          for tag in tags
+            items = items.concat(e.api.getStyleButtonsByTag(tag))
+            items.push("|")
+          # Pop the last "|"
+          items.pop()
+          items
+        onRender: (e) ->
+          e.button.state.visible = e.button.getItems(e).length > 1
+
     #
     # PRIVATE
     #

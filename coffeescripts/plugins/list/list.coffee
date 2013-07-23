@@ -16,8 +16,16 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
   includeBehaviours = (e) -> e.api.config.behaviours.push("list")
   $.extend(SnapEditor.buttons,
-    orderedList: Helpers.createButton("orderedList", "ctrl+shift+8", onInclude: includeBehaviours)
-    unorderedList: Helpers.createButton("unorderedList", "ctrl+shift+7", onInclude: includeBehaviours)
+    orderedList: Helpers.createButton("orderedList", "ctrl+shift+8", onInclude: (e) ->
+      includeBehaviours(e)
+      e.api.addWhitelistRule("Unordered List", "ul")
+      e.api.addWhitelistRule("List Item", "li > List Item")
+    )
+    unorderedList: Helpers.createButton("unorderedList", "ctrl+shift+7", onInclude: (e) ->
+      includeBehaviours(e)
+      e.api.addWhitelistRule("Ordered List", "ol")
+      e.api.addWhitelistRule("List Item", "li > List Item")
+    )
     indent: Helpers.createButton("indent", "", onInclude: includeBehaviours)
     outdent: Helpers.createButton("outdent", "", onInclude: includeBehaviours)
   )

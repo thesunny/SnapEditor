@@ -1,5 +1,5 @@
 define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, Browser, Keyboard) ->
-  Helpers = {
+  Helpers =
     #
     # CONSTANTS
     #
@@ -9,11 +9,10 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     # Used when dealing with text like in regex or textnodes.
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
 
-    buttons: {
+    buttons:
       left: 1
       middle: 2
       right: 3
-    }
 
     # This is a hash of the different node types.
     #
@@ -97,6 +96,34 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         current = current.parentNode
       sibling
 
+    # Get the sibling cell. Returns null if none is found.
+    # Arguments:
+    # cell - current cell
+    # next - true to find next cell, false to find previous cell
+    getSiblingCell: (cell, next) ->
+      $cell = $(cell)
+      direction = if next then "next" else "prev"
+      # Find the immediate sibling.
+      $siblingCell = $cell[direction]("td, th")
+      # If there is no immediate sibling, go to the sibling row.
+      if $siblingCell.length == 0
+        $parentRow = $cell.parent("tr")
+        $siblingRow = $parentRow[direction]("tr")
+        # If there is a sibling row, grab the sibling cell from the sibling row.
+        if $siblingRow.length > 0
+          position = if direction == "next" then "first" else "last"
+          $siblingCell = $siblingRow.find("td, th")[position]()
+      return $siblingCell[0] or null
+
+    # Runs up the parent chain and returns the node at the top.
+    getTopNode: (node, stopNode) ->
+      topNode = node
+      parent = topNode.parentNode
+      while parent != stopNode
+        topNode = parent
+        parent = topNode.parentNode
+      return topNode
+
     # Returns the element's document.
     getDocument: (el) ->
       el.ownerDocument
@@ -113,6 +140,7 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
       $("iframe").filter(-> this.contentWindow.document == doc)[0] or null
 
     # Replace the given node with its children.
+    # If there are no children, the node is simply removed.
     replaceWithChildren: (node) ->
       parent = node.parentNode
       parent.insertBefore(node.childNodes[0], node) while node.childNodes[0]
@@ -271,7 +299,6 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         uArray.push(a)
         unique[a] = true
       uArray
-  }
 
   $.extend(Helpers, Keyboard)
 

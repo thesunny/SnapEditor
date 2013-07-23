@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/api"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, API) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, API, ToolbarButton) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -44,9 +44,11 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @api.on("snapeditor.deactivate", @detachDOMEvents)
 
       # Deal with plugins.
+      @includeStyles()
       @includeButtons()
       @includeBehaviours()
       @includeShortcuts()
+      @includeWhitelistDefaults()
 
       # Delegate Public API functions.
       @delegatePublicAPIFunctions()
@@ -61,7 +63,14 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     prepareConfig: ->
       # We use slice and extend to clone arrays and objects so that they
       # aren't shared between editors.
-      @config.buttons or= @defaults.buttons.slice(0)
+      @config.styles or= @defaults.styles.slice(0)
+      @config.toolbar or= @defaults.toolbar
+      if typeof @config.toolbar == "string"
+        buttonName = @config.toolbar
+        buttonOptions = SnapEditor.buttons[@config.toolbar]
+        throw "Button has not been defined: #{@config.toolbar}" unless buttonOptions
+        throw "Button must have items in order to be used as a toolbar: #{@config.toolbar}" unless buttonOptions.items
+      @config.toolbar = new ToolbarButton(buttonName or "snapeditor_anonymous_toolbar", buttonOptions or @config.toolbar)
       @config.behaviours or= @defaults.behaviours.slice(0)
       @config.shortcuts or= @defaults.shortcuts.slice(0)
       @config.lang = $.extend({}, SnapEditor.lang)
@@ -83,15 +92,23 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # Add selectors to the eraseHandler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
+    includeStyles: ->
+      @styleButtons = {}
+      @includeStyle(selector) for selector in @config.styles
+
+    includeStyle: (selector) ->
+      @styleButtons[selector] = SnapEditor.buttons[selector] or throw "Style does not exist: #{selector}"
+
     includeButtons: ->
-      @includeButton(name) for name in @config.buttons
+      @includeButton(name) for name in @config.toolbar.getItems(api: @api)
 
     includeButton: (name) ->
       unless name == "|"
-        button = SnapEditor.buttons[name]
-        throw "Button does not exist: #{name}" unless button
-        button.onInclude(api: @api) if button.onInclude
-        @includeButton(name) for name in button.items or []
+        buttonOptions = SnapEditor.buttons[name]
+        throw "Button does not exist: #{name}" unless buttonOptions
+        button = new ToolbarButton(name, buttonOptions)
+        button.onInclude(api: @api)
+        @includeButton(name) for name in button.getItems(api: @api)
 
     includeBehaviours: ->
       @config.behaviours = Helpers.uniqueArray(@config.behaviours)
@@ -122,6 +139,9 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         # If the shortcut action is a string, relate the shortcut to an action
         # if available.
         @actionShortcuts[shortcut.action] = shortcut.key if typeof shortcut.action == "string"
+
+    includeWhitelistDefaults: ->
+      @addWhitelistRule("*", @getStyleButtonsByTag("style-block")[0] or "p > p")
 
     domEvents: [
       "mouseover"
@@ -266,7 +286,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       )
       Helpers.delegate(this, "getBlankRange()", "selectElementContents", "selectEndOfElement")
       Helpers.delegate(this, "execCommand",
-        "formatBlock", "formatInline", "align", "indent", "outdent",
+        "styleBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )
       Helpers.delegate(this, "widgetsManager", "insertWidget")
@@ -343,12 +363,37 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @keyboard.remove(key)
 
     #
+    # BUTTONS
+    #
+
+    # Returns an array of button strings where the button contains the given
+    # tag.
+    getStyleButtonsByTag: (tag) ->
+      buttons = []
+      for own selector, button of @styleButtons
+        buttons.push(selector) if button.tags and $.inArray(tag, button.tags) > -1
+      buttons
+
+    #
     # WHITELIST
     #
 
+    # Arguments:
+    # key and rule
+    # or
+    # object of keys/rules
+    addWhitelistRule: ->
+      @whitelist.add.apply(@whitelist, arguments)
+
+    # Arguments:
+    # rule - whitelist rule
+    # tags - array of tags
+    addWhitelistGeneralRule: ->
+      @whitelist.addGeneralRule.apply(@whitelist, arguments)
+
     # Gets the default block from the whitelist.
     getDefaultBlock: ->
-      @whitelist.getDefaults()["*"].getElement(@doc)
+      @whitelist.getDefaultFor("*", @doc)
 
     #
     # ASSETS

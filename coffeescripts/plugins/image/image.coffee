@@ -11,7 +11,10 @@ define ["jquery.custom", "plugins/helpers", "plugins/image/image.upload_dialog"]
       e.api.select($el[0]) if $el.tagName() == "img"
   SnapEditor.actions.image = (e) -> image.showDialog(e.api)
 
-  SnapEditor.buttons.image = Helpers.createButton("image", "ctrl+g", onInclude: (e) -> e.api.config.behaviours.push("image"))
+  SnapEditor.buttons.image = Helpers.createButton("image", "ctrl+g", onInclude: (e) ->
+    e.api.config.behaviours.push("image")
+    e.api.addWhitelistRule("Image", "img[src, width, height]")
+  )
 
   SnapEditor.behaviours.image =
     onActivate: (e) -> $(e.api.el).on("mousedown", image.selectImage)

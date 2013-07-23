@@ -141,6 +141,45 @@
         }
       };
 
+      SnapEditor.buttons.form = {
+        items: ["bold", "italic", "|", "styleBlock", "table"]
+      };
+
+      SnapEditor.buttons.multiLevel1 = {
+        text: "MultiLevel1",
+        items: ["p", "h1", "multiLevel2", "h2"]
+      }
+      SnapEditor.buttons.multiLevel2 = {
+        text: "MultiLevel2",
+        items: ["p", "h1", "h2"]
+      }
+
+      /*
+      SnapEditor.buttons.styleTd = {
+        text: "Style TD",
+        action: function (e) {
+          e.api.styleBlock("td.highlight.awesome");
+        },
+        onInclude: function (e) {
+          e.api.addWhitelistRule("StyleTd", "td.highlight.awesome");
+        }
+      };
+      */
+
+      SnapEditor.addStyleButton("h1.special", { text: "H1 Special" });
+      SnapEditor.addStyleButton("table.special", { text: "Table Special" });
+      SnapEditor.addStyleButton("table.highlight", { text: "Table Highlight" });
+      SnapEditor.addStyleButton("tr.special", { text: "TR Special" });
+      SnapEditor.addStyleButton("tr.highlight", { text: "TR Highlight" });
+      SnapEditor.addStyleButton("th", { text: "TH" });
+      SnapEditor.addStyleButton("td.special", { text: "TD Special" });
+      SnapEditor.addStyleButton("td.highlight", { text: "TD Highlight"});
+      var h1Styles = [];
+      for(var i=0; i<20; i++) {
+        SnapEditor.addStyleButton("h1.special_" + i, { text: "H1 Special " + i });
+        h1Styles.push("h1.special_" + i);
+      }
+
       //var secureResourceId = "secure/123";
       var insecureDirectory = "insecure/123";
       //var secureUrl = "/snapimage_api_secure";
@@ -175,7 +214,9 @@
       */
       var insecureForm = new SnapEditor.Form("insecure_form", {
         path: "/spec/acceptance/assets",
-        stylesheets: [],
+        stylesheets: ["/spec/acceptance/dev.form.css"],
+        styles: ["h1.special", "h1", "table.highlight", "table.special", "tr.highlight", "tr.special", "td.highlight", "td.special", "th"].concat(h1Styles),
+        toolbar: { items: ["styleBlock", "table"] },
         contentClass: "myClass",
         imageServer: {
           uploadUrl: insecureUploadUrl,
@@ -188,6 +229,7 @@
         buttons: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph"],
         stylesheets: [],
         contentClass: "myClass",
+        toolbar: "form",
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
@@ -197,17 +239,19 @@
       var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
         path: "/spec/acceptance/assets",
         //snap: false,
-        buttons: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph"],
+        toolbar: {
+          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph", "multiLevel1"]
+        },
         imageServer: {
           uploadUrl: insecureUploadUrl,
           publicUrl: insecurePublicUrl,
           directory: insecureDirectory
-        },
+        }/*,
         onSave: function (e) {
           console.log(e.html);
           console.log(e.api.getContents());
           return "OMG! ERROR!";
-        }
+        }*/
       });
       var insecureInPlace2 = new SnapEditor.InPlace("insecure_in_place2", {
         path: "/spec/acceptance/assets",
@@ -433,7 +477,8 @@
       <h1>Insecure</h1>
       <input type="button" value="activate" onclick="insecureForm.api.activate()" />
       <textarea id="insecure_form" class="form">
-        <p>some text at the beginning</p>
+        <address>some address<p>here's a block</p></address>
+        <p>some <span>text</span> at the beginning</p>
         <p>some text at the beginning</p>
         <div class="atomic">This is atomic</div>
         <h4>Heading 4</h4>
@@ -504,6 +549,9 @@
             </tr>
           </tbody>
         </table>
+        <ul>
+          <li>hi</li>
+        </ul>
 
         <p>
           <h1>
@@ -552,8 +600,57 @@
         <p><a href="snapeditor.com">SnapEditor</a></p>
         <h1>Heading 1</h1>
         <p><span class="atomic">Atomic span</span>between<span class="atomic">atomic span</span>between<span class="atomic">atomic span</span><span class="atomic">atomic span</span>between<span class="atomic">atomic span</span></p>
+        <ul>
+          <li>This</li>
+          <li>is</li>
+          <li>a</li>
+          <li>list</li>
+          <li>
+            This will have a
+            <p>block in it</p>
+          </li>
+          <li>
+            <p>more stuff</p>
+            <table>
+              <tbody>
+                <tr><th>Header</th></tr>
+                <tr><td>Data</td></tr>
+                <tr>
+                  <td>
+                    <div class="atomic">This is atomic</div>
+                    Data
+                    <p>another</p>
+                    text
+                    <ul>
+                      <li>first</li>
+                      <li>second</li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+        </ul>
         <div class="atomic">This is atomic</div>
         <p>More text!</p>
+        <table>
+          <tbody>
+            <tr><th>Header</th></tr>
+            <tr><td>Data</td></tr>
+            <tr>
+              <td>
+                <div class="atomic">This is atomic</div>
+                Data
+                <p>another</p>
+                text
+                <ul>
+                  <li>first</li>
+                  <li>second</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <div class="atomic">This is atomic</div>
         <div class="atomic">This is atomic</div>
         <p>More text!</p>

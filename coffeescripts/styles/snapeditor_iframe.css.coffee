@@ -73,6 +73,10 @@ define [], ->
     td, th, tr { vertical-align: inherit; }
     table, th, td { border: 1px solid #5c5c5c; }
 
+    a:hover {
+      cursor: default;
+    }
+
     b {
       font-weight: bolder;
     }

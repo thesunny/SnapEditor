@@ -8,12 +8,12 @@ define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
   SnapEditor.actions.strikethrough = formatInline
 
   $.extend(SnapEditor.buttons,
-    bold: Helpers.createButton("bold", "ctrl+b")
-    italic: Helpers.createButton("italic", "ctrl+i")
-    underline: Helpers.createButton("underline", "ctrl+u")
-    subscript: Helpers.createButton("subscript", "ctrl+shift+-")
-    superscript: Helpers.createButton("superscript", "ctrl+shift+=")
-    strikethrough: Helpers.createButton("strikethrough", "ctrl+-")
+    bold: Helpers.createButton("bold", "ctrl+b", onInclude: (e) -> e.api.addWhitelistRule(Bold: "b", strong: "Bold"))
+    italic: Helpers.createButton("italic", "ctrl+i", onInclude: (e) -> e.api.addWhitelistRule(Italic: "i", em: "Italic"))
+    underline: Helpers.createButton("underline", "ctrl+u", onInclude: (e) -> e.api.addWhitelistRule("Underline", "u"))
+    subscript: Helpers.createButton("subscript", "ctrl+shift+-", onInclude: (e) -> e.api.addWhitelistRule("Subscript", "sub"))
+    superscript: Helpers.createButton("superscript", "ctrl+shift+=", onInclude: (e) -> e.api.addWhitelistRule("Superscript", "sup"))
+    strikethrough: Helpers.createButton("strikethrough", "ctrl+-", onInclude: (e) -> e.api.addWhitelistRule(Strikethrough: "del", strike: "Strikethrough"))
   )
 
   styles = ""

@@ -122,6 +122,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
 
     describe "#normalizeNodes", ->
       beforeEach ->
+        # Everything is whitelisted.
         spyOn(normalizer, "checkWhitelist").andCallFake((node) -> node)
 
       it "does nothing when all the children are inline nodes and are all whitelisted", ->
@@ -148,7 +149,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
           expect(clean($editable.html())).toEqual("<div><div>this is <b>some</b> text with another </div><div>block <em>and</em> even </div><p>another one</p><div>inside that</div><div>in it plus </div><div>another just in case</div></div>")
 
       it "checks the whitelist and uses the replacement", ->
-        normalizer.api.isAllowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.isAllowed = (node) -> Helpers.isTextnode(node)
         normalizer.api.getReplacement = -> $('<p class="normal"/>')[0]
         normalizer.checkWhitelist.andCallThrough()
 
@@ -161,17 +162,25 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
           expect(clean($editable.html())).toEqual('<div><div>this is some text with another </div><p class=normal>block</p><div>in it</div></div>')
 
       it "replaces the non-whitelisted block with the default block when all children are inline", ->
-        normalizer.api.isAllowed = (node) -> !Helpers.isElement(node)
-        normalizer.api.getReplacement = -> null
-        normalizer.api.getDefaultBlock = -> $("<p/>")
+        normalizer.api.isAllowed = (node) -> Helpers.isTextnode(node)
+        normalizer.api.getReplacement = -> $("<p/>")[0]
         normalizer.checkWhitelist.andCallThrough()
 
         $div = $("<div><div>this is some inline text</div></div>").appendTo($editable)
         expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
         expect(clean($div.html())).toEqual("<p>this is some inline text</p>")
 
+      it "properly handles non-whitelisted block with blocks inside", ->
+        normalizer.api.isAllowed = (node) -> Helpers.isTextnode(node) or node.tagName == "P"
+        normalizer.api.getReplacement = -> $("<p/>")[0]
+        normalizer.checkWhitelist.andCallThrough()
+
+        $div = $("<div><div>inline text <p>a block</p></div></div>").appendTo($editable)
+        expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
+        expect(clean($div.html())).toEqual("<p>inline text </p><p>a block</p>")
+
       it "flattens the non-whitelisted block when it has no children", ->
-        normalizer.api.isAllowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.isAllowed = (node) -> Helpers.isTextnode(node)
         normalizer.api.getReplacement = -> null
         normalizer.checkWhitelist.andCallThrough()
 
@@ -180,7 +189,7 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         expect(clean($div.html())).toEqual("")
 
       it "checks the whitelist and replaces the node with its children when there is no replacement", ->
-        normalizer.api.isAllowed = (node) -> !Helpers.isElement(node)
+        normalizer.api.isAllowed = (node) -> Helpers.isTextnode(node)
         normalizer.api.getReplacement = -> null
         normalizer.checkWhitelist.andCallThrough()
 

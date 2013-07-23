@@ -17,7 +17,10 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "addKeyboardShortcut", "removeKeyboardShortcut",
         # ASSETS
         "imageAsset", "flashAsset",
+        # BUTTONS
+        "getStyleButtonsByTag",
         # WHITELIST
+        "addWhitelistRule", "addWhitelistGeneralRule",
         "isAllowed", "getReplacement",
         "getDefaultBlock", "getNext",
         # WIDGETS
@@ -33,6 +36,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "collapse", "unselect", "keepRange", "moveBoundary",
         "insert", "surroundContents", "delete",
         "select", "selectElementContents", "selectEndOfElement",
-        "formatBlock", "formatInline", "align", "indent", "outdent",
+        "styleBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )
