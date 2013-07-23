@@ -405,6 +405,66 @@ require ["jquery.custom", "core/helpers", "core/iframe.snapeditor"], ($, Helpers
         object.delFn1()
         expect(object.delObject.value).toBeTruthy()
 
+    describe "#deepClone", ->
+      it "clones an object", ->
+        object = { a: 1, b: 2 }
+        clone = Helpers.deepClone(object)
+        expect(clone).not.toBe(object)
+        expect(object.a).toEqual(1)
+        expect(object.b).toEqual(2)
+
+      it "clones an array", ->
+        object = [1, 2, 3]
+        clone = Helpers.deepClone(object)
+        expect(clone).not.toBe(object)
+        expect(clone.length).toEqual(3)
+        expect(clone[0]).toEqual(1)
+        expect(clone[1]).toEqual(2)
+        expect(clone[2]).toEqual(3)
+
+      it "doesn't clone a string", ->
+        object = "string"
+        clone = Helpers.deepClone(object)
+        expect(clone).toBe(object)
+
+      it "doesn't clone a number", ->
+        object = 1
+        clone = Helpers.deepClone(object)
+        expect(clone).toBe(object)
+
+      it "doesn't clone a function", ->
+        object = ->
+        clone = Helpers.deepClone(object)
+        expect(clone).toBe(object)
+
+      it "deep clones a mixed object", ->
+        object =
+          a: 1
+          b: [1, 2]
+          c:
+            aa: 1
+            bb: 2
+        clone = Helpers.deepClone(object)
+        expect(clone).not.toBe(object)
+        expect(clone.a).toEqual(1)
+        expect(clone.b).not.toBe(object.b)
+        expect(clone.b.length).toEqual(2)
+        expect(clone.b[0]).toEqual(1)
+        expect(clone.b[1]).toEqual(2)
+        expect(clone.c).not.toBe(object.c)
+        expect(clone.c.aa).toEqual(1)
+        expect(clone.c.bb).toEqual(2)
+
+      it "deep clones a mixed array", ->
+        object = [1, a: 1, b: 2]
+        clone = Helpers.deepClone(object)
+        expect(clone).not.toBe(object)
+        expect(clone.length).toEqual(2)
+        expect(clone[0]).toEqual(1)
+        expect(clone[1]).not.toBe(object[1])
+        expect(clone[1].a).toEqual(1)
+        expect(clone[1].b).toEqual(2)
+
     describe "#pass", ->
       it "passes arguments through", ->
         sum = (one, two, three) -> one + two + three

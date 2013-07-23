@@ -239,6 +239,19 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         throw "Delegate: #{del} does not exist on #{object}" if typeof object[del] == "undefined"
         delFn(object, fn)
 
+    # Deep clones the given object.
+    deepClone: (object) ->
+      switch $.type(object)
+        when "object"
+          clone = {}
+          clone[key] = @deepClone(val) for own key, val of object
+        when "array"
+          clone = []
+          clone.push(@deepClone(o)) for o in object
+        else
+          clone = object
+      clone
+
     #
     # Function
     #

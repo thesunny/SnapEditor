@@ -18,8 +18,7 @@ define ["jquery.custom"], ($) ->
       @cleanName = @name.replace(/\./g, "_")
       # If items is an array, change it to a function that returns the array.
       if $.type(@items) == "array"
-        # We duplicate the array so that we don't modify the original one.
-        items = @items.slice(0)
+        items = @items
         @items = -> items
 
     # Default items.
