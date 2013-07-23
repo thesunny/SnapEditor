@@ -35,7 +35,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       if @isCompatible(tag, el)
         styled = true
         if $.inArray(tag, paragraphTags) != -1
-          @styleParagraph(el, tag, styles)
+          @styleBlock(el, tag, styles)
         else
           @styleTable(el, tag, styles)
       styled
@@ -48,7 +48,9 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         compatible = $.inArray($(el).tagName(), tableTags) != -1
       compatible
 
-    styleParagraph: (el, tag, styles) ->
+    # Replaces the given el with the given tag if needed and ensures the
+    # resulting element has the given styles.
+    styleBlock: (el, tag, styles) ->
       styledEl = el
       # If the el does not have the same tag, replace it with the correct tag.
       unless $(el).tagName() == tag
@@ -58,8 +60,11 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       $(styledEl).removeAttr("class").addClass(styles.join(" "))
 
     styleTable: (el, tag, styles) ->
-      styledEl = $(el).closest(tag)
-      $(styledEl).removeAttr("class").addClass(styles.join(" "))
+      if tag == "td" or tag == "th"
+        @styleBlock($(el).closest("td, th")[0], tag, styles)
+      else
+        styledEl = $(el).closest(tag)
+        $(styledEl).removeAttr("class").addClass(styles.join(" "))
 
     # Returns all the top level elements between and including startEl and
     # endEl. This accounts for starting and ending in a table.

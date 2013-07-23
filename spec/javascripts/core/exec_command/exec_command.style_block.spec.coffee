@@ -28,15 +28,15 @@ require ["jquery.custom", "core/exec_command/exec_command.style_block"], ($, Sty
           expect(StyleBlock.isCompatible("tr", $("<p/>")[0])).toBeFalsy()
           expect(StyleBlock.isCompatible("tr", $("<li/>")[0])).toBeFalsy()
 
-    describe "#styleParagraph", ->
+    describe "#styleBlock", ->
       it "replaces the element with the new tag", ->
         $editable.html("<p>style me</p>")
-        StyleBlock.styleParagraph($editable.find("p")[0], "h1", [])
+        StyleBlock.styleBlock($editable.find("p")[0], "h1", [])
         expect(clean($editable.html())).toEqual("<h1>style me</h1>")
 
       it "replaces the styles", ->
         $editable.html('<h1 class="replace me">style me</h1>')
-        StyleBlock.styleParagraph($editable.find("h1")[0], "h1", ["with", "something", "else"])
+        StyleBlock.styleBlock($editable.find("h1")[0], "h1", ["with", "something", "else"])
         expect(clean($editable.html())).toEqual("<h1 class=with something else>style me</h1>")
 
     describe "#styleTable", ->
@@ -49,6 +49,12 @@ require ["jquery.custom", "core/exec_command/exec_command.style_block"], ($, Sty
         StyleBlock.styleTable(td, "td", ["new", "style"])
         expect($editable.find("td").hasClass("new")).toBeTruthy()
         expect($editable.find("td").hasClass("style")).toBeTruthy()
+
+      it "changes a cell", ->
+        StyleBlock.styleTable(td, "th", ["new", "style"])
+        expect($editable.find("td").length).toEqual(0)
+        expect($editable.find("th").hasClass("new")).toBeTruthy()
+        expect($editable.find("th").hasClass("style")).toBeTruthy()
 
       it "styles a row", ->
         StyleBlock.styleTable(td, "tr", ["new", "style"])
