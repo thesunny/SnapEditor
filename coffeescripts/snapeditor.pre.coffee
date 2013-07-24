@@ -24,7 +24,8 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
     #   * newline - only for non-TD/TH
     #   * shortcut - only for internal plugin use
     addStyleButton: (selector, style) ->
-      throw "The style button #{selector} is already defined." if SnapEditor.buttons[selector]
+      key = @getStyleKey(selector)
+      throw "The style button #{selector} is already defined." if SnapEditor.buttons[key]
 
       tags =
         p: "style-block"
@@ -40,11 +41,11 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
         th: "style-table-cell"
         td: "style-table-cell"
 
-      SnapEditor.actions[selector] = (e) -> e.api.styleBlock(selector)
-      SnapEditor.buttons[selector] =
+      SnapEditor.actions[key] = (e) -> e.api.styleBlock(selector)
+      SnapEditor.buttons[key] =
         text: style.text
         html: style.html
-        action: selector
+        action: key
         onInclude: (e) ->
           tag = selector.split(".").shift()
           rule = selector
@@ -52,12 +53,12 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
             rule += " > BR"
           else if style.newline
             rule += " > #{style.newline}"
-          e.api.addWhitelistRule(Helpers.capitalize(selector), rule)
+          e.api.addWhitelistRule(Helpers.capitalize(key), rule)
           if style.shortcut
-            SnapEditor.shortcuts[selector] =
+            SnapEditor.shortcuts[key] =
               key: style.shortcut
-              action: selector
-            e.api.config.shortcuts.push(selector)
+              action: key
+            e.api.config.shortcuts.push(key)
         tags: ["style", tags[selector.split(".")[0]]]
 
     addStyleButtons: (styles) ->
@@ -108,6 +109,12 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
         path = match[1]
         path = "." if path == ""
       path
+
+    getStyleKey: (selector) ->
+      "customStyle#{Helpers.capitalize(selector)}"
+
+    getSelectorFromStyleKey: (key) ->
+      key.replace(/^customStyle/, "").toLowerCase()
 
     DEBUG: ->
       if @debug

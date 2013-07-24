@@ -268,11 +268,13 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
       includeBehaviours(e)
       e.api.on("snapeditor.plugins_ready", (e) ->
         e.api.addWhitelistRule(
-          table: e.api.getStyleButtonsByTag("style-table")[0] or "table"
+          table: SnapEditor.getSelectorFromStyleKey(e.api.getStyleButtonsByTag("style-table")[0] or "table")
           "Table Body": "tbody"
-          tr: e.api.getStyleButtonsByTag("style-table-row")[0] or "tr"
+          tr: SnapEditor.getSelectorFromStyleKey(e.api.getStyleButtonsByTag("style-table-row")[0] or "tr")
+          # TODO: Decide whether th should be available or changed to td by
+          # default.
           "Table Header": "th > BR"
-          td: (e.api.getStyleButtonsByTag("style-table-cell")[0] or "td") + " > BR"
+          td: SnapEditor.getSelectorFromStyleKey(e.api.getStyleButtonsByTag("style-table-cell")[0] or "td") + " > BR"
         )
       )
     )

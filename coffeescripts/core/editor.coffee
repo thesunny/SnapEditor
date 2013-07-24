@@ -92,7 +92,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @includeStyle(selector) for selector in @config.styles
 
     includeStyle: (selector) ->
-      @styleButtons[selector] = SnapEditor.buttons[selector] or throw "Style does not exist: #{selector}"
+      key = SnapEditor.getStyleKey(selector)
+      @styleButtons[key] = SnapEditor.buttons[key] or throw "Style does not exist: #{selector}"
 
     includeButtons: ->
       @includeButton(name) for name in @config.toolbar.getItems(api: @api)
@@ -136,7 +137,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         @actionShortcuts[shortcut.action] = shortcut.key if typeof shortcut.action == "string"
 
     includeWhitelistDefaults: ->
-      @addWhitelistRule("*", @getStyleButtonsByTag("style-block")[0] or "p > p")
+      @addWhitelistRule("*", SnapEditor.getSelectorFromStyleKey(@getStyleButtonsByTag("style-block")[0] or "p > p"))
 
     domEvents: [
       "mouseover"
@@ -364,8 +365,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     # tag.
     getStyleButtonsByTag: (tag) ->
       buttons = []
-      for own selector, button of @styleButtons
-        buttons.push(selector) if button.tags and $.inArray(tag, button.tags) > -1
+      for own key, button of @styleButtons
+        buttons.push(key) if button.tags and $.inArray(tag, button.tags) > -1
       buttons
 
     #

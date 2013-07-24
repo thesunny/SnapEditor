@@ -76,11 +76,11 @@
 
       SnapEditor.buttons.multiLevel1 = {
         text: "MultiLevel1",
-        items: ["p", "h1", "multiLevel2", "h2"]
+        items: ["customStyleP", "customStyleH1", "multiLevel2", "customStyleH2"]
       }
       SnapEditor.buttons.multiLevel2 = {
         text: "MultiLevel2",
-        items: ["p", "h1", "h2"]
+        items: ["customStyleP", "customStyleH1", "customStyleH2"]
       }
 
       /*
@@ -96,11 +96,14 @@
       */
 
       SnapEditor.addStyleButton("h1.special", { text: "H1 Special" });
+      SnapEditor.addStyleButton("table", { text: "Table Normal" });
       SnapEditor.addStyleButton("table.special", { text: "Table Special" });
       SnapEditor.addStyleButton("table.highlight", { text: "Table Highlight" });
+      SnapEditor.addStyleButton("tr", { text: "TR Normal" });
       SnapEditor.addStyleButton("tr.special", { text: "TR Special" });
       SnapEditor.addStyleButton("tr.highlight", { text: "TR Highlight" });
       SnapEditor.addStyleButton("th", { text: "TH" });
+      SnapEditor.addStyleButton("td", { text: "TD Normal" });
       SnapEditor.addStyleButton("td.special", { text: "TD Special" });
       SnapEditor.addStyleButton("td.highlight", { text: "TD Highlight"});
       var h1Styles = [];
@@ -145,7 +148,7 @@
         width: "80%",
         path: "/spec/acceptance/assets",
         stylesheets: ["/spec/acceptance/dev.form.css"],
-        styles: ["h1.special", "h1", "table.highlight", "table.special", "tr.highlight", "tr.special", "td.highlight", "td.special", "th"].concat(h1Styles),
+        styles: ["h1.special", "h1", "table", "table.highlight", "table.special", "tr", "tr.highlight", "tr.special", "td", "td.highlight", "td.special", "th"].concat(h1Styles),
         toolbar: { items: ["styleBlock", "table"] },
         contentClass: "myClass",
         imageServer: {
@@ -169,7 +172,7 @@
         path: "/spec/acceptance/assets",
         //snap: false,
         toolbar: {
-          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "multiLevel1"]
+          items: ["customStyleP", "customStyleH1", "customStyleH2", "customStyleH3", "customStyleH4", "customStyleH5", "customStyleH6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "multiLevel1"]
         },
         imageServer: {
           uploadUrl: insecureUploadUrl,
@@ -216,7 +219,7 @@
 
       var inPlaceConfig = {
         toolbar: {
-          items: ["p"]
+          items: ["customStyleP"]
         },
         path: "/spec/acceptance/assets",
         imageServer: {
