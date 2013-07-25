@@ -13,7 +13,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     #    make it select to the end of the body. We then take the first
     #    clientRect. However, the right side is not correct, but it is okay
     #    because the range is collapsed. We just replace the right side with
-    #    the left coordinate.
+    #    the left coordinate. Also, for some reason, the top measurement is -1
+    #    off the real coordinate. Hence, we add back the missing 1 px.
     # 3. The last resort is to insert a <span> and measure its coordinates.
     #    However, this solution has its drawbacks because we now have to deal
     #    with cleaning up after ourselves.
@@ -26,6 +27,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         measureRange.setStart(@range.startContainer, @range.startOffset)
         measureRange.setEnd(body, body.childNodes.length)
         coords = @getCoordinatesFromClientRect(measureRange.getClientRects()[0])
+        coords.top += 1
         coords.right = coords.left
       else
         coords = @getCoordinatesFromClientRect(@range.getBoundingClientRect())
