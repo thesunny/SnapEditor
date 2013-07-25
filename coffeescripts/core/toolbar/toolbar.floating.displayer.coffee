@@ -96,7 +96,7 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
       @$toolbar.animate(styles, duration: 'fast', complete: completeFn)
 
     # In certain scenarios, it is possible for the toolbar to overlap the el at the
-    # top. 
+    # top.
     # Returns the amount of overlap space inside the el.
     overlapSpaceFromElTop: ->
       elCoords = @elCoords()
@@ -104,7 +104,7 @@ define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core
       if overlap > 0 then overlap else 0
 
     # In certain scenarios, it is possible for the toolbar to overlap the el at the
-    # top. 
+    # top.
     # Returns true if the cursor is in this space.
     isCursorInOverlapSpace: ->
       cursorPositionInEl = @cursorPosition() - @elCoords().top

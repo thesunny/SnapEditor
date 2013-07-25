@@ -22,7 +22,9 @@ if isWebkit
               range.range.selectNodeContents($first[0])
               range.collapse(true)
               coords = range.getCoordinates()
-              expect(coords.top).toEqual(100)
+              # In the tests, the -1 issue does not show but in the browser it
+              # does.
+              expect(coords.top).toEqual(101)
               # The bottom fluctuates depending on the font. From what I've seen,
               # when running with the headless webkit, I get 116. When running in
               # Chrome, I get 114.
