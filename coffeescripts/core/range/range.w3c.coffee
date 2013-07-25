@@ -416,6 +416,13 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
             @range.setEndBefore(endEl)
             @range.deleteContents()
             $(startElement).merge(endElement) if startElement != endElement
+            # In Webkit, when the editable element is empty and the element
+            # does not have any top or bottom padding (basically no height
+            # inside the element - because there's no more content), the range
+            # disappears. This is bad. Hence, we insert a zero-width no-break
+            # space to keep the height. This is left in for other browsers
+            # because it doesn't affect them.
+            $(@el).append(Helpers.zeroWidthNoBreakSpace) if Helpers.isEmpty(@el)
           )
         return deleted
   }

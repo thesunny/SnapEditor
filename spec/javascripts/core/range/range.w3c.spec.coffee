@@ -1,5 +1,5 @@
 if hasW3CRanges
-  require ["core/range/range.w3c", "core/helpers", "core/iframe"], (Module, Helpers, IFrame) ->
+  require ["core/range/range.w3c", "core/helpers", "core/browser", "core/iframe"], (Module, Helpers, Browser, IFrame) ->
     describe "Range.W3C", ->
       tests = (getDocFn) ->
         Range = doc = win = createElement = find = $container = $editable = $start = $end = null
@@ -698,8 +698,23 @@ if hasW3CRanges
               range.range.setEnd($end[0].childNodes[0], 2)
               range.select()
               range.delete()
+              range.range = Range.getRangeFromSelection(win)
               range.insertHTML("<b></b>")
               expect($editable.find("div").html()).toEqual("star<b></b>d")
+
+            it "keeps the range when there is no more content", ->
+              $editable.html("<p>text</p>")
+              $p = $editable.find("p")
+              range.getParentElements.andReturn($p[0], $p[0])
+              range.range.selectNodeContents($p[0])
+              range.delete()
+              range.range = Range.getRangeFromSelection(win)
+              expect(range.range).not.toBeNull()
+              range.insertHTML("<b></b>")
+              if Browser.isWebkit
+                expect(clean($editable.html())).toEqual("<p></p><b></b>")
+              else
+                expect(clean($editable.html())).toEqual("<p><b></b></p>")
 
             it "returns true if something was deleted", ->
               range.getParentElements.andReturn([$start[0], $start[0]])
