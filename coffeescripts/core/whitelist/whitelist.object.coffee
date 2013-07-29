@@ -20,8 +20,9 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     # classes can either be a space separated string or an array.
     # All duplicates are removed.
     addClasses: (classes) ->
-      @classes += " #{$.makeArray(classes).join(" ")}"
-      @classes = Helpers.uniqueArray(@classes.split(" ")).sort().join(" ")
+      if classes.length > 0
+        @classes += " #{$.makeArray(classes).join(" ")}"
+        @classes = Helpers.uniqueArray(@classes.split(" ")).sort().join(" ")
 
     # Adds the attributes.
     # attrs can either be an array of attributes or an object of the form:
