@@ -271,11 +271,15 @@ define ["jquery.custom", "plugins/helpers", "core/browser"], ($, Helpers, Browse
           table: SnapEditor.getSelectorFromStyleKey(e.api.getStyleButtonsByTag("style-table")[0] or "table")
           "Table Body": "tbody"
           tr: SnapEditor.getSelectorFromStyleKey(e.api.getStyleButtonsByTag("style-table-row")[0] or "tr")
-          # TODO: Decide whether th should be available or changed to td by
-          # default.
-          "Table Header": "th > BR"
           td: SnapEditor.getSelectorFromStyleKey(e.api.getStyleButtonsByTag("style-table-cell")[0] or "td") + " > BR"
         )
+        # Change th to td unless th styling is defined.
+        cellStyles = e.api.getStyleButtonsByTag("style-table-cell")
+        thFound = false
+        for style in cellStyles
+          thFound = style.split(".").shift() == "th"
+          break if thFound
+        e.api.addWhitelistRule("th", "td > BR") unless thFound
       )
     )
     addRowAbove: Helpers.createButton("addRowAbove", "ctrl+shift+enter", langKey: "tableAddRowAbove", onInclude: includeBehaviours)
