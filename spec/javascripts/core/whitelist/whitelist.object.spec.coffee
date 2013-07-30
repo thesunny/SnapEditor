@@ -22,6 +22,10 @@ require ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObjec
         obj.addClasses("just normal")
         expect(obj.classes).toEqual("highlighted just normal")
 
+      it "does nothing when there are no classes to add", ->
+        obj.addClasses([])
+        expect(obj.classes).toEqual("highlighted normal")
+
     describe "#addAttributes", ->
       obj = null
       beforeEach ->
