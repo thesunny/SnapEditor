@@ -43,14 +43,10 @@
 #   </div>
 #   <p>Widget content</p>
 # </div>
-define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, WidgetObject, IFrame) ->
+define ["jquery.custom", "core/iframe"], ($, IFrame) ->
   class WidgetOverlay
-    constructor: (el, @classname, @api) ->
-      @$el = $(el)
-      @type = @$el.attr("data-type")
-      @widget = SnapEditor.widgets[@type]
-      throw "WidgetOverlay: widget type does not exist - #{@type}" unless @widget
-      @widgetObject = new WidgetObject(@type, @classname, @api, WidgetOverlay)
+    constructor: (@widgetObject) ->
+      @$el = @widgetObject.$el
 
     insert: ->
       @$el.css("position", "relative")
@@ -109,7 +105,7 @@ define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, Widget
       appendTo(@$overlay)
 
       @$buttons = $("<div/>").
-        addClass("#{@classname}_buttons").
+        addClass("#{@widgetObject.classname}_buttons").
         css(
           position: "absolute"
           top: 0
@@ -131,15 +127,7 @@ define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, Widget
         appendTo(@$buttons)
 
     mouseup: (e) =>
-      sibling = @$el.prev()[0]
-      if sibling
-        @api.selectElementContents(sibling)
-        @api.collapse(true)
-      else
-        sibling = @$el.next()[0]
-        @api.selectElementContents(sibling)
-        @api.collapse(false)
-      @edit(e) unless($(e.target).parent(".#{@classname}_buttons")[0])
+      @edit(e) unless($(e.target).parent(".#{@widgetObject.classname}_buttons")[0])
 
     mouseover: (e) =>
       @$buttons.show()
@@ -149,18 +137,16 @@ define ["jquery.custom", "core/widget/widget.object", "core/iframe"], ($, Widget
 
     edit: (e) =>
       @$buttons.hide()
-      @widgetObject.load(@$el)
-      @widget.onEdit(
-        api: @api
+      @widgetObject.widget.onEdit(
+        api: @widgetObject.api
         widget: @widgetObject
         domEvent: e
       )
 
     remove: (e) =>
       @$buttons.hide()
-      @widgetObject.load(@$el)
-      @widget.onRemove(
-        api: @api
+      @widgetObject.widget.onRemove(
+        api: @widgetObject.api
         widget: @widgetObject
         domEvent: e
       )

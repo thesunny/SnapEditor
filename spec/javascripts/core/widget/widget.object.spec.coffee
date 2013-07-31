@@ -20,7 +20,8 @@ require ["jquery.custom", "core/widget/widget.object", "core/range", "core/helpe
         else
           range.range.findText("tart")
         range.collapse(true).select()
-        widgetObject = new WidgetObject("test", "widget", api)
+        widgetObject = new WidgetObject(api, "widget")
+        spyOn(widgetObject, "insertOverlay")
         widgetObject.insertEl()
         expect(clean($start.html())).toEqual("s<div class=widget contenteditable=false></div>tart")
 
@@ -31,7 +32,8 @@ require ["jquery.custom", "core/widget/widget.object", "core/range", "core/helpe
         else
           range.range.findText("tar")
         range.select()
-        widgetObject = new WidgetObject("test", "widget", api)
+        widgetObject = new WidgetObject(api, "widget")
+        spyOn(widgetObject, "insertOverlay")
         widgetObject.insertEl()
         expect(clean($start.html())).toEqual("s<div class=widget contenteditable=false></div>t")
 
@@ -41,6 +43,7 @@ require ["jquery.custom", "core/widget/widget.object", "core/range", "core/helpe
         else
           range.range.findText("tart")
         range.collapse().select()
-        widgetObject = new WidgetObject("test", "widget", api)
+        widgetObject = new WidgetObject(api, "widget")
+        spyOn(widgetObject, "insertOverlay")
         widgetObject.insertEl()
         expect(clean($start.html())).toEqual("s<div class=widget contenteditable=false></div>tart")

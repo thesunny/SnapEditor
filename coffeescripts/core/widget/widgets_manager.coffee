@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overlay"], ($, WidgetObject, WidgetOverlay) ->
+define ["jquery.custom", "core/widget/widget.object"], ($, WidgetObject) ->
   class WidgetsManager
     constructor: (@editor, @classname) ->
       @editor.on("snapeditor.activate", @activate)
@@ -21,16 +21,18 @@ define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overla
       # widget attribute.
       event = $.extend(
         api: @editor.api
-        widget: @createWidgetObject(type)
+        widget: @createWidgetObject(type: type)
         args.shift()
       )
       args.unshift(event)
       widget.onCreate.apply(widget, args)
 
-    createWidgetObject: (type, el = null) ->
-      widgetObject = new WidgetObject(type, @classname, @editor.api, WidgetOverlay)
-      widgetObject.load(el) if el
-      widgetObject
+    # Options:
+    # type
+    # el
+    # Either type or el must be specified.
+    createWidgetObject: (options = {}) ->
+      new WidgetObject(@editor.api, @classname, options)
 
     activate: =>
       @setup()
@@ -43,11 +45,8 @@ define ["jquery.custom", "core/widget/widget.object", "core/widget/widget.overla
       @editor.off("snapeditor.afterGetContent", @setup)
 
     setup: =>
-      setupWidget = @setupWidget
-      $(@editor.find(".#{@classname}")).each(-> setupWidget(this))
-
-    setupWidget: (el) =>
-      (new WidgetOverlay(el, @classname, @editor.api)).insert()
+      createWidgetObject = @createWidgetObject
+      $(@editor.find(".#{@classname}")).each(-> createWidgetObject(el: this))
 
     teardown: =>
       teardownWidget = @teardownWidget
