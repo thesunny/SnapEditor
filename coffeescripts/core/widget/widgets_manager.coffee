@@ -1,6 +1,7 @@
 define ["jquery.custom", "core/widget/widget.object"], ($, WidgetObject) ->
   class WidgetsManager
     constructor: (@editor, @classname) ->
+      @widgetObjects = []
       @editor.on("snapeditor.activate", @activate)
       @editor.on("snapeditor.deactivate", @deactivate)
 
@@ -32,7 +33,9 @@ define ["jquery.custom", "core/widget/widget.object"], ($, WidgetObject) ->
     # el
     # Either type or el must be specified.
     createWidgetObject: (options = {}) ->
-      new WidgetObject(@editor.api, @classname, options)
+      widgetObject = new WidgetObject(@editor.api, @classname, options)
+      @widgetObjects.push(widgetObject)
+      widgetObject
 
     activate: =>
       @setup()
@@ -45,13 +48,9 @@ define ["jquery.custom", "core/widget/widget.object"], ($, WidgetObject) ->
       @editor.off("snapeditor.afterGetContent", @setup)
 
     setup: =>
-      createWidgetObject = @createWidgetObject
-      $(@editor.find(".#{@classname}")).each(-> createWidgetObject(el: this))
+      self = this
+      $(@editor.find(".#{@classname}")).each(-> self.createWidgetObject(el: this))
 
     teardown: =>
-      teardownWidget = @teardownWidget
-      $(@editor.find(".#{@classname}")).each(-> teardownWidget(this))
-
-    teardownWidget: (el) =>
-      $(el).css("position", "")
-      $(el).find("#{@classname}_overlay").remove()
+      widgetObject.teardown() for widgetObject in @widgetObjects
+      @widgetObjects = []

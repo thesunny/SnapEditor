@@ -36,6 +36,9 @@ define ["../../../lib/json2", "jquery.custom", "core/widget/widget.overlay"], (J
     remove: ->
       @$el.remove()
 
+    teardown: ->
+      @overlay.teardown()
+
     #
     # HELPERS
     #

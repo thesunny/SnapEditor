@@ -150,3 +150,8 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
         widget: @widgetObject
         domEvent: e
       )
+
+    teardown: ->
+      @$el.css("position", "")
+      @$overlay.remove()
+      @$overlay = null
