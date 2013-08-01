@@ -47,12 +47,14 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
   class WidgetOverlay
     constructor: (@widgetObject) ->
       @$el = @widgetObject.$el
+      @api = @widgetObject.api
+      @classname = @widgetObject.classname
 
     insert: ->
       @$el.css("position", "relative")
       size = @$el.getSize()
 
-      @$overlay = $("<div/>").css(
+      @$overlay = $(@api.createElement("div")).css(
         position: "absolute"
         top: 0
         left: 0
@@ -104,8 +106,8 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
       ).
       appendTo(@$overlay)
 
-      @$buttons = $("<div/>").
-        addClass("#{@widgetObject.classname}_buttons").
+      @$buttons = $(@api.createElement("div")).
+        addClass("#{@classname}_buttons").
         css(
           position: "absolute"
           top: 0
@@ -115,19 +117,19 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
         ).
         hide().
         appendTo(@$overlay)
-      @$edit = $("<button/>").
+      @$edit = $(@api.createElement("button")).
         addClass("#{@classname}_edit").
         html("edit").
         click(@edit).
         appendTo(@$buttons)
-      @$remove = $("<button/>").
+      @$remove = $(@api.createElement("button")).
         addClass("#{@classname}_remove").
         html("remove").
         click(@remove).
         appendTo(@$buttons)
 
     mouseup: (e) =>
-      @edit(e) unless($(e.target).parent(".#{@widgetObject.classname}_buttons")[0])
+      @edit(e) unless($(e.target).parent(".#{@classname}_buttons")[0])
 
     mouseover: (e) =>
       @$buttons.show()
@@ -138,7 +140,7 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
     edit: (e) =>
       @$buttons.hide()
       @widgetObject.widget.onEdit(
-        api: @widgetObject.api
+        api: @api
         widget: @widgetObject
         domEvent: e
       )
@@ -146,7 +148,7 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
     remove: (e) =>
       @$buttons.hide()
       @widgetObject.widget.onRemove(
-        api: @widgetObject.api
+        api: @api
         widget: @widgetObject
         domEvent: e
       )

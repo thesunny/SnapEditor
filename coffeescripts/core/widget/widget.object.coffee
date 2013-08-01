@@ -60,7 +60,7 @@ define ["../../../lib/json2", "jquery.custom", "core/widget/widget.overlay"], (J
       throw "Widget type does not exist - #{@type}" unless @widget
 
     insertEl: ->
-      $el = $("<div/>").attr("id", "INSERT_WIDGET").addClass(@classname).attr("contenteditable", false)
+      $el = $(@api.createElement("div")).attr("id", "INSERT_WIDGET").addClass(@classname).attr("contenteditable", false)
       @range.delete()
       @range.insert($el[0])
       @$el = $(@api.find("#INSERT_WIDGET")).removeAttr("id")
