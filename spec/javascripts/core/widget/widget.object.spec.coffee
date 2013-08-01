@@ -6,6 +6,7 @@ require ["jquery.custom", "core/widget/widget.object", "core/range", "core/helpe
         $editable = addEditableFixture()
         $start = $('<div id="start">start</div>').appendTo($editable)
         api =
+          createElement: (tag) -> document.createElement(tag)
           getRange: -> new Range($editable[0], window)
           find: (selector) -> $(selector)
         Helpers.delegate(api, "getRange()", "insert", "delete")
