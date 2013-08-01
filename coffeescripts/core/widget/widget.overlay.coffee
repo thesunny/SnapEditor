@@ -139,19 +139,11 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
 
     edit: (e) =>
       @$buttons.hide()
-      @widgetObject.widget.onEdit(
-        api: @api
-        widget: @widgetObject
-        domEvent: e
-      )
+      @widgetObject.onEdit(e)
 
     remove: (e) =>
       @$buttons.hide()
-      @widgetObject.widget.onRemove(
-        api: @api
-        widget: @widgetObject
-        domEvent: e
-      )
+      @widgetObject.onRemove(e)
 
     teardown: ->
       @$el.css("position", "")
