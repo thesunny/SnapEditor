@@ -50,13 +50,22 @@ define ["../../../lib/json2", "jquery.custom", "core/browser", "core/widget/widg
     remove: ->
       @$el.remove()
 
-    teardown: ->
-      @overlay.teardown()
-
     #
     # HELPERS
     #
 
+    # Calls the #onCreate function of the widget.
+    create: (e, args = []) ->
+      # Create a new event off the given event.
+      event = $.extend(
+        api: @api
+        widget: this
+        e
+      )
+      args.unshift(event)
+      @widget.onCreate.apply(@widget, args)
+
+    # Loads widget object data from the given el.
     load: (el) ->
       @$el = $(el)
       @type = @$el.attr("data-type")
@@ -65,6 +74,10 @@ define ["../../../lib/json2", "jquery.custom", "core/browser", "core/widget/widg
       @setWidget()
       @insertOverlay()
 
+    # Tears down the widget object.
+    teardown: ->
+      @overlay.teardown()
+
     #
     # PRIVATE
     #
@@ -72,6 +85,9 @@ define ["../../../lib/json2", "jquery.custom", "core/browser", "core/widget/widg
     setWidget: ->
       @widget = SnapEditor.widgets[@type]
       throw "Widget type does not exist - #{@type}" unless @widget
+      # Set the default onRemove function if it doesn't exist.
+      @widget.onRemove or= (e) -> e.widget.remove()
+
 
     insertEl: ->
       $el = $(@api.createElement("div")).attr("id", "INSERT_WIDGET").addClass(@classname).attr("contenteditable", false)

@@ -7,26 +7,13 @@ define ["jquery.custom", "core/widget/widget.object"], ($, WidgetObject) ->
 
     # The first argument is the type.
     # All other arguments are extra arguments to be passed to the onCreate().
+    # It is expected that first argument of the other arguments is SnapEditor
+    # event object.
     insertWidget: ->
       type = arguments[0]
-      args = [].slice.apply(arguments, [1])
-      widget = SnapEditor.widgets[type]
-      throw "insertWidget(): widget type does not exist - #{type}" unless widget
-
-      # Set the default onRemove function if it doesn't exist.
-      widget.onRemove or= (e) -> e.widget.remove()
-
-      # If an event was passed through the arguments, "clone" it and add the
-      # widget attribute.
-      # If no event was passed through, create a new event with the api and
-      # widget attribute.
-      event = $.extend(
-        api: @editor.api
-        widget: @createWidgetObject(type: type)
-        args.shift()
-      )
-      args.unshift(event)
-      widget.onCreate.apply(widget, args)
+      event = arguments[1]
+      args = [].slice.apply(arguments, [2])
+      @createWidgetObject(type: type).create(event, args)
 
     # Options:
     # type
