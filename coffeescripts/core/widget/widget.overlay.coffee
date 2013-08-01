@@ -92,7 +92,18 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
             </html>
           """)
         load: ->
-          $(@find("body")).mouseup(self.mouseup)
+          # Set the default mouseup event which will trigger edit.
+          events = mouseup: self.edit
+          # Add each given event.
+          $.each(self.widgetObject.widget.events or {}, (event, fn) ->
+            events[event.replace(/^on/, "").toLowerCase()] = (e) ->
+              fn(
+                api: self.api
+                widget: self.widgetObject
+                domEvent: e
+              )
+          )
+          $(@find("body")).on(events)
       )).
       # The frameborder must be set before the iframe is inserted. If it is
       # added afterwards, it has no effect.
@@ -127,9 +138,6 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
         html("remove").
         click(@remove).
         appendTo(@$buttons)
-
-    mouseup: (e) =>
-      @edit(e) unless($(e.target).parent(".#{@classname}_buttons")[0])
 
     mouseover: (e) =>
       @$buttons.show()
