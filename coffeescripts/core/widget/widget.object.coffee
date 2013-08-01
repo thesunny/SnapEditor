@@ -1,7 +1,7 @@
 # json2 is needed for IE7. IE7 does not implement JSON natively.
 # NOTE: json2 does not follow AMD. The J is needed to swallow up the undefined
 # given by json2.
-define ["../../../lib/json2", "jquery.custom", "core/widget/widget.overlay"], (J, $, WidgetOverlay) ->
+define ["../../../lib/json2", "jquery.custom", "core/browser", "core/widget/widget.overlay"], (J, $, Browser, WidgetOverlay) ->
   class WidgetObject
     # Options:
     # type
@@ -25,6 +25,20 @@ define ["../../../lib/json2", "jquery.custom", "core/widget/widget.overlay"], (J
       @$el && @$el[0]
 
     save: ->
+      # In Webkit and Firefox, we have to manually move the focus back to the
+      # editor.
+      # The focus is set before inserting because in Webkit, if we focus
+      # afterwards, the focus is set, but not really. The cursor shows, but
+      # you have to hit a key before focus is actually set. If we focus before
+      # we insert, the insertion acts as the focus trigger. Firefox works no
+      # matter where you put the focus.
+      # @api.win.focus() must be used in Webkit because @api.el.focus() makes
+      # the page jump.
+      # @api.el.focus() must be used in Firefox because @api.win.focus() does
+      # nothing.
+      # This affects IE as it makes the page jump to where the cursor is.
+      @api.win.focus() if Browser.isWebkit
+      @api.el.focus() if Browser.isGecko
       @insertEl() unless @$el
       @$el.attr("data-type", @type)
       @$el.attr("data-json", JSON.stringify(@json))
