@@ -74,6 +74,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @config.behaviours or= @defaults.behaviours
       @config.shortcuts or= @defaults.shortcuts
       @config.lang = $.extend({}, SnapEditor.lang)
+      @config.activateByLinks = @defaults.activateByLinks
       @config.cleaner or= {}
       @config.cleaner.whitelist or = @defaults.cleaner.whitelist
       @config.cleaner.ignore or= @defaults.cleaner.ignore
