@@ -23,6 +23,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "addWhitelistRule", "addWhitelistGeneralRule",
         "isAllowed", "getReplacement",
         "getDefaultBlock", "getNext",
+        # WIDGETS
+        "insertWidget",
         # ACTIONS
         "activate", "tryDeactivate", "deactivate",
         "update", "clean",

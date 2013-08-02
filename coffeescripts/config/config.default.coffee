@@ -52,3 +52,5 @@ define [
       delete: []
     atomic:
       classname: "atomic"
+    widget:
+      classname: "widget"

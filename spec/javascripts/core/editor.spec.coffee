@@ -18,6 +18,8 @@ require ["jquery.custom", "core/editor", "core/helpers", "core/range"], ($, Edit
           delete: "delete"
         atomic:
           classname: "atomic"
+        widget:
+          classname: "widget"
       config = path: "spec/javascripts/support/assets"
       editor = new Editor($editable[0], defaults, config)
 

@@ -1,4 +1,4 @@
-define ["jquery.custom"], ($) ->
+define ["jquery.custom", "core/browser"], ($, Browser) ->
   class IFrame
     constructor: (options = {}) ->
       # Set defaults.
@@ -6,11 +6,20 @@ define ["jquery.custom"], ($) ->
       options.afterWrite or= ->
       options.load or= ->
 
-      $iframe = $("<iframe/>").on("load", ->
+      $iframe = $("<iframe/>").load(->
         # In Firefox, if we don't remove the "load" event, it continuously
-        # triggers the event causing an infinite loop. This is left in for
-        # other browsers as there is no harm.
-        $(this).off("load")
+        # triggers the event causing an infinite loop.
+        # If we leave this in for Webkit, sometimes, when inserting the
+        # iframe, the load still gets called but something happens and the
+        # content gets overwritten by a very basic page (empty <html>,
+        # <body>). I'm not sure what's going on but leaving this out for
+        # Webkit.
+        # If we take this out for IE, IE sometimes hangs. Leaving this in for
+        # IE for now.
+        # NOTE: It looks like Firefox no longer exhibits this behaviour.
+        # However, I'm not sure which version is safe. Better to leave this in
+        # here for a while as it does no harm in Firefox.
+        $(this).off("load") unless Browser.isWebkit
         @win = @contentWindow
         # NOTE: We use doc because IE doesn't like using document.
         @doc = @win.document

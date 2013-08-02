@@ -6,6 +6,7 @@ require ["jquery.custom", "plugins/autoscroll/autoscroll"], ($, Autoscroll) ->
         api =
           win: window
           getCoordinates: null
+          isValid: -> true
 
       it "scrolls to the top line if the cursor is above the top line", ->
         spyOn(api, "getCoordinates").andReturn(top: 5)

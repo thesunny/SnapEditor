@@ -5,7 +5,9 @@ require ["jquery.custom", "core/api", "core/range"], ($, API, Range) ->
       $editable = addEditableFixture()
       api = new API(
         el: $editable[0]
-        config: path: "/"
+        config:
+          path: "/"
+          widget: classname: "widget"
         contents: null
         activate: null
         assets: {}

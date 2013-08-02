@@ -70,6 +70,77 @@
       SnapEditor.config.shortcuts.push("hi")
       SnapEditor.config.shortcuts.push("bye")
 
+      SnapEditor.buttons.graph = {
+        text: "Graph",
+        action: function (e) {
+          e.api.insertWidget("graph", e);
+        }
+      }
+      SnapEditor.widgets.graph = {
+        onCreate: function (e) {
+          console.log(e);
+          this.e = e;
+          //this.save("1,2,200");
+          this.displayPopup();
+        },
+        onEdit: function (e) {
+          console.log(e);
+          this.e = e;
+          //this.save("1,2,200");
+          this.displayPopup();
+          console.log(this.e.widget.json.data);
+          this.popup.find("input[name=data]").val(this.e.widget.json.data);
+        },
+        /*
+        onRemove: function (e) {
+          console.log("REMOVE");
+          e.widget.remove();
+        },
+        */
+        displayPopup: function () {
+          this.setupPopup();
+          this.popup.show();
+          this.popup.find("input[name=data]")[0].focus();
+        },
+        setupPopup: function () {
+          if(!this.popup) {
+            this.popup = $([
+              '<div class="snapeditor_ignore_deactivate">',
+                '<form>',
+                  '<label for="name">Data</label>',
+                  '&nbsp;',
+                  '<input name="data" type="text" style="width: 300px;" />',
+                  '&nbsp;',
+                  '<input type="submit" />',
+                '</form>',
+              '</div>'
+            ].join("")).hide().appendTo("body");
+            this.popup.css({
+              position: "fixed",
+              top: 100,
+              left: 300,
+              zIndex: 300,
+              border: "1px solid gray",
+              background: "white",
+              padding: 10
+            });
+            var self = this;
+            this.popup.find("form").submit(function (e) {
+              e.preventDefault();
+              self.save(this.data.value);
+            });
+          }
+        },
+        heights: [5, 50, 100, 150, 200],
+        counter: 0,
+        save: function (data) {
+          this.popup.hide();
+          this.e.widget.json.data = data;
+          this.e.widget.html = $("<div>hello world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.widget.json.data)).html();
+          this.e.widget.save();
+        }
+      };
+
       SnapEditor.buttons.form = {
         items: ["bold", "italic", "|", "styleBlock", "table"]
       };
@@ -149,7 +220,7 @@
         path: "/spec/acceptance/assets",
         stylesheets: ["/spec/acceptance/dev.form.css"],
         styles: ["h1.special", "h1", "table", "table.highlight", "table.special", "tr", "tr.highlight", "tr.special", "td", "td.highlight", "td.special", "th"].concat(h1Styles),
-        toolbar: { items: ["styleBlock", "table"] },
+        toolbar: { items: ["styleBlock", "table", "graph", "link"] },
         contentClass: "myClass",
         imageServer: {
           uploadUrl: insecureUploadUrl,
@@ -159,6 +230,7 @@
       });
       var insecureForm2 = new SnapEditor.Form("insecure_form2", {
         path: "/spec/acceptance/assets",
+        buttons: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph"],
         stylesheets: [],
         contentClass: "myClass",
         toolbar: "form",
@@ -172,7 +244,7 @@
         path: "/spec/acceptance/assets",
         //snap: false,
         toolbar: {
-          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "multiLevel1"]
+          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph", "multiLevel1"]
         },
         imageServer: {
           uploadUrl: insecureUploadUrl,

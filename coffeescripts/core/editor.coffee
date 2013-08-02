@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, API, ToolbarButton) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, API, ToolbarButton) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -38,6 +38,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @whitelist = new Whitelist(@config.cleaner.whitelist)
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)
+      @widgetsManager = new WidgetsManager(this, @config.widget.classname)
 
       # Instantiate the API.
       @api = new API(this)
@@ -81,10 +82,14 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @config.atomic or= {}
       @config.atomic.classname or= @defaults.atomic.classname
       @config.atomic.selectors = [".#{@config.atomic.classname}"]
+      @config.widget or= {}
+      @config.widget.classname or= @defaults.widget.classname
 
-      # Add the atomic classname to the cleaner's ignore list.
+      # Add selectors to the atomic's selectors list.
+      @config.atomic.selectors.push(".#{@config.widget.classname}")
+      # Add selectors to the cleaner's ignore list.
       @config.cleaner.ignore = @config.cleaner.ignore.concat(@config.atomic.selectors)
-      # Add the atomic selectors to the erase handler's delete list.
+      # Add selectors to the eraseHandler's delete list.
       @config.eraseHandler.delete = @config.eraseHandler.delete.concat(@config.atomic.selectors)
 
     includeStyles: ->
@@ -285,6 +290,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         "styleBlock", "formatInline", "align", "indent", "outdent",
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )
+      Helpers.delegate(this, "widgetsManager", "insertWidget")
 
     #
     # EVENTS
