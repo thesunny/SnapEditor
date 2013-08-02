@@ -91,19 +91,6 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
               <body class="snapeditor_ignore_deactivate"><div class="overlay"></div></body>
             </html>
           """)
-        load: ->
-          # Set the default mouseup event which will trigger edit.
-          events = mouseup: self.edit
-          # Add each given event.
-          $.each(self.widgetObject.widget.events or {}, (event, fn) ->
-            events[event.replace(/^on/, "").toLowerCase()] = (e) ->
-              fn(
-                api: self.api
-                widget: self.widgetObject
-                domEvent: e
-              )
-          )
-          $(@find("body")).on(events)
       )).
       # The frameborder must be set before the iframe is inserted. If it is
       # added afterwards, it has no effect.

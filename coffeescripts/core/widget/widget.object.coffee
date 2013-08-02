@@ -93,7 +93,7 @@ define ["../../../lib/json2", "jquery.custom", "core/browser", "core/widget/widg
 
     # Tears down the widget object.
     teardown: ->
-      @overlay.teardown()
+      @overlay.teardown() if @overlay
 
     #
     # PRIVATE
