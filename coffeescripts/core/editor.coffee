@@ -60,6 +60,18 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # chance to set it first (namely the plugin).
       @config.onTryDeactivate or= @deactivate
 
+      # When there is a mousedown outside, we may lose the current range. Save
+      # it in case we need it again later.
+      # TODO: There are other cases to consider too, but this will do for now.
+      # This is currently used to fix IE8 as it is the only one to lose the
+      # range when opening a dialog.
+      # Other cases:
+      # - tabbing out of SnapEditor.Form
+      # - user-defined action to remove the focus away from SnapEditor
+      #   - it should be noted that pressing a button on the toolbar is
+      #     considered an outside_mousedown, hence any focus after a button
+      #     has been pressed will be okay
+      @on("snapeditor.outside_mousedown", @saveRange)
 
       # Ready.
       @trigger("snapeditor.plugins_ready")
@@ -147,6 +159,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     includeWhitelistDefaults: ->
       @addWhitelistRule("*", SnapEditor.getSelectorFromStyleKey(@getStyleButtonsByTag("style-block")[0] or "p > p"))
 
+    saveRange: =>
+      @savedRange = @getRange()
 
     domEvents: [
       "mouseover"
@@ -434,7 +448,14 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     # Otherwise returns the range that represents the el.
     # If a selection does not exist, use #getBlankRange().
     getRange: (el) ->
-      new Range(@el, el or @win)
+      range = new Range(@el, el or @win)
+      # If the range is invalid and we have saved a range, return the saved
+      # range instead.
+      if @savedRange and !range.isValid()
+        range = @savedRange
+        @savedRange = null
+      range
+
 
     # Get a blank range. This is here in case a selection does not exist.
     # If a selection exists, use #getRange().
