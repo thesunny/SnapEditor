@@ -12,6 +12,7 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
     shortcuts: {}
     actions: {}
     widgets: {}
+    dialogs: {}
     InPlace: {}
     Form: {}
     Dialog: Dialog

@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, API, ToolbarButton) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/dialog/dialogs_manager", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, DialogsManager, API, ToolbarButton) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -39,6 +39,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)
       @widgetsManager = new WidgetsManager(this, @config.widget.classname)
+      @dialogsManager = new DialogsManager()
 
       # Instantiate the API.
       @api = new API(this)
@@ -58,6 +59,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # We set the onTryDeactivate default here to give every one else a
       # chance to set it first (namely the plugin).
       @config.onTryDeactivate or= @deactivate
+
 
       # Ready.
       @trigger("snapeditor.plugins_ready")
@@ -144,6 +146,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     includeWhitelistDefaults: ->
       @addWhitelistRule("*", SnapEditor.getSelectorFromStyleKey(@getStyleButtonsByTag("style-block")[0] or "p > p"))
+
 
     domEvents: [
       "mouseover"
@@ -292,6 +295,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )
       Helpers.delegate(this, "widgetsManager", "insertWidget")
+      Helpers.delegate(this, "dialogsManager", "showDialog")
 
     #
     # EVENTS
