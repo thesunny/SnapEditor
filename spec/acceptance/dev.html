@@ -164,12 +164,12 @@
           this.counter = 0;
           this.titles = ["Say Hi", "Say Hello", "", undefined];
           console.log("Say Hi Setup", e);
-          e.dialog.on("snapeditor.click", ".say_hi_hi", function (e) {
+          e.dialog.on(".say_hi_hi", "snapeditor.click", function (e) {
             console.log("Saying Hi", e);
             e.api.insert("Hi");
             e.dialog.close();
           });
-          e.dialog.on("snapeditor.click", ".say_hi_hello", function (e) {
+          e.dialog.on(".say_hi_hello", "snapeditor.click", function (e) {
             console.log("Saying Hello", e);
             e.api.insert("Hello");
             e.dialog.close();

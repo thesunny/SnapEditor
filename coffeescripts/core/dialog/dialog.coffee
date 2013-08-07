@@ -94,16 +94,19 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     setHTML: (html) ->
       @$content.html(html or "")
 
-    on: (event, selector, fn) ->
+    on: (selector, event, fn) ->
       domEvent = event.replace(/^snapeditor\./, "")
       self = this
       @$el.find(selector).on(domEvent, (e) ->
-        fn(
+        fn.apply(self.dialog, [
           api: self.api
           dialog: self
           domEvent: e
-        )
+        ])
       )
+
+    find: (selector) ->
+      @$el.find(selector)[0]
 
     setup: ->
       unless @$el
