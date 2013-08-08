@@ -32,7 +32,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "update", "clean",
         "execAction",
         # RANGE
-        "getRange",
+        "getRange", "lockRange", "unlockRange",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getParentElement", "getParentElements", "getText", "getCoordinates",
         "collapse", "unselect", "keepRange", "moveBoundary",

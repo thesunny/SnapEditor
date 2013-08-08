@@ -84,7 +84,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
     onOpen: (e) ->
       @dialog = e.dialog
       @api = e.api
-      @range = @api.getRange()
+      #@range = @api.getRange()
       [startParent, endParent] = @api.getParentElements("a")
       @$link = $(startParent || endParent)
       @imageSelected = @isImageSelected()
@@ -95,7 +95,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
 
     onClose: (e) ->
       @mirrorInput.deactivate()
-      @api.select(@range)
+      @api.select()
 
     #
     # FORM
@@ -220,13 +220,13 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
         $link.text(text) if text
         $link.attr("target", "_blank") if newWindow
         if @api.isCollapsed()
-          @range.insert($link[0])
+          @api.insert($link[0])
         else
           if @imageSelected
-            @range.surroundContents($link[0])
+            @api.surroundContents($link[0])
           else
-            @range.delete()
-            @range.insert($link[0])
+            @api.delete()
+            @api.insert($link[0])
       @api.clean()
 
 

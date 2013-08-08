@@ -129,6 +129,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     open: (e, args) =>
       @api = e.api
       unless @opened
+        @api.lockRange(@api.getRange())
         @setup()
         @$el.css(@getStyles()).show()
         # Uses mousedown because the toolbar uses mouseup to show the dialog. If
@@ -180,6 +181,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
             api: @api
             dialog: this
           )
+        @api.unlockRange()
 
     tryMouseClose: (e) =>
       @close() if $(e.target).closest(@$el).length == 0
