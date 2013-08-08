@@ -1,5 +1,9 @@
-define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Helpers, Browser, Events) ->
+define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   class Dialog
+    constructor: (@type) ->
+      @dialog = SnapEditor.dialogs[@type]
+      throw "Dialog does not exist - #{@type}" unless @dialog
+
     template: """
       <div class="snapeditor_dialog snapeditor_ignore_deactivate">
         <div class="snapeditor_dialog_title_container">
@@ -80,56 +84,87 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
       }
     """
 
-    # Options:
-    # * title
-    # * html
-    setup: (options = {}) ->
+    setTitle: (title) ->
+      if typeof title == "undefined"
+        @$titleContainer.hide()
+      else
+        @$titleContainer.show()
+        @$title.text(title)
+
+    setHTML: (html) ->
+      @$content.html(html or "")
+
+    on: (selector, event, fn) ->
+      domEvent = event.replace(/^snapeditor\./, "")
+      self = this
+      @$el.find(selector).on(domEvent, (e) ->
+        fn.apply(self.dialog, [
+          api: self.api
+          dialog: self
+          domEvent: e
+        ])
+      )
+
+    find: (selector) ->
+      @$el.find(selector)[0]
+
+    setup: ->
       unless @$el
         @$el = $(@template).hide().appendTo("body")
-        @$title = @$el.find(".snapeditor_dialog_title").text(options.title or "")
-        @$content = @$el.find(".snapeditor_dialog_content").html(options.html or "")
-        @api.insertStyles("dialog", @css)
+        @$titleContainer = @$el.find(".snapeditor_dialog_title_container")
+        @$title = @$el.find(".snapeditor_dialog_title")
+        @setTitle(@dialog.title)
+        @$content = @$el.find(".snapeditor_dialog_content").addClass("snapeditor_dialog_content_#{@type}")
+        @$content.css(
+          width: @dialog.width or "auto"
+          height: @dialog.height or "auto"
+        )
+        @setHTML(@dialog.html)
+        @api.insertStyles("dialog_#{@type}", @css + @dialog.css)
+        if @dialog.onSetup
+          @dialog.onSetup(
+            dialog: this
+          )
 
-    getEl: ->
-      @$el[0]
+    open: (e, args) =>
+      @api = e.api
+      unless @opened
+        @api.lockRange(@api.getRange())
+        @setup()
+        @$el.css(@getStyles()).show()
+        # Uses mousedown because the toolbar uses mouseup to show the dialog. If
+        # mouseup was used to close, the following would happen:
+        # 1. Toolbar button triggers mouseup
+        # 2. Show dialog
+        # 3. Add mouseup listener to close
+        # 4. Propagation of mouseup to document
+        # 5. close dialog
+        # Therefore, the dialog will never show! Using mousedown avoids this
+        # problem as mousedown has already propagated before mouseup is even
+        # fired.
+        @api.on(
+          "snapeditor.mousedown": @close
+          "snapeditor.document_mousedown": @tryMouseClose
+          "snapeditor.document_keyup": @tryKeyClose
+        )
+        # In Firefox, if we don't set the focus on the dialog first, the focus on
+        # the input will not work.
+        # In Webkit, if we don't set the focus on the window first, the second
+        # time the dialog is shown, the focus on the input will not work.
+        # We use window.focus() instead of @$dialog[0].focus() because
+        # focusing on the dialog does not fix Webkit. Focusing on the window
+        # fixes Firefox.
+        # This affects only IE8. It does not affect >IE8.
+        window.focus() unless Browser.isIE8
+        @opened = true
+        @dialog.onOpen.apply(@dialog, [$.extend(dialog: this, e), args]) if @dialog.onOpen
 
-    setTitle: (title) ->
-      @$title.text(title)
-
-    show: (@api) =>
-      @setup()
-      @$el.css(@getStyles()).show()
-      # Uses mousedown because the toolbar uses mouseup to show the dialog. If
-      # mouseup was used to hide, the following would happen:
-      # 1. Toolbar button triggers mouseup
-      # 2. Show dialog
-      # 3. Add mouseup listener to hide
-      # 4. Propagation of mouseup to document
-      # 5. Hide dialog
-      # Therefore, the dialog will never show! Using mousedown avoids this
-      # problem as mousedown has already propagated before mouseup is even
-      # fired.
-      @api.on(
-        "snapeditor.document_mousedown": @tryMouseHide
-        "snapeditor.document_keyup": @tryKeyHide
-      )
-      # In Firefox, if we don't set the focus on the dialog first, the focus on
-      # the input will not work.
-      # In Webkit, if we don't set the focus on the window first, the second
-      # time the dialog is shown, the focus on the input will not work.
-      # We use window.focus() instead of @$dialog[0].focus() because
-      # focusing on the dialog does not fix Webkit. Focusing on the window
-      # fixes Firefox.
-      # This affects only IE8. It does not affect >IE8.
-      window.focus() unless Browser.isIE8
-      @shown = true
-
-    hide: =>
-      if @shown
+    close: =>
+      if @opened
         @$el.hide()
         @api.off(
-          "snapeditor.document_mousedown": @tryMouseHide
-          "snapeditor.document_keyup": @tryKeyHide
+          "snapeditor.document_mousedown": @tryMouseClose
+          "snapeditor.document_keyup": @tryKeyClose
         )
         # In Webkit and Firefox, we have to manually move the focus back to the
         # editor.
@@ -140,13 +175,19 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
         # This affects IE as it makes the page jump to where the cursor is.
         @api.win.focus() if Browser.isWebkit
         @api.el.focus() if Browser.isGecko
-        @shown = false
+        @opened = false
+        if @dialog.onClose
+          @dialog.onClose(
+            api: @api
+            dialog: this
+          )
+        @api.unlockRange()
 
-    tryMouseHide: (e) =>
-      @hide() if $(e.target).closest(@$el).length == 0
+    tryMouseClose: (e) =>
+      @close() if $(e.target).closest(@$el).length == 0
 
-    tryKeyHide: (e) =>
-      @hide() if Helpers.keysOf(e) == "esc"
+    tryKeyClose: (e) =>
+      @close() if Helpers.keysOf(e) == "esc"
 
     getStyles: ->
       elSize = @$el.getSize()
@@ -156,17 +197,3 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/events"], ($, Hel
         top: windowScroll.y + ((windowSize.y - elSize.y) / 2)
         left: windowScroll.x + ((windowSize.x - elSize.x) / 2)
       }
-
-    addCustomDataToEvent: (e) ->
-      e.api = @api
-
-  Helpers.include(Dialog, Events)
-  # Override the default trigger() from Events so that we can add custom data
-  # to the event being triggered.
-  Dialog.prototype.elTrigger = Dialog.prototype.trigger
-  Dialog.prototype.trigger = (event, params = []) ->
-    e = if typeof event == "string" then $.Event(event) else event
-    @addCustomDataToEvent(e)
-    @elTrigger(e, params)
-
-  Dialog

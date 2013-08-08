@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, API, ToolbarButton) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/dialog/dialogs_manager", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, DialogsManager, API, ToolbarButton) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -39,6 +39,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)
       @widgetsManager = new WidgetsManager(this, @config.widget.classname)
+      @dialogsManager = new DialogsManager()
 
       # Instantiate the API.
       @api = new API(this)
@@ -292,6 +293,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )
       Helpers.delegate(this, "widgetsManager", "insertWidget")
+      Helpers.delegate(this, "dialogsManager", "showDialog")
 
     #
     # EVENTS
@@ -426,11 +428,22 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     # RANGE
     #
 
-    # Gets the current selection if el is not given.
+    # Gets the locked selection or current selection if el is not given.
     # Otherwise returns the range that represents the el.
     # If a selection does not exist, use #getBlankRange().
     getRange: (el) ->
-      new Range(@el, el or @win)
+      if el or !@range
+        new Range(@el, el or @win)
+      else
+        @range
+
+    # Locks the selected range to the given range.
+    lockRange: (range) ->
+      @range = range
+
+    # Unlocks the selected range.
+    unlockRange: ->
+      @range = null
 
     # Get a blank range. This is here in case a selection does not exist.
     # If a selection exists, use #getRange().

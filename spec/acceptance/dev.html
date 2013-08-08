@@ -154,6 +154,42 @@
         items: ["p", "h1", "h2"]
       }
 
+      SnapEditor.dialogs.sayHi = {
+        title: "Say Hi",
+        html: '<button class="say_hi_hi">Say Hi</button><button class="say_hi_hello">Hello</button>',
+        width: 200,
+        height: 100,
+        css: '.snapeditor_dialog_content_sayHi { background-color: #eee; }',
+        onSetup: function (e) {
+          this.counter = 0;
+          this.titles = ["Say Hi", "Say Hello", "", undefined];
+          console.log("Say Hi Setup", e);
+          e.dialog.on(".say_hi_hi", "snapeditor.click", function (e) {
+            console.log("Saying Hi", e);
+            e.api.insert("Hi");
+            e.dialog.close();
+          });
+          e.dialog.on(".say_hi_hello", "snapeditor.click", function (e) {
+            console.log("Saying Hello", e);
+            e.api.insert("Hello");
+            e.dialog.close();
+          });
+        },
+        onOpen: function (e) {
+          console.log("Say Hi Open", e);
+          e.dialog.setTitle(this.titles[this.counter++ % 4]);
+        },
+        onClose: function (e) {
+          console.log("Say Hi Close", e);
+        }
+      };
+      SnapEditor.buttons.sayHi = {
+        text: "Say Hi",
+        action: function (e) {
+          e.api.showDialog("sayHi", e);
+        }
+      }
+
       /*
       SnapEditor.buttons.styleTd = {
         text: "Style TD",
@@ -220,7 +256,7 @@
         path: "/spec/acceptance/assets",
         stylesheets: ["/spec/acceptance/dev.form.css"],
         styles: ["h1.special", "h1", "table", "table.highlight", "table.special", "tr", "tr.highlight", "tr.special", "td", "td.highlight", "td.special", "th"].concat(h1Styles),
-        toolbar: { items: ["styleBlock", "table", "graph", "link"] },
+        toolbar: { items: ["styleBlock", "table", "graph", "link", "sayHi"] },
         contentClass: "myClass",
         imageServer: {
           uploadUrl: insecureUploadUrl,
@@ -244,7 +280,7 @@
         path: "/spec/acceptance/assets",
         //snap: false,
         toolbar: {
-          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph", "multiLevel1"]
+          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph", "multiLevel1", "sayHi"]
         },
         imageServer: {
           uploadUrl: insecureUploadUrl,

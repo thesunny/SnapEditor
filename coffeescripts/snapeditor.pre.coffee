@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers, LangEn, Dialog) ->
+define ["jquery.custom", "core/helpers", "lang/en"], ($, Helpers, LangEn) ->
   window.SnapEditor or= {}
   $.extend(window.SnapEditor,
     #
@@ -12,9 +12,9 @@ define ["jquery.custom", "core/helpers", "lang/en", "ui/ui.dialog"], ($, Helpers
     shortcuts: {}
     actions: {}
     widgets: {}
+    dialogs: {}
     InPlace: {}
     Form: {}
-    Dialog: Dialog
     debug: false
 
     # Arguments

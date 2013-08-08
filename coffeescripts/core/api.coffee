@@ -25,12 +25,14 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         "getDefaultBlock", "getNext",
         # WIDGETS
         "insertWidget",
+        # DIALOGS
+        "showDialog",
         # ACTIONS
         "activate", "tryDeactivate", "deactivate",
         "update", "clean",
         "execAction",
         # RANGE
-        "getRange",
+        "getRange", "lockRange", "unlockRange",
         "isValid", "isCollapsed", "isImageSelected", "isStartOfElement", "isEndOfElement",
         "getParentElement", "getParentElements", "getText", "getCoordinates",
         "collapse", "unselect", "keepRange", "moveBoundary",
