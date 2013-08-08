@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plugins/save/save.error_dialog"], ($, Helpers, PromptDialog, ErrorDialog) ->
+define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   save =
     #
     # PLUGIN EVENT HANDLERS
@@ -26,25 +26,9 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
         if @api.config.onUnsavedChanges
           @api.config.onUnsavedChanges(e)
         else
-          @getPromptDialog().show(@api)
+          @api.showDialog("savePrompt", e)
       else
         @api.deactivate()
-
-    #
-    # DIALOGS
-    #
-
-    getPromptDialog: ->
-      unless @promptDialog
-        @promptDialog = new PromptDialog()
-        @promptDialog.on(
-          save: (e) -> save.save()
-          discard: (e) -> save.discard()
-        )
-      @promptDialog
-
-    getErrorDialog: ->
-      @errorDialog or= new ErrorDialog()
 
     #
     # DIALOG EVENT HANDLERS
@@ -55,7 +39,7 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
       result = @api.config.onSave(api: @api, html: @api.getContents()) if @api.config.onSave
       result
       if typeof result == "string"
-        @getErrorDialog().show(@api, result)
+        @api.showDialog("saveError", api: @api, result)
       else
         @api.deactivate()
 
@@ -78,6 +62,52 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
 
     isEdited: ->
       @api.getContents() != @originalHTML
+
+  SnapEditor.dialogs.savePrompt =
+    title: SnapEditor.lang.saveTitle
+
+    html:
+      """
+        <div class="save_dialog">
+          <div class="message">#{SnapEditor.lang.saveExitMessage}</div>
+          <div class="buttons">
+            <button class="save submit button">#{SnapEditor.lang.saveSaveButton}</button>
+            <button class="cancel button">#{SnapEditor.lang.formCancel}</button>
+          </div>
+          <div class="discard_message">
+            #{SnapEditor.lang.saveOr} <a class="discard" href="javascript:void(null);">#{SnapEditor.lang.saveDiscardChanges}</a>
+          </div>
+        </div>
+      """
+
+    onSetup: (e) ->
+      e.dialog.on(".save", "click", (e) ->
+        e.dialog.close()
+        save.save()
+      )
+      e.dialog.on(".cancel", "click", (e) ->
+        e.dialog.close()
+      )
+      e.dialog.on(".discard", "click", (e) ->
+        e.dialog.close()
+        save.discard()
+      )
+
+  SnapEditor.dialogs.saveError =
+    title: SnapEditor.lang.saveErrorTitle
+
+    html:
+      """
+        <div class="error"></div>
+        <button class="okay">#{SnapEditor.lang.formOk}</button>
+      """
+
+    onSetup: (e) ->
+      e.dialog.on(".okay", "click", e.dialog.close)
+
+    onOpen: (e, message) ->
+      $(e.dialog.find(".error")).html(message)
+
   SnapEditor.actions.save = -> save.save()
   SnapEditor.actions.discard = -> save.discard()
 
@@ -95,7 +125,6 @@ define ["jquery.custom", "core/helpers", "plugins/save/save.prompt_dialog", "plu
 
   SnapEditor.behaviours.save =
     onBeforeActivate: (e) -> save.activate(e.api) if e.api.config.onSave
-    onTryDeactivate: (e) -> save.exit() if e.api.config.onSave
     onDeactivate: (e) -> save.deactivate() if e.api.config.onSave
 
   styles = """

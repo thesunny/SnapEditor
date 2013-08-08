@@ -157,7 +157,9 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         # This affects only IE8. It does not affect >IE8.
         window.focus() unless Browser.isIE8
         @opened = true
-        @dialog.onOpen.apply(@dialog, [$.extend(dialog: this, e), args]) if @dialog.onOpen
+        if @dialog.onOpen
+          args.unshift($.extend(dialog: this, e))
+          @dialog.onOpen.apply(@dialog, args)
 
     close: =>
       if @opened
