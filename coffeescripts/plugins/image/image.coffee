@@ -1,4 +1,4 @@
-define ["jquery.custom", "plugins/helpers", "plugins/image/image.upload_dialog"], ($, Helpers, Dialog) ->
+define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
   # api.config.imageServer
 
 
