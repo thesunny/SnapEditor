@@ -172,17 +172,17 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         # editor.
         # @api.win.focus() must be used in Webkit because @api.el.focus() makes
         # the page jump.
-        # @api.el.focus() must be used in Firefox because @api.win.focus() does
-        # nothing.
+        # @api.win.focus() must be used in Firefox when using an iframe
+        # because @api.el.focus() makes the iframe jump.
+        # @api.el.focus() must be used in Firefox when not using an iframe
+        # because @api.win.focus() does nothing.
         # This affects IE as it makes the page jump to where the cursor is.
-        @api.win.focus() if Browser.isWebkit
+        # TODO: The call to @api.editor.iframe is really ugly. Figure out how
+        # to fix this properly.
+        @api.win.focus() if Browser.isWebkit or Browser.isGecko and @api.editor.iframe
         @api.el.focus() if Browser.isGecko
         @opened = false
-        if @dialog.onClose
-          @dialog.onClose(
-            api: @api
-            dialog: this
-          )
+        @dialog.onClose(api: @api, dialog: this) if @dialog.onClose
         @api.unlockRange()
 
     tryMouseClose: (e) =>
