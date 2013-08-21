@@ -84,7 +84,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
               # Normalize the children first.
               innerBlockFound = @normalizeNodes(node.firstChild, node.lastChild)
 
-              if innerBlockFound or !replacement or (isBlock and !node.firstChild)
+              if innerBlockFound or !replacement or (isBlock and !node.firstChild and node.tagName != "IMG")
                 # If inner blocks were found, there is no inline replacement,
                 # or the block is empty, flatten the outer element.
 

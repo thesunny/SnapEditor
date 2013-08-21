@@ -49,8 +49,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], 
       )
 
   SnapEditor.behaviours.cleaner =
-    onActivate: (e) ->
+    onBeforeActivate: (e) ->
       cleaner.api = e.api
+    onActivate: (e) ->
       # keepRange() is used because onActivate, the cursor position must be
       # preserved after cleaning.
       cleaner.keepRange(-> @clean(@api.el.firstChild, @api.el.lastChild))

@@ -5,6 +5,7 @@ define ["../lib/jquery", "../lib/mustache"], ->
 
   # Shortcut for tagName.
   $.fn.tagName = ->
+    return null unless this.length > 0
     this[0].tagName.toLowerCase()
 
   # Mimics MooTools getCoordinates.
