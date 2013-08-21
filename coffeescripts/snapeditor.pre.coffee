@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/helpers", "lang/en"], ($, Helpers, LangEn) ->
+define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, Helpers, LangEn, Dialog) ->
   window.SnapEditor or= {}
   $.extend(window.SnapEditor,
     #
@@ -116,6 +116,12 @@ define ["jquery.custom", "core/helpers", "lang/en"], ($, Helpers, LangEn) ->
 
     getSelectorFromStyleKey: (key) ->
       key.replace(/^customStyle/, "").toLowerCase()
+
+    createdDialogs: {}
+
+    showDialog: (type, event, args)->
+      @createdDialogs[type] or= new Dialog(type)
+      @createdDialogs[type].open(event, args)
 
     DEBUG: ->
       if @debug

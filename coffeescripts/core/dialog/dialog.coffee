@@ -106,7 +106,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       )
 
     find: (selector) ->
-      @$el.find(selector)[0]
+      @$el.find(selector).toArray()
 
     setup: ->
       unless @$el
