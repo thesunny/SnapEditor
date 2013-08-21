@@ -1,2 +1,3 @@
 directory: "/home/wesley/Dropbox/projects/snapeditor/storage"
+public_url: "http://localhost:9292/storage"
 max_file_size: 10485760
