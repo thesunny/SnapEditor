@@ -74,7 +74,6 @@ define ["jquery.custom", "plugins/helpers", "jquery.file_upload"], ($, Helpers) 
 
       formData = []
       formData.push(name: param, value: value) for own param, value of @api.config.imageServer.uploadParams or {}
-      formData.push(name: "directory", value: @api.config.imageServer.directory)
 
       self = this
       for $upload in [@$singleUpload, @$multiUpload]
