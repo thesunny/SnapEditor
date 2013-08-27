@@ -1,4 +1,4 @@
-define ["jquery.custom", "plugins/helpers", "jquery.file_upload"], ($, Helpers) ->
+define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"], ($, Helpers, Browser) ->
   SnapEditor.dialogs.image =
     title: SnapEditor.lang.imageUploadTitle
 
@@ -9,8 +9,8 @@ define ["jquery.custom", "plugins/helpers", "jquery.file_upload"], ($, Helpers) 
           <a class="url" href="javascript:void(null);">URL</a>
         </div>
         <div class="snapeditor_image_upload">
-          <form class="single_upload"><input type="file"></form>
-          <form class="multi_upload"><input type="file" multiple></form>
+          <input class="single_upload" type="file">
+          <input class="multi_upload" type="file" multiple>
           <div class="snapeditor_image_upload_progress_container" style="display: none;"></div>
         </div>
         <div class="snapeditor_image_url">
@@ -22,9 +22,8 @@ define ["jquery.custom", "plugins/helpers", "jquery.file_upload"], ($, Helpers) 
       """
 
     onSetup: (e) ->
+      @dialog = e.dialog
       @imageCounter = 0
-      @$singleUpload = $(e.dialog.find(".snapeditor_image_upload .single_upload"))
-      @$multiUpload = $(e.dialog.find(".snapeditor_image_upload .multi_upload"))
       @$uploadContainer = $(e.dialog.find(".snapeditor_image_upload"))
       @$urlContainer = $(e.dialog.find(".snapeditor_image_url")).hide()
       @$progressContainer = $(e.dialog.find(".snapeditor_image_upload_progress_container"))
@@ -43,20 +42,47 @@ define ["jquery.custom", "plugins/helpers", "jquery.file_upload"], ($, Helpers) 
         # TODO: Handle form errors.
         self.insertImage($(e.dialog.find(".snapeditor_image_url input[type=text]")).val())
       )
-      for $upload in [@$singleUpload, @$multiUpload]
-        $upload.find("input").on("fileuploadstart", (ev, data) ->
+      for $upload in [$(@getSingleUpload()), $(@getMultiUpload())]
+        $upload.on("fileuploadstart", (ev, data) ->
+          # In IE8/9, jQuery File Upload uses iframe transport to upload the
+          # images. This causes some issues afterwards when trying to reselect
+          # the range. I'm not sure exactly what's going on, but I think it
+          # has to do with focusing. The range is still completely valid and
+          # we can insert and collapse and move the range around. The only
+          # thing we can't do with the range is select it. This makes me think
+          # that it has to do with focusing. Adding an image through the URL
+          # does not cause this problem because there is no iframe transport.
+          # Solutions tried but failed:
+          # - tried api.win.focus() but fails in IE9 (works for IE8)
+          # - tried api.el.focus() but makes the window jump in IE9 (works for
+          #   IE8)
+          # - tried placing api.select() in #onOpen() but fails as I think
+          #   it's too early
+          # - tried placing api.select() in "fileuploadadd" and it works, but
+          #   "fileuploadstart" is earlier and called only once
+          # - tried placing api.select() in "fileuploadprogress",
+          #   "fileuploadprogressall", and "fileuploaddone" but they all fail
+          #   as I think it's too late
+          # - tried placing api.select() in #insertImage() but it fails as I
+          #   think it's too late
+          self.api.select() if Browser.isIE8 or Browser.isIE9
+
           # Hide the input and show the overall progress bar.
-          $upload.hide()
-          self.$progressContainer.show().append('<div class="progress" style="width: 0%></div>"')
+          $(self.getSingleUpload()).hide()
+          $(self.getMultiUpload()).hide()
+          console.log("UPLOADSTART")
+          self.$progressContainer.show().append('<div class="progress" style="width: 0%"></div>')
         ).on("fileuploadadd", (ev, data) ->
           # File is added so increment the image count and add a progress bar.
           self.imageCounter += 1
-          data.progressBar = $('<div class="progress" style="width: 0%"></div>').appendTo(self.progressContainer)
+          #data.progressBar = $('<div class="progress" style="width: 0%"></div>').appendTo(self.progressContainer)
         ).on("fileuploadprogress", (ev, data) ->
-          progress = data.loaded / data.total
-          data.progressBar.css("width", "#{parseInt(progress * 100, 10)}%")
+          #progress = data.loaded / data.total
+          #console.log "PROGRESS", progress
+          #data.progressBar.css("width", "#{parseInt(progress * 100, 10)}%")
         ).on("fileuploadprogressall", (ev, data) ->
           progress = data.loaded / data.total
+          console.log "PROGRESSALL", progress
           $(self.dialog.find(".snapeditor_image_upload_progress_container .progress")[0]).css("width", "#{parseInt(progress * 100, 10)}%")
         ).on("fileuploaddone", (ev, data) ->
           # TODO: Handle errors
@@ -70,14 +96,13 @@ define ["jquery.custom", "plugins/helpers", "jquery.file_upload"], ($, Helpers) 
     # onError - function to handle an error
     onOpen: (e, @options) ->
       @api = e.api
-      @dialog = e.dialog
 
       formData = []
       formData.push(name: param, value: value) for own param, value of @api.config.imageServer.uploadParams or {}
 
       self = this
-      for $upload in [@$singleUpload, @$multiUpload]
-        $upload.find("input").fileupload(
+      for $upload in [$(@getSingleUpload()), $(@getMultiUpload())]
+        $upload.fileupload(
           # Server
           url: @api.config.imageServer.uploadUrl
           type: "POST"
@@ -95,6 +120,12 @@ define ["jquery.custom", "plugins/helpers", "jquery.file_upload"], ($, Helpers) 
     onClose: (e) ->
       @$urlContainer.find("form")[0].reset()
       @$progressContainer.empty().hide()
+
+    getSingleUpload: ->
+      @dialog.find(".snapeditor_image_upload .single_upload")
+
+    getMultiUpload: ->
+      @dialog.find(".snapeditor_image_upload .multi_upload")
 
     # Takes the given URL and inserts the image into SnapEditor.
     insertImage: (url) ->
@@ -134,14 +165,16 @@ define ["jquery.custom", "plugins/helpers", "jquery.file_upload"], ($, Helpers) 
     showUpload: ->
       @$uploadContainer.show()
       @$urlContainer.hide()
+      $singleUpload = $(@getSingleUpload())
+      $multiUpload = $(@getMultiUpload())
       if @options.multiple
-        @$singleUpload.hide()
-        @$multiUpload.show()
-        @$multiUpload.find("input")[0].focus()
+        $singleUpload.hide()
+        $multiUpload.show()
+        $multiUpload[0].focus()
       else
-        @$singleUpload.show()
-        @$multiUpload.hide()
-        @$singleUpload.find("input")[0].focus()
+        $singleUpload.show()
+        $multiUpload.hide()
+        $singleUpload[0].focus()
 
     showURL: ->
       @$uploadContainer.hide()
@@ -167,5 +200,4 @@ define ["jquery.custom", "plugins/helpers", "jquery.file_upload"], ($, Helpers) 
       background-color: #0087af;
     }
   """ + Helpers.createStyles("image", 23 * -26)
-  styles = Helpers.createStyles("image", 23 * -26)
   SnapEditor.insertStyles("image", styles)
