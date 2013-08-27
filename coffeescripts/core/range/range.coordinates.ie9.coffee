@@ -12,11 +12,20 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     # We handle images by getting the image directly and using jQuery to find
     # the coordinates of the image.
     # To solve the collapsed range, we create a range that is not collapsed
-    # and measure the first clientRect. We correct the right coordinate by
-    # replacing it with the left because it is collapsed. However, this does
-    # not work at the end of the editable area. The list of clientRects is 0.
-    # Hence we revert to the last resort which is to insert a span, measure
-    # the span's coordinates, and clean it up.
+    # by starting the range from the beginning of the body to where the cursor
+    # is. We then measure the last clientRect. We correct the right coordinate
+    # by replacing it with the left because it is collapsed. However, this does
+    # not work at the beginning of the editable area. The list of clientRects
+    # is 0. Hence we revert to the last resort which is to insert a span,
+    # measure the span's coordinates, and clean it up.
+    # Note that we don't set the range to start at the cursor and end it at
+    # the end of the body because we run into the issue where if the cursor is
+    # at the end of a line, when we seleect to the end of the body, the cursor
+    # doesn't start at the end of the line but the beginning of the next line.
+    # This gives the coordinates of the next line instead of the current line.
+    # This become problematic when the next line is large. For instance, if it
+    # contains an image. The coordinates could be off by 500px (the height of
+    # the image).
     getCoordinates: ->
       if @isImageSelected()
         # The range's startContainer and startOffset is set to the image.
@@ -33,9 +42,10 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         if @isCollapsed()
           body = @find("body")[0]
           measureRange = @constructor.getBlankRange()
-          measureRange.setStart(@range.startContainer, @range.startOffset)
-          measureRange.setEnd(body, body.childNodes.length)
-          clientRect = measureRange.getClientRects()[0]
+          measureRange.setStart(body, 0)
+          measureRange.setEnd(@range.startContainer, @range.startOffset)
+          clientRects = measureRange.getClientRects()
+          clientRect = clientRects[clientRects.length - 1]
           if clientRect
             coords = @getCoordinatesFromClientRect(clientRect)
             coords.right = coords.left

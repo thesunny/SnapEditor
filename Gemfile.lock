@@ -1,6 +1,6 @@
 GIT
   remote: /home/wesley/Dropbox/projects/snapimage
-  revision: 50ae6f0f9abd1ff74a2433fea11b6ea512c66898
+  revision: acd96b796c11a11842c92cbd3afdd5d469c6ee3b
   specs:
     snapimage (0.1.1)
       rack
