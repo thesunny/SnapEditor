@@ -71,7 +71,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
           $(self.getSingleUpload()).hide()
           $(self.getMultiUpload()).hide()
           console.log("UPLOADSTART")
-          self.$progressContainer.show().append('<div class="progress" style="width: 0%"></div>')
+          self.$progressContainer.show().append('<div class="progress" style="width: 5%"></div>')
         ).on("fileuploadadd", (ev, data) ->
           # File is added so increment the image count and add a progress bar.
           self.imageCounter += 1
@@ -158,7 +158,8 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
         if self.imageCounter == 0
           self.dialog.close()
           self.imageCounter = 0
-          self.api.clean()
+          image.hideShim()
+          self.api.clean(self.api.el.childNodes[0], self.api.el.childNodes[self.api.el.childNodes.length - 1])
       imgObject.onerror = @options.onError or ->
       imgObject.src = url
 
@@ -189,10 +190,66 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
     e.api.addWhitelistRule("Image", "img[src, width, height, style]")
   )
 
+  image =
+    getShim: (options = {}) ->
+      $shim = $(@api.doc).find(".snapeditor_image_shim")
+      if $shim.length == 0
+        self = this
+        $shim = $(@api.createElement("div")).
+          html("""
+            <button class="snapeditor_image_shim_delete">Delete</button>
+          """).
+          addClass("snapeditor_image_shim").
+          addClass("snapeditor_ignore_deactivate").
+          css(
+            position: "absolute"
+            zIndex: 200
+            background: "rgba(256, 256, 256, 0.4)"
+            cursor: "pointer"
+          ).
+          click((e) ->
+            unless $(e.target).tagName() == "button"
+              self.api.showDialog("image", { api: self.api }, { imageEl: self.imageEl, mutliple: false })
+          ).
+          hide().
+          appendTo(@api.doc.body)
+        if Browser.isIE8
+          # IE8 does not support rgba(). However, we can't add this to the
+          # above CSS because IE10 messes up. Hence, we add the hack only for
+          # IE8.
+          $shim.css(
+            background: "transparent"
+            "-ms-filter": "progid:DXImageTransform.Microsoft.gradient(startColorstr=#66FFFFFF,endColorstr=#66FFFFFF)"
+          )
+        $shim.find(".snapeditor_image_shim_delete").click(->
+          self.hideShim()
+          $(self.imageEl).remove()
+        )
+      $shim
+
+    showShim: (@imageEl) ->
+      $img = $(@imageEl)
+      coords = $img.getCoordinates()
+      @getShim().css(
+        top: coords.top
+        left: coords.left
+        width: coords.width
+        height: coords.height
+      ).show()
+
+    hideShim: ->
+      @getShim().css(top: 0, left: -9999).hide()
+
   SnapEditor.behaviours.image =
-    click: (e) ->
+    activate: (e) ->
+      image.api = e.api
+    deactivate: (e) ->
+      image.hideShim()
+    mouseover: (e) ->
       if $(e.target).tagName() == "img"
-        e.api.showDialog("image", e, imageEl: e.target, mutliple: false)
+        image.showShim(e.target)
+      else
+        image.hideShim()
 
   styles = """
     .snapeditor_image_upload .progress {
