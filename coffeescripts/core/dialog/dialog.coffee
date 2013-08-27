@@ -182,6 +182,10 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         @api.win.focus() if Browser.isWebkit or Browser.isGecko and @api.editor.iframe
         @api.el.focus() if Browser.isGecko
         @opened = false
+        # Collapse before reselecting the range because in Firefox, sometimes
+        # it selects all the way to the bottom.
+        @api.collapse(true)
+        @api.select()
         @dialog.onClose(api: @api, dialog: this) if @dialog.onClose
         @api.unlockRange()
 

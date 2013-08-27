@@ -95,7 +95,6 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
 
     onClose: (e) ->
       @mirrorInput.deactivate()
-      @api.select()
 
     #
     # FORM
