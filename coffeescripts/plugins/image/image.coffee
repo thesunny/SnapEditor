@@ -11,13 +11,18 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
         <div class="snapeditor_image_upload">
           <input class="single_upload" type="file">
           <input class="multi_upload" type="file" multiple>
-          <div class="snapeditor_image_upload_progress_container" style="display: none;"></div>
+          <div class="progress_container" style="display: none;">
+            <div class="progress"></div>
+          </div>
         </div>
         <div class="snapeditor_image_url">
           <form>
             <input type="text">
             <input type="submit" value="Insert">
           </form>
+        </div>
+        <div class="snapeditor_image_buttons">
+          <a class="cancel" href="javascript:void(null);">Cancel</a>
         </div>
       """
 
@@ -26,7 +31,9 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
       @imageCounter = 0
       @$uploadContainer = $(e.dialog.find(".snapeditor_image_upload"))
       @$urlContainer = $(e.dialog.find(".snapeditor_image_url")).hide()
-      @$progressContainer = $(e.dialog.find(".snapeditor_image_upload_progress_container"))
+      @$progressContainer = @$uploadContainer.find(".progress_container")
+      @$progressBar = @$progressContainer.find(".progress")
+      @$buttonsContainer = $(e.dialog.find(".snapeditor_image_buttons"))
       self = this
       e.dialog.on(".snapeditor_image_nav .upload", "snapeditor.click", (ev) ->
         ev.domEvent.preventDefault()
@@ -38,9 +45,14 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
       )
       e.dialog.on(".snapeditor_image_url form", "snapeditor.submit", (ev) ->
         ev.domEvent.preventDefault()
-        self.imageCounter = 1
-        # TODO: Handle form errors.
-        self.insertImage($(e.dialog.find(".snapeditor_image_url input[type=text]")).val())
+        url = $.trim($(e.dialog.find(".snapeditor_image_url input[type=text]")).val())
+        # TODO: Handle errors.
+        if url.length > 0
+          self.imageCounter = 1
+          self.insertImage(url)
+      )
+      e.dialog.on(".snapeditor_image_buttons .cancel", "snapeditor.click", (ev) ->
+        self.dialog.close()
       )
       for $upload in [$(@getSingleUpload()), $(@getMultiUpload())]
         $upload.on("fileuploadstart", (ev, data) ->
@@ -70,20 +82,15 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
           # Hide the input and show the overall progress bar.
           $(self.getSingleUpload()).hide()
           $(self.getMultiUpload()).hide()
-          console.log("UPLOADSTART")
-          self.$progressContainer.show().append('<div class="progress" style="width: 5%"></div>')
+          self.$buttonsContainer.hide()
+          self.$progressBar.css("width", "5%")
+          self.$progressContainer.show()
         ).on("fileuploadadd", (ev, data) ->
           # File is added so increment the image count and add a progress bar.
           self.imageCounter += 1
-          #data.progressBar = $('<div class="progress" style="width: 0%"></div>').appendTo(self.progressContainer)
-        ).on("fileuploadprogress", (ev, data) ->
-          #progress = data.loaded / data.total
-          #console.log "PROGRESS", progress
-          #data.progressBar.css("width", "#{parseInt(progress * 100, 10)}%")
         ).on("fileuploadprogressall", (ev, data) ->
           progress = data.loaded / data.total
-          console.log "PROGRESSALL", progress
-          $(self.dialog.find(".snapeditor_image_upload_progress_container .progress")[0]).css("width", "#{parseInt(progress * 100, 10)}%")
+          self.$progressBar.css("width", "#{parseInt(progress * 100, 10)}%")
         ).on("fileuploaddone", (ev, data) ->
           # TODO: Handle errors
           if data.result.status_code == 200
@@ -115,11 +122,12 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
           disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent)
           imageMaxWidth: $(@api.el).getSize().x
         )
+      @$buttonsContainer.show()
       @showUpload()
 
     onClose: (e) ->
       @$urlContainer.find("form")[0].reset()
-      @$progressContainer.empty().hide()
+      @$progressContainer.hide()
 
     getSingleUpload: ->
       @dialog.find(".snapeditor_image_upload .single_upload")
@@ -137,7 +145,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
         $img = $(@api.createElement("img"))
         $img.attr(id: id, src: url).css("display", "block")
         @api.insert($img[0])
-      # Get the width and height
+      # Get the width and height.
       imgObject = new Image()
       self = this
       imgObject.onload = ->
@@ -238,13 +246,15 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
       ).show()
 
     hideShim: ->
-      @getShim().css(top: 0, left: -9999).hide()
+      @getShim().hide()
 
   SnapEditor.behaviours.image =
     activate: (e) ->
       image.api = e.api
     deactivate: (e) ->
       image.hideShim()
+    click: (e) ->
+      e.api.showDialog("image", e, imageEl: e.target, multiple: false ) if $(e.target).tagName() == "img"
     mouseover: (e) ->
       if $(e.target).tagName() == "img"
         image.showShim(e.target)

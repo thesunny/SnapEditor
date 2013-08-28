@@ -147,15 +147,6 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           "snapeditor.document_mousedown": @tryMouseClose
           "snapeditor.document_keyup": @tryKeyClose
         )
-        # In Firefox, if we don't set the focus on the dialog first, the focus on
-        # the input will not work.
-        # In Webkit, if we don't set the focus on the window first, the second
-        # time the dialog is shown, the focus on the input will not work.
-        # We use window.focus() instead of @$dialog[0].focus() because
-        # focusing on the dialog does not fix Webkit. Focusing on the window
-        # fixes Firefox.
-        # This affects only IE8. It does not affect >IE8.
-        window.focus() unless Browser.isIE8
         @opened = true
         if @dialog.onOpen
           args.unshift($.extend(dialog: this, e))
