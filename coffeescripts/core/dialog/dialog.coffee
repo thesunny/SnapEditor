@@ -171,7 +171,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         # TODO: The call to @api.editor.iframe is really ugly. Figure out how
         # to fix this properly.
         @api.win.focus() if Browser.isWebkit or Browser.isGecko and @api.editor.iframe
-        @api.el.focus() if Browser.isGecko
+        @api.el.focus() if Browser.isGecko and !@api.editor.iframe
         @opened = false
         # Collapse before reselecting the range because in Firefox, sometimes
         # it selects all the way to the bottom.
