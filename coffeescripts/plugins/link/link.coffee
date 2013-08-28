@@ -171,8 +171,8 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
         message += "</ul>"
         @showError(message)
       else
-        e.dialog.close()
         @link()
+        e.dialog.close()
 
     remove: (e) ->
       Helpers.replaceWithChildren(@$link[0]) if @$link.length > 0
