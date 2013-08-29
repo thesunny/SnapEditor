@@ -225,9 +225,12 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
           # IE8 does not support rgba(). However, we can't add this to the
           # above CSS because IE10 messes up. Hence, we add the hack only for
           # IE8.
+          # NOTE: IE8 is supposed to use -ms-filter instead of filter as
+          # filter is for >IE8. However, -ms-filter doesn't work and filter
+          # does. Hence, we're using filter isntead.
           $shim.css(
             background: "transparent"
-            "-ms-filter": "progid:DXImageTransform.Microsoft.gradient(startColorstr=#66FFFFFF,endColorstr=#66FFFFFF)"
+            "filter": "progid:DXImageTransform.Microsoft.gradient(startColorstr=#66FFFFFF,endColorstr=#66FFFFFF)"
           )
         $shim.find(".snapeditor_image_shim_delete").click(->
           self.hideShim()
