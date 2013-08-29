@@ -15,8 +15,20 @@ define ["jquery.custom"], ($) ->
     # 2. collapsed right before an image
     # Note that if you have a selection, then it's okay if the selection
     # starts/ends on an odd case.
-    # We capture the odd cases by seeing if the top and bottom are equal. We
-    # insert a span, grab the span's coordinates, and then remove the span.
+    # We capture the odd cases by seeing if the top and bottom are equal.
+    # We used to do the span insertion method mentioned below, but found out
+    # that if you are at the end of the line, because the range is collapsed,
+    # it gives coordinates of the line below. I'm guessing it's because being
+    # at the end of a line and beginning of a line is the "same" thing.
+    # Hence, instead, we now check to see if the range is collapsed. If it is,
+    # we make it uncollapsed by selecting the previous character and get the
+    # last client rectangle. We use the previous character instead of the next
+    # or else we run into the same problem as selecting forward means we're on
+    # the next line. We only use the span insertion method if the last client
+    # rectangle doesn't exist.
+    #
+    # The span insertion method:
+    # We insert a span, grab the span's coordinates, and then remove the span.
     # We're lucky because the span method makes the page jump in all cases
     # except for when it's at the end of an element. Perfect for case #1.
     # Unfortunately, this still makes case #2 jump. However, the coordinates
@@ -39,31 +51,45 @@ define ["jquery.custom"], ($) ->
     # right of the end span.
     getCoordinates: ->
       if @range.getBoundingClientRect
-        coords = @range.getBoundingClientRect()
-        # IE8's rectangle is read-only. However, we need a writable object so
-        # we recreate the coords object.
-        coords =
-          top: coords.top
-          bottom: coords.bottom
-          left: coords.left
-          right: coords.right
-        if coords.top == coords.bottom
-          startCoords = @getEdgeCoordinates(true)
-          endCoords = @getEdgeCoordinates(false)
-          coords =
-            top: startCoords.top
-            bottom: endCoords.bottom
-            left: startCoords.left
-            right: endCoords.right
+        clientRect = @range.getBoundingClientRect()
+        if clientRect.top == clientRect.bottom
+          if @isCollapsed()
+            body = @find("body")[0]
+            measureRange = @range.duplicate()
+            measureRange.moveStart("character", -1)
+            clientRects = measureRange.getClientRects()
+            clientRect = clientRects[clientRects.length - 1]
+            if clientRect
+              coords = @getCoordinatesFromClientRect(clientRect)
+            else
+              coords = @getCoordinatesFromEdges()
+          else
+            coords = @getCoordinatesFromEdges()
         else
-          scroll = $(@win).getScroll()
-          coords.top += scroll.y
-          coords.bottom += scroll.y
-          coords.left += scroll.x
-          coords.right += scroll.x
+          coords = @getCoordinatesFromClientRect(clientRect)
       else
         coords = $(@range.item(0)).getCoordinates()
       coords
+
+    # The clientRect is relative to the viewport. We want the coordinates
+    # relative to the document.
+    getCoordinatesFromClientRect: (clientRect) ->
+      windowScroll = $(@win).getScroll()
+      coords =
+        top: clientRect.top + windowScroll.y
+        bottom: clientRect.bottom + windowScroll.y
+        left: clientRect.left + windowScroll.x
+        right: clientRect.right + windowScroll.x
+
+    # Find the start and end edges and combine them to find the coordinates.
+    getCoordinatesFromEdges: ->
+      startCoords = @getEdgeCoordinates(true)
+      endCoords = @getEdgeCoordinates(false)
+      coords =
+        top: startCoords.top
+        bottom: endCoords.bottom
+        left: startCoords.left
+        right: endCoords.right
 
     # Returns the coordinates of the start of the range if true. Otherwise,
     # returns the end.
