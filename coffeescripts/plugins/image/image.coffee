@@ -202,17 +202,35 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
     getShim: (options = {}) ->
       $shim = $(@api.doc).find(".snapeditor_image_shim")
       if $shim.length == 0
+        # One of the original problems with the shim was setting the
+        # transparency on the background but keeping the children opaque.
+        # Opaciy and filter caused the children to also be transparent.
+        # I tried using rgba():
+        #   background: "rgba(256, 256, 256, 0.4)"
+        # But IE8 does not support rgba(), so I had to use a workaround for
+        # IE8:
+        #   background: "transparent"
+        #   filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#66FFFFFF,endColorstr=#66FFFFFF)"
+        # The workaround should actually use -ms-filter because filter should
+        # be for <IE8, but -ms-filter didn't work and filter did.
+        # Everything worked fine, execpt for in IE8, when the transparency is
+        # set this way, the mouse clicks through the element and onto the
+        # elements below the shim. The click event also never fires from the
+        # shim. This makes the shim useless besides looking pretty.
+        # The final workaround for all this was to settle for having the
+        # transparent layer separate from the button, which is what is used
+        # below.
+        # Note that the transparent layer is positioned normally while the
+        # button is positioned absolutely. This had to be because if we
+        # positioned the transparent layer instead, it would cover the button
+        # and make the button transparent as well.
         self = this
         $shim = $(@api.createElement("div")).
-          html("""
-            <button class="snapeditor_image_shim_delete">Delete</button>
-          """).
           addClass("snapeditor_image_shim").
           addClass("snapeditor_ignore_deactivate").
           css(
             position: "absolute"
             zIndex: 200
-            background: "rgba(256, 256, 256, 0.4)"
             cursor: "pointer"
           ).
           click((e) ->
@@ -221,21 +239,28 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
           ).
           hide().
           appendTo(@api.doc.body)
-        if Browser.isIE8
-          # IE8 does not support rgba(). However, we can't add this to the
-          # above CSS because IE10 messes up. Hence, we add the hack only for
-          # IE8.
-          # NOTE: IE8 is supposed to use -ms-filter instead of filter as
-          # filter is for >IE8. However, -ms-filter doesn't work and filter
-          # does. Hence, we're using filter isntead.
-          $shim.css(
-            background: "transparent"
-            "filter": "progid:DXImageTransform.Microsoft.gradient(startColorstr=#66FFFFFF,endColorstr=#66FFFFFF)"
-          )
-        $shim.find(".snapeditor_image_shim_delete").click(->
-          self.hideShim()
-          $(self.imageEl).remove()
-        )
+        $innerShim = $(@api.createElement("div")).
+          css(
+            width: "100%"
+            height: "100%"
+            background: "white"
+            opacity: 0.4
+            filter: "alpha(opacity=40)"
+          ).
+          appendTo($shim)
+        $delete = $(@api.createElement("button")).
+          # TODO: Add this to the language pack.
+          html("Delete").
+          css(
+            position: "absolute"
+            top: 0
+            left: 0
+          ).
+          click(->
+            self.hideShim()
+            $(self.imageEl).remove()
+          ).
+          appendTo($shim)
       $shim
 
     showShim: (@imageEl) ->
