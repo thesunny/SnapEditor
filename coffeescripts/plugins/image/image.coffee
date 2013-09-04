@@ -167,7 +167,18 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
           self.dialog.close()
           self.imageCounter = 0
           image.hideShim()
-          self.api.clean(self.api.el.childNodes[0], self.api.el.childNodes[self.api.el.childNodes.length - 1])
+          # In IE8, after inserting an image using a URL, the iframe jumps to
+          # the top. This is caused by cleaning the entire editable element.
+          # If we just call api.clean(), the jumping does not occur. However,
+          # we need to clean the entire editable element. Hence, we call
+          # api.keepRange(). Note that the jumping doesn't happen after an
+          # upload. It is only after a URL.
+          if Browser.isIE8
+            self.api.keepRange(->
+              self.api.clean(self.api.el.childNodes[0], self.api.el.childNodes[self.api.el.childNodes.length - 1])
+            )
+          else
+            self.api.clean(self.api.el.childNodes[0], self.api.el.childNodes[self.api.el.childNodes.length - 1])
       imgObject.onerror = @options.onError or ->
       imgObject.src = url
 
