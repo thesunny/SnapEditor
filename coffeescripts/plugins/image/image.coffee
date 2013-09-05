@@ -143,7 +143,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
       else
         id = Math.random().toString(36).substr(2, 16)
         $img = $(@api.createElement("img"))
-        $img.attr(id: id, src: url).css("display", "block")
+        $img.attr(id: id, src: url)
         @api.insert($img[0])
       # Get the width and height.
       imgObject = new Image()
