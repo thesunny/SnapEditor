@@ -105,13 +105,13 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
       @api = e.api
 
       formData = []
-      formData.push(name: param, value: value) for own param, value of @api.config.imageServer.uploadParams or {}
+      formData.push(name: param, value: value) for own param, value of @api.config.image.uploadParams or {}
 
       self = this
       for $upload in [$(@getSingleUpload()), $(@getMultiUpload())]
         $upload.fileupload(
           # Server
-          url: @api.config.imageServer.uploadUrl
+          url: @api.config.image.uploadUrl
           type: "POST"
           dataType: "json"
           singleFileUploads: true # Separate HTTP requests
