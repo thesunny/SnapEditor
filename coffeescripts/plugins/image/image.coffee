@@ -270,6 +270,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "jquery.file_upload"
           click(->
             self.hideShim()
             $(self.imageEl).remove()
+            self.api.clean()
           ).
           appendTo($shim)
       $shim
