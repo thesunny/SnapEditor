@@ -69,4 +69,5 @@ define [], ->
     "cancel": "Cancel"
     "delete": "Delete"
     "insert": "Insert"
+    "url": "URL"
   }

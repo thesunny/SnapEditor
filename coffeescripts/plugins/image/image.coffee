@@ -123,7 +123,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
       """
         <div class="snapeditor_image_url">
           <form>
-            <div>URL</div>
+            <div>#{SnapEditor.lang.url}</div>
             <input type="text">
             <div class="snapeditor_image_buttons">
               <input class="button submit" type="submit" value="#{SnapEditor.lang.insert}">

@@ -65,5 +65,6 @@ SnapEditor.lang = {
   "ok": "OK",
   "cancel": "Cancel",
   "delete": "Delete",
-  "insert": "Insert"
+  "insert": "Insert",
+  "url": "URL"
 }
