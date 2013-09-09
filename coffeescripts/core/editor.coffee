@@ -411,11 +411,14 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     # DIALOGS
     #
 
-    showDialog: ->
+    openDialog: ->
       type = arguments[0]
       event = arguments[1]
       args = [].slice.apply(arguments, [2])
-      SnapEditor.showDialog(type, event, args)
+      SnapEditor.openDialog(type, event, args)
+
+    closeDialog: (type) ->
+      SnapEditor.closeDialog(type)
 
     #
     # ACTIONS

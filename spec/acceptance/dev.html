@@ -135,7 +135,7 @@
       };
 
       SnapEditor.buttons.form = {
-        items: ["bold", "italic", "|", "styleBlock", "table"]
+        items: ["bold", "italic", "|", "styleBlock", "table", "image"]
       };
 
       SnapEditor.buttons.multiLevel1 = {
@@ -212,12 +212,12 @@
         h1Styles.push("h1.special_" + i);
       }
 
-      var insecureDirectory = "insecure/123";
-      var insecureUploadUrl = "/snapimage_api";
-      //var insecureUploadUrl = "http://" + window.location.hostname + ":54321/snapimage_api";
-      //var insecureUploadUrl = "http://images.snapeditor.com/snapimage_api";
+      var directory = "insecure/123";
+      var uploadURL = "/snapimage_api";
+      //var uploadURL = "http://" + window.location.hostname + ":54321/snapimage_api";
+      //var uploadURL = "http://images.snapeditor.com/snapimage_api";
 
-      var insecureForm = new SnapEditor.Form("insecure_form", {
+      var form = new SnapEditor.Form("form", {
         width: "80%",
         path: "/spec/acceptance/assets",
         stylesheets: ["/spec/acceptance/dev.form.css"],
@@ -225,30 +225,32 @@
         toolbar: { items: ["styleBlock", "table", "graph", "link", "sayHi", "image"] },
         contentClass: "myClass",
         image: {
-          uploadUrl: insecureUploadUrl,
+          insertByUpload: true,
+          uploadURL: uploadURL,
           uploadParams: {
-            directory: insecureDirectory
+            directory: directory
           }
         }
       });
-      var insecureForm2 = new SnapEditor.Form("insecure_form2", {
+      var form2 = new SnapEditor.Form("form2", {
         path: "/spec/acceptance/assets",
-        buttons: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph"],
         stylesheets: [],
         contentClass: "myClass",
         toolbar: "form",
         image: {
-          uploadUrl: insecureUploadUrl
+          uploadURL: uploadURL
         }
       });
-      var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
+      var inPlace = new SnapEditor.InPlace("in_place", {
         path: "/spec/acceptance/assets",
         //snap: false,
         toolbar: {
           items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph", "multiLevel1", "sayHi"]
         },
         image: {
-          uploadUrl: insecureUploadUrl
+          insertByURL: false,
+          insertByUpload: true,
+          uploadURL: uploadURL
         }/*,
         onSave: function (e) {
           console.log(e.html);
@@ -256,11 +258,11 @@
           return "OMG! ERROR!";
         }*/
       });
-      var insecureInPlace2 = new SnapEditor.InPlace("insecure_in_place2", {
+      var inPlace2 = new SnapEditor.InPlace("in_place2", {
         path: "/spec/acceptance/assets",
         snap: false,
         image: {
-          uploadUrl: insecureUploadUrl
+          uploadURL: uploadURL
         },
         onSave: function (e) {
           console.log(e.html);
@@ -268,11 +270,11 @@
           return "OMG! ERROR!";
         }
       });
-      var insecureInPlace3 = new SnapEditor.InPlace("insecure_in_place3", {
+      var inPlace3 = new SnapEditor.InPlace("in_place3", {
         path: "/spec/acceptance/assets",
         snap: false,
         image: {
-          uploadUrl: insecureUploadUrl
+          uploadURL: uploadURL
         },
         onUnsavedChanges: function(e) {
           console.log(e);
@@ -290,228 +292,226 @@
         },
         path: "/spec/acceptance/assets",
         image: {
-          uploadUrl: insecureUploadUrl
+          uploadURL: uploadURL
         },
         onSave: function (e) {
           return true;
         }
       };
-      var insecureInPlace4 = new SnapEditor.InPlace("insecure_in_place4", inPlaceConfig);
-      var insecureInPlace5 = new SnapEditor.InPlace("insecure_in_place5", inPlaceConfig);
-      var insecureInPlace6 = new SnapEditor.InPlace("insecure_in_place6", inPlaceConfig);
+      var inPlace4 = new SnapEditor.InPlace("in_place4", inPlaceConfig);
+      var inPlace5 = new SnapEditor.InPlace("in_place5", inPlaceConfig);
+      var inPlace6 = new SnapEditor.InPlace("in_place6", inPlaceConfig);
     </script>
   </head>
   <body>
-    <div class="insecure">
-      <h1>Insecure</h1>
-      <input type="button" value="activate" onclick="insecureForm.api.activate()" />
-      <textarea id="insecure_form" class="form">
-        <address>some address<p>here's a block</p></address>
-        <p>some <span>text</span> at the beginning</p>
-        <p>some text at the beginning</p>
-        <div class="atomic">This is atomic</div>
-        <h4>Heading 4</h4>
-        <p>This is some text</p>
-        <p>This is some text</p>
-        <p>This is some text. This is going to be really long because we need to check things like justify and other things like that. That's why this is so long. I normally wouldn't bother typing so much but oh well...</p>
-        <p>This is some text</p>
-        <p>This is some text</p>
-        <p>This is some text</p>
-        Make me editable!
-        <br/>
-        <div class="atomic">This is atomic</div>
-        <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
-        <p><a href="snapeditor.com">SnapEditor</a></p>
-        <ul>
-          <li>This</li>
-          <li>is</li>
-          <li>a</li>
-          <li>list</li>
-          <li>
-            This will have a
-            <p>block in it</p>
-          </li>
-          <li>
-            <p>more stuff</p>
-            <table>
-              <tbody>
-                <tr><th>Header</th></tr>
-                <tr><td>Data</td></tr>
-                <tr>
-                  <td>
-                    <div class="atomic">This is atomic</div>
-                    Data
-                    <p>another</p>
-                    text
-                    <ul>
-                      <li>first</li>
-                      <li>second</li>
-                    </ul>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </li>
-        </ul>
-        <h1>Heading 1</h1>
-        <p>More text!</p>
-        <div class="atomic">This is atomic</div>
-        <div class="atomic">This is atomic</div>
-        <div class="atomic">This is atomic</div>
-        a little more complicated
+    <h1>Insecure</h1>
+    <input type="button" value="activate" onclick="form.api.activate()" />
+    <textarea id="form" class="form">
+      <address>some address<p>here's a block</p></address>
+      <p>some <span>text</span> at the beginning</p>
+      <p>some text at the beginning</p>
+      <div class="atomic">This is atomic</div>
+      <h4>Heading 4</h4>
+      <p>This is some text</p>
+      <p>This is some text</p>
+      <p>This is some text. This is going to be really long because we need to check things like justify and other things like that. That's why this is so long. I normally wouldn't bother typing so much but oh well...</p>
+      <p>This is some text</p>
+      <p>This is some text</p>
+      <p>This is some text</p>
+      Make me editable!
+      <br/>
+      <div class="atomic">This is atomic</div>
+      <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+      <p><a href="snapeditor.com">SnapEditor</a></p>
+      <ul>
+        <li>This</li>
+        <li>is</li>
+        <li>a</li>
+        <li>list</li>
+        <li>
+          This will have a
+          <p>block in it</p>
+        </li>
+        <li>
+          <p>more stuff</p>
+          <table>
+            <tbody>
+              <tr><th>Header</th></tr>
+              <tr><td>Data</td></tr>
+              <tr>
+                <td>
+                  <div class="atomic">This is atomic</div>
+                  Data
+                  <p>another</p>
+                  text
+                  <ul>
+                    <li>first</li>
+                    <li>second</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <h1>Heading 1</h1>
+      <p>More text!</p>
+      <div class="atomic">This is atomic</div>
+      <div class="atomic">This is atomic</div>
+      <div class="atomic">This is atomic</div>
+      a little more complicated
 
-        <table>
-          <tbody>
-            <tr><th>Header</th></tr>
-            <tr><td>Data</td></tr>
-            <tr>
-              <td>
-                Data
-                <span class="atomic">Atomic span</span>
-                <p>another</p>
-                text
-                <ul>
-                  <li>first</li>
-                  <li>second</li>
-                </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <ul>
-          <li>hi</li>
-        </ul>
+      <table>
+        <tbody>
+          <tr><th>Header</th></tr>
+          <tr><td>Data</td></tr>
+          <tr>
+            <td>
+              Data
+              <span class="atomic">Atomic span</span>
+              <p>another</p>
+              text
+              <ul>
+                <li>first</li>
+                <li>second</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>hi</li>
+      </ul>
 
-        <p>
-          <h1>
-            <b></b>
-          </h1>
-          <p>
-          </p>
-          <h1>
-          </h1>
-        </p>
-
+      <p>
         <h1>
-          no it isn't
-          <p>i'm okay, i swear</p>
-          oh no!
+          <b></b>
         </h1>
-
-        <div>
-          inner
-          <div>
-            things that make
-            <div>
-              somebody maybe <b>want</b> to cry
-            </div>
-            or
-          </div>
-        </div>
-        <table>
-          <tr>
-            <th>header</th>
-            <td>nope</td>
-          </tr>
-        </table>
-        just maybe not...
-        <div class="atomic">This is atomic</div>
-      </textarea>
-      <textarea id="insecure_form2" class="form">
-        <div>
-          Some text
-        </div>
-        <table>
-          <tr>
-            <th>header</th>
-            <td>nope</td>
-          </tr>
-        </table>
-        <p>here</p>
-      </textarea>
-      <input type="button" value="submit" />
-      <input type="button" value="activate" onclick="insecureInPlace.api.activate()" />
-      <div id="insecure_in_place" class="in_place">
-        <div class="atomic">This is atomic</div>
-        Make me editable!
-        <br/>
-        <p style="text-align: right; background-color: pink">
-          RIGHT HERE!
+        <p>
         </p>
-        <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
-        <p><a href="snapeditor.com">SnapEditor</a></p>
-        <h1>Heading 1</h1>
-        <p><span class="atomic">Atomic span</span>between<span class="atomic">atomic span</span>between<span class="atomic">atomic span</span><span class="atomic">atomic span</span>between<span class="atomic">atomic span</span></p>
-        <ul>
-          <li>This</li>
-          <li>is</li>
-          <li>a</li>
-          <li>list</li>
-          <li>
-            This will have a
-            <p>block in it</p>
-          </li>
-          <li>
-            <p>more stuff</p>
-            <table>
-              <tbody>
-                <tr><th>Header</th></tr>
-                <tr><td>Data</td></tr>
-                <tr>
-                  <td>
-                    <div class="atomic">This is atomic</div>
-                    Data
-                    <p>another</p>
-                    text
-                    <ul>
-                      <li>first</li>
-                      <li>second</li>
-                    </ul>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </li>
-        </ul>
-        <div class="atomic">This is atomic</div>
-        <p>More text!</p>
-        <table>
-          <tbody>
-            <tr><th>Header</th></tr>
-            <tr><td>Data</td></tr>
-            <tr>
-              <td>
-                <div class="atomic">This is atomic</div>
-                Data
-                <p>another</p>
-                text
-                <ul>
-                  <li>first</li>
-                  <li>second</li>
-                </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="atomic">This is atomic</div>
-        <div class="atomic">This is atomic</div>
-        <p>More text!</p>
-        <div class="atomic">This is atomic</div>
+        <h1>
+        </h1>
+      </p>
+
+      <h1>
+        no it isn't
+        <p>i'm okay, i swear</p>
+        oh no!
+      </h1>
+
+      <div>
+        inner
+        <div>
+          things that make
+          <div>
+            somebody maybe <b>want</b> to cry
+          </div>
+          or
+        </div>
       </div>
-      <div id="insecure_in_place2" class="in_place">
-        <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+      <table>
+        <tr>
+          <th>header</th>
+          <td>nope</td>
+        </tr>
+      </table>
+      just maybe not...
+      <div class="atomic">This is atomic</div>
+    </textarea>
+    <textarea id="form2" class="form">
+      <div>
+        Some text
       </div>
-      <div id="insecure_in_place3" class="in_place">
-        <p>hello</p><p>world</p><p>﻿</p></div>
+      <table>
+        <tr>
+          <th>header</th>
+          <td>nope</td>
+        </tr>
+      </table>
+      <p>here</p>
+    </textarea>
+    <input type="button" value="submit" />
+    <input type="button" value="activate" onclick="inPlace.api.activate()" />
+    <div id="in_place" class="in_place">
+      <div class="atomic">This is atomic</div>
+      Make me editable!
+      <br/>
+      <p style="text-align: right; background-color: pink">
+        RIGHT HERE!
+      </p>
+      <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+      <p><a href="snapeditor.com">SnapEditor</a></p>
+      <h1>Heading 1</h1>
+      <p><span class="atomic">Atomic span</span>between<span class="atomic">atomic span</span>between<span class="atomic">atomic span</span><span class="atomic">atomic span</span>between<span class="atomic">atomic span</span></p>
+      <ul>
+        <li>This</li>
+        <li>is</li>
+        <li>a</li>
+        <li>list</li>
+        <li>
+          This will have a
+          <p>block in it</p>
+        </li>
+        <li>
+          <p>more stuff</p>
+          <table>
+            <tbody>
+              <tr><th>Header</th></tr>
+              <tr><td>Data</td></tr>
+              <tr>
+                <td>
+                  <div class="atomic">This is atomic</div>
+                  Data
+                  <p>another</p>
+                  text
+                  <ul>
+                    <li>first</li>
+                    <li>second</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <div class="atomic">This is atomic</div>
+      <p>More text!</p>
+      <table>
+        <tbody>
+          <tr><th>Header</th></tr>
+          <tr><td>Data</td></tr>
+          <tr>
+            <td>
+              <div class="atomic">This is atomic</div>
+              Data
+              <p>another</p>
+              text
+              <ul>
+                <li>first</li>
+                <li>second</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="atomic">This is atomic</div>
+      <div class="atomic">This is atomic</div>
+      <p>More text!</p>
+      <div class="atomic">This is atomic</div>
     </div>
+    <div id="in_place2" class="in_place">
+      <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+    </div>
+    <div id="in_place3" class="in_place">
+      <p>hello</p><p>world</p><p>﻿</p></div>
     <iframe src="http://ycombinator.com"></iframe>
-    <div id="insecure_in_place4">
+    <div id="in_place4">
       <p>text</p>
     </div>
-    <div id="insecure_in_place5">
+    <div id="in_place5">
       <p>text</p>
     </div>
-    <div id="insecure_in_place6">
+    <div id="in_place6">
       <p>text</p>
       <p>text</p>
       <p>text</p>

@@ -119,9 +119,13 @@ define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, H
 
     createdDialogs: {}
 
-    showDialog: (type, event, args)->
+    openDialog: (type, event, args) ->
       @createdDialogs[type] or= new Dialog(type)
       @createdDialogs[type].open(event, args)
+
+    closeDialog: (type) ->
+      @createdDialogs[type] or= new Dialog(type)
+      @createdDialogs[type].close()
 
     DEBUG: ->
       if @debug

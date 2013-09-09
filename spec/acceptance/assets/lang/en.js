@@ -48,7 +48,9 @@ SnapEditor.lang = {
   "tableDeleteColumn": "Delete Column",
   "tableDelete": "Delete Table",
   "image": "Select Images",
-  "imageUploadTitle": "Upload New Image",
+  "imageInsertTitle": "Insert Image",
+  "imageURL": "URL",
+  "imageUpload": "Upload",
   "print": "Print",
   "save": "Save",
   "discard": "Discard",
@@ -59,7 +61,9 @@ SnapEditor.lang = {
   "saveDiscardChanges": "discard changes",
   "saveErrorTitle": "Save/Cancel Error",
   "saveLeavePageMessage": "You have unsaved edits.",
-  "formOk": "OK",
-  "formCancel": "Cancel",
-  "formErrorMessage": "Please fix the following errors:"
+  "formErrorMessage": "Please fix the following errors:",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "insert": "Insert"
 }

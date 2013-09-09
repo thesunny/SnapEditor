@@ -26,7 +26,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         # WIDGETS
         "insertWidget",
         # DIALOGS
-        "showDialog",
+        "openDialog", "closeDialog",
         # ACTIONS
         "activate", "tryDeactivate", "deactivate",
         "update", "clean",
