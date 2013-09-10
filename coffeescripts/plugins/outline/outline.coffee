@@ -3,8 +3,10 @@ define ["jquery.custom"], ($) ->
     setup: (api) ->
       self = this
       el = api.el
-      showHandler = (e) -> self.show(el)
-      hideHandler = (e) -> self.hide()
+      showHandler = (e) ->
+        self.show(el) if api.isEnabled()
+      hideHandler = (e) ->
+        self.hide()
       api.on(
         "snapeditor.activate": ->
           self.hide()

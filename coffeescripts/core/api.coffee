@@ -8,6 +8,8 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       Helpers.delegate(this, "editor",
         # EVENTS
         "on", "off", "trigger",
+        # ENABLE
+        "enable", "disable", "isEnabled",
         # CONTENTS
         "getContents", "setContents",
         # DOM

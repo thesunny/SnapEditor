@@ -14,7 +14,11 @@ define ["jquery.custom"], ($) ->
 
     onmousedown: (e, api) ->
       # NOTE: This should trigger making @api.$el editable.
-      api.trigger("snapeditor.activate_click") if @shouldActivate(api, e.target)
+      if @shouldActivate(api, e.target)
+        api.trigger("snapeditor.activate_click")
+      else
+        self = this
+        $(api.el).one("mousedown", (e) -> self.onmousedown(e, api))
 
     onmouseup: (e, api) ->
       target = e.target
@@ -32,4 +36,7 @@ define ["jquery.custom"], ($) ->
         #
         api.select(target) if $(target).tagName() == 'img'
         @finishActivate(api)
+      else
+        self = this
+        $(api.el).one("mouseup", (e) -> self.onmouseup(e, api))
   }

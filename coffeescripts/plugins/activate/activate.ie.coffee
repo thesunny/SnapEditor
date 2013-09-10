@@ -32,4 +32,7 @@ define ["jquery.custom"], ($) ->
           api.select(target)
           api.collapse(false)
         @finishActivate(api)
+      else
+        self = this
+        $(api.el).one("mouseup", (e) -> self.onmouseup(e, api))
   }
