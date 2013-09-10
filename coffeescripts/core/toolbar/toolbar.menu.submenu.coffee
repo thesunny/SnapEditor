@@ -39,7 +39,7 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu", "core/data
       """
         .snapeditor_toolbar_menu {
           position: absolute;
-          z-index: 201;
+          z-index: #{SnapEditor.zIndexBase + 101};
           width: 300px;
           font-size: 14px;
           font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;

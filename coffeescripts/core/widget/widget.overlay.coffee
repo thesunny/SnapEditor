@@ -58,7 +58,7 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
         position: "absolute"
         top: 0
         left: 0
-        zIndex: 100
+        zIndex: SnapEditor.zIndexBase
         width: "100%"
         height: "100%"
       ).on(
@@ -110,7 +110,7 @@ define ["jquery.custom", "core/iframe"], ($, IFrame) ->
           position: "absolute"
           top: 0
           left: 0
-          zIndex: 101
+          zIndex: SnapEditor.zIndexBase + 1
           cursor: "default"
         ).
         hide().

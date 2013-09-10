@@ -47,7 +47,7 @@ define ["jquery.custom"], ($) ->
         background: 'black'
         top: 0
         left: 0
-        zIndex: 100
+        zIndex: SnapEditor.zIndexBase
       )
       @divs =
         top: div.clone(true, false).appendTo("body")

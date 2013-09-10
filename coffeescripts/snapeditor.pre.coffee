@@ -15,6 +15,7 @@ define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, H
     dialogs: {}
     InPlace: {}
     Form: {}
+    zIndexBase: window.SnapEditor.zIndexBase or 100
     debug: false
 
     # Arguments

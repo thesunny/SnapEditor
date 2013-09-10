@@ -284,7 +284,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
           addClass("snapeditor_ignore_deactivate").
           css(
             position: "absolute"
-            zIndex: 200
+            zIndex: SnapEditor.zIndexBase
           ).
           hide().
           appendTo(@api.doc.body)

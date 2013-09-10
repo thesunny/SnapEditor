@@ -8,7 +8,7 @@ define ["core/toolbar/toolbar.menu.toolbar", "core/toolbar/toolbar.floating.disp
     floatCSS: """
       .snapeditor_toolbar_floating {
         position: relative;
-        z-index: 200;
+        z-index: #{SnapEditor.zIndexBase + 100};
         margin: 0;
         padding: 2px 0;
       }
