@@ -26,7 +26,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         if @api.config.onUnsavedChanges
           @api.config.onUnsavedChanges(e)
         else
-          @api.showDialog("savePrompt", e)
+          @api.openDialog("savePrompt", e)
       else
         @api.deactivate()
 
@@ -39,7 +39,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       result = @api.config.onSave(api: @api, html: @api.getContents()) if @api.config.onSave
       result
       if typeof result == "string"
-        @api.showDialog("saveError", api: @api, result)
+        @api.openDialog("saveError", api: @api, result)
       else
         @api.deactivate()
 
