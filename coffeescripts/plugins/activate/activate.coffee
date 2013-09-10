@@ -37,7 +37,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
       $el.tagName() == 'a' or $el.parent('a').length != 0
 
     shouldActivate: (api, el) ->
-      console.log api.isEnabled()
       api.isEnabled() and (api.config.activateByLinks or !@isLink(el))
 
   SnapEditor.actions.activate = (e) ->
