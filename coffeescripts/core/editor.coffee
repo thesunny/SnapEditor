@@ -1,4 +1,4 @@
-define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/dialog/dialogs_manager", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, DialogsManager, API, ToolbarButton) ->
+define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, API, ToolbarButton) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"
 # Contexts
@@ -39,7 +39,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @keyboard = new Keyboard(this, "keydown")
       @execCommand = new ExecCommand(this)
       @widgetsManager = new WidgetsManager(this, @config.widget.classname)
-      @dialogsManager = new DialogsManager()
 
       # Instantiate the API.
       @api = new API(this)
@@ -293,7 +292,6 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         "insertUnorderedList", "insertOrderedList", "insertHorizontalRule", "insertLink"
       )
       Helpers.delegate(this, "widgetsManager", "insertWidget")
-      Helpers.delegate(this, "dialogsManager", "showDialog")
 
     #
     # EVENTS
@@ -408,6 +406,19 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     flashAsset: (filename) ->
       @assets.flash(filename)
+
+    #
+    # DIALOGS
+    #
+
+    openDialog: ->
+      type = arguments[0]
+      event = arguments[1]
+      args = [].slice.apply(arguments, [2])
+      SnapEditor.openDialog(type, event, args)
+
+    closeDialog: (type) ->
+      SnapEditor.closeDialog(type)
 
     #
     # ACTIONS

@@ -106,7 +106,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       )
 
     find: (selector) ->
-      @$el.find(selector)[0]
+      @$el.find(selector).toArray()
 
     setup: ->
       unless @$el
@@ -147,15 +147,6 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
           "snapeditor.document_mousedown": @tryMouseClose
           "snapeditor.document_keyup": @tryKeyClose
         )
-        # In Firefox, if we don't set the focus on the dialog first, the focus on
-        # the input will not work.
-        # In Webkit, if we don't set the focus on the window first, the second
-        # time the dialog is shown, the focus on the input will not work.
-        # We use window.focus() instead of @$dialog[0].focus() because
-        # focusing on the dialog does not fix Webkit. Focusing on the window
-        # fixes Firefox.
-        # This affects only IE8. It does not affect >IE8.
-        window.focus() unless Browser.isIE8
         @opened = true
         if @dialog.onOpen
           args.unshift($.extend(dialog: this, e))
@@ -172,17 +163,21 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         # editor.
         # @api.win.focus() must be used in Webkit because @api.el.focus() makes
         # the page jump.
-        # @api.el.focus() must be used in Firefox because @api.win.focus() does
-        # nothing.
+        # @api.win.focus() must be used in Firefox when using an iframe
+        # because @api.el.focus() makes the iframe jump.
+        # @api.el.focus() must be used in Firefox when not using an iframe
+        # because @api.win.focus() does nothing.
         # This affects IE as it makes the page jump to where the cursor is.
-        @api.win.focus() if Browser.isWebkit
-        @api.el.focus() if Browser.isGecko
+        # TODO: The call to @api.editor.iframe is really ugly. Figure out how
+        # to fix this properly.
+        @api.win.focus() if Browser.isWebkit or Browser.isGecko and @api.editor.iframe
+        @api.el.focus() if Browser.isGecko and !@api.editor.iframe
         @opened = false
-        if @dialog.onClose
-          @dialog.onClose(
-            api: @api
-            dialog: this
-          )
+        # Collapse before reselecting the range because in Firefox, sometimes
+        # it selects all the way to the bottom.
+        @api.collapse(true)
+        @api.select()
+        @dialog.onClose(api: @api, dialog: this) if @dialog.onClose
         @api.unlockRange()
 
     tryMouseClose: (e) =>

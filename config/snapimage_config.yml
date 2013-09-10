@@ -1,2 +1,2 @@
-directory: "/home/wesley/Dropbox/projects/snapeditor/storage"
+adapter: "cloudinary"
 max_file_size: 10485760

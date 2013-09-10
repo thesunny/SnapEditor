@@ -23,7 +23,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
             <label class="label_left"></label>
             <input class="link_submit submit button" type="submit" value="#{SnapEditor.lang.linkCreate}" />
             <input class="link_remove delete button" type="button" value="#{SnapEditor.lang.linkRemove}" />
-            <input class="link_cancel cancel button" type="button" value="#{SnapEditor.lang.formCancel}" />
+            <input class="link_cancel cancel button" type="button" value="#{SnapEditor.lang.cancel}" />
           </div>
         </form>
       """
@@ -95,7 +95,6 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
 
     onClose: (e) ->
       @mirrorInput.deactivate()
-      @api.select()
 
     #
     # FORM
@@ -172,8 +171,8 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
         message += "</ul>"
         @showError(message)
       else
-        e.dialog.close()
         @link()
+        e.dialog.close()
 
     remove: (e) ->
       Helpers.replaceWithChildren(@$link[0]) if @$link.length > 0
@@ -230,7 +229,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
       @api.clean()
 
 
-  SnapEditor.actions.link = (e) -> e.api.showDialog("link", e)
+  SnapEditor.actions.link = (e) -> e.api.openDialog("link", e)
 
   SnapEditor.buttons.link = Helpers.createButton("link", "ctrl+k", onInclude: (e) -> e.api.addWhitelistRule("Link", "a[href, target]"))
 

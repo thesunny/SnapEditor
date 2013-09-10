@@ -1,0 +1,9 @@
+[submodule "lib/jQuery-File-Upload"]
+	path = lib/jQuery-File-Upload
+	url = https://github.com/blueimp/jQuery-File-Upload
+[submodule "lib/JavaScript-Load-Image"]
+	path = lib/JavaScript-Load-Image
+	url = https://github.com/blueimp/JavaScript-Load-Image
+[submodule "lib/JavaScript-Canvas-to-Blob"]
+	path = lib/JavaScript-Canvas-to-Blob
+	url = https://github.com/blueimp/JavaScript-Canvas-to-Blob

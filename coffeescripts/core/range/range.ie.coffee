@@ -158,6 +158,12 @@ define ["core/helpers"], (Helpers) ->
       # MANIPULATE RANGE FUNCTIONS
       #
 
+      collapse: (start) ->
+        # When an image is selected, the range does not have a collapse()
+        # function to call.
+        @range.collapse(start) unless @isImageSelected()
+        this
+
       # Select the given range or its own range if none given.
       select: (range) ->
         range or= @range

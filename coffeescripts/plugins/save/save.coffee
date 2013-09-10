@@ -72,7 +72,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
           <div class="message">#{SnapEditor.lang.saveExitMessage}</div>
           <div class="buttons">
             <button class="save submit button">#{SnapEditor.lang.saveSaveButton}</button>
-            <button class="cancel button">#{SnapEditor.lang.formCancel}</button>
+            <button class="cancel button">#{SnapEditor.lang.cancel}</button>
           </div>
           <div class="discard_message">
             #{SnapEditor.lang.saveOr} <a class="discard" href="javascript:void(null);">#{SnapEditor.lang.saveDiscardChanges}</a>
@@ -99,7 +99,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
     html:
       """
         <div class="error"></div>
-        <button class="okay">#{SnapEditor.lang.formOk}</button>
+        <button class="okay">#{SnapEditor.lang.ok}</button>
       """
 
     onSetup: (e) ->

@@ -41,12 +41,13 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     isBlock: (object, inDOM = true) ->
       return false unless @isElement(object)
       $object = $(object)
+      # Add this special case because IE7 displays <hr> as inline.
+      # Treat images as block elements.
+      return true if $object.tagName() == "hr" or $object.tagName() == "img"
       unless inDOM
         $container = $("<div/>").hide().appendTo("body")
         $object.appendTo($container)
       isBlock = $object.css("display") != "inline"
-      # Add this special case because IE7 displays <hr> as inline.
-      isBlock = true if $object.tagName() == "hr"
       unless inDOM
         $object.detach()
         $container.remove()

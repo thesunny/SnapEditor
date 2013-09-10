@@ -1,7 +1,5 @@
 define [], ->
   """
-    /* GENERAL */
-
     * {
       outline: none;
     }

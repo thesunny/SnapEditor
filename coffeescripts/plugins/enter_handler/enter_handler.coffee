@@ -16,7 +16,10 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     handleEnterKey: (@api) ->
       if @api.delete()
         parent = @getParentElement()
-        next = @api.getNext(parent)
+        if parent
+          next = @api.getNext(parent)
+        else
+          next = @api.getDefaultBlock()
         if $(next).tagName() == "br"
           @handleBR(next)
         else
@@ -30,7 +33,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       # should exist.
       # This can occur right after a table that is at the end of the editable
       # area. The cursor can be placed after the table but before the end of
-      # the editable area by using the down/right arrow keys are by simply
+      # the editable area by using the down/right arrow keys or by simply
       # clicking the area to the right of the table. Text that is entered is at
       # the top level.
       unless parent
@@ -45,26 +48,35 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       @api.insert("#{next.outerHTML}#{Helpers.zeroWidthNoBreakSpace}")
 
     handleBlock: (block, next) ->
-      isEndOfElement = @api.isEndOfElement(block)
-      if $(block).tagName() == "li" and isEndOfElement and @api.isStartOfElement(block)
-        # Empty list item, so outdent.
-        @api.outdent()
-      else if isEndOfElement
-        # Hitting enter at the end of an element. Add the next block and
-        # place the selection in it.
-        $(next).insertAfter(block).html(Helpers.zeroWidthNoBreakSpace)
-        @api.selectEndOfElement(next)
+      if block
+        # If a block is given, the parent is the block.
+        isEndOfElement = @api.isEndOfElement(block)
+        if $(block).tagName() == "li" and isEndOfElement and @api.isStartOfElement(block)
+          # Empty list item, so outdent.
+          @api.outdent()
+        else if isEndOfElement
+          # Hitting enter at the end of an element. Add the next block and
+          # place the selection in it.
+          $(next).insertAfter(block).html(Helpers.zeroWidthNoBreakSpace)
+          @api.selectEndOfElement(next)
+        else
+          # In the middle of a block. Split the block and place the selection in
+          # the second block.
+          @api.keepRange((startEl, endEl) ->
+            $span = $('<span id="ENTER_HANDLER"/>').insertBefore(startEl)
+            [$first, $second] = $(block).split($span)
+            # Insert a <br/> if $first is empty.
+            if $first[0].childNodes.length == 0 or ($first[0].childNodes.length == 1 and $first[0].firstChild.nodeType == 3 and $first[0].firstChild.nodeValue.match(/^[\n\t ]*$/))
+              $first.html("&nbsp;")
+            $span.remove()
+          )
       else
-        # In the middle of a block. Split the block and place the selection in
-        # the second block.
-        @api.keepRange((startEl, endEl) ->
-          $span = $('<span id="ENTER_HANDLER"/>').insertBefore(startEl)
-          [$first, $second] = $(block).split($span)
-          # Insert a <br/> if $first is empty.
-          if $first[0].childNodes.length == 0 or ($first[0].childNodes.length == 1 and $first[0].firstChild.nodeType == 3 and $first[0].firstChild.nodeValue.match(/^[\n\t ]*$/))
-            $first.html("&nbsp;")
-          $span.remove()
-        )
+        # If no block is given, that means we are at the top of the editable
+        # element.
+        $next = $(next).attr("id", "ENTER_HANDLER").html(Helpers.zeroWidthNoBreakSpace)
+        @api.insert($next[0])
+        $next = $(@api.find("#ENTER_HANDLER")).removeAttr("id")
+        @api.selectEndOfElement($next[0])
 
   SnapEditor.behaviours.enterHandler =
     onActivate: (e) -> enterHandler.activate(e.api)
