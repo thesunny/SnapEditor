@@ -196,7 +196,7 @@
       };
       */
 
-      SnapEditor.addStyleButton("h1.special", { text: "H1 Special" });
+      SnapEditor.addStyleButton("h1.special", { text: "H1 Special", newline: "h1.special" });
       SnapEditor.addStyleButton("table", { text: "Table Normal" });
       SnapEditor.addStyleButton("table.special", { text: "Table Special" });
       SnapEditor.addStyleButton("table.highlight", { text: "Table Highlight" });
@@ -222,7 +222,7 @@
         width: "80%",
         path: "/spec/acceptance/assets",
         stylesheets: ["/spec/acceptance/dev.form.css"],
-        styles: ["h1.special", "h1", "table", "table.highlight", "table.special", "tr", "tr.highlight", "tr.special", "td", "td.highlight", "td.special", "th"].concat(h1Styles),
+        styles: ["h1", "h1.special", "h2", "table", "table.highlight", "table.special", "tr", "tr.highlight", "tr.special", "td", "td.highlight", "td.special", "th"].concat(h1Styles),
         toolbar: { items: ["styleBlock", "table", "graph", "link", "sayHi", "image"] },
         contentClass: "myClass",
         image: {
