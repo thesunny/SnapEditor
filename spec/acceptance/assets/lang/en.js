@@ -51,6 +51,7 @@ SnapEditor.lang = {
   "imageInsertTitle": "Insert Image",
   "imageURL": "URL",
   "imageUpload": "Upload",
+  "imageEdit": "Edit Image",
   "print": "Print",
   "save": "Save",
   "discard": "Discard",

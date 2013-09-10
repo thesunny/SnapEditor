@@ -90,7 +90,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
           )
 
       # Setup the form data.
-      formData = []
+      formData = [{ name: "max_width", value: $(@api.el).getSize().x }]
       formData.push(name: param, value: value) for own param, value of @api.config.image.uploadParams or {}
 
       for $upload in [$(@getSingleUpload()), $(@getMultiUpload())]
@@ -184,7 +184,10 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
       @tabs.insert(@dialog.find(".snapeditor_image_container"))
 
   SnapEditor.actions.image = (e) ->
-    e.api.openDialog("image", e, multiple: true)
+    if e.api.getParentElement("table, ul, ol")
+      alert("Sorry. This action cannot be performed inside a table or list.")
+    else
+      e.api.openDialog("image", e, multiple: true)
 
   SnapEditor.buttons.image = Helpers.createButton("image", "ctrl+g", onInclude: (e) ->
     e.api.config.behaviours.push("image")
@@ -248,7 +251,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
       imgObject.onerror = options.onError or ->
       imgObject.src = url
 
-    getShim: (options = {}) ->
+    getShim: (styles) ->
       $shim = $(@api.doc).find(".snapeditor_image_shim")
       if $shim.length == 0
         # One of the original problems with the shim was setting the
@@ -274,17 +277,14 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
         # positioned the transparent layer instead, it would cover the button
         # and make the button transparent as well.
         self = this
+
+        # Create the shim.
         $shim = $(@api.createElement("div")).
           addClass("snapeditor_image_shim").
           addClass("snapeditor_ignore_deactivate").
           css(
             position: "absolute"
             zIndex: 200
-            cursor: "pointer"
-          ).
-          click((e) ->
-            unless $(e.target).tagName() == "button"
-              self.api.openDialog("image", { api: self.api }, { imageEl: self.imageEl, mutliple: false })
           ).
           hide().
           appendTo(@api.doc.body)
@@ -297,25 +297,54 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
             filter: "alpha(opacity=40)"
           ).
           appendTo($shim)
-        $delete = $(@api.createElement("button")).
-          html(SnapEditor.lang.delete).
+
+        # Add the buttons.
+        $buttons = $(@api.createElement("div")).
+          addClass("snapeditor_image_shim_buttons").
           css(
             position: "absolute"
             top: 0
             left: 0
           ).
+          appendTo($shim)
+        $edit = $(@api.createElement("button")).
+          html(SnapEditor.lang.imageEdit).
+          click(->
+            self.api.openDialog("image", { api: self.api }, { imageEl: self.imageEl, mutliple: false })
+          ).
+          appendTo($buttons)
+        $delete = $(@api.createElement("button")).
+          html(SnapEditor.lang.delete).
           click(->
             self.hideShim()
             $(self.imageEl).remove()
-            self.api.clean()
+            self.api.clean(self.api.el.childNodes[0], self.api.el.childNodes[self.api.el.childNodes.length - 1])
           ).
-          appendTo($shim)
+          appendTo($buttons)
+
+      # Set the shim styles.
+      $shim.css(styles) if styles
+
+      # Position the buttons.
+      # Note that we use #measure() for buttons but not the shim because the
+      # buttons are not shown yet so we get 0 for both the width and height.
+      # Using #measure() ensures we get the correct size for buttons. This is
+      # not needed for the shim even though it is not shown because we
+      # manually assigned the width and height to the shim earlier.
+      $buttons = $shim.find(".snapeditor_image_shim_buttons")
+      shimSize = $shim.getSize()
+      buttonsSize = $buttons.measure(-> @getSize())
+      $buttons.css(
+        top: parseInt((shimSize.y - buttonsSize.y) / 2, 10)
+        left: parseInt((shimSize.x - buttonsSize.x) / 2, 10)
+      )
+
       $shim
 
     showShim: (@imageEl) ->
       $img = $(@imageEl)
       coords = $img.getCoordinates()
-      @getShim().css(
+      @getShim(
         top: coords.top
         left: coords.left
         width: coords.width
@@ -331,8 +360,6 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
       image.prepareConfig()
     deactivate: (e) ->
       image.hideShim()
-    click: (e) ->
-      e.api.openDialog("image", e, imageEl: e.target, multiple: false ) if $(e.target).tagName() == "img"
     mouseover: (e) ->
       if $(e.target).tagName() == "img"
         image.showShim(e.target)
