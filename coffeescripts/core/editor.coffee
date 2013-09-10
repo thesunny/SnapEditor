@@ -20,6 +20,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     # Perform the actual initialization of the editor.
     init: (el) =>
       @unsupported = false
+      @enabled = true
 
       # Transform the string into a CSS id selector.
       el = "#" + el if typeof el == "string"
@@ -296,6 +297,18 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     #
     # EVENTS
     #
+
+    # Enable the editor.
+    enable: ->
+      @enabled = true
+
+    # Disable the editor.
+    disable: ->
+      @enabled = false
+
+    # Returns true if the editor is enabled. False otherwise.
+    isEnabled: ->
+      @enabled
 
     # Activate the editor.
     activate: ->

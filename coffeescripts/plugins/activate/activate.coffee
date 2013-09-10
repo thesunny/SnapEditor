@@ -2,7 +2,11 @@
 define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activate.others", "plugins/activate/activate.ie"], ($, Browser, Helpers, Others, IE) ->
   activate =
     click: (e, api) ->
-      e.preventDefault() if @shouldActivate(api, e.target)
+      if @shouldActivate(api, e.target)
+        e.preventDefault()
+      else
+        self = this
+        $(api.el).one("click", (e) -> self.click(e, api))
 
     # Activates the editing session.
     finishActivate: (api) ->
@@ -33,7 +37,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activ
       $el.tagName() == 'a' or $el.parent('a').length != 0
 
     shouldActivate: (api, el) ->
-      api.config.activateByLinks || !@isLink(el)
+      console.log api.isEnabled()
+      api.isEnabled() and (api.config.activateByLinks or !@isLink(el))
 
   SnapEditor.actions.activate = (e) ->
     api = e.api
