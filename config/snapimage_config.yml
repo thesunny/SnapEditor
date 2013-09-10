@@ -1,3 +1,2 @@
-directory: "/home/wesley/Dropbox/projects/snapeditor/storage"
-public_url: "http://wesley.com:9292/storage"
+adapter: "cloudinary"
 max_file_size: 10485760
