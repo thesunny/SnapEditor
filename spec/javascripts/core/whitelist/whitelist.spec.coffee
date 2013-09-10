@@ -52,7 +52,7 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
       beforeEach ->
         whitelist = new Whitelist(
           Title: "h1.title > Normal"
-          Subtitle: "h1.subtitle"
+          Subtitle: "h1.subtitle > h1.subtitle"
           Normal: "div.normal"
           "*": "Normal"
         )
@@ -62,23 +62,15 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
         expect($next.tagName()).toEqual("div")
         expect($next.attr("class")).toEqual("normal")
 
-      it "returns the default when none exists", ->
+      it "returns the object when it is itself", ->
         $next = $(whitelist.getNext($('<h1 class="subtitle"></h1>')[0]))
+        expect($next.tagName()).toEqual("h1")
+        expect($next.attr("class")).toEqual("subtitle")
+
+      it "returns the default when none exists", ->
+        $next = $(whitelist.getNext($('<div class="normal"></h1>')[0]))
         expect($next.tagName()).toEqual("div")
         expect($next.attr("class")).toEqual("normal")
-
-    describe "#match", ->
-      whitelist = null
-      beforeEach ->
-        whitelist = new Whitelist(
-          Normal: "p"
-          Title: "h1.title > Normal")
-
-      it "returns the matched object", ->
-        expect(whitelist.match($('<h1 class="title">Title</h1>')[0])).not.toBeNull()
-
-      it "returns null when a match is not found", ->
-        expect(whitelist.match($('<h1 class="almost">Title</h1>')[0])).toBeNull()
 
     describe "#getReplacementByTag", ->
       whitelist = null

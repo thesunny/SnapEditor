@@ -91,6 +91,13 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
         expect(whitelists.general.td[0].attrs.style).toBeTruthy()
         expect(whitelists.general.td[0].values.style["text-align"]).toBeTruthy()
 
+    describe "#matchByElement", ->
+      it "returns the matched object", ->
+        expect(whitelists.matchByElement($('<h1 class="title">Title</h1>')[0])).not.toBeNull()
+
+      it "returns null when a match is not found", ->
+        expect(whitelists.matchByElement($('<h1 class="almost">Title</h1>')[0])).toBeNull()
+
     describe "#isLabel", ->
       it "returns true when the label starts with a capital", ->
         expect(whitelists.isLabel("Normal")).toBeTruthy()
@@ -192,20 +199,6 @@ require ["core/whitelist/whitelist.whitelists"], (Whitelists) ->
             "text-align": true
         )
         expect(obj.next).toBeUndefined()
-
-      it "adds a new label when next is not a label", ->
-        obj = whitelists.parse("p > div")
-        expect(obj.tag).toEqual("p")
-        expect(obj.next).toEqual("Div")
-        expect(whitelists.byLabel.Div).toBeDefined()
-
-      it "parses a next label", ->
-        obj = whitelists.parse("p > Block")
-        expect(obj.tag).toEqual("p")
-        expect(obj.id).toBeNull()
-        expect(obj.classes).toEqual("")
-        expect(obj.attrs).toEqual([])
-        expect(obj.next).toEqual("Block")
 
       it "parses a full string", ->
         obj = whitelists.parse("p#special.normal.highlighted[width,height,style=(background|text-align)] > Simple")

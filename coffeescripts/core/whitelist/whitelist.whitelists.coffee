@@ -64,6 +64,40 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.object"], ($,
           # Add the rule to all existing whitelist objects.
           tagObj.merge(obj) for tagObj in @byTag[tag] or []
 
+    # Finds the whitelist object that matches the given object or else returns
+    # null.
+    # obj can be an element, a label, or a rule.
+    match: (obj) ->
+      if Helpers.isElement(obj)
+        @matchByElement(obj)
+      else if typeof obj == "string"
+        if @isLabel(obj)
+          @getByLabel(obj) or null
+        else
+          @matchByRule(obj)
+      else
+        null
+
+    # Finds the whitelist object that matches the given el or else returns null.
+    matchByElement: (el) ->
+      match = null
+      list = @getByTag($(el).tagName())
+      if list
+        for obj in list
+          if obj.matches(el)
+            match = obj
+            break
+      return match
+
+
+    # Finds the whitelist object that matches the given rule or else returns
+    # null.
+    matchByRule: (rule) ->
+      # Parse the rule.
+      # Then create an element off of the whitelist object.
+      # Then find the match.
+      @matchByElement(@parse(rule).getElement(document))
+
     isLabel: (label) ->
       !!label.match(/^[A-Z0-9]/)
 
@@ -84,8 +118,4 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.object"], ($,
           # Use [0..-2] to remove the trailing ')'.
           values[attr] = ($.trim(s) for s in v[0..-2].split("|")) if v
           attr
-      if next and !@isLabel(next)
-        nextRule = next
-        next = Helpers.capitalize(next)
-        @add(next, nextRule)
       new WhitelistObject(tag, id, classes, attrs, values, next)

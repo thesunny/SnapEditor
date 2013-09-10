@@ -45,19 +45,14 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"],
       next = @whitelists.getByDefault("*")
       throw "The whitelist is missing a '*' default" unless next
       match = @match(el)
-      next = @whitelists.getByLabel(match.next) if match and match.next
+      # Find the matching next whitelist object. In case there is no match,
+      # keep the default.
+      next = @whitelists.match(match.next) or next if match and match.next
       return next.getElement(Helpers.getDocument(el))
 
     # Finds the object that matches the given el or else returns null.
     match: (el) ->
-      match = null
-      list = @whitelists.getByTag($(el).tagName())
-      if list
-        for obj in list
-          if obj.matches(el)
-            match = obj
-            break
-      return match
+      @whitelists.match(el)
 
     # Finds the first object without an id.
     # Returns null if no object can be found.
