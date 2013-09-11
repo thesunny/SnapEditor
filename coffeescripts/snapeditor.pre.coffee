@@ -43,7 +43,9 @@ define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, H
         th: "style-table-cell"
         td: "style-table-cell"
 
-      SnapEditor.actions[key] = (e) -> e.api.styleBlock(selector)
+      SnapEditor.actions[key] = (e) ->
+        e.api.styleBlock(selector)
+        e.api.clean()
       SnapEditor.buttons[key] =
         text: style.text
         html: style.html
