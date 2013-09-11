@@ -230,20 +230,23 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       $document = $(document)
       $document.off.apply($document, args)
 
+    # Place a shim over each iframe on the page except for the given ignored
+    # iframe.
     addIFrameShims: (ignoreIFrame) ->
       @iframeShims = []
       self = this
       $("iframe").each(->
         unless this == ignoreIFrame
-          coords = $(this).getCoordinates()
-          self.iframeShims.push($("<div/>").css(
+          $iframe = $(this)
+          $shim = $("<div/>").css(
             position: "absolute"
-            top: coords.top
-            left: coords.left
-            width: coords.width
-            height: coords.height
-            zIndex: parseInt($(this).css("zIndex")) + 1
-          ).appendTo("body"))
+            zIndex: parseInt($iframe.css("zIndex")) + 1
+          ).appendTo("body")
+          self.positionIFrameShim($iframe, $shim)
+          self.iframeShims.push(
+            $iframe: $iframe
+            $shim: $shim
+          )
       )
       # In IE, a div over an iframe doesn't block out the iframe. The div does
       # indeed overlay the iframe, but you can still click through the div
@@ -256,12 +259,32 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # coordinate. This positioned all subsequent divs in the wrong place. To
       # avoid this, we apply the filter after positioning the divs.
       if Browser.isIE
-        for $shim in @iframeShims
-          $shim.css(
+        for iframeShim in @iframeShims
+          iframeShim.$shim.css(
             backgroundColor: "white"
             filter: "alpha(opacity=1)" # IE8/9
             opacity: 0.01 # IE10
           )
+      @on("snapeditor.cleaner_finished", @repositionIFrameShims)
+
+    # Remove all the iframe shims.
+    removeIFrameShims: ->
+      @off("snapeditor.cleaner_finished", @repositionIFrameShims)
+      iframeShim.$shim.remove() for iframeShim in @iframeShims
+
+    # Reposition all the iframe shims.
+    repositionIFrameShims: =>
+      @positionIFrameShim(iframeShim.$iframe, iframeShim.$shim) for iframeShim in @iframeShims
+
+    # Position the shim over the iframe.
+    positionIFrameShim: ($iframe, $shim) ->
+      coords = $iframe.getCoordinates()
+      $shim.css(
+        top: coords.top
+        left: coords.left
+        width: coords.width
+        height: coords.height
+      )
 
     attachDOMEvents: =>
       @$el.on(event, @handleDOMEvent) for event in @domEvents
@@ -270,7 +293,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     detachDOMEvents: =>
       @$el.off(event, @handleDOMEvent) for event in @domEvents
-      $shim.remove() for $shim in @iframeShims
+      @removeIFrameShims()
       @offDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
     ############################################################################
