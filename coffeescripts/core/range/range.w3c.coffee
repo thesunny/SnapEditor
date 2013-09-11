@@ -203,9 +203,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         @range.collapse(false)
         @select()
         # TODO: Figure out why this is here. Then add tests if applicable.
-        # This breaks IE9 as the focus scrolls the page so that the caret is
+        # This breaks IE9/10 as the focus scrolls the page so that the caret is
         # at the bottom of the page.
-        @el.focus() unless Browser.isIE9
+        @el.focus() if !Browser.isIE9 and !Browser.isIE10
 
       # Place the selection after the element.
       #
