@@ -65,9 +65,9 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
       @$remove = $(e.dialog.find(".link_remove"))
       @mirrorInput = new MirrorInput(@$href, @$text)
 
-      e.dialog.on(".link_form", "snapeditor.submit", @submit)
-      e.dialog.on(".link_remove", "snapeditor.click", @remove)
-      e.dialog.on(".link_cancel", "snapeditor.click", @cancel)
+      e.dialog.on(".link_form", "submit", @submit)
+      e.dialog.on(".link_remove", "click", @remove)
+      e.dialog.on(".link_cancel", "click", @cancel)
       # Only in IE8, if the form is not present on page load, it does not
       # know how to submit the form when hitting enter. IE8 scans the page
       # on load for any submit buttons and attaches the enter-to-submit at
@@ -77,9 +77,9 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "plugins/link/link.m
       # adds the link, then adds a newline in the editor. To prevent this
       # from happening, we handle the enter key in the inputs directly.
       if Browser.isIE8 or Browser.isGecko
-        e.dialog.on(".link_href", "snapeditor.keydown", @handleEnter)
-        e.dialog.on(".link_text", "snapeditor.keydown", @handleEnter)
-        e.dialog.on(".link_new_window", "snapeditor.keydown", @handleEnter)
+        e.dialog.on(".link_href", "keydown", @handleEnter)
+        e.dialog.on(".link_text", "keydown", @handleEnter)
+        e.dialog.on(".link_new_window", "keydown", @handleEnter)
 
     onOpen: (e) ->
       @dialog = e.dialog

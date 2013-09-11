@@ -96,6 +96,8 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       @$content.html(html or "")
 
     on: (selector, event, fn) ->
+      # TODO: Currently, it doesn't seem like we need to namespace. Remove if
+      # we decided not to use it.
       domEvent = event.replace(/^snapeditor\./, "")
       self = this
       @$el.find(selector).on(domEvent, (e) ->
@@ -130,10 +132,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         else
           dialogCSS = @dialog.css or ""
         @api.insertStyles("dialog_#{@type}", @css() + dialogCSS)
-        if @dialog.onSetup
-          @dialog.onSetup(
-            dialog: this
-          )
+        @dialog.onSetup(dialog: this) if @dialog.onSetup
 
     open: (e, args) =>
       @api = e.api
