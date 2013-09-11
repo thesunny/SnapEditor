@@ -78,7 +78,17 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         # I start typing, it will toggle lists on and off.
         # This cannot be called for IE because it will cause the window to
         # scroll and jump. Hence this is only for Firefox.
-        @api.el.focus() if Browser.isGecko
+        # @api.win.focus() must be used in Firefox when using an iframe
+        # because @api.el.focus() makes the iframe jump.
+        # @api.el.focus() must be used in Firefox when not using an iframe
+        # because @api.win.focus() does nothing.
+        # TODO: The call to @api.editor.iframe is really ugly. Figure out how
+        # to fix this properly.
+        if Browser.isGecko
+          if @api.editor.iframe
+            @api.win.focus()
+          else
+            @api.el.focus()
         action = @getDataActionEl(e.target).attr("data-action")
         @api.trigger(action, e.target)
       @isClick = false
