@@ -86,11 +86,11 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       """
 
     setTitle: (title) ->
-      if typeof title == "undefined"
-        @$titleContainer.hide()
-      else
+      if title
         @$titleContainer.show()
         @$title.text(title)
+      else
+        @$titleContainer.hide()
 
     setHTML: (html) ->
       @$content.html(html or "")
