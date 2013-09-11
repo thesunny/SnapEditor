@@ -123,12 +123,12 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         if typeof @dialog.html == "function"
           dialogHTML = @dialog.html()
         else
-          dialogHTML = @dialog.html
+          dialogHTML = @dialog.html or ""
         @setHTML(dialogHTML)
         if typeof @dialog.css == "function"
           dialogCSS = @dialog.css()
         else
-          dialogCSS = @dialog.css
+          dialogCSS = @dialog.css or ""
         @api.insertStyles("dialog_#{@type}", @css() + dialogCSS)
         if @dialog.onSetup
           @dialog.onSetup(
