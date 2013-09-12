@@ -4,18 +4,11 @@
     <div id="editor">
       <h1>This is editable.</h1>
       <p>Click me to start editing.</p>
-      <p><i>Note: If you're not running this from a server and instead have just simply opened the HTML file, image uploads will not work.</i></p>
     </div>
 
     <script type="text/javascript" src="snapeditor.js"></script>
     <script type="text/javascript">
-      var editor = new SnapEditor.InPlace("editor", {
-        imageServer: {
-          uploadUrl: "http://images.snapeditor.com/snapimage_api",
-          publicUrl: "http://images.snapeditor.com/images",
-          directory: "example"
-        }
-      });
+      var editor = new SnapEditor.InPlace("editor");
     </script>
   </body>
 </html>
