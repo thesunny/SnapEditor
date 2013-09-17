@@ -39,7 +39,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       result = @api.config.onSave(api: @api, html: @api.getContents()) if @api.config.onSave
       result
       if typeof result == "string"
-        @api.openDialog("saveError", api: @api, result)
+        @api.openDialog("error", { api: @api }, { title: SnapEditor.lang.saveErrorTitle, error: result })
       else
         @api.deactivate()
 
@@ -92,21 +92,6 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         e.dialog.close()
         save.discard()
       )
-
-  SnapEditor.dialogs.saveError =
-    title: SnapEditor.lang.saveErrorTitle
-
-    html:
-      """
-        <div class="error"></div>
-        <button class="okay">#{SnapEditor.lang.ok}</button>
-      """
-
-    onSetup: (e) ->
-      e.dialog.on(".okay", "click", e.dialog.close)
-
-    onOpen: (e, message) ->
-      $(e.dialog.find(".error")).html(message)
 
   SnapEditor.actions.save = -> save.save()
   SnapEditor.actions.discard = -> save.discard()
