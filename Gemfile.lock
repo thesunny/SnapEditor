@@ -1,8 +1,8 @@
 GIT
   remote: /home/wesley/Dropbox/projects/snapimage
-  revision: e1a86e753154586a33a67ddef24e91d697c09437
+  revision: 5ac190082573166391bbbd6255b6f5711f61fe31
   specs:
-    snapimage (0.1.1)
+    snapimage (0.2.1)
       rack
       rake
       sinatra
@@ -91,5 +91,5 @@ DEPENDENCIES
   guard-shell
   jasmine-headless-webkit
   rb-inotify (~> 0.8.8)
-  snapimage (= 0.1.1)!
+  snapimage (= 0.2.1)!
   thin
