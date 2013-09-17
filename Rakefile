@@ -21,29 +21,42 @@ desc "Compile and build snapeditor.js"
 task :compileAndBuild => [:compile, :build]
 
 namespace :prepare do
+  def bundle(type)
+    `markdown documentation/LICENSE.md > documentation/LICENSE.html`
+    `markdown documentation/README.md > documentation/README.html`
+    directory = File.join("bundle", type)
+    mkdir_p directory
+    rm_rf "#{directory}/snapeditor"
+    mkdir_p "#{directory}/snapeditor"
+    mkdir_p "#{directory}/snapeditor/lang"
+    cp "documentation/LICENSE.md", "#{directory}/snapeditor/."
+    cp "documentation/LICENSE.html", "#{directory}/snapeditor/."
+    cp "documentation/README.md", "#{directory}/snapeditor/."
+    cp "documentation/README.html", "#{directory}/snapeditor/."
+    cp "documentation/example.html", "#{directory}/snapeditor/."
+    cp "build/snapeditor.js", "#{directory}/snapeditor/."
+    cp_r "spec/acceptance/assets/images", "#{directory}/snapeditor/."
+    cp_r "spec/acceptance/assets/lang/en.js", "#{directory}/snapeditor/lang/."
+    # zip usage: zip [options] <zip name without .zip> <directory to zip>
+    #   -r: recursive (include subdirectories and files)
+    `cd #{directory} && rm -f snapeditor.zip && zip -r snapeditor snapeditor/`
+  end
+
   desc "Prepares snapeditor.js for testing"
   task :test => [:compile, :build] do
     cp "build/snapeditor.js", "spec/acceptance/assets/."
   end
 
-  desc "Prepare the bundle for uploading"
-  task :bundle => [:compile, :build] do
-    `markdown documentation/LICENSE.md > documentation/LICENSE.html`
-    `markdown documentation/README.md > documentation/README.html`
-    mkdir_p "bundle"
-    rm_rf "bundle/snapeditor"
-    mkdir_p "bundle/snapeditor"
-    mkdir_p "bundle/snapeditor/lang"
-    cp "documentation/LICENSE.md", "bundle/snapeditor/."
-    cp "documentation/LICENSE.html", "bundle/snapeditor/."
-    cp "documentation/README.md", "bundle/snapeditor/."
-    cp "documentation/README.html", "bundle/snapeditor/."
-    cp "documentation/example.html", "bundle/snapeditor/."
-    cp "build/snapeditor.js", "bundle/snapeditor/."
-    cp_r "spec/acceptance/assets/images", "bundle/snapeditor/."
-    cp_r "spec/acceptance/assets/lang/en.js", "bundle/snapeditor/lang/."
-    # zip usage: zip [options] <zip name without .zip> <directory to zip>
-    #   -r: recursive (include subdirectories and files)
-    `cd bundle && rm -f snapeditor.zip && zip -r snapeditor snapeditor/`
+  desc "Prepares the normal bundle for uploading"
+  task :bundle_norm => [:compile, :build_dev] do
+    bundle("norm")
   end
+
+  desc "Prepares the minified bundle for uploading"
+  task :bundle_min => [:compile, :build] do
+    bundle("min")
+  end
+
+  desc "Prepare the bundle for uploading"
+  task :bundle => [:bundle_norm, :bundle_min]
 end
