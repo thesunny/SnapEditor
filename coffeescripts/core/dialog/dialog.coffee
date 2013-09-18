@@ -139,6 +139,16 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       unless @opened
         @api.lockRange(@api.getRange())
         @setup()
+        # The dialog must be shown before calling @dialog.onOpen() in case
+        # @dialog.onOpen() calls something visual like focus(). If the dialog
+        # is not shown yet, focus() will not work.
+        # Also, the CSS is set here even though it is not the final CSS
+        # because @dialog.onOpen() may change the content. However, the CSS
+        # must be set here so that the dialog is somewhat centered in the view
+        # port. If it wasn't, if @dialog.onOpen() calls focus(), it would
+        # scroll the window to wherever the dialog is currently, which could
+        # be anywhere. The final setting of the CSS after all content has been
+        # set is at the end.
         @$el.css(@getStyles()).show()
         # Uses mousedown because the toolbar uses mouseup to show the dialog. If
         # mouseup was used to close, the following would happen:
@@ -159,6 +169,8 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         if @dialog.onOpen
           args.unshift($.extend(dialog: this, e))
           @dialog.onOpen.apply(@dialog, args)
+        # Set the final CSS of the dialog after all content has been set.
+        @$el.css(@getStyles())
 
     close: =>
       if @opened
