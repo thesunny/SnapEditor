@@ -17,6 +17,7 @@ require ["jquery.custom", "core/data_action_handler", "core/helpers"], ($, Handl
         </div>
       ').prependTo("body")
       api = $("<div/>")
+      api.editor = {}
       api.el = $el[0]
       api.isValid = ->
       spyOn(api, "trigger")
