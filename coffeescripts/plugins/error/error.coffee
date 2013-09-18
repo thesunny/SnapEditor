@@ -15,3 +15,4 @@ define ["jquery.custom"], ($) ->
     onOpen: (e, options = {}) ->
       e.dialog.setTitle(options.title)
       $(e.dialog.find(".error")).html(options.error)
+      e.dialog.find(".okay")[0].focus()
