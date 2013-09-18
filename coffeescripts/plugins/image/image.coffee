@@ -84,9 +84,14 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
             progress = data.loaded / data.total
             self.$progressBar.css("width", "#{parseInt(progress * 100, 10)}%")
           ).on("fileuploaddone", (e, data) ->
-            # TODO: Handle errors
             if data.result.status_code == 200
               image.insertImage(data.result.url, self.options)
+            else
+              image.errors.push("#{data.files[0].name}: #{data.result.message}")
+              image.finish()
+          ).on("fileuploadfail", (e, data) ->
+            image.errors.push("#{data.files[0].name}: #{data.errorThrown}")
+            image.finish()
           )
 
       # Setup the form data.
@@ -144,10 +149,16 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
         @$contentEl.find("form").on("submit", (e) ->
           e.preventDefault()
           url = $.trim(self.$contentEl.find("input[type=text]").val())
-          # TODO: Handle errors.
           if url.length > 0
             image.imageCounter = 1
-            image.insertImage(url, self.options)
+            # Load the image. If it loads, then insert it.
+            imgObject = new Image()
+            imgObject.onload = ->
+              image.insertImage(url, self.options)
+            imgObject.onerror = ->
+              image.errors.push("#{url}: Cannot be loaded or is not an image")
+              image.finish()
+            imgObject.src = url
         )
 
       @$contentEl
@@ -173,9 +184,16 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
     # Options:
     # * imageEl - replaces the imageEl instead of inserting a new image
     # * multiple - allow multiple images (defaults to false)
-    # * onError - function to handle an error
+    # * onErrors - function to handle errors
     onOpen: (e, @options) ->
       @api = e.api
+      self = this
+      image.onErrors = @options.onErrors or (errors) ->
+        html = "<p>The following errors occurred:</p><ul>"
+        html += "<li>#{error}</li>" for error in errors
+        html += "</ul>"
+        self.api.openDialog("error", { api: self.api }, { title: SnapEditor.lang.imageErrorTitle, error: html })
+      image.errors = []
       image.imageCounter = 0
 
       @tabs.clear()
@@ -229,27 +247,35 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
           height = @height
         imageEl or= self.api.find("##{id}")
         $(imageEl).attr(width: width, height: height).removeAttr("id")
-        # Decrement the image count and if it is at 0, then we are done.
-        # Close the dialog and cleanup.
-        self.imageCounter -= 1
-        if self.imageCounter == 0
-          self.api.closeDialog("image")
-          self.imageCounter = 0
-          image.hideShim()
-          # In IE8, after inserting an image using a URL, the iframe jumps to
-          # the top. This is caused by cleaning the entire editable element.
-          # If we just call api.clean(), the jumping does not occur. However,
-          # we need to clean the entire editable element. Hence, we call
-          # api.keepRange(). Note that the jumping doesn't happen after an
-          # upload. It is only after a URL.
-          if Browser.isIE8
-            self.api.keepRange(->
-              self.api.clean(self.api.el.childNodes[0], self.api.el.childNodes[self.api.el.childNodes.length - 1])
-            )
-          else
-            self.api.clean(self.api.el.childNodes[0], self.api.el.childNodes[self.api.el.childNodes.length - 1])
-      imgObject.onerror = options.onError or ->
+        self.finish()
+      imgObject.onerror = ->
+        image.errors.push("#{url}: Cannot be loaded or is not an image")
+        image.finish()
       imgObject.src = url
+
+    finish: ->
+      # Decrement the image count and if it is at 0, then we are done.
+      # Close the dialog and cleanup.
+      @imageCounter -= 1
+      if @imageCounter == 0
+        @api.closeDialog("image")
+        @api.imageCounter = 0
+        @hideShim()
+        # In IE8, after inserting an image using a URL, the iframe jumps to
+        # the top. This is caused by cleaning the entire editable element.
+        # If we just call api.clean(), the jumping does not occur. However,
+        # we need to clean the entire editable element. Hence, we call
+        # api.keepRange(). Note that the jumping doesn't happen after an
+        # upload. It is only after a URL.
+        if Browser.isIE8
+          self = this
+          @api.keepRange(->
+            self.api.clean(self.api.el.childNodes[0], self.api.el.childNodes[self.api.el.childNodes.length - 1])
+          )
+        else
+          @api.clean(@api.el.childNodes[0], @api.el.childNodes[@api.el.childNodes.length - 1])
+        # Handle any errors.
+        @onErrors(@errors) if @errors.length > 0
 
     getShim: (styles) ->
       $shim = $(@api.doc).find(".snapeditor_image_shim")
