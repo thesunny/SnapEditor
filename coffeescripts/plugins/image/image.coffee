@@ -7,27 +7,20 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
         <div class="snapeditor_image_upload">
           <input class="single_upload" type="file">
           <input class="multi_upload" type="file" multiple>
-          <div class="progress_container" style="display: none;">
-            <div class="progress">
-              <div class="bar"></div>
-            </div>
-          </div>
           <div class="snapeditor_image_buttons">
             <a class="button cancel" href="javascript:void(null);">#{SnapEditor.lang.cancel}</a>
           </div>
         </div>
       """
 
-    getContentEl: (@api, @options) ->
+    getContentEl: (@api) ->
       self = this
 
       unless @$contentEl
         @$contentEl = $(@html).on("show", ->
-          self.$buttonsContainer.show()
-          self.$progressContainer.hide()
           $singleUpload = $(self.getSingleUpload())
           $multiUpload = $(self.getMultiUpload())
-          if self.options.multiple
+          if image.options.multiple
             $singleUpload.hide()
             $multiUpload.show()
             $multiUpload[0].focus()
@@ -41,77 +34,12 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
         @$buttonsContainer = @$contentEl.find(".snapeditor_image_buttons")
         @$contentEl.find(".cancel").click(-> self.api.closeDialog("image"))
 
-        # Find the progress elements.
-        @$progressContainer = @$contentEl.find(".progress_container")
-        @$progressBar = @$contentEl.find(".bar")
-
         # Setup the uploads.
-        for $upload in [$(@getSingleUpload()), $(@getMultiUpload())]
-          $upload.on("fileuploadstart", (e, data) ->
-            # In IE8/9, jQuery File Upload uses iframe transport to upload the
-            # images. This causes some issues afterwards when trying to reselect
-            # the range. I'm not sure exactly what's going on, but I think it
-            # has to do with focusing. The range is still completely valid and
-            # we can insert and collapse and move the range around. The only
-            # thing we can't do with the range is select it. This makes me think
-            # that it has to do with focusing. Adding an image through the URL
-            # does not cause this problem because there is no iframe transport.
-            # Solutions tried but failed:
-            # - tried api.win.focus() but fails in IE9 (works for IE8)
-            # - tried api.el.focus() but makes the window jump in IE9 (works for
-            #   IE8)
-            # - tried placing api.select() in #onOpen() but fails as I think
-            #   it's too early
-            # - tried placing api.select() in "fileuploadadd" and it works, but
-            #   "fileuploadstart" is earlier and called only once
-            # - tried placing api.select() in "fileuploadprogress",
-            #   "fileuploadprogressall", and "fileuploaddone" but they all fail
-            #   as I think it's too late
-            # - tried placing api.select() in #insertImage() but it fails as I
-            #   think it's too late
-            self.api.select() if Browser.isIE8 or Browser.isIE9
-
-            # Hide the input and show the overall progress bar.
-            $(self.getSingleUpload()).hide()
-            $(self.getMultiUpload()).hide()
-            self.$buttonsContainer.hide()
-            self.$progressBar.css("width", "5%")
-            self.$progressContainer.show()
-          ).on("fileuploadadd", (e, data) ->
-            # File is added so increment the image count and add a progress bar.
-            image.imageCounter += 1
-          ).on("fileuploadprogressall", (e, data) ->
-            progress = data.loaded / data.total
-            self.$progressBar.css("width", "#{parseInt(progress * 100, 10)}%")
-          ).on("fileuploaddone", (e, data) ->
-            if data.result.status_code == 200
-              image.insertImage(data.result.url, self.options)
-            else
-              image.errors.push("#{data.files[0].name}: #{data.result.message}")
-              image.finish()
-          ).on("fileuploadfail", (e, data) ->
-            image.errors.push("#{data.files[0].name}: #{data.errorThrown}")
-            image.finish()
-          )
-
-      # Setup the form data.
-      formData = [{ name: "max_width", value: $(@api.el).getSize().x }]
-      formData.push(name: param, value: value) for own param, value of @api.config.image.uploadParams or {}
-
-      for $upload in [$(@getSingleUpload()), $(@getMultiUpload())]
-        $upload.fileupload(
-          # Server
-          url: @api.config.image.uploadURL
-          type: "POST"
-          dataType: "json"
-          singleFileUploads: true # Separate HTTP requests
-          # Params
-          paramName: "file"
-          formData: formData
-          # Resizing
-          disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent)
-          imageMaxWidth: $(@api.el).getSize().x
+        $.each([@getSingleUpload(), @getMultiUpload()], ->
+          image.setupUploader($(this))
         )
+
+      image.configUploader($upload) for $upload in [$(@getSingleUpload()), $(@getMultiUpload())]
 
       @$contentEl
 
@@ -138,7 +66,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
         </div>
       """
 
-    getContentEl: (@api, @options) ->
+    getContentEl: (@api) ->
       unless @$contentEl
         self = this
         @$contentEl = $(@html).on("show", ->
@@ -154,7 +82,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
             # Load the image. If it loads, then insert it.
             imgObject = new Image()
             imgObject.onload = ->
-              image.insertImage(url, self.options)
+              image.insertImage(url, image.options.imageEl)
             imgObject.onerror = ->
               image.errors.push("#{url}: Cannot be loaded or is not an image")
               image.finish()
@@ -184,22 +112,33 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
     # Options:
     # * imageEl - replaces the imageEl instead of inserting a new image
     # * multiple - allow multiple images (defaults to false)
-    # * onErrors - function to handle errors
-    onOpen: (e, @options) ->
-      @api = e.api
-      self = this
-      image.onErrors = @options.onErrors or (errors) ->
-        html = "<p>The following errors occurred:</p><ul>"
-        html += "<li>#{error}</li>" for error in errors
-        html += "</ul>"
-        self.api.openDialog("error", { api: self.api }, { title: SnapEditor.lang.imageErrorTitle, error: html })
-      image.errors = []
-      image.imageCounter = 0
-
+    onOpen: (e, options) ->
+      image.options = options
       @tabs.clear()
-      @tabs.add(uploader.getContentEl(@api, @options), uploader.title) if @api.config.image.insertByUpload
-      @tabs.add(urlLoader.getContentEl(@api, @options), urlLoader.title) if @api.config.image.insertByURL
+      @tabs.add(uploader.getContentEl(e.api), uploader.title) if e.api.config.image.insertByUpload
+      @tabs.add(urlLoader.getContentEl(e.api), urlLoader.title) if e.api.config.image.insertByURL
       @tabs.insert(@dialog.find(".snapeditor_image_container"))
+
+  SnapEditor.dialogs.imageUploadProgress =
+    title: SnapEditor.lang.imageInsertTitle
+
+    html:
+      """
+        <div class="snapeditor_progress">
+          <div class="bar"></div>
+        </div>
+      """
+
+    onSetup: (e) ->
+      @dialog = e.dialog
+      @$progressBar = $(@dialog.find(".bar"))
+
+    onOpen: (e, @$upload) ->
+      @$progressBar.css("width", "5%")
+
+    update: (loaded, total) ->
+      progress = loaded / total
+      @$progressBar.css("width", "#{parseInt(progress * 100, 10)}%")
 
   SnapEditor.actions.image = (e) ->
     if e.api.getParentElement("table, ul, ol")
@@ -213,18 +152,130 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
   )
 
   image =
+    options: {}
+    api: null
+    imageCounter: 0
+    errors: []
+
     prepareConfig: ->
       @api.config.image or= {}
       @api.config.image.insertByURL = true if typeof @api.config.image.insertByURL == "undefined"
       if @api.config.image.insertByUpload
         throw "Missing image config: uploadURL" unless @api.config.image.uploadURL
 
+    setupUploader: ($upload) ->
+      self = this
+      $upload.on("fileuploadstart", (e, data) ->
+        # In IE8/9, jQuery File Upload uses iframe transport to upload the
+        # images. This causes some issues afterwards when trying to reselect
+        # the range. I'm not sure exactly what's going on, but I think it
+        # has to do with focusing. The range is still completely valid and
+        # we can insert and collapse and move the range around. The only
+        # thing we can't do with the range is select it. This makes me think
+        # that it has to do with focusing. Adding an image through the URL
+        # does not cause this problem because there is no iframe transport.
+        # Solutions tried but failed:
+        # - tried api.win.focus() but fails in IE9 (works for IE8)
+        # - tried api.el.focus() but makes the window jump in IE9 (works for
+        #   IE8)
+        # - tried placing api.select() in #onOpen() but fails as I think
+        #   it's too early
+        # - tried placing api.select() in "fileuploadadd" and it works, but
+        #   "fileuploadstart" is earlier and called only once
+        # - tried placing api.select() in "fileuploadprogress",
+        #   "fileuploadprogressall", and "fileuploaddone" but they all fail
+        #   as I think it's too late
+        # - tried placing api.select() in #insertImage() but it fails as I
+        #   think it's too late
+        self.api.select() if Browser.isIE8 or Browser.isIE9
+
+        self.api.closeDialog("image")
+        self.api.openDialog("imageUploadProgress", api: self.api)
+      ).on("fileuploadadd", (e, data) ->
+        unless data.files[0].name
+          file = data.files[0]
+          extname = file.type.replace("image/", "")
+          data.files[0].name = "pasted_image.#{extname}"
+        # File is added so increment the image count.
+        self.imageCounter += 1
+      ).on("fileuploadprogressall", (e, data) ->
+          SnapEditor.dialogs.imageUploadProgress.update(data.loaded, data.total)
+      ).on("fileuploaddone", (e, data) ->
+        if data.result.status_code == 200
+          self.insertImage(data.result.url, self.options.imageEl)
+        else
+          self.errors.push("#{data.files[0].name}: #{data.result.message}")
+          self.finish()
+      ).on("fileuploadfail", (e, data) ->
+        self.errors.push("#{data.files[0].name}: #{data.errorThrown}")
+        self.finish()
+      )
+
+    configUploader: ($upload, options = {}) ->
+      # Setup the form data.
+      formData = [{ name: "max_width", value: $(@api.el).getSize().x }]
+      formData.push(name: param, value: value) for own param, value of @api.config.image.uploadParams or {}
+
+      $upload.fileupload($.extend(
+        # Server
+        url: @api.config.image.uploadURL
+        type: "POST"
+        dataType: "json"
+        singleFileUploads: true # Separate HTTP requests
+        # Params
+        paramName: "file"
+        formData: formData
+        # Resizing
+        disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent)
+        imageMaxWidth: $(@api.el).getSize().x
+        # If dropZone is not set to null, when another uploader sets the
+        # dropZone, any uploaders that didn't set dropZone to null will use
+        # the set dropZone. The same thing happens with pasteZone.
+        # This doesn't seem right and could be a bug in the
+        # jQuery plugin.
+        dropZone: null
+        pasteZone: null
+        options
+      ))
+
+    getAutoUploader: ->
+      unless @$autoUploader
+        @$autoUploader = $("<input/>").
+          attr(
+            type: "file"
+            multiple: true
+          ).
+          css(
+            position: "absolute"
+            top: 0
+            left: -9999
+          ).
+          appendTo("body")
+        @setupUploader(@$autoUploader)
+      @$autoUploader
+
+    preventDefault: (e) ->
+      e.preventDefault()
+
+    enableAutoUploader: ->
+      if @api.config.image.insertByUpload
+        $(@api.doc).on("drop dragover", @preventDefault)
+        $upload = @getAutoUploader()
+        @configUploader($upload,
+          dropZone: @api.el
+          pasteZone: @api.el
+        )
+
+    disableAutoUploader: ->
+      if @api.config.image.insertByUpload
+        $(@api.doc).off("drop dragover", @preventDefault)
+        @getAutoUploader().fileupload("option",
+          dropZone: null
+          pasteZone: null
+        )
+
     # Takes the given URL and inserts the image into SnapEditor.
-    # Options:
-    # * imageEl - replaces the imageEl instead of inserting a new image
-    # * onError - function to handle an error
-    insertImage: (url, options = {}) ->
-      imageEl = options.imageEl
+    insertImage: (url, imageEl) ->
       if imageEl
         $(imageEl).attr("src", url)
       else
@@ -253,13 +304,19 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
         image.finish()
       imgObject.src = url
 
+    onErrors: (errors) ->
+      html = "<p>The following errors occurred:</p><ul>"
+      html += "<li>#{error}</li>" for error in errors
+      html += "</ul>"
+      @api.openDialog("error", { api: @api }, { title: SnapEditor.lang.imageErrorTitle, error: html })
+
     finish: ->
       # Decrement the image count and if it is at 0, then we are done.
       # Close the dialog and cleanup.
       @imageCounter -= 1
       if @imageCounter == 0
         @api.closeDialog("image")
-        @api.imageCounter = 0
+        @api.closeDialog("imageUploadProgress")
         @hideShim()
         # In IE8, after inserting an image using a URL, the iframe jumps to
         # the top. This is caused by cleaning the entire editable element.
@@ -275,7 +332,15 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
         else
           @api.clean(@api.el.childNodes[0], @api.el.childNodes[@api.el.childNodes.length - 1])
         # Handle any errors.
-        @onErrors(@errors) if @errors.length > 0
+        if @errors.length > 0
+          if @api.config.image.onErrors
+            @api.config.image.onErrors(@errors)
+          else
+            @onErrors(@errors)
+        # Cleanup.
+        @options = {}
+        @imageCounter = 0
+        @errors = []
 
     getShim: (styles) ->
       $shim = $(@api.doc).find(".snapeditor_image_shim")
@@ -384,8 +449,10 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
     activate: (e) ->
       image.api = e.api
       image.prepareConfig()
+      image.enableAutoUploader()
     deactivate: (e) ->
       image.hideShim()
+      image.disableAutoUploader()
     mouseover: (e) ->
       if $(e.target).tagName() == "img"
         image.showShim(e.target)
@@ -451,7 +518,8 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
     .snapeditor_image_upload input[type=file] {
       margin-bottom: 20px;
     }
-    .snapeditor_image_upload .progress {
+    .snapeditor_progress {
+      width: 200px;
       height: 20px;
       overflow: hidden;
       background-color: #f7f7f7;
@@ -462,7 +530,7 @@ define ["jquery.custom", "plugins/helpers", "core/browser", "core/dialog/tabs", 
       -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
       box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
     }
-    .snapeditor_image_upload .bar {
+    .snapeditor_progress .bar {
       float: left;
       height: 100%;
       font-size: 12px;
