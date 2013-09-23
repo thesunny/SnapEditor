@@ -1,14 +1,7 @@
 require "rubygems"
 require "bundler/setup"
 require "json"
-require "cloudinary"
 require "snapimage"
-
-Cloudinary.config do |config|
-  config.cloud_name = "snapeditor-com"
-  config.api_key = "153958284567649"
-  config.api_secret = "c7vKfULZ4zZ_Ma-3dbOKFJoXcck"
-end
 
 base_dir = File.dirname(File.expand_path(__FILE__))
 # Don't cache. This is helpful because IE tends to cache all asynchronously
