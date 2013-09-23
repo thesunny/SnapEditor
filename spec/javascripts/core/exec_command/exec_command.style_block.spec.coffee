@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 require ["jquery.custom", "core/exec_command/exec_command.style_block"], ($, StyleBlock) ->
   describe "ExecCommand.StyleBlock", ->
     $editable = null

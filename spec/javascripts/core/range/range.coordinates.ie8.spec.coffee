@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 # This test uses the Range object directly instead of the module because the
 # module depends quite heavily on the Range object. However, the tests should
 # still be only testing the functionality of the module.

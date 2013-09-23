@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 require ["core/helpers/helpers.keyboard"], (Keyboard) ->
   describe "Helpers.Keyboard", ->
     describe "#keyOf", ->
