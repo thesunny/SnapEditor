@@ -3,6 +3,7 @@
 *.swp
 .rbenv-version
 README.html
+runner.filter.html
 runner.html
 tags
 /.jhw-cache/
