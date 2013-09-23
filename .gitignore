@@ -2,9 +2,7 @@
 *.cache
 *.swp
 .rbenv-version
-hardcopy.*
 README.html
-runner.filter.html
 runner.html
 tags
 /.jhw-cache/
@@ -14,4 +12,3 @@ tags
 /build/snapeditor.js
 /spec/acceptance/assets/snapeditor.js
 /storage/
-/lib/jquery.full.js
