@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 require ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu.dropdown"], ($, Helpers, Dropdown) ->
   describe "Toolbar.Dropdown", ->
     dropdown = null

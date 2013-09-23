@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 # NOTE: These tests only work in Webkit because the iframe loads immediately.
 # In the other browsers, the load is delayed and falls out of the runtime of
 # the tests.

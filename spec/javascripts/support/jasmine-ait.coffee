@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 # Taken from http://blog.pixelingene.com/2011/12/simple-helper-method-for-async-testing-with-jasmine/
 #
 # We need this because Jasmine's functions are synchronous. However, RequireJS

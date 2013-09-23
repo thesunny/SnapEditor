@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 # NOTE: When checking an element's HTML, we use #toLowerCase() because IE
 # returns the HTML tags as uppercase.
 # NOTE: Unlike Range.W3C and Webkit, it is not easy to rerun the tests using an

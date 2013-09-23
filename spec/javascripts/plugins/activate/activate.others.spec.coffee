@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 unless isIE
   require ["jquery.custom", "core/helpers", "plugins/activate/activate.others"], ($, Helpers, Others) ->
     describe "Activate.Others", ->

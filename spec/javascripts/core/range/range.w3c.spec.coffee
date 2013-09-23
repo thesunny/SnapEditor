@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 if hasW3CRanges
   require ["core/range/range.w3c", "core/helpers", "core/browser", "core/iframe"], (Module, Helpers, Browser, IFrame) ->
     describe "Range.W3C", ->

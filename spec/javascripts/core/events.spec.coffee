@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 # NOTE: This is more like an integration test because there's not much point
 # unit testing ecah function separately. For instance, when binding, in order
 # to test if it worked, you would have to trigger the event.
