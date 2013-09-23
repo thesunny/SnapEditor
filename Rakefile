@@ -22,21 +22,18 @@ task :compileAndBuild => [:compile, :build]
 
 namespace :prepare do
   def bundle(type)
-    `markdown documentation/LICENSE.md > documentation/LICENSE.html`
-    `markdown documentation/README.md > documentation/README.html`
     directory = File.join("bundle", type)
     mkdir_p directory
     rm_rf "#{directory}/snapeditor"
     mkdir_p "#{directory}/snapeditor"
     mkdir_p "#{directory}/snapeditor/lang"
-    cp "documentation/LICENSE.md", "#{directory}/snapeditor/."
-    cp "documentation/LICENSE.html", "#{directory}/snapeditor/."
-    cp "documentation/README.md", "#{directory}/snapeditor/."
-    cp "documentation/README.html", "#{directory}/snapeditor/."
-    cp "documentation/example.html", "#{directory}/snapeditor/."
+    cp "COPYING", "#{directory}/snapeditor/."
+    cp "COPYING.LESSER", "#{directory}/snapeditor/."
     cp "build/snapeditor.js", "#{directory}/snapeditor/."
     cp_r "spec/acceptance/assets/images", "#{directory}/snapeditor/."
-    cp_r "spec/acceptance/assets/lang/en.js", "#{directory}/snapeditor/lang/."
+    cp_r "documentation", "#{directory}/snapeditor/."
+    mv "#{directory}/snapeditor/documentation/example.html", "#{directory}/snapeditor/."
+    cp_r "spec/acceptance/assets/lang", "#{directory}/snapeditor/."
     # zip usage: zip [options] <zip name without .zip> <directory to zip>
     #   -r: recursive (include subdirectories and files)
     `cd #{directory} && rm -f snapeditor.zip && zip -r snapeditor snapeditor/`

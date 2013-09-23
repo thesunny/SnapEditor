@@ -1,0 +1,281 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Configuration</title>
+    <link rel="stylesheet" href="google-code-prettify/sunburst.css" type="text/css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <h1>Configuration</h1>
+
+    <p>All configs are optional unless otherwise stated.</p>
+    <pre class="prettyprint">
+      <code>
+        // Per instance of SnapEditor
+        {
+          path: "/snapeditor",
+          toolbar: {
+            items: [
+              "styleBlock", "|",
+              "p", "h1", "h2", "h2", "h3", "h5", "h6", "|",
+              "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|",
+              "alignment", "|",
+              "alignLeft", "alignCentre", "alignRight", "alignJustify", "|",
+              "orderedList", "unorderedList", "indent", "outdent", "|",
+              "link", "table", "image", "horizontalRule", "|",
+              "print"
+            ],
+          },
+          styles: ["h1.title", "h2.subtitle", "tr", "tr.alternate"],
+          width: 600,
+          height: 400,
+          image: {
+            insertByURL: true,
+            insertByUpload: false,
+            uploadURL: "/images",
+            uploadParams: { param1: "abc123" }
+          },
+          snap: true,
+          contentClass: "my-class",
+          stylesheets: ["public/my-colors.css", "public/my-typography.css"],
+          onSave: function (e) {
+            var isSuccess = true;
+            var html = e.html;
+            // Actually perform the save and update isSuccess.
+            return isSuccess || "Error";
+          },
+          onUnsavedChanges: function (e) {
+            if(confirm("Save changes?")) {
+              e.api.execAction("save");
+            } else {
+              e.api.execAction("discard");
+            }
+          }
+        }
+
+        // Global config
+        SnapEditor.zIndexBase = 100;
+      </code>
+    </pre>
+
+    <h2>Path</h2>
+    <p>SnapEditor will auto-detect the correct path to the <code>snapeditor/</code> directory.</p>
+    <p>If you are having issues and SnapEditor cannot determine the correct path, you can use the <code>path</code> config. The <code>path</code> config specifies the URL to the <code>snapeditor/</code> directory.</p>
+    <pre class="prettyprint">
+      <code>path: "/snapeditor"</code>
+    </pre>
+
+    <h2>Toolbar</h2>
+    <p>The <code>toolbar</code> config specifies an object that contains an <code>item</code> key. The value of the <code>item</code> key is an array of buttons that should appear in the toolbar.</p>
+    <pre class="prettyprint">
+      <code>
+        toolbar: {
+          items: ["h1", "h2", "h3"]
+        }
+      </code>
+    </pre>
+    <p>The following buttons are available. Note that the buttons are case sensitive.</p>
+    <pre class="prettyprint">
+      <code>
+        "styleBlock", "p", "h1", "h2", "h2", "h3", "h5", "h6",
+        "bold", "italic", "underline", "subscript", "superscript", "strikethrough",
+        "alignment", "alignLeft", "alignCentre", "alignRight", "alignJustify",
+        "orderedList", "unorderedList", "indent", "outdent",
+        "link", "table", "image", "horizontalRule",
+        "print",
+        "|"
+      </code>
+    </pre>
+    <p>The pipe character <code>"|"</code> is used to signify a separator between buttons.</p>
+    <p>The default toolbar is itself a button and is declared like the following.</p>
+    <pre class="prettyprint">
+      <code>
+        SnapEditor.buttons.toolbar = {
+          items: [
+            "styleBlock", "|",
+            "bold", "italic", "|",
+            "orderedList", "unorderedList", "indent", "outdent", "|",
+            "link", "table", "image"
+          ]
+        };
+      </code>
+    </pre>
+    <p>This means that you can create custom toolbars in the same manner. We suggest using a namespace to avoid conflicts with existing buttons.</p>
+    <pre class="prettyprint">
+      <code>
+        SnapEditor.buttons.myBlogToolbar = {
+          items: [
+            "h3", "h4", "h5", "h6", "|",
+            "bold", "italic"
+          ]
+        }
+      </code>
+    </pre>
+    <p>For more information on buttons, refer to the <a href="plugins.html#buttons">Plugins doc</a>. However, it is not necessary to know about Plugins for basic usage.</p>
+    <p>To use the toolbars, there are two ways. Either set the global config or add it to the per instance config. The per instance config overrides the default.</p>
+    <pre class="prettyprint">
+      <code>
+        // Global config.
+        // Default.
+        SnapEditor.config.toolbar = "toolbar";
+        // Custom.
+        SnapEditor.config.toolbar = "myBlogToolbar";
+
+        // Per instance config.
+        var editor = new SnapEditor.InPlace("editor", {
+          toolbar: "myBlogToolbar"
+        });
+      </code>
+    </pre>
+    <p>Because the default toolbar is just an object, you can modify <code>SnapEditor.buttons.toolbar.items</code>.</p>
+    <pre class="prettyprint">
+      <code>
+        // Adding buttons to the global default.
+        SnapEditor.buttons.toolbar.items = SnapEditor.buttons.toolbar.items.concat([
+          "|", "alignLeft", "alignCentre", "alignRight"
+        ]);
+        // Changing the global default.
+        SnapEditor.buttons.toolbar.items = ["h2", "h3", "|", "bold", "italic"];
+      </code>
+    </pre>
+    <p>One last way to specify the toolbar is to skip the whole buttons declaration step and simply declare it in the per instance config directly.</p>
+    <pre class="prettyprint">
+      <code>
+        // Adding buttons to an existing toolbar.
+        var editor = new SnapEditor.InPlace("editor", {
+          toolbar: {
+            items: SnapEditor.buttons.toolbar.items.concat(["styleBlock", "|", "b", "i"])
+          }
+        });
+        // New set of buttons.
+        var editor = new SnapEditor.InPlace("editor", {
+          toolbar: {
+            items: ["styleBlock", "|", "b", "i"]
+          }
+        });
+      </code>
+    </pre>
+
+    <h2>Styles</h2>
+    <p>The <code>styles</code> config specifies the set of available custom styles. For more information, check out the <a href="custom_styles.html">Custom Styles</a> docs.</p>
+    <pre class="prettyprint">
+      <code>styles: ["h1.title", "h2.subtitle", "tr", "tr.alternate"]</code>
+    </pre>
+
+    <h2>Width</h2>
+    <p>This is only available in the Form SnapEditor.</p>
+    <p>The <code>width</code> config specifies the width and overrides the width specified on the textarea. The width can either be a number or a string. When a number is specified, the measurements are in pixels. For all others, use a string.</p>
+    <p>Note that this is the only way to specify relative widths. A relative width on the textarea will not work.</p>
+    <pre class="prettyprint">
+      <code>width: 600</code>
+    </pre>
+
+    <h2>Height</h2>
+    <p>This is only available in the Form SnapEditor.</p>
+    <p>The <code>height</code> config specifies the height and overrides the height specified on the textarea. The height can either be a number or a string. When a number is specified, the measurements are in pixels. For all others, use a string. Note that relative heights are not allowed.</p>
+    <pre class="prettyprint">
+      <code>height: 400</code>
+    </pre>
+
+    <h2>Images</h2>
+    <p>The <code>image</code> config specifies the config for the image feature.</p>
+    <pre class="prettyprint">
+      <code>
+        image: {
+          insertByURL: true,
+          insertByUpload: false,
+          uploadURL: "/images",
+          uploadParams: { param1: "abc123" }
+        }
+      </code>
+    </pre>
+    <p>The <code>insertByURL</code> config specifies whether inserting an image using a URL is enabled. It is set to <code>true</code> by default.</p>
+    <p>The <code>insertByUpload</code> config specifies whether inserting an image through an upload is enabled. It is set to <code>false</code> by default.</p>
+    <p>The <code>uploadURL</code> config specifies where the images should be uploaded to. This is mandatory if <code>insertByUpload</code> is <code>true</code>.</p>
+    <p>The <code>uploadParams</code> config specifies any extra parameters to be sent to the <code>uploadURL</code>. This is optional.</p>
+    <p>For more details about uploading, refer to the <a href="image_upload.html">Image Upload</a> docs.</p>
+
+    <h2>Snap</h2>
+    <p>The <code>snap</code> config specifies whether to include the snap effect when editing. The default is <code>true</code>.</p>
+    <pre class="prettyprint">
+      <code>snap: true</code>
+    </pre>
+
+    <h2>Content Class</h2>
+    <p>This is only available in the Form SnapEditor.</p>
+    <p>The <code>contentClass</code> config specifies the class to be added to the editable area inside the Form SnapEditor.</p>
+    <pre class="prettyprint">
+      <code>contentClass: "my-class"</code>
+    </pre>
+    <p>This is useful if your content is displayed with a wrapper element with a class. The same class can be applied inside the Form SnapEditor.</p>
+
+    <h2>Stylesheets</h2>
+    <p>This is only available in the Form SnapEditor.</p>
+    <p>The <code>stylesheets</code> config specifies the stylesheets to load inside the Form SnapEditor.</p>
+    <pre class="prettyprint">
+      <code>stylesheets: ["public/my-colors.css", "public/my-typography.css"]</code>
+    </pre>
+
+    <h2>Saving</h2>
+    <p>This is only available in the In-Place SnapEditor.</p>
+    <h3>onSave</h3>
+    <p>The <code>onSave</code> config specifies a function that will perform the save.</p>
+    <p>The function receives a single argument which is an event object.</p>
+    <pre class="prettyprint">
+      <code>
+        {
+          api: &lt;SnapEditor API object&gt;,
+          html: &lt;HTML string of the current content in SnapEditor&gt;
+        }
+      </code>
+    </pre>
+    <p>After performing the save, the function must return <code>true</code> or an error string to be displayed.</p>
+    <pre class="prettyprint">
+      <code>
+        onSave: function (e) {
+          var isSuccess = true;
+          var html = e.html;
+          // Actually perform the save and update isSuccess.
+          return isSuccess || "Error";
+        }
+      </code>
+    </pre>
+    <p>Adding the <code>onSave</code> config automatically appends the Save and Discard buttons to the toolbar. It also adds a prompt to save any unsaved edits when leaving SnapEditor or the page.</p>
+    <h3>onUnsavedChanges</h3>
+    <p>The <code>onUnsavedChanges</code> config specifies a function that will be called when leaving the editor and there are unsaved changes. This function is used to override the default behaviour of the Save/Discard/Cancel dialog.</p>
+    <p>The function receives a single argument which is an event object.</p>
+    <pre class="prettyprint">
+      <code>
+        {
+          api: &lt;SnapEditor API object&gt;
+        }
+      </code>
+    </pre>
+    <p>You can use this function to popup your own dialog, to immediately save the content, to immediately discard the content, or anything else you can think of.</p>
+    <p>The following example illustrates a JavaScript confirmation to save or discard.</p>
+    <pre class="prettyprint">
+      <code>
+        onUnsavedChanges: function (e) {
+          if(confirm("Save changes?")) {
+            e.api.execAction("save");
+          } else {
+            e.api.execAction("discard");
+          }
+        }
+      </code>
+    </pre>
+
+    <h2>SnapEditor.zIndexBase</h2>
+    <p>This is used to set the base z-index that SnapEditor will use whenever it needs to set a z-index.</p>
+    <p>Set this before instantiating any SnapEditors.</p>
+    <pre class="prettyprint">
+      <code>
+        SnapEditor.zIndexBase = 200;
+        var editor = new SnapEditor.InPlace("editor");
+      </code>
+    </pre>
+    <script src="google-code-prettify/prettify.js"></script>
+    <script>
+      prettyPrint();
+    </script>
+  </body>
+</html>

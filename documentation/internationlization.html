@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Internationalization</title>
+    <link rel="stylesheet" href="google-code-prettify/sunburst.css" type="text/css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <h1>Internationalization</h1>
+
+    <p>SnapEditor comes with a default English pack built-in. An example of the English pack can be found at <code>/snapeditor/lang/en.js</code>. It is a simple JavaScript file that contains a single object with keys and values. The values are the language specific text to be displayed.</p>
+    <p>If you wish to create your own language pack, create a new JavaScript file, such as <code>/snapeditor/lang/fr.js</code>. Copy the contents of <code>/snapeditor/lang/en.js</code> into the new file. Go through all the values and replace them with the language specific text you want displayed.</p>
+    <p>Now add a script tag pointing to your new language pack. Make sure that the language pack is sourced before SnapEditor, not after.</p>
+    <pre class="prettyprint">
+      <code>
+        &lt;script type="text/javascript" src="/snapeditor/lang/fr.js"&gt;&lt;/script&gt;
+        &lt;script type="text/javascript" src="/snapeditor/snapeditor.js"&gt;&lt;/script&gt;
+        &lt;script type="text/javascript"&gt;
+          var inPlaceEditor = new SnapEditor.InPlace("editor");
+        &lt;/script&gt;
+      </code>
+    </pre>
+    <p>List of language packs:</p>
+    <ul>
+      <li>German (1.8.3) - Added by Stefan Keller</li>
+    </ul>
+    <script src="google-code-prettify/prettify.js"></script>
+    <script>
+      prettyPrint();
+    </script>
+  </body>
+</html>

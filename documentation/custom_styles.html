@@ -1,0 +1,111 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Custom Styles</title>
+    <link rel="stylesheet" href="google-code-prettify/sunburst.css" type="text/css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <h1>Custom Styles</h1>
+
+    <h2>Introduction</h2>
+    <p>Custom styles allow you to specify a custom set of tags and classes that can be used inside SnapEditor. A dropdown of styles automatically shows up which allows you to toggle through the specified styles.</p>
+    <p>This allows users to select predefined styles to change the look of their content.</p>
+    <p>SnapEditor allows for custom styles on the following tags.</p>
+    <pre class="prettyprint">
+      <code>
+        "p", "div", "h1", "h2", "h3", "h4", "h5", "h6",
+        "table", "tr", "th", "td"
+      </code>
+    </pre>
+
+    <h2>Declaring Style Buttons</h2>
+    <p>Custom style buttons must be declared before they can be used.</p>
+    <pre class="prettyprint">
+      <code>SnapEditor.addStyleButton(selector, options);</code>
+    </pre>
+    <h3>selector</h3>
+    <p>The <code>selector</code> argument is a string in the form of a CSS selector. It specifies a tag followed by one or more class names separated by '.'.</p>
+    <pre class="prettyprint">
+      <code>
+        // Just a tag. Produces &lt;h1&gt;...&lt;/h1&gt;
+        "h1"
+        // A tag with a single class name. Produces &lt;h1 class="title"&gt;...&lt;/h1&gt;
+        "h1.title"
+        // A tag with mutliple class names. Produces &lt;h1 class="title special"&gt;...&lt;/h1&gt;
+        "h1.title.special"
+      </code>
+    </pre>
+    <h3>options</h3>
+    <p>The <code>options</code> argument is an object that looks like the following.</p>
+    <pre class="prettyprint">
+      <code>
+        {
+          text: "Title"
+          html: '&lt;span class="title_button"&gt;Title&lt;/span&gt;'
+          newline: "h2"
+        }
+      </code>
+    </pre>
+    <p>The <code>text</code> attribute is mandatory. It specifies the text for the tooltip. It also specifies the text to display in the dropdown if <code>html</code> is not specified.</p>
+    <p>The <code>html</code> attribute is optional. It specifies the HTML to display in the dropdown. Only inline elements are allowed.</p>
+    <p>The <code>newline</code> attribute is optional. It specifies what to insert when you hit enter at the end of the current element. This can be any selector as defined above. If <code>newline</code> is not specified, the first block style will be used (usually a paragraph tag).</p>
+    <h3>Example</h3>
+    <pre class="prettyprint">
+      <code>
+        SnapEditor.addStyleButton("h1.title", {
+          text: "Title",
+          html: '&lt;span class="title_button"&gt;Title&lt;/span&gt;'
+        });
+      </code>
+    </pre>
+    <h3>Shortcut for Multiple Styles</h3>
+    <p>A convenience method is provided for adding multiple styles at a time.</p>
+    <pre class="prettyprint">
+      <code>
+        SnapEditor.addStyleButtons({
+          "h1.title": { text: "Title" },
+          "h2.subtitle": { text: "Subtitle" }
+        });
+      </code>
+    </pre>
+    <p><code>addStyleButtons</code> takes a single object where the keys are the selectors and the values are the options.</p>
+
+    <h2>Using Style Buttons</h2>
+    <p>To use style buttons, specify which selectors you want in the <code>styles</code> config.</p>
+    <pre class="prettyprint">
+      <code>
+        // Global config.
+        SnapEditor.config.styles = ["h1.title", "h2.subtitle"];
+        // Per instance config.
+        var editor = new SnapEditor.InPlace("editor", {
+          styles: ["h1.title", "h2.subtitle"]
+        });
+      </code>
+    </pre>
+    <p>The default looks like the following.</p>
+    <pre class="prettyprint">
+      <code>SnapEditor.config.styles = ["p", "h1", "h2", "h3", "h4", "h5", "h6"];</code>
+    </pre>
+
+    <h2>Dropdowns</h2>
+    <p>The specified style buttons to be used are placed in dropdowns so the user can select them.</p>
+    <p>The block styles are added to the <code>styleBlock</code> button. This includes the following tags.</p>
+    <pre class="prettyprint">
+      <code>"p", "h1", "h2", "h3", "h4", "h5", "h6"</code>
+    </pre>
+    <p>The table styles are added to the <code>table</code> button. This includes the following tags.</p>
+    <pre class="prettyprint">
+      <code>"table", "tr", "th", "td"</code>
+    </pre>
+
+    <h2>Control</h2>
+    <p>Custom styles allow you to specify tags and classes that are allowed inside SnapEditor. This means anything that is not specified is not allowed in SnapEditor.</p>
+    <p>The default <code>styles</code> config contains the usual block styles. However, if you change this list, it changes what is allowed inside SnapEditor.</p>
+    <p>For instance, if you decided to remove <code>p</code> as one of the styles, SnapEditor will not allow <code>p</code> tags. Instead, SnapEditor will change all disallowed block elements into the first style specified.</p>
+    <p>An example that would take advantage of this is if you were only allowing the user to edit a heading. You could simply only add <code>h1</code> to the <code>styles</code> config and the user would be restricted to <code>h1</code> only.</p>
+    <script src="google-code-prettify/prettify.js"></script>
+    <script>
+      prettyPrint();
+    </script>
+  </body>
+</html>

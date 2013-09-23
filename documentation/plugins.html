@@ -1,0 +1,504 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Plugins (Beta)</title>
+    <link rel="stylesheet" href="google-code-prettify/sunburst.css" type="text/css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <h1>Plugins (Beta)</h1>
+
+    <p>Plugins are currently in beta. We don't anticipate any major changes as we have been working on this for more than half a year but we don't guarantee it won't change. Use this at your own risk.</p>
+    <p>In SnapEditor, plugins are just a concept. There is no plugin object. Plugins are just a group of features packaged together. Each feature can stand on its own.</p>
+    <p>If you are looking to just create a custom button, skip down to the <a href="#buttons">Buttons feature</a>.</p>
+
+    <h2 id="actions">Actions</h2>
+    <p>Use actions to share functions in SnapEditor.</p>
+    <p>Add actions to the <code>SnapEditor.actions</code> object.</p>
+    <pre class="prettyprint">
+      <code>
+        SnapEditor.actions.say = function(e, text) {
+          e.api.insert("&lt;p&gt;" + text + "&lt;/p&gt;");
+        };
+      </code>
+    </pre>
+    <p>Execute actions at any time from the <a href="api.html">API</a> object. To execute an action, call the <code>api.execAction()</code> function.</p>
+    <pre class="prettyprint">
+      <code>
+        function (e) {
+          e.api.execAction("say", e, text);
+        }
+      </code>
+    </pre>
+    <p>The first argument to <code>api.execAction()</code> is the name of the action you want to execute.</p>
+    <p>The extra arguments are passed through to the action.</p>
+    <p>To keep things consistent, the first extra argument should always be a SnapEditor event object. This way, the action always has access to the <a href="api.html">API</a>.</p>
+
+    <h2 id="buttons">Buttons</h2>
+    <p>Buttons are declared first, then added. Buttons may be added to other buttons. In this case, the button will trigger a menu with the other buttons in it.</p>
+    <p>Button objects may contain the following keys.</p>
+    <pre class="prettyprint">
+      <code>text, html, action, items</code>
+    </pre>
+    <h3>text (mandatory)</h3>
+    <p><code>text</code> is used for the title when hovering over a button. It is also used for the label if the button is included in a menu and does not have an <code>html</code> key.</p>
+    <h3>html (optional)</h3>
+    <p><code>html</code> is only used when the button is included in a menu. It is used as the label.</p>
+    <h3>action (optional)</h3>
+    <p>This is only optional if <code>items</code> is not specified.</p>
+    <p><code>action</code> specifies a function to execute when the button is clicked. The function will receive a SnapEditor event object.</p>
+    <pre class="prettyprint">
+      <code>
+        {
+          api: &lt;SnapEditor API Object&gt;
+        }
+      </code>
+    </pre>
+    <p>The action may also be a String which corresponds to the name of a predefined <a href="#actions">action</a>.</p>
+    <h3>items (optional)</h3>
+    <p><code>items</code> tells SnapEditor that this button will trigger a menu.</p>
+    <p><code>items</code> is an array of Strings that correspond to the names of each button to include in the menu.</p>
+    <p>When <code>items</code> is specified, <code>action</code> is ignored since the behaviour of the button is to show a menu.</p>
+    <h3>Declaration</h3>
+    <p>Declare buttons by adding the button to the <code>SnapEditor.buttons</code> object.</p>
+    <pre class="prettyprint">
+      <code>
+        // Add an action to be used.
+        SnapEditor.actions.sayBye =  function (e) {
+          e.api.insert("&lt;p&gt;Bye&lt;/p&gt;");
+        };
+
+        // Declaring a button.
+        SnapEditor.buttons.sayHi = {
+          text: "Say Hi",
+          action: function (e) {
+            e.api.insert("&lt;p&gt;Hi&lt;/p&gt;");
+          }
+        }
+        // Declaring a button with a predefined action.
+        SnapEditor.buttons.sayBye = {
+          text: "Say Bye",
+          action: "sayBye"
+        }
+        // Declaring a button with custom HTML for menus.
+        SnapEditor.buttons.sayWorld = {
+          text: "Say World",
+          html: '&lt;span class="shout"&gt;Say World&lt;/span&gt;',
+          action: function (e) {
+            e.api.insert("&lt;p&gt;World&lt;/p&gt;");
+          },
+        }
+        // Declaring a button that triggers a menu with other buttons.
+        SnapEditor.buttons.say = {
+          text: "Say",
+          items: ["sayHi", "sayBye", "sayWorld"]
+        }
+      </code>
+    </pre>
+    <h3>Adding a Button</h3>
+    <p>After declaring a button, you can add the button to the global SnapEditor default config or a particular instance of SnapEditor.</p>
+    <pre class="prettyprint">
+      <code>
+        // Add to the global SnapEditor default config.
+        SnapEditor.config.buttons.push("say");
+        // Add to a particular instance of SnapEditor by overriding the default.
+        var editor = new SnapEditor.InPlace("editor", {
+          buttons: ["bold", "italic", "say"]
+        });
+        // Add to a particular instance of SnapEditor by appending to the default.
+        var editor = new SnapEditor.InPlace("editor", {
+          buttons: SnapEditor.config.buttons.concat(["say"])
+        });
+      </code>
+    </pre>
+    <h3>Styling</h3>
+    <p>The button will have a classname of the following form.</p>
+    <pre class="prettyprint">
+      <code>
+        snapeditor_toolbar_icon_&lt;snake case of button name&gt;
+      </code>
+    </pre>
+    <p>Due to CSS selector strength, to override the default icon, an extra classname needs to be used.</p>
+    <pre class="prettyprint">
+      <code>
+        .snapeditor_toolbar .snapeditor_toolbar_icon_&lts;snake case of button name&gt;
+      </code>
+    </pre>
+    <p>Icons should be 26px by 26px.</p>
+    <p>Example.</p>
+    <pre class="prettyprint">
+      <code>
+        // JavaScript
+        SnapEditor.buttons.sayHi = {
+          text: "Say Hi",
+          action: function (e) {
+            e.api.insert("&lt;p&gt;Hi&lt;/p&gt;");
+          }
+        }
+
+        // CSS
+        .snapeditor_toolbar .snapeditor_toolbar_icon_say_hi {
+          background-image: url("say_hi.png");
+        }
+      </code>
+    </pre>
+    <p>For a full example that includes <a href="#shortcuts">shortcuts</a>, go the <a href="#custom-buttons">Custom Buttons example</a>.</p>
+
+    <h2 id="shortcuts">Shortcuts</h2>
+    <p>Shortcuts are declared first, then added. Shortcuts are used to execute an <a href="#actions">action</a>.</p>
+    <p>Shortcut objects must contain the following keys.</p>
+    <pre class="prettyprint">
+      <code>key, action</code>
+    </pre>
+    <h3>key</h3>
+    <p><code>key</code> specifies the keyboard shortcut to be used. When specifying a combination of keys, separate the keys by a '+'.</p>
+    <p>The following are the available keys for use.</p>
+    <pre class="prettyprint">
+      <code>
+        alt, ctrl, shift,
+        0-9, a-z,
+        backspace, delete, esc, enter, space, tab,
+        up, down, left, right,
+        home, end, pageup, pagedown
+      </code>
+    </pre>
+    <h3>action</h3>
+    <p><code>action</code> refers to the name of the predefined action to execute.</p>
+    <h3>Declaration</h3>
+    <p>Declare shortcuts by adding the shortcut to the <code>SnapEditor.shortcuts</code> object.</p>
+    <pre class="prettyprint">
+      <code>
+        // Add an action to be used.
+        SnapEditor.actions.sayHi =  function (e) {
+          e.api.insert("&lt;p&gt;Hi&lt;/p&gt;");
+        };
+
+        // Declare the shortcut for the action.
+        SnapEditor.shortcuts.sayHi = {
+          key: "ctrl+h",
+          action: "sayHi"
+        }
+      </code>
+    </pre>
+    <h3>Adding a Shortcut</h3>
+    <p>After declaring a shortcut, you can add the shortcut to the global SnapEditor default config or a particular instance of SnapEditor.</p>
+    <pre class="prettyprint">
+      <code>
+        // Add to the global SnapEditor default config.
+        SnapEditor.config.shortcuts.push("sayHi");
+        // Add to a particular instance of SnapEditor by overriding the default.
+        // Do this with care as you will lose other shortcuts.
+        var editor = new SnapEditor.InPlace("editor", {
+          shortcut: ["sayHi"]
+        });
+        // Add to a particular instance of SnapEditor by appending to the default.
+        // This is preferred.
+        var editor = new SnapEditor.InPlace("editor", {
+          shortcut: SnapEditor.config.shortcuts.concat(["sayHi"])
+        });
+      </code>
+    </pre>
+    <p>If there is a button that references the same action as the shortcut, SnapEditor will automatically include the shortcut in the button's title.</p>
+
+    <h2>Dialogs</h2>
+    <p>SnapEditor provides a way to easily create dialogs that can be used for various purposes, such as being triggered by an <a href="#actions">action</a>.</p>
+    <p>Add dialogs to the <code>SnapEditor.dialogs</code> object.</p>
+    <pre class="prettyprint">
+      <code>
+        SnapEditor.dialogs.sayHi = {
+          html: "Hi"
+        }
+      </code>
+    </pre>
+    <p>Dialog objects may contain the following keys.</p>
+    <pre class="prettyprint">
+      <code>title, html, css, width, height, onSetup, onOpen, onClose</code>
+    </pre>
+    <h3>title (optional)</h3>
+    <p><code>title</code> is used for the title of the dialog box. If <code>title</code> is set to an empty string "", the title bar shows but with no title. If <code>title</code> is not specified or set to <code>null</code>, the title bar is not rendered.</p>
+    <h3>html (mandatory)</h3>
+    <p><code>html</code> is used for the content of the dialog. It can either be a string or a function that returns a string.</p>
+    <h3>css (optional)</h3>
+    <p><code>css</code> is used to style the dialog. It can either be a string or a function that returns a string.</p>
+    <h3>width (optional)</h3>
+    <p><code>width</code> is used to set the width of the content.</p>
+    <h3>height (optional)</h3>
+    <p><code>height</code> is used to set the height of the content.</p>
+    <h3>onSetup (optional)</h3>
+    <p><code>onSetup</code> is a function that gets called the first time the dialog is set up. The function gets a Dialog event object that contains a reference to the <a href="#dialog_object">dialog</a>. Note that there is no reference to the <a href="api.html">SnapEditor API</a> at this point as the setup is called in a general manner.</p>
+    <pre class="prettyprint">
+      <code>
+        {
+          onSetup: function (e) {
+            e.dialog.setTitle("All set up");
+          }
+        }
+      </code>
+    </pre>
+    <h3>onOpen (optional)</h3>
+    <p><code>onOpen</code> is a function that gets called whenever the dialog is opened. The function gets a Dialog event object that contains a reference to the <a href="#dialog_object">dialog</a> and the <a href="api.html">SnapEditor API</a>. It also gets any other arguments that are passed through when <a href="#dialog_open">opening a dialog</a>.</p>
+    <pre class="prettyprint">
+      <code>
+        {
+          onOpen: function (e, arg1, arg2) {
+            e.dialog.setTitle("Opening");
+            e.api.getContents();
+          }
+        }
+      </code>
+    </pre>
+    <h3>onClose (optional)</h3>
+    <p><code>onClose</code> is a function that gets called whenever the dialog is closed. The function gets a Dialog event object that contains a reference to the <a href="#dialog_object">dialog</a> and the <a href="api.html">SnapEditor API</a>.</p>
+    <pre class="prettyprint">
+      <code>
+        {
+          onClose function (e) {
+            e.dialog.setTitle("Closing");
+            e.api.getContents();
+          }
+        }
+      </code>
+    </pre>
+    <h3 id="dialog_object">Dialog Object</h3>
+    <p>The Dialog object has the following functions.</p>
+    <pre class="prettyprint">
+      <code>setTitle(), setHTML(), on(), find(), close()</code>
+    </pre>
+    <p></p>
+    <strong> setTitle()</strong>
+    <pre class="prettyprint">
+      <code>setTitle([title])</code>
+    </pre>
+    <p><code>setTitle()</code> sets the title of the dialog. If an empty string "" is given, the title bar shows but with no title. If no <code>title</code> is given or is null, the title bar is not rendered.</p>
+    <p></p>
+    <strong> setHTML()</strong>
+    <pre class="prettyprint">
+      <code>setHTML(html)</code>
+    </pre>
+    <p><code>setHTML()</code> sets the content of the dialog.</p>
+    <p></p>
+    <strong> on()</strong>
+    <pre class="prettyprint">
+      <code>on(selector, event, handler)</code>
+    </pre>
+    <p><code>on()</code> attaches the given <code>handler</code> to the given <code>event</code> on the elements inside the dialog content that match the given <code>selector</code>.</p>
+    <p>The <code>handler</code> is given a Dialog event object that contains a reference to the <a href="#dialog_object">dialog</a>, the <a href="api.html">SnapEditor API</a>, and the original DOM event.</p>
+    <pre class="prettyprint">
+      <code>
+        dialog.on("a.cancel", "click", function (e) {
+          e.domEvent.preventDefault();
+          e.api.getContents();
+          e.dialog.close();
+        });
+      </code>
+    </pre>
+    <p></p>
+    <strong> find()</strong>
+    <pre class="prettyprint">
+      <code>find(selector)</code>
+    </pre>
+    <p><code>find()</code> returns an array of all elements inside the dialog content that matches the given <code>selector</code>.</p>
+    <p><code>find()</code> returns an array even if there is a single match or no matches.</p>
+    <pre class="prettyprint">
+      <code>var inputs = dialog.find("input[type=text]");</code>
+    </pre>
+    <p></p>
+    <strong> close()</strong>
+    <pre class="prettyprint">
+      <code>close()</code>
+    </pre>
+    <p><code>close()</code> closes the dialog.</p>
+    <h3 id="dialog_open">Opening a Dialog</h3>
+    <pre class="prettyprint">
+      <code>api.openDialog("sayHi", e, arg1, arg2);</code>
+    </pre>
+    <p>The first argument to <code>api.openDialog()</code> is the name of the dialog you want to open.</p>
+    <p>The extra arguments are passed through to the action.</p>
+    <p>To keep things consistent, the first extra argument should always be a SnapEditor event object. This way, the dialog always has access to the API.</p>
+    <h3 id="dialog_close">Closing a Dialog</h3>
+    <pre class="prettyprint">
+      <code>
+        dialog.close();
+        api.closeDialog("sayHi");
+      </code>
+    </pre>
+    <p>The first way to close a dialog is to call the <code>close()</code> function of the <a href="#dialog_object">Dialog object</a> if you have one.</p>
+    <p>The other way to close a dialog is to call <code>api.closeDialog()</code>. The only argument to <code>api.closeDialog()</code> is the name of the dialog you want to close.</p>
+
+    <h2>Behaviours</h2>
+    <p>Behaviours affect the way SnapEditor works. They are triggered by attaching themselves to <a href="api.html#events">SnapEditor events</a>.</p>
+    <p>Behaviours are declared first, then added.</p>
+    <p>Behaviour objects are made up of SnapEditor event names without the <code>snapeditor</code> namespace. "on" is appended to the name to make it clear we're dealing with events. This makes up the key. The values are functions that will receive a SnapEditor event object which will contain a <a href="api.html">SnapEditor API</a> object as an argument.</p>
+    <pre class="prettyprint">
+      <code>
+        // We'll use the "snapeditor.activate" event as an example.
+        {
+          onActivate: function (e) {
+            console.log(e.api.getContents());
+          }
+        }
+      </code>
+    </pre>
+    <h3>Declaration</h3>
+    <p>Declare behaviours by adding the behaviour to the <code>SnapEditor.behaviours</code> object.</p>
+    <pre class="prettyprint">
+      <code>
+        SnapEditor.behaviours.say = {
+          onActivate: function (e) {
+            console.log("Activated with content: " + e.api.getContents());
+          },
+          onUpdate: function (e) {
+            // Reposition a custom dialog.
+          }
+        }
+      </code>
+    </pre>
+    <h3>Adding Behaviour</h3>
+    <p>After declaring a behaviour, you can add the behaviour to the global SnapEditor default config or a particular instance of SnapEditor.</p>
+    <pre class="prettyprint">
+      <code>
+        // Add to the global SnapEditor default config.
+        SnapEditor.config.behaviours.push("say");
+        // Add to a particular instance of SnapEditor by overriding the default.
+        // This is never recommended as the default behaviours of SnapEditor will be removed.
+        var editor = new SnapEditor.InPlace("editor", {
+          behaviour: ["say"]
+        });
+        // Add to a particular instance of SnapEditor by appending to the default.
+        // This is the proper way of adding behaviours.
+        var editor = new SnapEditor.InPlace("editor", {
+          behaviour: SnapEditor.config.behaviours.concat(["say"])
+        });
+      </code>
+    </pre>
+
+    <h2 id="custom-buttons">Custom Buttons</h2>
+    <p>Here is an example of a custom button.</p>
+    <pre class="prettyprint">
+      <code>
+        &lt;!DOCTYPE html&gt;
+        &lt;html&gt;
+          &lt;head&gt;
+            &lt;style&gt;
+              /* Set the icon for the custom button. */
+              .snapeditor_toolbar .snapeditor_toolbar_icon_say_hi {
+                background-image: url("say_hi.png");
+              }
+            &lt;/style&gt;
+          &lt;/head&gt;
+          &lt;body&gt;
+            &lt;div id="editor"&gt;
+              &lt;p&gt;This is an in-place editor!&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;script type="text/javascript" src="/snapeditor/snapeditor.js"&gt;&lt;/script&gt;
+            &lt;script type="text/javascript"&gt;
+              // Declare all the needed features.
+              SnapEditor.actions.sayHi = function (e) { e.api.insert("&lt;p&gt;Hi&lt;/p&gt;"); };
+              SnapEditor.buttons.sayHi = {
+                text: "Say Hi",
+                action: "sayHi"
+              };
+              SnapEditor.shortcuts.sayHi = {
+                key: "ctrl+alt+h",
+                action: "sayHi"
+              };
+
+              var inPlaceEditor = new SnapEditor.InPlace("editor", {
+                // Add the button and shortcut.
+                buttons: SnapEditor.config.buttons.concat(["sayHi"]),
+                shortcuts: SnapEditor.config.shortcuts.concat(["sayHi"])
+              });
+            &lt;/script&gt;
+          &lt;/body&gt;
+        &lt;/html&gt;
+      </code>
+    </pre>
+
+    <h2>Plugins</h2>
+    <p>As mentioned at the beginning of this doc, plugins are just a concept. There is no plugin object. Plugins are conceptual groupings of the above features.</p>
+    <p>One way to group the features together for a plugin is to put them into a single JavaScript file.</p>
+    <p>Because the features are all attached to global objects, we suggest namespacing all features with the name of your plugin as to not collide with other features.</p>
+    <p>Here is an example of a "Say" plugin in a file called <code>say.js</code>. We will be using "say" as the namespace. Note that this plugin uses all the features. However, you don't have to.</p>
+    <pre class="prettyprint">
+      <code>
+        // Declare the actions.
+        SnapEditor.actions.sayHi = function (e) { e.api.insert("&lt;p&gt;Hi&lt;/p&gt;"); };
+        SnapEditor.actions.sayBye = function (e) { e.api.insert("&lt;p&gt;Bye&lt;/p&gt;"); };
+        SnapEditor.actions.sayWorld = function (e) { e.api.insert("&lt;p&gt;World&lt;/p&gt;"); };
+
+        // Declare the buttons.
+        SnapEditor.buttons.sayHi = {
+          text: "Say Hi",
+          html: '&lt;span class="hi"&gt;Say Hi&lt;/span&gt;',
+          action: "sayHi"
+        };
+        SnapEditor.buttons.sayBye = {
+          text: "Say Bye",
+          html: '&lt;span class="bye"&gt;Say Bye&lt;/span&gt;',
+          action: "sayBye"
+        };
+        SnapEditor.buttons.sayWorld = {
+          text: "Say World",
+          html: '&lt;span class="world"&gt;Say World&lt;/span&gt;',
+          action: "sayWorld"
+        };
+        SnapEditor.buttons.say = {
+          text: "Say",
+          items: ["sayHi", "sayBye", "sayWorld"] // menu of buttons
+        };
+
+        // Declare behaviours.
+        SnapEditor.behaviours.say {
+          onActivate: function (e) {
+            console.log("From the Say plugin: Hi!");
+          },
+          onClean: function (e) {
+            console.log("From the Say plugin: I see you're cleaning the content!");
+          }
+        }
+      </code>
+    </pre>
+    <p>Note that shortcuts are not specified. This is recommended as you're not sure what other plugins the developer may decide to add. If you specify shortcuts in your plugin, it may collide with other ones that the developer is already using. We recommend that shortcuts be left to the developer to determine.</p>
+    <p>Now the developer can include it on the page.</p>
+    <pre class="prettyprint">
+      <code>
+        &lt;!DOCTYPE html&gt;
+        &lt;html&gt;
+          &lt;body&gt;
+            &lt;div id="editor"&gt;
+              &lt;p&gt;This is an in-place editor!&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;script type="text/javascript" src="/snapeditor/snapeditor.js"&gt;&lt;/script&gt;
+            &lt;script type="text/javascript" src="/snapeditor/plugins/say.js"&gt;&lt;/script&gt;
+            &lt;script type="text/javascript"&gt;
+              // Declare the shortcuts.
+              SnapEditor.shortcuts.sayHi = {
+                key: "ctrl+alt+h",
+                action: "sayHi"
+              };
+              SnapEditor.shortcuts.sayBye = {
+                key: "ctrl+alt+b",
+                action: "sayBye"
+              };
+              SnapEditor.shortcuts.sayWorld = {
+                key: "ctrl+alt+w",
+                action: "sayWorld"
+              };
+
+              // In this example, we've decided to add the features directly to the global SnapEditor default config.
+              SnapEditor.config.buttons.push("say");
+              SnapEditor.config.behaviours.push("say");
+              SnapEditor.config.shortcuts.push("sayHi");
+              SnapEditor.config.shortcuts.push("sayBye");
+              SnapEditor.config.shortcuts.push("sayWorld");
+
+              var inPlaceEditor = new SnapEditor.InPlace("editor");
+            &lt;/script&gt;
+          &lt;/body&gt;
+      </code>
+    </pre>
+    <script src="google-code-prettify/prettify.js"></script>
+    <script>
+      prettyPrint();
+    </script>
+  </body>
+</html>

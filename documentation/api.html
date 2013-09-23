@@ -1,0 +1,598 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>API (Beta)</title>
+    <link rel="stylesheet" href="google-code-prettify/sunburst.css" type="text/css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <h1>API (Beta)</h1>
+
+    <p> The SnapEditor API is currently in beta. We don't anticipate any major changes as we have been working on this for more than half a year but we don't guarantee it won't change. Use this at your own risk.</p>
+    <p> The API is the public interface to a particular SnapEditor instance.</p>
+
+    <h2>Access</h2>
+    <p> If you have a SnapEditor instance, you can access the API through the instance.</p>
+    <pre class="prettyprint">
+      <code>
+        var editor = new SnapEditor.InPlace("editor");
+        editor.api;
+      </code>
+    </pre>
+    <p> All callbacks are given a SnapEditor event object that contains the API.</p>
+    <pre class="prettyprint">
+      <code>
+        var editor = new SnapEditor.InPlace("editor", {
+          onSave: function (e) {
+            e.api;
+          }
+        });
+      </code>
+    </pre>
+
+    <h2>API Object</h2>
+    <p> The following attributes are available.</p>
+    <pre class="prettyprint">
+      <code>el, doc, win, config</code>
+    </pre>
+    <p> The following functions are available.</p>
+    <pre class="prettyprint">
+      <code>
+        // Event related
+        on(), off(), trigger()
+        // Enable related
+        enable(), disable(), isEnabled(),
+        // Content related
+        getContents(), setContents()
+        // DOM related
+        createElement(), createTextNode(), find()
+        // Dialog related
+        openDialog(), closeDialog(),
+        // Action related
+        activate(), deactivate(), update(), clean(), execAction()
+        // Range related
+        getRange(),
+        isValid(), isCollapsed(), isImageSelected(), isStartOfElement(), isEndOfElement(),
+        getParentElement(), getParentElements(), getText(), getCoordinates(),
+        collapse(), unselect(), keepRange(), moveBoundary(),
+        insert(), surroundContents(), delete(),
+        select(), selectElementContents(), selectEndOfElement(),
+        formatBlock(), formatInline(), align(), indent(), outdent(),
+        insertUnorderedList(), insertOrderedList(), insertHorizontalRule(), insertLink()
+      </code>
+    </pre>
+
+    <h2>Attributes</h2>
+    <h3> el</h3>
+    <pre class="prettyprint">
+      <code>api.el</code>
+    </pre>
+    <p> This is a reference to the DOM element that is editable.</p>
+    <h3> doc</h3>
+    <pre class="prettyprint">
+      <code>api.doc</code>
+    </pre>
+    <p> This is a reference to the document containing the editable element. This is especially useful when the editable element is inside an iframe.</p>
+    <h3> win</h3>
+    <pre class="prettyprint">
+      <code> api.win</code>
+    </pre>
+    <p> This is a reference to the window containing the eidtable element. This is especially useful when the editable element is inside an iframe.</p>
+    <h3> config</h3>
+    <pre class="prettyprint">
+      <code> api.config</code>
+    </pre>
+    <p> This is a reference to the config object passed in when initializing the SnapEditor instance.</p>
+
+    <h2>Event Related Functions</h2>
+    <h3> <code>on()</code></h3>
+    <pre class="prettyprint">
+      <code>
+        api.on(&lt;event type&gt;, &lt;callback function&gt;)
+        api.on(&lt;multiple events as an object&gt;)
+      </code>
+    </pre>
+    <p> <code>on()</code> is used to add event handlers to events triggered by the API.</p>
+    <p> The event type is a String. When the event type is triggered, the corresponding callback function is called. The callback function will receive a SnapEditor event object as the first argument that will contain the API, as well as any arguments passed through when calling <code>trigger()</code>.</p>
+    <p> <code>on()</code> also accepts an object where the keys are the event types and the values are the callback functions.</p>
+    <p> SnapEditor will trigger the following events.</p>
+    <pre id="events" class="prettyprint">
+      <code>
+        // SnapEditor events
+        "snapeditor.plugins_ready" - when all the plugins have been loaded
+        "snapeditor.activate" - when the user clicks into a SnapEditor instance to activate it
+        "snapeditor.ready" - when all activate callbacks are complete
+        "snapeditor.deactivate" - when the SnapEditor instance deactivates
+        "snapeditor.update" - triggered by api.update()
+        "snapeditor.clean" - triggered by api.clean()
+        // DOM events
+        // - document events are events that occur on the document
+        // - outside events are events that occur on the document but not in the editable element
+        "snapeditor.document_mouseover"
+        "snapeditor.document_mouseout"
+        "snapeditor.document_mousedown"
+        "snapeditor.document_mouseup"
+        "snapeditor.document_click"
+        "snapeditor.document_dblclick"
+        "snapeditor.document_keydown"
+        "snapeditor.document_keyup"
+        "snapeditor.document_keypress"
+        "snapeditor.outside_mouseover"
+        "snapeditor.outside_mousedown"
+        "snapeditor.outside_mouseup"
+        "snapeditor.outside_click"
+        "snapeditor.outside_dblclick"
+        "snapeditor.outside_keydown"
+        "snapeditor.outside_keyup"
+        "snapeditor.outside_keypress"
+      </code>
+    </pre>
+    <p> For SnapEditor DOM events, <code>outerPageX</code> and <code>outerPageY</code> are available which translates the mouse coordinates inside an iframe to coordinates relative to the outer document.</p>
+    <p> Other events not listed here may also be triggered. Plugins may trigger their own events and of course, you may also trigger your own events. See the details for <code>trigger()</code>.</p>
+    <p> Examples.</p>
+    <pre class="prettyprint">
+      <code>
+        api.on("snapeditor.activate", function (e) {
+          console.log("activate called", e.api.getContents());
+        });
+        api.on({
+          "snapeditor.activate", function (e) {
+            console.log("activate called", e.api.getContents());
+          },
+          "snapeditor.document_click", function (e) {
+            console.log("document click called", e.api.getContents());
+          }
+        })
+      </code>
+    </pre>
+    <h3> off()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.off(&lt;event type&gt;[, &lt;callback function&gt;])
+        api.off(&lt;multiple events in an object&gt;)
+      </code>
+    </pre>
+    <p> <code>off()</code> is used to remove event handlers from the API.</p>
+    <p> The event type is a String. When given a callback function, it removes that specific callback function for the event type.</p>
+    <p> When no callback function is given, all callback functions for the event type are removed. This is provided as a convenient way to remove all event handlers. However, we recommend that this be used with care as it will also remove all other event handlers that you may not have attached.</p>
+    <p> <code>off()</code> also accepts an object where the keys are the event types and the values are the callback functions.</p>
+    <p> Examples.</p>
+    <pre class="prettyprint">
+      <code>
+        var fn1 = function (e) {};
+        var fn2 = function (e) {};
+        // Remove a single event handler.
+        api.on("snapeditor.activate", fn1);
+        api.off("snapeditor.activate", fn1);
+        // Remove all event handlers.
+        api.on("snapeditor.activate", fn1);
+        api.on("snapeditor.activate", fn2);
+        api.off("snapeditor.activate");
+        // Remove multiple event handlers
+        api.on("snapeditor.activate", fn1);
+        api.on("snapeditor.deactivate", fn2);
+        api.off({
+          "snapeditor.activate": fn1,
+          "snapeditor.deactivate": fn2
+        });
+      </code>
+    </pre>
+    <h3> trigger()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.trigger(&lt;event type&gt;[, arguments])
+      </code>
+    </pre>
+    <p> <code>trigger()</code> is used to trigger the event handlers attached to the event type. The event handlers will receive a SnapEditor event object as their first argument that will contain the API. Extra arguments can be passed through to the event handlers using the arguments array. The event handler will see the extra arguments as separate arguments after the event that is passed through.</p>
+    <p> Event types can be any String. However, collisions can occur. To prevent this, we suggest namespacing custom events. A namespace is created using a '.'. The SnapEditor event system only supports one level of namespacing. An example would be "custom_namespace.activate".</p>
+    <p> Examples.</p>
+    <pre class="prettyprint">
+      <code>
+        // Trigger without arguments.
+        api.on("custom_namespace.activate", function (e) {
+          var html = e.api.getContents();
+        });
+        api.trigger("custom_namespace.activate");
+        // Trigger with arguments.
+        api.on("custom_namespace.show", function(e, message, status) {
+          var html = e.api.getContents();
+        });
+        api.trigger("custom_namespace.show", ["Hello World", 200]);
+      </code>
+    </pre>
+
+    <h2>Enable Related Functions</h2>
+    <h3> enable()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.enable()
+      </code>
+    </pre>
+    <p> <code>enable()</code> enables the particular instance of SnapEditor. By default, each instance of SnapEditor is enabled.</p>
+    <h3> disable()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.disable()
+      </code>
+    </pre>
+    <p> <code>disable()</code> disables the particular instance of SnapEditor. This means the outline on hover does not show up and clicking inside this instance of SnapEditor does nothing.</p>
+    <h3> isEnabled()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.isEnabled()
+      </code>
+    </pre>
+    <p> <code>isEnabled()</code> returns true if the particular instance of SnapEditor is enabled. Otherwise, it returns false.</p>
+
+    <h2>Content Related Functions</h2>
+    <h3> getContents()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.getContents()
+      </code>
+    </pre>
+    <p> <code>getContents()</code> returns the HTML contents of the editor as a String. Use this to get the contents instead of using innerHTML of the editable element itself because SnapEditor runs certains check before returning the content.</p>
+    <p> Example.</p>
+    <pre class="prettyprint">
+      <code>
+        // Do this.
+        var html = api.getContents();
+        // Don't do this.
+        var html = api.el.innerHTML;
+      </code>
+    </pre>
+    <h3> setContents()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.setContents(&lt;HTML String&gt;)
+      </code>
+    </pre>
+    <p> <code>setContents()</code> takes the given HTML String and sets the contents of the editor. Use this to set the contents instead of using innerHTML of the editable element itself because SnapEditor runs certains check before setting the content</p>
+    <p> Example.</p>
+    <pre class="prettyprint">
+      <code>
+        // Do this.
+        api.setContents("Hello World");
+        // Don't do this.
+        api.el.innerHTML = "Hello World";
+      </code>
+    </pre>
+
+    <h2>DOM Related Functions</h2>
+    <h3> createElement()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.createElement(&lt;tag&gt;)
+      </code>
+    </pre>
+    <p> <code>createElement()</code> is a shortcut to the document's <code>createElement()</code>. Use this when creating elements to be inserted into SnapEditor instead of the document's <code>createElement()</code>. This is useful to prevent errors when inserting elements into an iframe.</p>
+    <p> Example.</p>
+    <pre class="prettyprint">
+      <code> var el = api.createElement("div");</code>
+    </pre>
+    <h3> createTextNode()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.createTextNode(&lt;text&gt;)
+      </code>
+    </pre>
+    <p> <code>createTextNode()</code> is a shortcut to the document's <code>createTextNode()</code>. Use this when creating textnodes to be inserted into SnapEditor instead of the document's <code>createTextNode()</code>. This is useful to prevent errors when inserting textnodes into an iframe.</p>
+    <p> Example.</p>
+    <pre class="prettyprint">
+      <code> var textnode = api.createTextNode("text");</code>
+    </pre>
+    <h3> find()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.find(&lt;selector&gt;)
+      </code>
+    </pre>
+    <p> <code>find()</code> finds all the elements that match the given CSS selector within the editable element. The matched elements are returned in an array even when there is only a single match. An empty array is returned when there are no matches.</p>
+    <p> Examples.</p>
+    <pre class="prettyprint">
+      <code>
+        // No match.
+        var empty = api.find("this doesn't exist"); // []
+        // Single match.
+        var single = api.find("#single"); // [&lt;element&gt;]
+        // Multiple matches.
+        var multiple = api.find("p"); // [&lt;element&gt;, &lt;element&gt;, &lt;element&gt;]
+      </code>
+    </pre>
+
+    <h2>Dialog Related Functions</h2>
+    <h3> openDialog()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.openDialog(&lt;name&gt;, &lt;SnapEditor Event Object&gt;, [extra args])
+      </code>
+    </pre>
+    <p> For more details, check out the <a href="plugins.html#dialog_open">Dialog docs</a>.</p>
+    <h3> closeDialog()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.closeDialog(&lt;name&gt;)
+      </code>
+    </pre>
+    <p> For more details, check out the <a href="plugins.html#dialog_close">Dialog docs</a>.</p>
+
+    <h2>Action Related Functions</h2>
+    <h3> activate()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.activate()
+      </code>
+    </pre>
+    <p> <code>activate()</code> starts the activation procedure of the editor and places the cursor at the beginning of the content.</p>
+    <h3> deactivate()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.deactivate()
+      </code>
+    </pre>
+    <p> <code>deactivate()</code> starts the deactivation procedure of the editor.</p>
+    <h3> update()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.update()
+      </code>
+    </pre>
+    <p> <code>update()</code> should be called when there are any changes to the contents of the editor. It lets the editor know that it needs to kick off the update process, such as updating the snap elements.</p>
+    <h3> clean()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.clean([start element, end element])
+      </code>
+    </pre>
+    <p> <code>clean()</code> triggers the cleaner.</p>
+    <p> When no arguments are passed in, the cleaner cleans the area where the current selection is.</p>
+    <p> When start element and end element are given, the cleaner cleans the area from the start element to the end element.</p>
+    <p> Note that the cleaner may decide to clean more than specified. The selection, start element, and end element are only hints.</p>
+    <h3> execAction()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.execAction(&lt;name&gt;, &lt;SnapEditor Event Object&gt;, [extra args])
+      </code>
+    </pre>
+    <p> For more details, check out the <a href="plugins.html#actions">Action docs</a>.</p>
+
+    <h2>Range Related Functions</h2>
+    <h3> getRange()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.getRange([element])
+      </code>
+    </pre>
+    <p> When <code>getRange()</code> is called without arguments, a SnapEditor range object is returned that represents the current selection.</p>
+    <p> When <code>getRange()</code> is called with a DOM element, a SnapEditor range object is returned that represents the element.</p>
+    <p> This is useful when you want to save the range for later use.</p>
+    <p> Examples.</p>
+    <pre class="prettyprint">
+      <code>
+        // Get the current selection.
+        api.getRange();
+        // Get the range that represents the first &lt;p&gt;.
+        var ps = api.find("p");
+        api.getRange(ps[0]);
+      </code>
+    </pre>
+    <h3> isValid()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.isValid()
+      </code>
+    </pre>
+    <p> <code>isValid()</code> returns true when the current selection is valid. Usually, <code>isValid()</code> will return false when no selection has been made or the selection has been removed.</p>
+    <h3> isCollapsed()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.isCollapsed()
+      </code>
+    </pre>
+    <p> <code>isCollapsed()</code> returns true when the selection is collapsed. A selection is collapsed when it looks like a caret. That is, a selection is collapsed when the start and end of the selection is the same. <code>isCollapsed()</code> returns false otherwise.</p>
+    <h3> isImageSelected()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.isImageSelected()
+      </code>
+    </pre>
+    <p> <code>isImageSelected()</code> returns true when an image is currently selected. <code>isImageSelected()</code> returns false otherwise.</p>
+    <h3> isStartOfElement()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.isStartOfElement(&lt;element&gt;)
+      </code>
+    </pre>
+    <p> <code>isStartOfElement()</code> returns true if the selection is at the start of the element. The selection is at the start if there are no other width-generating characters in between the start of the element and the selection. <code>isStartOfElement()</code> returns false otherwise.</p>
+    <h3> isEndOfElement()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.isEndOfElement(&lt;element&gt;)
+      </code>
+    </pre>
+    <p> <code>isEndOfElement()</code> returns true if the selection is at the end of the element. The selection is at the end if there are no other width-generating characters in between the end of the element and the selection. <code>isEndOfElement()</code> returns false otherwise.</p>
+    <h3> getParentElement()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.getParentElement([selector])
+      </code>
+    </pre>
+    <p> When no arguments are passed to <code>getParentElement()</code>, it returns the closest common ancestor. When the selection is collapsed, the closest common ancestor is the immediate parent element that contains the selection. When the selection is not collapsed, the closest common ancestor is the parent element that encompasses the entire selection.</p>
+    <p> When a CSS selector is given, <code>getParentElement()</code> returns the closest common ancestor that matches.</p>
+    <p> If no match can be found before inside the editable element, <code>null</code> is returned.</p>
+    <p> Examples.</p>
+    <pre class="prettyprint">
+      <code>
+        // Get the parent element.
+        var parent = api.getParentElement();
+        // Get the parent element that matches.
+        var matchParent = api.getParentElement("table");
+        // No match returns null.
+        var noParent = api.getParentElement("no match");
+      </code>
+    </pre>
+    <h3> getParentElements()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.getParentElements([selector])
+      </code>
+    </pre>
+    <p> <code>getParentElements()</code> behaves similarly to <code>getParentElement()</code>. The only difference is that it returns an array of 2 elements. The first element represents the closest common ancestor to the start of the selection. The second element represents the closest common ancestor to the end of the selection.</p>
+    <h3> getText()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.getText()
+      </code>
+    </pre>
+    <p> <code>getText()</code> returns the text of the current selection. Note that this only returns the text. It does not return the HTML.</p>
+    <h3> getCoordinates()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.getCoordinates()
+      </code>
+    </pre>
+    <p> <code>getCoordinates()</code> returns the coordinates of the selection as an object. The coordinates represent a bounding box around the selection. Note that the coordinates are relative to the outermost document. This is useful when dealing with iframes.</p>
+    <pre class="prettyprint">
+      <code>
+        {
+          top: &lt;Integer&gt;,
+          bottom: &lt;Integer&gt;,
+          left: &lt;Integer&gt;,
+          right: &lt;Integer&gt;
+        }
+      </code>
+    </pre>
+    <p> Note that in IE8, the left and right are not always the left and right of the bounding box. Instead, the left is sometimes the left of the start of the selection and the right is sometimes the right of the end of the selection. This is unfortunately a problem with IE8 itself.</p>
+    <h3> collapse()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.collapse(&lt;true/false&gt;)
+      </code>
+    </pre>
+    <p> When true is passed to <code>collapse()</code> the current selection is collapsed to the start of the selection.</p>
+    <p> When false is passed to <code>collapse()</code> the current selection is collapsed to the end of the selection.</p>
+    <h3> unselect()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.unselect()
+      </code>
+    </pre>
+    <p> <code>unselect()</code> unselects the current selection. Be careful with this because a lot of SnapEditor functions require a selection to be present to work properly. This is provided because there are certain cases where unselecting is required. However, be sure to select something before your code finishes executing.</p>
+    <h3> keepRange()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.keepRange(&lt;function&gt;)
+      </code>
+    </pre>
+    <p> <code>keepRange()</code> saves the current selection, executes the given function, then reselects the selection.</p>
+    <p> In order to keep the range, a span is inserted at the start of the selection and another span is inserted at the end of the selection. The function will receive the start and end spans as arguments.</p>
+    <p> Because the spans are required to reselect the selection, the function must be careful not to remove these spans. However, they may be moved around. Note though that if the spans are moved, the reselection may not resemble the original selection.</p>
+    <p> Example.</p>
+    <pre class="prettyprint">
+      <code>
+        // Remove the starting textnode while keeping the range.
+        api.keepRange(function (startEl, endEl) {
+          var nextEl = startEl.nextSibling;
+          if(nextEl && nextEl.nodeType === 3) {
+            nextEl.parentNode.removeChild(nextEl);
+          }
+        });
+      </code>
+    </pre>
+    <h3> moveBoundary()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.moveBoundary(&lt;boundaries&gt;, &lt;element&gt;)
+      </code>
+    </pre>
+    <p> <code>moveBoundary()</code> moves the start or end of the selection to the start or end of the given element.</p>
+    <p> The boundaries argument tells which boundary of the selection to move and which boundary of the element to move to. The first start/end refers to the boundary of the selection and the second start/end refers to the boundary of the element. The following are the possible values of the boundaries argument. Note that these values are case insensitive.</p>
+    <pre class="prettyprint">
+      <code>
+        "starttostart", "starttoend", "endtostart", "endtoend"
+      </code>
+    </pre>
+    <p> Example.</p>
+    <pre class="prettyprint">
+      <code>
+        // This moves the current selection's end to the start of the given element.
+        var lastP = api.find("p").pop();
+        api.moveBoundary("endtostart", lastP);
+      </code>
+    </pre>
+    <h3> insert()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.insert(&lt;HTML or DOM element&gt;)
+      </code>
+    </pre>
+    <p> <code>insert()</code> inserts the given HTML string or DOM element.</p>
+    <p> Note that when given a DOM element, the actual DOM element is not inserted. The string representation of the element is inserted instead. Hence, do not expect to be able to reference the inserted content using the original DOM element.</p>
+    <p> Examples.</p>
+    <pre class="prettyprint">
+      <code>
+        // Insert HTML.
+        api.insert("&lt;bold&gt;This is bold&lt;/bold&gt;");
+        // Insert a DOM element.
+        var el = api.createElement("p");
+        el.innerHTML = "Hello";
+        api.insert(el);
+        // The following will not actually modify the inserted &lt;p&gt; in the editor.
+        el.innerHTML = "World";
+      </code>
+    </pre>
+    <h3> surroundContents()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.surroundContents(&lt;element&gt;)
+      </code>
+    </pre>
+    <p> <code>surroundContents()</code> wraps the currently selected content with the given element.</p>
+    <h3> delete()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.delete()
+      </code>
+    </pre>
+    <p> <code>delete()</code> deletes the contents of the current selection.</p>
+    <h3> select()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.select([SnapEditor range object or DOM element])
+      </code>
+    </pre>
+    <p> When <code>select()</code> is called without an argument, it selects the current selection.</p>
+    <p> When <code>select()</code> is called with a SnapEditor range object, it selects the given range.</p>
+    <p> When <code>select()</code> is called with a DOM element, it selects the the given DOM element.</p>
+    <p> Examples.</p>
+    <pre class="prettyprint">
+      <code>
+        // Select the current selection.
+        api.select();
+        // Select a saved range.
+        var range = api.getRange();
+        api.select(range);
+        // Select a DOM element.
+        var firstP = api.find("p")[0];
+        api.select(firstP);
+      </code>
+    </pre>
+    <h3> selectElementContents()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.selectElementContents(&lt;element&gt;)
+      </code>
+    </pre>
+    <p> <code>selectElementContents()</code> selects the contents of the given element.</p>
+    <h3> selectEndOfElement()</h3>
+    <pre class="prettyprint">
+      <code>
+        api.selectEndOfElement(&lt;element&gt;)
+      </code>
+    </pre>
+    <p> <code>selectEndOfElement()</code> places the selection at the end of the given element.</p>
+    <script src="google-code-prettify/prettify.js"></script>
+    <script>
+      prettyPrint();
+    </script>
+  </body>
+</html>

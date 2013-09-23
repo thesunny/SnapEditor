@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Installation</title>
+    <link rel="stylesheet" href="google-code-prettify/sunburst.css" type="text/css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <h1>Installation</h1>
+
+    <h2>Sourcing</h2>
+    <p>Place the <code>snapeditor/</code> directory somewhere publicly accessible by your application. For example, in a <code>public/</code> directory.</p>
+    <p>Assuming Snapeditor code can be reached at <code>/snapeditor/snapeditor.js</code> you must source it before using SnapEditor.</p>
+    <pre class="prettyprint">
+      <code>&lt;script type="text/javascript" src="/snapeditor/snapeditor.js"&gt;&lt;/script&gt;</code>
+    </pre>
+
+    <h2>Initialization</h2>
+    <p>To initialize SnapEditor, create a new SnapEditor.InPlace or SnapEditor.Form object. Note that the object is available, but SnapEditor doesn't initialize until the document is ready.</p>
+    <pre class="prettyprint">
+      <code>
+        new SnapEditor.InPlace(&lt;id or DOM element&gt;, &lt;config&gt;)
+        new SnapEditor.Form(&lt;id or DOM element&gt;, &lt;config&gt;)
+      </code>
+    </pre>
+    <p>For more details on the possible options, refer to the <a href="configuration.html">Config</a> docs.</p>
+
+    <h2>In-Place SnapEditor</h2>
+    <p>Wrap the content you wish to make editable in a <code>div</code> with an <code>id</code>.</p>
+    <pre class="prettyprint">
+      <code>
+        &lt;div id="editor"&gt;
+          &lt;p&gt;This inner content is all editable including the p tags, but not the div tag.&lt;/p&gt;
+        &lt;/div&gt;
+      </code>
+    </pre>
+    <p>Add some JavaScript.</p>
+    <pre class="prettyprint">
+      <code>
+        &lt;script type="text/javascript"&gt;
+          var inPlaceEditor = new SnapEditor.InPlace("editor");
+        &lt;/script&gt;
+      </code>
+    </pre>
+    <p>Full example.</p>
+    <pre class="prettyprint">
+      <code>
+        &lt;!DOCTYPE html&gt;
+        &lt;html&gt;
+          &lt;body&gt;
+            &lt;div id="editor"&gt;
+              &lt;p&gt;This is an in-place editor!&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;script type="text/javascript" src="/snapeditor/snapeditor.js"&gt;&lt;/script&gt;
+            &lt;script type="text/javascript"&gt;
+              // "editor" is the id of the div.
+              var inPlaceEditor = new SnapEditor.InPlace("editor");
+            &lt;/script&gt;
+          &lt;/body&gt;
+        &lt;/html&gt;
+      </code>
+    </pre>
+
+    <h2>Form SnapEditor</h2>
+    <p>Add an <code>id</code> to the <code>textarea</code> you want to make editable. SnapEditor will automatically hide the <code>textarea</code> and insert itself. The <code>textarea</code> will be automatically updated whenever SnapEditor loses focus. You can continue submitting your form like normal without any modifications to the form.</p>
+    <p>The size of the editor is controlled by the width and height placed on the <code>textarea</code>. The width and height can also be specified in the <code>config</code> which will override the textarea dimensions. Also, relative widths can only be specified in the <code>config</code>. For more information, check out the <a href="configuration.html">Configuration</a> docs.</p>
+    <pre class="prettyprint">
+      <code>
+        &lt;textarea id="editor" name="content" style="width: 600px; height: 400px;"&gt;
+          &lt;p&gt;This content will be editable&lt;/p&gt;
+        &lt;/textarea&gt;
+      </code>
+    </pre>
+    <p>Add some JavaScript.</p>
+    <pre class="prettyprint">
+      <code>
+        &lt;script type="text/javascript"&gt;
+          var formEditor = new SnapEditor.Form("editor");
+        &lt;/script&gt;
+      </code>
+    </pre>
+    <p>Full example.</p>
+    <pre class="prettyprint">
+      <code>
+        &lt;!DOCTYPE html&gt;
+        &lt;html&gt;
+          &lt;body&gt;
+            &lt;form&gt;
+              &lt;textarea id="editor" name="content" style="width: 600px; height: 400px;"&gt;
+                &lt;p&gt;This content will be editable&lt;/p&gt;
+              &lt;/textarea&gt;
+              &lt;input type="submit" value="Save" /&gt;
+            &lt;/form&gt;
+            &lt;script type="text/javascript" src="/snapeditor/snapeditor.js"&gt;&lt;/script&gt;
+            &lt;script type="text/javascript"&gt;
+              // "editor" is the id of the textarea.
+              var formEditor = new SnapEditor.Form("editor");
+            &lt;/script&gt;
+          &lt;/body&gt;
+        &lt;/html&gt;
+      </code>
+    </pre>
+    <script src="google-code-prettify/prettify.js"></script>
+    <script>
+      prettyPrint();
+    </script>
+  </body>
+</html>

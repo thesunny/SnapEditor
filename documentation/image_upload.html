@@ -1,0 +1,123 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Image Upload</title>
+    <link rel="stylesheet" href="google-code-prettify/sunburst.css" type="text/css" media="screen" charset="utf-8">
+  </head>
+  <body>
+    <h1>Image Upload</h1>
+
+    <p> The <code>image</code> configuration must be set.</p>
+    <pre class="prettyprint">
+      <code>
+        image: {
+          insertByUpload: true,
+          uploadURL: "/images",
+          uploadParams: { param1: "abc123" }
+        }
+      </code>
+    </pre>
+
+    <h2> Enable</h2>
+    <p> The <code>insertByUpload</code> configuration specifies whether image uploads are enabled. By default, this is set to <code>false</code>. To enable image uploads, it must be set to <code>true</code>.</p>
+
+    <h2> Upload URL</h2>
+    <p> The <code>uploadURL</code> configuration specifies the URL to upload images to.</p>
+    <pre class="prettyprint">
+      <code> uploadURL: "/images"</code>
+    </pre>
+
+    <h2> Upload Parameters (optional)</h2>
+    <p> The <code>uploadParams</code> configuration specifies any custom parameters to pass to the server when uploading images. The default is <code>{}</code>.</p>
+    <pre class="prettyprint">
+      <code> uploadParams: { param1: "abc123" }</code>
+    </pre>
+
+    <h2> Client-side</h2>
+    <p> Depending on <a href="#browser_support">browser support</a>, multiple images may be uploaded at one time. If the <a href="#browser_support">browser supports</a> it, each image is resized to fit within the width of SnapEditor. Depending on <a href="#browser_support">browser support</a>, the upload will either be via XHR or IFrame transport.</p>
+    <p> The POST contains the following data.</p>
+    <pre class="prettyprint">
+      <code class="language-html">
+        file: The actual file. This also contains the filename.
+        max_width: The width of the editor in case the server wants to do its own resizing.
+        param1: Custom param 1 using the uploadParams configuration.
+        param2: Custom param 2 using the uploadParams configuration.
+      </code>
+    </pre>
+
+    <h2> Server-side</h2>
+    <p> SnapEditor concentrates on creating the best online HTML5 WYSIWYG text editor, hence we do not provide a server-side implementation of the upload API for every single language. That said, we will try our best to help out.</p>
+    <p> On the server-side, the POST must be handled at the URL specified by the <code>uploadURL</code> configuration.</p>
+    <p> These are the general steps to handle the POST request.</p>
+    <ol>
+      <li> Ensure the request is a POST and contains at least <code>file</code> data. If not, return an <a href="#error_codes">error response</a>.</li>
+      <li> Ensure the filename is valid. We suggest the regular expression of <code>/^[^\/]+[.](gif|jpg|jpeg|png)$/i</code>. If not, return an <a href="#error_codes">error response</a>.</li>
+      <li> Ensure the file is not too large. If not, return an <a href="#error_codes">error response</a>.</li>
+      <li> Save the image.</li>
+      <li> Generate the public URL where the image can be accessed from the browser.</li>
+      <li> Return a success response with the public URL and <a href="#content_type">the correct Content-Type</a>.</li>
+    </ol>
+    <p> Responses should be a JSON object with the following format.</p>
+    <pre class="prettyprint">
+      <code>
+        {
+          "status_code": 200,
+          "message": "Success",
+          "url": "http://example.com/images/image.png" // url not required on error
+        }
+      </code>
+    </pre>
+    <h3 id="content_type">Internet Explorer 8 and 9</h3>
+    <p> Internet Explorer 8 and 9 treat the JSON response as a file to download.</p>
+    <p> On a server, a JSON response should have a <code>Content-Type</code> of <code>application/json</code>. This is fine if the request was via XHR. However, Internet Explorer 8 and 9 uses IFrame transport. This is what causes the download.</p>
+    <p> To fix this problem, the <code>Content-Type</code> of the server response must be tweaked if the request was not via XHR.</p>
+    <p> If the request is not via XHR, simply set the <code>Content-Type</code> to <code>text/plain</code> or <code>text/html</code> instead of <code>application/json</code>.</p>
+    <h3 id="error_codes">Error Codes</h3>
+    <p> Here is a list of status codes and possible messages to return. The exact message returned is up to you.</p>
+    <ul>
+      <li> 200 - "Success"</li>
+      <li> 400 - "Bad Request"</li>
+      <li> 403 - "Invalid Filename"</li>
+      <li> 405 - "File Too Large"</li>
+    </ul>
+    <h3> Ruby Gem</h3>
+    <p> For those that use Ruby, we have written a Rack middleware which handles simple server-side uploading and is distributed as a gem under the name "snapimage". It also comes with a pre-built image server. For more information, visit the <a href="https://github.com/snapeditor/snapimage">SnapImage homepage</a>. We hope to support more languages in the future.</p>
+
+    <h2 id="browser_support">Browser Support</h2>
+    <h3> Multiple Uploads</h3>
+    <ul>
+      <li> Firefox</li>
+      <li> Chrome</li>
+      <li> Safari (desktop)</li>
+      <li> Microsoft Internet 10+</li>
+    </ul>
+    <h3> Single Upload</h3>
+    <ul>
+      <li> Microsoft Internet 8</li>
+      <li> Microsoft Internet 9</li>
+    </ul>
+    <h3> Client-side Resize</h3>
+    <ul>
+      <li> Firefox</li>
+      <li> Chrome</li>
+      <li> Safari (desktop)</li>
+      <li> Microsoft Internet 10+</li>
+    </ul>
+    <h3> XHR</h3>
+    <ul>
+      <li> Firefox</li>
+      <li> Chrome</li>
+      <li> Safari (desktop)</li>
+      <li> Microsoft Internet 10+</li>
+    </ul>
+    <h3> IFrame Transport</h3>
+    <ul>
+      <li> Microsoft Internet 8</li>
+      <li> Microsoft Internet 9</li>
+    </ul>
+    <script src="google-code-prettify/prettify.js"></script>
+    <script>
+      prettyPrint();
+    </script>
+  </body>
+</html>
