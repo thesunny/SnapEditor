@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.form", "core/assets", "styles/cssreset-min.css", "styles/snapeditor_iframe.css", "core/iframe.snapeditor", "core/toolbar/toolbar.static"], ($, Helpers, Editor, Defaults, Assets, CSSReset, CSS, IFrame, Toolbar) ->
   class FormEditor extends Editor
     constructor: (textarea, config = {}) ->

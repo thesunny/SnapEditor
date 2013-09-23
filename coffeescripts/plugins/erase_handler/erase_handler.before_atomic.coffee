@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 # Handles the annoying spans that Safari adds when it merges lines together
 # after deleting content through the delete or backspace button.
 #

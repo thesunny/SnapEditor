@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 # NOTE: There is no spec file for this file because the cut/copy/paste
 # functionalities cannot be copied using execCommand. They are prohibited by
 # the browser unless the user allows it through his/her preferences. Therefore,

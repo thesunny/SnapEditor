@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   paragraphTags = ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6"]
   listTags = ["ul, ol, li"]

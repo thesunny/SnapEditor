@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 # The Range object attempts to normalize browser differences.
 # W3C browsers (including IE9+) use a DOM-base model to handle ranges.
 # IE7/8 browsers use a text-based model to handle ranges.

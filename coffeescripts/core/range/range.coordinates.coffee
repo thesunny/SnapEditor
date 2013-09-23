@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 define ["core/browser", "core/range/range.coordinates.ie7", "core/range/range.coordinates.ie8", "core/range/range.coordinates.ie9", "core/range/range.coordinates.ie10", "core/range/range.coordinates.webkit", "core/range/range.coordinates.gecko1", "core/range/range.coordinates.gecko"], (Browser, IE7Coordinates, IE8Coordinates, IE9Coordinates, IE10Coordinates, WebkitCoordinates, Gecko1Coordinates, GeckoCoordinates) ->
   if Browser.isIE7
     Coordinates = IE7Coordinates

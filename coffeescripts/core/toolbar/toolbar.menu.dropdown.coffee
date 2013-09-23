@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu.submenu", "core/toolbar/toolbar.menu.flyout"], ($, Helpers, Submenu, Flyout) ->
   class Dropdown extends Submenu
     getSubmenuClass: ->

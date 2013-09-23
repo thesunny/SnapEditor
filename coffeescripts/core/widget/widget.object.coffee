@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 # json2 is needed for IE7. IE7 does not implement JSON natively.
 # NOTE: json2 does not follow AMD. The J is needed to swallow up the undefined
 # given by json2.

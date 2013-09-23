@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
   SnapEditor.actions.print = (e) ->
     printWin = window.open("","_blank","width=1000,height=650,left=400,top=100,menubar=yes,toolbar=no,location=no,scrollbars=yes")

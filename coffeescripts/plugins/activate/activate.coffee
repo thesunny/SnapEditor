@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 # This plugin controls how the editor will be activated.
 define ["jquery.custom", "core/browser", "core/helpers", "plugins/activate/activate.others", "plugins/activate/activate.ie"], ($, Browser, Helpers, Others, IE) ->
   activate =

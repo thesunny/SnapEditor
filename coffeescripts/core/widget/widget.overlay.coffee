@@ -1,3 +1,5 @@
+# Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
+# For licensing, see COPYING and COPYING.LESSER.
 # This is an overlay for the widget. It adds the overlay to the top of the
 # widget and is absolutely positioned to cover the widget.
 #
