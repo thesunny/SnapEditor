@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 define ["jquery.custom", "core/exec_command/exec_command.gecko", "core/browser", "core/helpers", "core/exec_command/exec_command.style_block"], ($, Gecko, Browser, Helpers, StyleBlock) ->
   class ExecCommand
     constructor: (@editor) ->

@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 define ["core/browser", "core/range/range.w3c", "core/range/range.ie"], (Browser, W3C, IE) ->
   # Add browser specific functions.
   # TODO: Figure out how to require either W3C or IE. This solution doesn't

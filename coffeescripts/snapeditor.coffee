@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 # This require is specific to almond.js and not require.js.
 # The third argument is the relName. We don't need it so we set it to null.
 # The fourth argument is set to true for loading the editor synchronously.

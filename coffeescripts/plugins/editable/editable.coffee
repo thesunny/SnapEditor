@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/editable.others", "plugins/editable/editable.ie"], ($, Browser, Helpers, Others, IE) ->
   editable =
     # Turn on editing in the div. This includes preserving the caret position

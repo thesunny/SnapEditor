@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/assets", "core/range", "core/exec_command/exec_command", "core/keyboard", "core/whitelist/whitelist", "core/widget/widgets_manager", "core/api", "core/toolbar/toolbar.button"], ($, Browser, Helpers, Events, Assets, Range, ExecCommand, Keyboard, Whitelist, WidgetsManager, API, ToolbarButton) ->
 # NOTE: Removed from the list above. May need it later.
 # "core/contexts"

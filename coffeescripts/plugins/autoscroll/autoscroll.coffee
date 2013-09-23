@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 # TODO: Autoscroll is not working right now when you hold down the shift key
 # while selecting.
 define ["jquery.custom"], ($) ->

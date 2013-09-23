@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core/browser"], ($, Styles, Browser) ->
   class Displayer
     constructor: (toolbar, el, @editor) ->

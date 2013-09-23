@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 # This is used to trigger events from button clicks and select or text input
 # changes. It looks for a "data-action" attribute on the target and triggers
 # that event. This makes it so that there is little wiring code needed and it

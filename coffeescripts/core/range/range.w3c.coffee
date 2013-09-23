@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
-# For licensing, see COPYING and COPYING.LESSER.
+# For licensing, see LICENSE.
 # This returns an object that contains static and instance functions. The
 # expected usage is to extend a class with the static functions and to include 
 # the instance functions.
