@@ -37,6 +37,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @prepareConfig()
 
       # Create needed objects.
+      # TODO: It's possible that @assets isn't used anymore and can be removed
+      # because we include assets directly now -SH
       @assets = new Assets(@config.path or SnapEditor.getPath())
       @whitelist = new Whitelist(@config.cleaner.whitelist)
       @keyboard = new Keyboard(this, "keydown")
@@ -291,11 +293,15 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
     attachDOMEvents: =>
       @$el.on(event, @handleDOMEvent) for event in @domEvents
       @addIFrameShims()
+      # TODO: We can probably attach the event directly now and remove the function call -SH
+      # This is because the shims take care of clicking in iframes
       @onDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
     detachDOMEvents: =>
       @$el.off(event, @handleDOMEvent) for event in @domEvents
       @removeIFrameShims()
+      # TODO: We can probably detach the event directly now and remove the function call -SH
+      # This is because the shims take care of clicking in iframes
       @offDocument(event, @handleDocumentEvent) for event in @outsideDOMEvents
 
     ############################################################################
