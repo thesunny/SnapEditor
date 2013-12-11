@@ -12,10 +12,16 @@ define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
     h6: text: SnapEditor.lang.h6, html: getHTML(6), shortcut: "ctrl+alt+6"
   )
   SnapEditor.addStyleList("styleBlock", SnapEditor.lang.styleBlock, "style-block")
-  # Create aliases for style buttons.
+  # These are just aliases to simply named buttons. They are here because
+  # when we use SnapEditor.addStyleButtons, it prefixes the button names so
+  # that they don't conflict with pre-existing actions; however, we want
+  # buttons like "p" and "h1" to be available with a simple name. This makes
+  # that possible
   for button, i in ["p", "h1", "h2", "h3", "h4", "h5", "h6"]
     SnapEditor.buttons[button] = SnapEditor.buttons[SnapEditor.getStyleKey(button)]
 
+  # This is styling for the toolbar. .snapeditor_style_block_h1 is automatically,
+  # etc. are automatically set based on the style button name.
   styles = """
     div.snapeditor_toolbar_menu_style_block { width: 275px; }
     .snapeditor_style_block_h1 { margin: 0; padding: 0; font-size: 200%; }

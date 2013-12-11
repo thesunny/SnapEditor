@@ -55,7 +55,14 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
       @addAttributes(obj.attrs)
       @addValues(obj.values)
 
-    # If a template is given, the allowed attributes are copied.
+    # Takes an element or null and returns a safe version, in terms of the
+    # whitelist, of that element or, if null, returns the default element.
+    # This ensures that the element is in the whitelist and if it is, that
+    # all the attributes are allowed.
+    # TODO: Consider renaming to getSafeElement or something like that.
+    #
+    # Note: The doc needs to be passed around so that this works properly in
+    # iFrames.
     getElement: (doc, templateEl) ->
       $el = $(doc.createElement(@tag))
       # Add the classes if there are any.
@@ -116,3 +123,5 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         return true
       else
         throw "Whitelist: Values for #{attr} are unsupported. Only values for the style attribute can be checked."
+
+ 

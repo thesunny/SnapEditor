@@ -3,6 +3,10 @@
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class API
     constructor: (@editor) ->
+      # This @el is the editable element (i.e. the element inside the iframe
+      # that the user is editing). This is not the element that has been
+      # marked for editing. @doc and @win are related to the editable element
+      # as well.
       @el = @editor.el
       @doc = @editor.doc
       @win = @editor.win

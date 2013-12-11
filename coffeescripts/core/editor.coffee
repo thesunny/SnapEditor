@@ -107,6 +107,9 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @styleButtons[key] = SnapEditor.buttons[key] or throw "Style does not exist: #{selector}"
 
     includeButtons: ->
+      # TODO: getItems is actually the names of the buttons. We considered
+      # different things like calling them commands but we are now somewhere
+      # halfway between both.
       @includeButton(name) for name in @config.toolbar.getItems(api: @api)
 
     includeButton: (name) ->
@@ -137,6 +140,13 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         throw "Shortcut is missing an action: #{name}" unless shortcut.action
         # The generateActionFn() is required due to scoping issues.
         self = this
+        # We generate something like a scoped action to execute from the
+        # keyboard shortcut. We name the Event's type after the action. This
+        # is arbitrary but we set it to the name of the action. This helps
+        # us when we have several actions that are similar but behave
+        # slightly differently and we encode the difference into the action
+        # name. For example, h1, h2, p, etc. all refer actually to the
+        # same function.
         generateActionFn = (action) ->
           ->
             e = $.Event(action)
@@ -148,6 +158,11 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
         @actionShortcuts[shortcut.action] = shortcut.key if typeof shortcut.action == "string"
 
     includeWhitelistDefaults: ->
+      # * is the default style. This piece of code looks for the first style
+      # that has been passed in and sets it to the default. Usually this is p
+      # but if the user has set h1 as the first tyle, h1 will be used as the
+      # default.
+      # TODO: Consider explicitly setting defaultStyle in the config. -SH
       @addWhitelistRule("*", SnapEditor.getSelectorFromStyleKey(@getStyleButtonsByTag("style-block")[0] or "p > p"))
 
     domEvents: [
@@ -204,6 +219,8 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
           e.type = "snapeditor.outside_#{type}"
           @trigger(e)
 
+    # TODO: Consider stubbing this out with an error and putting it in the
+    # subclass.
     addCustomDataToEvent: (e) ->
       e.api = @api
       if e.pageX

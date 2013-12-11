@@ -8,6 +8,15 @@
 # The values are stored as Whitelist.Objects.
 define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.object"], ($, Helpers, WhitelistObject) ->
   class Whitelists
+    # The whitelist Javascript object is passed in with a config (or some other
+    # area) and it specified something like this:
+    #
+    # cleaner:
+    #   whitelist:
+    #     "*": "p"                  # by label. Not found in config but added in SnapEditor
+    #     "BR": "br"                # by label because capitalized
+    #     "Range Start": "span#RANGE_START"
+    #     "b": "strong"             # by tag because lowercase
     constructor: (whitelist) ->
       @defaults = {} # { *: "label", tag: "label" }
       @byLabel = {} # { "label": Whitelist.Object }
@@ -34,8 +43,9 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.object"], ($,
     add: (key, rule) ->
       if @isLabel(key)
         prevObj = @byLabel[key]
+        # @parse returns a whitelist Object
         obj = @parse(rule)
-        # Add general rules.
+        # Add general rules. General objects always need to be specified first.
         obj.merge(generalObj) for generalObj in @general[obj.tag] or []
         @byLabel[key] = obj
         # Add to the whitelist by tag.

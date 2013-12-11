@@ -28,6 +28,8 @@ define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, H
     #   * newline - only for non-TD/TH
     #   * shortcut - only for internal plugin use
     addStyleButton: (selector, style) ->
+      # The key in this case represents the unique name for this button.
+      # getStyleKey prefixes it to help avoid collisions.
       key = @getStyleKey(selector)
       throw "The style button #{selector} is already defined." if SnapEditor.buttons[key]
 
@@ -54,12 +56,18 @@ define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, H
         action: key
         onInclude: (e) ->
           tag = selector.split(".").shift()
+          # This section creates the rule which is based off of the selector
+          # and then also specifies what happens after you hit ENTER. That
+          # part is specified after the ">"
           rule = selector
           if $.inArray(tag, ["td", "th"]) > -1
             rule += " > BR"
           else if style.newline
             rule += " > #{style.newline}"
           e.api.addWhitelistRule(Helpers.capitalize(key), rule)
+          # TODO: Consider setting the SnapEditor.shortcuts outside of
+          # onInclude and just leave the e.api.config.shortcuts.push(key)
+          # here.
           if style.shortcut
             SnapEditor.shortcuts[key] =
               key: style.shortcut
@@ -76,12 +84,17 @@ define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, H
         text: text
         items: (e) ->
           items = []
+          # We add the style buttons in groups by tag. Between groups we add
+          # a "|" as a separator. At the end, we pop off the last one because
+          # we don't need it.
           for tag in tags
             items = items.concat(e.api.getStyleButtonsByTag(tag))
             items.push("|")
           # Pop the last "|"
           items.pop()
           items
+        # This gets called before this individual button render happens.
+        # If there is nothing here, we don'ot need to display it.
         onRender: (e) ->
           e.button.state.visible = e.button.getItems(e).length > 1
 
@@ -117,6 +130,8 @@ define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, H
       path
 
     getStyleKey: (selector) ->
+      # We namespace the custom style's name so that it doesn't overwrite
+      # a button with the same name.
       "customStyle#{Helpers.capitalize(selector)}"
 
     getSelectorFromStyleKey: (key) ->

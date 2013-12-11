@@ -20,6 +20,11 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"],
         else
           throw "Wrong number of arguments to Whitelist#add"
 
+    # A general rule is a rule that applies to all rules of a given set of tags.
+    # This is used because we don't want to specify the same rule over and
+    # over again for each individual whitelist object. For example, all p tags
+    # are similar, but if a user specifies p.fancy, he shouldn't have to
+    # specify all the other p rules with it.
     addGeneralRule: (rule, tags) ->
       @whitelists.addGeneralRule(rule, tags)
 
@@ -28,10 +33,12 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"],
       def = @whitelists.getByDefault(key)
       def and def.getElement(doc)
 
+    # MAIN PUBLIC:
     # Returns true if the el is whitelisted. False otherwise.
     isAllowed: (el) ->
       return !!@match(el)
 
+    # MAIN PUBLIC:
     # Finds the element that should replace the given el.
     # Returns null if the element is inline and does not have a replacement.
     getReplacement: (el) ->
@@ -42,7 +49,9 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"],
       replacement = @whitelists.getByDefault("*") if !replacement and Helpers.isBlock(el)
       return replacement and replacement.getElement(Helpers.getDocument(el), el)
 
-    # Finds the element that should be after the given el.
+    # MAIN PUBLIC:
+    # Finds the element that should be after the given el after the user
+    # presses enter.
     getNext: (el) ->
       next = @whitelists.getByDefault("*")
       throw "The whitelist is missing a '*' default" unless next
