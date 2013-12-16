@@ -1,5 +1,8 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
+#
+# Handles when there is nothing inside the editor and we want to create the
+# starting default tag (usually a P tag)
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   emptyHandler =
     activate: (@api) ->
@@ -16,7 +19,10 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
         @deleteAll()
 
     # After the cleaner has finished, insert the default block if the editor is
-    # empty.
+    # empty. This is because in some editors, when there is no content,
+    # the editor keeps around the last styling mode like H1, H2 or H3 so that
+    # when you start typing in an empty contentEditable, you don't start 
+    # with a P tag.
     onCleanerFinished: (@api) ->
       @deleteAll() if Helpers.isEmpty(@api.el)
 

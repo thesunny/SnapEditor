@@ -1,5 +1,16 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
+#
+# NOTE:
+# The Displayer moves the toolbar so that it is always in the viewport and also
+# out of the way of the cursor. Our current functionality is that if the
+# user cursors up, then it scrolls the page so that the cursor is still in view
+# even as the toolbar is stuck to the top of the page. This functionality is
+# handled separately in the autoscroll plugin.
+#
+# The Displayer jumps the toolbar to the bottom of the page if (a) the viewport
+# is at the top of the page and (b) the toolbar covers the cursor which is
+# also at the top of the page.
 define ["jquery.custom", "core/toolbar/toolbar.floating.displayer.styles", "core/browser"], ($, Styles, Browser) ->
   class Displayer
     constructor: (toolbar, el, @editor) ->

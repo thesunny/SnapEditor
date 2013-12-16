@@ -114,6 +114,8 @@ define ["jquery.custom", "core/helpers", "core/toolbar/toolbar.menu", "core/data
     getStyles: ->
       {}
 
+    # We add mouseover: true in the submenu because we want the flyouts to
+    # show even if we just hover over the submenu item.
     getDataActionHandler: ->
       new DataActionHandler(@$el, @options.editor.api, mouseover: true)
 

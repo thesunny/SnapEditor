@@ -5,10 +5,15 @@ define ["jquery.custom", "core/browser", "core/iframe"], ($, Browser, IFrame) ->
     constructor: (options = {}) ->
       # Set defaults.
       classname = options.class or ""
+      # content inside contentEditable (HTML)
       contents = options.contents or ""
+      # className for content div
       contentClass = options.contentClass or ""
+      # stylesheet paths
       stylesheets = options.stylesheets or []
+      # CSS styles as text
       styles = options.styles or ""
+      # Any additional load function to call
       options.load or= ->
 
       options.write = ->

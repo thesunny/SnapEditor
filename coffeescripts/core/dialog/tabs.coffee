@@ -1,5 +1,8 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
+#
+# Doesn't create the actual tabs but wires up the DOM elements so that they
+# behave like tabs.
 define ["jquery.custom"], ($) ->
   class Tabs
     # Options:

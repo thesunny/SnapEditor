@@ -8,6 +8,18 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       # needs to take care of its own initialization.
       $(Helpers.pass(@formInit, [textarea, config], this))
 
+    # formInit sets up the DOM so that it looks something like this
+    #
+    # textarea <-- original textarea
+    # div.snapeditor_form
+    #   div.snapeditor_form_iframe_container
+    #      iframe.snapeditor_form_iframe
+    #        div <-- contentEditable div here
+    #
+    # TODO:
+    # We may be able to transform a bunch of these => into ->. This could be
+    # helpful because the latest version of coffeescript was throwing errors
+    # when using super inside of a bound => function.
     formInit: (textarea, config) =>
       # Transform the string into a CSS id selector.
       textarea = "#" + textarea if typeof textarea == "string"
@@ -22,6 +34,16 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       # iframe loads, but we need the assets to create the iframe.
       assets = new Assets(config.path)
       self = this
+      # new IFrame returns a DOM element. It is not jQueryized but it has
+      # special iframe.snapeditor properties on it.
+      #
+      # NOTE:      
+      # WARNING:
+      # The IFrame referencedes here is iframe.snapeditor and not iframe even
+      # though it is named as IFrame.
+      #
+      # TODO:
+      # Consider renaming IFrame to IFrameSnapeditor or something like that.
       @iframe = new IFrame(
         class: "snapeditor_form_iframe"
         contents: @$textarea.attr("value")
@@ -39,6 +61,7 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       ).appendTo(@$iframeContainer)
 
     finishConstructor: (el, config) =>
+      # In coffeescript the superclass is accessed via the __super__ property.
       FormEditor.__super__.constructor.call(this, el, SnapEditor.Form.config, config)
 
     # Perform the actual initialization of the editor.
@@ -49,9 +72,15 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       @$el.blur(@updateTextarea)
       @insertStyles("snapeditor_form", @css)
 
+    # This replaces the textarea, visually, with div.snapeditor_form. It also
+    # reserves space for the toolbar and the space for the contentEditable.
+    # When its all finished, it shows the editor and hides the textarea by
+    # moving it to where it isn't visible.
     formize: (toolbar) ->
       $toolbar = $(toolbar)
       textareaSize = $.extend(@$textarea.getSize(), x: @config.width, y: @config.height)
+      # measure is a custom jQuery function that we wrote to measure an element
+      # even though it isn't displayed yet.
       toolbarSize = $toolbar.measure(-> @getSize())
       # Setup the container.
       @$container.css(
@@ -93,6 +122,10 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       super(e)
       # If mouse coordinates are set and the target came from inside the
       # iframe, then we need to adjust the outerPage coordinates.
+      #
+      # NOTE:
+      # The event would have originated outside of the document (which is the
+      # iframe in this case) if it was from a dialog or the toolbar.
       if e.pageX and Helpers.getDocument(e.target) != document
         coords = Helpers.transformCoordinatesRelativeToOuter(
           x: e.outerPageX

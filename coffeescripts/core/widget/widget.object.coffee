@@ -12,11 +12,17 @@ define ["../../../lib/json2", "jquery.custom", "core/browser", "core/widget/widg
     constructor: (@api, @classname, @options = {}) ->
       @json = {}
       @html = ""
+      # This is creating a new widget that doesn't yet exist in the contentEditable
       if @options.type
         @type = @options.type
         @setWidget()
+      # This is activating a widget that is already in the contentEditable
       @load(@options.el) if @options.el
       # Save the range.
+      # NOTE:
+      # TODO:
+      # We may not need to do this anymore if they are using our dialog system
+      # because the dialog automatically uses lockRange to save the range.
       @range = @api.getRange()
 
     #
@@ -39,8 +45,16 @@ define ["../../../lib/json2", "jquery.custom", "core/browser", "core/widget/widg
       # @api.el.focus() must be used in Firefox because @api.win.focus() does
       # nothing.
       # This affects IE as it makes the page jump to where the cursor is.
+
+      # NOTE:
+      # TODO:
+      # These two lines may not be necessary anymore as they should be
+      # handled automatically in our dialog system.
       @api.win.focus() if Browser.isWebkit
       @api.el.focus() if Browser.isGecko
+      # The widget element is inserted here if this WidgetObject is not already
+      # associated with an existing element. In other words, if it is new,
+      # it inserts. If not, then we just set attributes on $el.
       @insertEl() unless @$el
       @$el.attr("data-type", @type)
       @$el.attr("data-json", JSON.stringify(@json))

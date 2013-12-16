@@ -1,8 +1,14 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
+#
+# NOTE:
+# All editors use a single dialog box element per dialog box type which is shared.
+# For example, there is only one image editor dialog box.
 define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
   class Dialog
     constructor: (@type) ->
+      # This @dialog object refers to the options that are created with the
+      # plugin that contains the dialog. e.g. SnapEditor.dialogs.image
       @dialog = SnapEditor.dialogs[@type]
       throw "Dialog does not exist - #{@type}" unless @dialog
 

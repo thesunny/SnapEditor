@@ -18,6 +18,9 @@ define ["core/helpers"], (Helpers) ->
   return {
     static:
       # Get a brand new range.
+      #
+      # When we create a blank range, we always create a text range. In IE,
+      # there is also something called a control range.
       getBlankRange: (win = window) ->
         win.document.body.createTextRange()
 
@@ -81,6 +84,10 @@ define ["core/helpers"], (Helpers) ->
       #
 
       # Is the selection a caret.
+      #
+      # If an image or other control is selected, it is not collapsed because
+      # the beginning is before the control and the ending is after the
+      # control.
       isCollapsed: ->
         !@isImageSelected() && @range.text.length == 0
 
@@ -103,6 +110,11 @@ define ["core/helpers"], (Helpers) ->
       # character code 160. As a workaround, we grab all the textnodes and get
       # the text using nodeValue and concatenate them togther. Fortunately,
       # jQuery does this already with the #text() function.
+      #
+      # NOTE:
+      # TODO:
+      # See isStartOfElement in W3C. Basically, there may be a bug in the code
+      # under certain circumstances.
       isStartOfElement: (el) ->
         elRange = @constructor.getRangeFromElement(el)
         range = @cloneRange()
@@ -124,6 +136,11 @@ define ["core/helpers"], (Helpers) ->
       # character code 160. As a workaround, we grab all the textnodes and get
       # the text using nodeValue and concatenate them togther. Fortunately,
       # jQuery does this already with the #text() function.
+      # 
+      # NOTE:
+      # TODO:
+      # See isStartOfElement in W3C. Basically, there may be a bug in the code
+      # under certain circumstances.
       isEndOfElement: (el) ->
         elRange = @constructor.getRangeFromElement(el)
         range = @cloneRange()
@@ -132,6 +149,9 @@ define ["core/helpers"], (Helpers) ->
         endText.match(Helpers.emptyRegExp)
 
       # Get immediate parent element.
+      #
+      # TODO:
+      # Consider renaming to getBrowserSpecificParentElement
       getImmediateParentElement: ->
         # Only textranges have parentElement. Controlranges do not.
         (@isImageSelected() and @range.item(0)) or @range.parentElement()
@@ -285,6 +305,11 @@ define ["core/helpers"], (Helpers) ->
       #
       # The first boundary refers to the range's boundary. The second boundary
       # refers to the el's boundary. Capitalization is normalized.
+      #
+      # OVERVIEW:
+      # The way this works is that we find the start/end of a node and then
+      # create a browser range there based on the element. We then expand the
+      # current range using this temporarily created browser range.
       moveBoundary: (boundaries, node) ->
         origBoundaries = boundaries
         boundaries = boundaries.toLowerCase()
@@ -430,6 +455,11 @@ define ["core/helpers"], (Helpers) ->
         @insertNode(el)
 
       # Delete the contents of the range.
+      #
+      # NOTE:
+      # The range to be deleted either has to not be in a table at all or
+      # if it is in a table, then it needs to be within the same cell. Otherwise
+      # we don't delete.
       delete: ->
         @select()
         [startElement, endElement] = @getParentElements((el) -> Helpers.isBlock(el))

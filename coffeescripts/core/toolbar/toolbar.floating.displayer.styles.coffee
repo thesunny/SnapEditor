@@ -1,5 +1,17 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
+#
+# NOTE:
+# Basically @top and @bottom are the public methods for styles.
+#
+# There is a seemingly lot amount of code here because it has to handle two
+# different cases.
+#
+# 1. The editor is fully within the viewport and therefore the toolbar is
+#    absolutely positioned at the top of the editor (with some exceptions)
+# 2. The editor is not within the viewport and therefore the toolbar is
+#    fixed at the top of the viewport (or in the case of IE, faked into
+#    a fixed position)
 define ["jquery.custom", "core/browser"], ($, Browser) ->
   class Styles
     # el is the container that the floater will float around.

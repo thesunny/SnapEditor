@@ -11,6 +11,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
   return {
     static:
       # Get a brand new range.
+      #
+      # Note that in W3C we only have to deal with one type of range where as
+      # in IE, there are text ranges and control ranges.
       getBlankRange: (win = window) ->
         win.document.createRange()
 
@@ -22,6 +25,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
         # EnterHandler where manipulating the range but still letting the
         # default enter handler to operate resulted in weird results like
         # duplicate fragments and stuff.
+        #
+        # But if we clone the range, the problem goes away.
         selection = win.getSelection()
         if !selection || selection.rangeCount == 0
           return null
@@ -51,6 +56,8 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
 
       # Is an image selected.
       isImageSelected: ->
+        # We create a temporary div and copy the contents of the range in it so
+        # that we can see if there is an image inside of it.
         div = $("<div/>").append(@range.cloneContents())[0]
         # An image is selected if it is the only content in the div.
         div.childNodes.length == 1 && div.childNodes[0].tagName && div.childNodes[0].tagName.toLowerCase(0) == "img"
@@ -69,6 +76,20 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       # character code 160. As a workaround, we grab all the textnodes and get
       # the text using nodeValue and concatenate them togther. Fortunately,
       # jQuery does this already with the #text() function.
+      #
+      # NOTE:
+      # TODO:
+      # It appears that this code may have a bug in it but it doesn't cause
+      # problems the way it is being used right now. This call only works if
+      # the range is collapsed.
+      #
+      # What it's doing is it is taking a range and expanding it out to
+      # encompass the element. If the range actuallye xpanded, then the
+      # contents of the range would contain something and this would tell us
+      # that it wasn't at the start of the element; however, if the range
+      # already had stuff in it, even if the range didn't expand, it would
+      # tell us that we weren't at the start of the element. This would be the
+      # wrong answer.
       isStartOfElement: (el) ->
         range = @cloneRange()
         range.setStartBefore(el)
@@ -90,6 +111,9 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       # the text using nodeValue and concatenate them togther. Fortunately,
       # jQuery does this already with the #text() function.
       #
+      # NOTE:
+      # TODO:
+      # Similar issue with isStartOfElement.
       isEndOfElement: (el) ->
         range = @cloneRange()
         range.setEndAfter(el)
@@ -99,12 +123,15 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       # Get immediate parent element.
       getImmediateParentElement: ->
         if @isImageSelected()
-          # When an image is selected, the commonAncestorContainer is the
+          # When an image is selected, the startContainer is the
           # container of the image, not the image itself. Hence, we need to
           # find the image manually.
           node = @range.startContainer.childNodes[@range.startOffset]
         else
           node = @range.commonAncestorContainer
+          # NOTE:
+          # This might work okay as an if statement. I don't think the parent
+          # of a textNode can be anything other than an element.
           while !Helpers.isElement(node)
             node = node.parentNode
         node
@@ -383,6 +410,12 @@ define ["jquery.custom", "core/browser", "core/helpers"], ($, Browser, Helpers) 
       # NOTE: This uses #selectAfterElement. In WebKit, there are problems when
       # the node is an inline element with content. Refer to
       # #selectAfterElement for details.
+      #
+      # NOTE:
+      # How the insert actually works is that it creates a temporary DIV element
+      # and populates it with the given HTML. When we do this, the HTML is
+      # converted into a bunch of nodes. We then take the nodes out of the
+      # temporayr DIV and place them into the DOM.
       insertHTML: (html) ->
         @select()
         div = @doc.createElement("div")

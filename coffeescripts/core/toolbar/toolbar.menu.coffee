@@ -127,6 +127,9 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
     getCSS: ->
       throw "#getCSS() must be overridden"
 
+    # NOTE:
+    # This is only called once which is why it returns a new object. We may
+    # wish to refactor this later.
     getDataActionHandler: ->
       new DataActionHandler(@$el, @options.editor.api)
 
@@ -218,6 +221,10 @@ define ["jquery.custom", "core/helpers", "core/browser", "core/data_action_handl
           submenu = new klass(button, editor: @options.editor, relEl: button.getEl())
           @submenus.push(submenu)
         actionHandler = @getActionHandler(button, submenu)
+        # The clean name is created in toolbar.button.coffee in the constructor
+        # of the button. It basically takes the name given to the button and
+        # turns it into something that can be fired (i.e. a valid event name).
+        # Right now this comprises turning "." into "_"
         @options.editor.on(button.cleanName, (e) ->
           # In Webkit, after the toolbar is clicked, the focus hops to the parent
           # window. We need to refocus it back into the iframe. Focusing breaks IE

@@ -47,7 +47,10 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
 
     #
     # STATIC FUNCTIONS
+    # PRIVATE
     #
+    # All of these static functions return a browser range and not a SnapEditor
+    # range.
 
     # Get a brand new range.
     @getBlankRange: (win = window) ->
@@ -65,8 +68,8 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # arg:
     #   - window: the range is the current selection
     #   - element: the range surrounds the element
-    #   - range: the range is the given range
-    #   - nothing: the range is a new range
+    #   - range: the range is the given browser range
+    #   - nothing: the range is a new blank range
     constructor: (@el, arg) ->
       throw "new Range() is missing argument el" unless @el
       throw "new Range() el is not an element" unless Helpers.isElement(@el)
@@ -85,6 +88,10 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     clone: ->
       new @constructor(@el, @cloneRange())
 
+    # TODO:
+    # We should have a method cloneRange defined in here with a throw that is
+    # must be overridden with a browser specific implementation.
+
     # Shortcut to document.createElement().
     # NOTE: This returns a jQuery object.
     createElement: (name) ->
@@ -99,7 +106,12 @@ define ["jquery.custom", "core/helpers", "core/range/range.module", "core/range/
     # QUERY RANGE STATE FUNCTIONS
     #
 
-    # Is the range valid.
+    # Is the range valid which means that it exists and it is within this
+    # range's contentEditable area.
+    #
+    # TODO:
+    # WTF is going on here? The first line makes sense. The others don't really
+    # make sense. This might be a bug.
     isValid: ->
       # Invalid if there is no range.
       return false unless @range

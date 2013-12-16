@@ -1,5 +1,15 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
+#
+# Atomic ensures that certain classes of elements are treated as a single unit.
+# Here are some things that it handles:
+#
+# * Clicking on atomic moves cursor out of atomic
+# * Moving into atomic with cursor bumps you out
+# * If moving into it and it's the first or last element, it creates an element
+#   that you can move into
+# * When selecting, and an end point is in the atomic, then we need to move
+#   the end point so that it's not in the middle of the atomic
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   atomic =
     activate: (@api) ->

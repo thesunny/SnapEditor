@@ -76,6 +76,9 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
         else
           @api.keepRange(-> $(aEl).merge(bEl))
 
+    # This creates a list of CSS selectors that should be deleted as a group.
+    # This is used by the atomic plugin to ensure that atomic classes are
+    # deleted as a group.
     getCSSSelectors: ->
       ["hr"].concat(@api.config.eraseHandler.delete).join(",")
 

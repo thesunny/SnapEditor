@@ -1,5 +1,8 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
+#
+# The Editor's API is used as the public interface to the editor. We put it into
+# a separate object to make it more explicit what is supposed to be public.
 define ["jquery.custom", "core/helpers"], ($, Helpers) ->
   class API
     constructor: (@editor) ->

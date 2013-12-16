@@ -1,5 +1,22 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
+#
+# NOTE:
+# Not all of these methods call the browsers excecCommand. Sometimes we do it
+# manually.
+#
+# NOTE:
+# The public interface to this does not include calling exec directly ever.
+# Instead we call specific methods and these may call exec.
+#
+# NOTE:
+# Not all the methods actually call the browser's execCommand. Sometimes we
+# want to provide our own version that might, for example, use a Range to
+# carry out the execution of the function.
+#
+# NOTE:
+# One nice thing is that apart from one exception for Gecko, everything in
+# exec_command is not browser specific.
 define ["jquery.custom", "core/exec_command/exec_command.gecko", "core/browser", "core/helpers", "core/exec_command/exec_command.style_block"], ($, Gecko, Browser, Helpers, StyleBlock) ->
   class ExecCommand
     constructor: (@editor) ->
