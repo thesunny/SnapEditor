@@ -4,10 +4,18 @@
 
 ### CoffeeScript, NodeJS, and NPM
 
+Note: Currently you must install coffee-script version 1.2.0 or else the
+compile fails.
+
     sudo apt-get install nodejs npm -y
-    sudo npm install -g coffee-script
+    sudo npm install -g coffee-script@1.2.0
 
   For other releases, take a look at this [post](http://www.opinionatedprogrammer.com/2010/12/installing-coffeescript-on-debian-or-ubuntu/)
+
+Windows:
+Install node using the installer (I think) and then
+
+    npm install -g coffee-script@1.2.0
 
 ### Ruby and RubyGems
 
