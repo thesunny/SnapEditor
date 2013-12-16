@@ -1,0 +1,421 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <!--<link rel="stylesheet" href="/spec/javascripts/support/assets/stylesheets/cssreset-min.css" type="text/css" charset="utf-8">-->
+    <style type="text/css">
+      table {
+        border-collapse: collapse;
+      }
+      table, th, td {
+        border: 1px solid gray;
+      }
+
+      /*
+      .secure { float: right; }
+      .insecure { float: left; }
+      */
+      .form {
+        width: 590px;
+        height: 500px;
+      }
+      .in_place {
+        padding: 10px;
+        margin-top: 20px;
+        width: 570px;
+        word-wrap: break-word;
+      }
+      .buttons {
+        margin-top: 20px;
+      }
+
+      h1 {
+        text-decoration: underline;
+      }
+    </style>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/lib/json2.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/spec/javascripts/support/assets/javascripts/sha1.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/spec/javascripts/support/assets/javascripts/strftime.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/spec/javascripts/support/assets/javascripts/toISOString.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/spec/acceptance/assets/snapeditor.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      SnapEditor.debug = true;
+
+      //var secureResourceId = "secure/123";
+      var insecureDirectory = "insecure/123";
+      //var secureUrl = "/snapimage_api_secure";
+      var insecureUploadUrl = "/snapimage_api";
+      var insecurePublicUrl = "/storage"
+      //var insecureUploadUrl = "http://" + window.location.hostname + ":54321/snapimage_api";
+      //var insecureUploadUrl = "http://images.snapeditor.com/snapimage_api";
+      //var clientSecurityToken = CryptoJS.SHA1("client:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
+      //var serverSecurityToken = CryptoJS.SHA1("server:" + new Date().strftime("%Y-%m-%d") + ":123456789:" + secureResourceId).toString();
+
+      /*
+      var secureForm = new SnapEditor.Form("secure_form", {
+        path: "/spec/acceptance/assets",
+        image_server: {
+          url: secureUrl,
+          resource_id: secureResourceId,
+          client_security_token: clientSecurityToken
+        }
+      });
+      var secureInPlace = new SnapEditor.InPlace("secure_in_place", {
+        path: "/spec/acceptance/assets",
+        image_server: {
+          url: secureUrl,
+          resource_id: secureResourceId,
+          client_security_token: clientSecurityToken
+        },
+        onSave: function (html) {
+          console.log(html);
+          return true;
+        }
+      });
+      */
+      var insecureForm = new SnapEditor.Form("insecure_form", {
+        stylesheets: [],
+        contentClass: "myClass",
+        imageServer: {
+          uploadUrl: insecureUploadUrl,
+          publicUrl: insecurePublicUrl,
+          directory: insecureDirectory
+        },
+      });
+      var insecureInPlace = new SnapEditor.InPlace("insecure_in_place", {
+        snap: false,
+        toolbar: {
+          items: ["bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link"]
+        },
+        imageServer: {
+          uploadUrl: insecureUploadUrl,
+          publicUrl: insecurePublicUrl,
+          directory: insecureDirectory
+        },
+        onSave: function (html) {
+          console.log(html);
+          return "OMG! ERROR!";
+        }
+      });
+
+      /*
+      var success = function (data, text, xhr) { console.log(data); };
+      var error = function (xhr, text, error) { console.log(text); };
+
+      $(".server_sync").click(function (e) {
+        var $parent = $(e.target).parents(".insecure");
+        var url;
+        var options = {
+          action: "sync_resource",
+          content: {},
+          sync_date_time: new Date().toISOString()
+        }
+        if($parent.length > 0) {
+          url = insecureUploadUrl;
+          options["content"]["form"] = insecureForm.getContents();
+          options["content"]["in_place"] = insecureInPlace.getContents();
+          options["resource_identifier"] = insecureDirectory;
+        } else {
+          url = secureUrl;
+          options["content"]["form"] = secureForm.getContents();
+          options["content"]["in_place"] = secureInPlace.getContents();
+          options["resource_identifier"] = secureResourceId;
+          options["server_security_token"] = serverSecurityToken;
+        }
+        $.ajax({
+          url: url,
+          type: "POST",
+          data: { json: JSON.stringify(options) },
+          success: success,
+          error: error
+        });
+      });
+
+      $(".server_list").click(function (e) {
+        var $parent = $(e.target).parents(".insecure");
+        var url;
+        var options = { action: "list_resource_images" }
+        if($parent.length > 0) {
+          url = insecureUploadUrl;
+          options["resource_identifier"] = insecureDirectory;
+        } else {
+          url = secureUrl;
+          options["resource_identifier"] = secureResourceId;
+          options["server_security_token"] = serverSecurityToken;
+        }
+        $.ajax({
+          url: url,
+          type: "POST",
+          data: { json: JSON.stringify(options) },
+          success: success,
+          error: error
+        });
+      });
+
+      $(".server_delete").click(function (e) {
+        var $parent = $(e.target).parents(".insecure");
+        var url;
+        var options = { action: "delete_resource_images" }
+        if($parent.length > 0) {
+          url = insecureUploadUrl;
+          options["resource_identifier"] = insecureDirectory;
+        } else {
+          url = secureUrl;
+          options["resource_identifier"] = secureResourceId;
+          options["server_security_token"] = serverSecurityToken;
+        }
+        $.ajax({
+          url: url,
+          type: "POST",
+          data: { json: JSON.stringify(options) },
+          success: success,
+          error: error
+        });
+      });
+      */
+    </script>
+  </head>
+  <body>
+    <!--<div class="secure">-->
+      <!--<h1>Secure</h1>-->
+      <!--<textarea id="secure_form" class="form">-->
+        <!--some text here-->
+        <!--<h1>Heading 1</h1>-->
+        <!--some text here-->
+        <!--<h2>Heading 2</h2>-->
+        <!--some text here-->
+        <!--<h3>Heading 3</h3>-->
+        <!--some text here-->
+        <!--<p>before<a href="http://snapeditor.com">SnapEditor</a>after</p>-->
+        <!--<p>before <a href="http://snapeditor.com">SnapEditor</a> after</p>-->
+        <!--<p><a href="http://snapeditor.com">SnapEditor</a></p>-->
+        <!--<h4>Heading 4</h4>-->
+        <!--Make me editable!-->
+        <!--<br/>-->
+        <!--<img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />-->
+        <!--<p><a href="http://snapeditor.com">SnapEditor</a></p>-->
+        <!--<ul>-->
+          <!--<li>This</li>-->
+          <!--<li>is</li>-->
+          <!--<li>a</li>-->
+          <!--<li>list</li>-->
+          <!--<li>-->
+            <!--This will have a-->
+            <!--<p>block in it</p>-->
+          <!--</li>-->
+          <!--<li>-->
+            <!--<p>more stuff</p>-->
+            <!--<table>-->
+              <!--<tbody>-->
+                <!--<tr><th>Header</th></tr>-->
+                <!--<tr><td>Data</td></tr>-->
+                <!--<tr>-->
+                  <!--<td>-->
+                    <!--Data-->
+                    <!--<p>another</p>-->
+                    <!--text-->
+                    <!--<ul>-->
+                      <!--<li>first</li>-->
+                      <!--<li>second</li>-->
+                    <!--</ul>-->
+                  <!--</td>-->
+                <!--</tr>-->
+              <!--</tbody>-->
+            <!--</table>-->
+          <!--</li>-->
+        <!--</ul>-->
+        <!--<h1>Heading 1</h1>-->
+        <!--<p>More text!</p>-->
+        <!--a little more complicated-->
+        <!--<table>-->
+          <!--<tbody>-->
+            <!--<tr><th>Header</th></tr>-->
+            <!--<tr><td>Data</td></tr>-->
+            <!--<tr>-->
+              <!--<td>-->
+                <!--Data-->
+                <!--<p>another</p>-->
+                <!--text-->
+                <!--<ul>-->
+                  <!--<li>first</li>-->
+                  <!--<li>second</li>-->
+                <!--</ul>-->
+              <!--</td>-->
+            <!--</tr>-->
+          <!--</tbody>-->
+        <!--</table>-->
+
+        <!--<p>-->
+          <!--<h1>-->
+            <!--<b></b>-->
+          <!--</h1>-->
+          <!--<p>-->
+          <!--</p>-->
+          <!--<h1>-->
+          <!--</h1>-->
+        <!--</p>-->
+
+        <!--<h1>-->
+          <!--no it isn't-->
+          <!--<p>i'm okay, i swear</p>-->
+          <!--oh no!-->
+        <!--</h1>-->
+
+        <!--<div>-->
+          <!--inner-->
+          <!--<div>-->
+            <!--things that make-->
+            <!--<div>-->
+              <!--somebody maybe <b>want</b> to cry-->
+            <!--</div>-->
+            <!--or-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--just maybe not...-->
+      <!--</textarea>-->
+      <!--<div id="secure_in_place" class="in_place">-->
+        <!--Make me editable!-->
+        <!--<br/>-->
+        <!--<img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />-->
+        <!--<p><a href="snapeditor.com">SnapEditor</a></p>-->
+        <!--<h1>Heading 1</h1>-->
+        <!--<p>More text!</p>-->
+      <!--</div>-->
+      <!--<div class="buttons">-->
+        <!--<button class="server_sync">Sync</button>-->
+        <!--<button class="server_list">List</button>-->
+        <!--<button class="server_delete">Delete</button>-->
+      <!--</div>-->
+    <!--</div>-->
+    <div class="insecure">
+      <h1>Insecure</h1>
+      <textarea id="insecure_form" class="form">
+        <p>some text at the beginning</p>
+        <p>some text at the beginning</p>
+        <div class="atomic">This is atomic</div>
+        <h4>Heading 4</h4>
+        <p>This is some text</p>
+        <p>This is some text</p>
+        <p>This is some text. This is going to be really long because we need to check things like justify and other things like that. That's why this is so long. I normally wouldn't bother typing so much but oh well...</p>
+        <p>This is some text</p>
+        <p>This is some text</p>
+        <p>This is some text</p>
+        Make me editable!
+        <br/>
+        <div class="atomic">This is atomic</div>
+        <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+        <p><a href="snapeditor.com">SnapEditor</a></p>
+        <ul>
+          <li>This</li>
+          <li>is</li>
+          <li>a</li>
+          <li>list</li>
+          <li>
+            This will have a
+            <p>block in it</p>
+          </li>
+          <li>
+            <p>more stuff</p>
+            <table>
+              <tbody>
+                <tr><th>Header</th></tr>
+                <tr><td>Data</td></tr>
+                <tr>
+                  <td>
+                    <div class="atomic">This is atomic</div>
+                    Data
+                    <p>another</p>
+                    text
+                    <ul>
+                      <li>first</li>
+                      <li>second</li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+        </ul>
+        <h1>Heading 1</h1>
+        <p>More text!</p>
+        <div class="atomic">This is atomic</div>
+        <div class="atomic">This is atomic</div>
+        <div class="atomic">This is atomic</div>
+        a little more complicated
+
+        <table>
+          <tbody>
+            <tr><th>Header</th></tr>
+            <tr><td>Data</td></tr>
+            <tr>
+              <td>
+                Data
+                <span class="atomic">Atomic span</span>
+                <p>another</p>
+                text
+                <ul>
+                  <li>first</li>
+                  <li>second</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          <h1>
+            <b></b>
+          </h1>
+          <p>
+          </p>
+          <h1>
+          </h1>
+        </p>
+
+        <h1>
+          no it isn't
+          <p>i'm okay, i swear</p>
+          oh no!
+        </h1>
+
+        <div>
+          inner
+          <div>
+            things that make
+            <div>
+              somebody maybe <b>want</b> to cry
+            </div>
+            or
+          </div>
+        </div>
+        just maybe not...
+        <div class="atomic">This is atomic</div>
+      </textarea>
+      <input type="button" value="submit" />
+      <div id="insecure_in_place" class="in_place">
+        <div class="atomic">This is atomic</div>
+        Make me editable!
+        <br/>
+        <p style="text-align: right; background-color: pink">
+          RIGHT HERE!
+        </p>
+        <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+        <p><a href="snapeditor.com">SnapEditor</a></p>
+        <h1>Heading 1</h1>
+        <p><span class="atomic">Atomic span</span>between<span class="atomic">atomic span</span>between<span class="atomic">atomic span</span><span class="atomic">atomic span</span>between<span class="atomic">atomic span</span></p>
+        <div class="atomic">This is atomic</div>
+        <p>More text!</p>
+        <div class="atomic">This is atomic</div>
+        <div class="atomic">This is atomic</div>
+        <p>More text!</p>
+        <div class="atomic">This is atomic</div>
+      </div>
+      <!--<div class="buttons">-->
+        <!--<button class="server_sync">Sync</button>-->
+        <!--<button class="server_list">List</button>-->
+        <!--<button class="server_delete">Delete</button>-->
+      <!--</div>-->
+    </div>
+  </body>
+</html>

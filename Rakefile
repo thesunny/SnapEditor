@@ -9,11 +9,15 @@ task :compile do
   sh "coffee -bcl -o javascripts coffeescripts"
 end
 
+# Puts the Javascripts together. It doesn't do anything with
+# respect to the original .coffee files.
 desc "Build snapeditor.js"
 task :build do
   sh "cd build && node r.js -o build.js"
 end
 
+# Puts the Javascripts together. It doesn't do anything with
+# respect to the original .coffee files.
 desc "Build snapeditor.js for development"
 task :build_dev do
   sh "cd build && node r.js -o build_dev.js"
@@ -23,6 +27,7 @@ desc "Compile and build snapeditor.js"
 task :compileAndBuild => [:compile, :build]
 
 namespace :prepare do
+  # Prepares the bundle for the release
   def bundle(type)
     directory = File.join("bundle", type)
     mkdir_p directory
@@ -36,26 +41,49 @@ namespace :prepare do
     cp_r "documentation", "#{directory}/snapeditor/."
     mv "#{directory}/snapeditor/documentation/example.html", "#{directory}/snapeditor/."
     cp_r "spec/acceptance/assets/lang", "#{directory}/snapeditor/."
+    # TODO:
+    # Make this work in windows probably by using pkzip or some other free
+    # zip software.
+    #
     # zip usage: zip [options] <zip name without .zip> <directory to zip>
     #   -r: recursive (include subdirectories and files)
     `cd #{directory} && rm -f snapeditor.zip && zip -r snapeditor snapeditor/`
   end
 
+  # Creates a test version for testers to use that can be updated separately
+  # from the build that we use for development. This lets us dev and test
+  # concurrently.
+  #
+  # Can be found in /spec/acceptance/test.html
+  #
+  # NOTE: test.html hasn't been updated in some time.
   desc "Prepares snapeditor.js for testing"
   task :test => [:compile, :build] do
     cp "build/snapeditor.js", "spec/acceptance/assets/."
   end
 
+  # Part of bundle (not minified)
   desc "Prepares the normal bundle for uploading"
   task :bundle_norm => [:compile, :build_dev] do
     bundle("norm")
   end
 
+  # Part of bundle (minified)
   desc "Prepares the minified bundle for uploading"
   task :bundle_min => [:compile, :build] do
     bundle("min")
   end
 
+  # Runs both bundling method
   desc "Prepare the bundle for uploading"
   task :bundle => [:bundle_norm, :bundle_min]
+end
+
+begin
+  require 'jasmine'
+  load 'jasmine/tasks/jasmine.rake'
+rescue LoadError
+  task :jasmine do
+    abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"
+  end
 end

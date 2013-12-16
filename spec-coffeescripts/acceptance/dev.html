@@ -1,0 +1,523 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <!--<link rel="stylesheet" href="/spec/javascripts/support/assets/stylesheets/cssreset-min.css" type="text/css" charset="utf-8">-->
+    <style type="text/css">
+      table {
+        border-collapse: collapse;
+      }
+      table, th, td {
+        border: 1px solid gray;
+      }
+
+      .form {
+        width: 590px;
+        height: 500px;
+      }
+      .in_place {
+        padding: 10px;
+        margin-top: 20px;
+        width: 570px;
+        word-wrap: break-word;
+      }
+      .buttons {
+        margin-top: 20px;
+      }
+
+      h1 {
+        text-decoration: underline;
+      }
+    </style>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/lib/json2.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      SnapEditor.debug = true;
+      SnapEditor.zIndexBase = 200;
+      SnapEditor.actions.hi = function (e) {
+        console.log("HI", e);
+      };
+      SnapEditor.behaviours.hi = {
+        onMousedown: "hi",
+        onMouseup: function (e) {
+          console.log("MOUSEUP", e);
+        }
+      }
+      SnapEditor.buttons.hi = {
+        text: "Hi",
+        action: "hi"
+      }
+      SnapEditor.shortcuts.hi = {
+        key: "ctrl+d",
+        action: function (e) {
+          console.log("SHORTCUT CTRL+D", e);
+        }
+      }
+      SnapEditor.shortcuts.bye = {
+        key: "ctrl+h",
+        action: "hi"
+      }
+
+      SnapEditor.InPlace.config.behaviours.push("hi")
+      SnapEditor.config.shortcuts.push("hi")
+      SnapEditor.config.shortcuts.push("bye")
+
+      SnapEditor.buttons.graph = {
+        text: "Graph",
+        action: function (e) {
+          e.api.insertWidget("graph", e);
+        }
+      }
+      SnapEditor.widgets.graph = {
+        onCreate: function (e) {
+          console.log(e);
+          this.e = e;
+          //this.save("1,2,200");
+          this.displayPopup();
+        },
+        onEdit: function (e) {
+          console.log(e);
+          this.e = e;
+          //this.save("1,2,200");
+          this.displayPopup();
+          console.log(this.e.widget.json.data);
+          this.popup.find("input[name=data]").val(this.e.widget.json.data);
+        },
+        /*
+        onRemove: function (e) {
+          console.log("REMOVE");
+          e.widget.remove();
+        },
+        */
+        displayPopup: function () {
+          this.setupPopup();
+          this.popup.show();
+          this.popup.find("input[name=data]")[0].focus();
+        },
+        setupPopup: function () {
+          if(!this.popup) {
+            this.popup = $([
+              '<div class="snapeditor_ignore_deactivate">',
+                '<form>',
+                  '<label for="name">Data</label>',
+                  '&nbsp;',
+                  '<input name="data" type="text" style="width: 300px;" />',
+                  '&nbsp;',
+                  '<input type="submit" />',
+                '</form>',
+              '</div>'
+            ].join("")).hide().appendTo("body");
+            this.popup.css({
+              position: "fixed",
+              top: 100,
+              left: 300,
+              zIndex: 300,
+              border: "1px solid gray",
+              background: "white",
+              padding: 10
+            });
+            var self = this;
+            this.popup.find("form").submit(function (e) {
+              e.preventDefault();
+              self.save(this.data.value);
+            });
+          }
+        },
+        heights: [5, 50, 100, 150, 200],
+        counter: 0,
+        save: function (data) {
+          this.popup.hide();
+          this.e.widget.json.data = data;
+          this.e.widget.html = $("<div>hello world</div>").append($("<img/>").attr("src", "https://chart.googleapis.com/chart?cht=bvs&chs=400x" + this.heights[this.counter++ % 4] + "&chd=t:" + this.e.widget.json.data)).html();
+          this.e.widget.save();
+        }
+      };
+
+      SnapEditor.buttons.form = {
+        items: ["bold", "italic", "|", "styleBlock", "table", "image"]
+      };
+
+      SnapEditor.buttons.multiLevel1 = {
+        text: "MultiLevel1",
+        items: ["p", "h1", "multiLevel2", "h2"]
+      }
+      SnapEditor.buttons.multiLevel2 = {
+        text: "MultiLevel2",
+        items: ["p", "h1", "h2"]
+      }
+
+      SnapEditor.dialogs.sayHi = {
+        title: "Say Hi",
+        html: '<button class="say_hi_hi">Say Hi</button><button class="say_hi_hello">Hello</button>',
+        width: 200,
+        height: 100,
+        css: '.snapeditor_dialog_content_sayHi { background-color: #eee; }',
+        onSetup: function (e) {
+          this.counter = 0;
+          this.titles = ["Say Hi", "Say Hello", "", undefined];
+          console.log("Say Hi Setup", e);
+          e.dialog.on(".say_hi_hi", "snapeditor.click", function (e) {
+            console.log("Saying Hi", e);
+            e.api.insert("Hi");
+            e.dialog.close();
+          });
+          e.dialog.on(".say_hi_hello", "snapeditor.click", function (e) {
+            console.log("Saying Hello", e);
+            e.api.insert("Hello");
+            e.dialog.close();
+          });
+        },
+        onOpen: function (e) {
+          console.log("Say Hi Open", e);
+          e.dialog.setTitle(this.titles[this.counter++ % 4]);
+        },
+        onClose: function (e) {
+          console.log("Say Hi Close", e);
+        }
+      };
+      SnapEditor.buttons.sayHi = {
+        text: "Say Hi",
+        action: function (e) {
+          e.api.openDialog("sayHi", e);
+        }
+      }
+
+      /*
+      SnapEditor.buttons.styleTd = {
+        text: "Style TD",
+        action: function (e) {
+          e.api.styleBlock("td.highlight.awesome");
+        },
+        onInclude: function (e) {
+          e.api.addWhitelistRule("StyleTd", "td.highlight.awesome");
+        }
+      };
+      */
+
+      SnapEditor.addStyleButton("h1.special", { text: "H1 Special", newline: "h1.special" });
+      SnapEditor.addStyleButton("table", { text: "Table Normal" });
+      SnapEditor.addStyleButton("table.special", { text: "Table Special" });
+      SnapEditor.addStyleButton("table.highlight", { text: "Table Highlight" });
+      SnapEditor.addStyleButton("tr", { text: "TR Normal" });
+      SnapEditor.addStyleButton("tr.special", { text: "TR Special" });
+      SnapEditor.addStyleButton("tr.highlight", { text: "TR Highlight" });
+      SnapEditor.addStyleButton("th", { text: "TH" });
+      SnapEditor.addStyleButton("td", { text: "TD Normal" });
+      SnapEditor.addStyleButton("td.special", { text: "TD Special" });
+      SnapEditor.addStyleButton("td.highlight", { text: "TD Highlight"});
+      var h1Styles = [];
+      for(var i=0; i<20; i++) {
+        SnapEditor.addStyleButton("h1.special_" + i, { text: "H1 Special " + i });
+        h1Styles.push("h1.special_" + i);
+      }
+
+      var directory = "insecure/123";
+      var uploadURL = "/snapimage_api";
+      //var uploadURL = "http://" + window.location.hostname + ":54321/snapimage_api";
+      //var uploadURL = "http://images.snapeditor.com/snapimage_api";
+
+      var form = new SnapEditor.Form("form", {
+        width: "80%",
+        path: "/spec/acceptance/assets",
+        stylesheets: ["/spec/acceptance/dev.form.css"],
+        styles: ["h1", "h1.special", "h2", "table", "table.highlight", "table.special", "tr", "tr.highlight", "tr.special", "td", "td.highlight", "td.special", "th"].concat(h1Styles),
+        toolbar: { items: ["styleBlock", "table", "graph", "link", "sayHi", "image"] },
+        contentClass: "myClass",
+        image: {
+          insertByUpload: true,
+          uploadURL: uploadURL,
+          uploadParams: {
+            directory: directory
+          }
+        }
+      });
+      var form2 = new SnapEditor.Form("form2", {
+        path: "/spec/acceptance/assets",
+        stylesheets: [],
+        contentClass: "myClass",
+        toolbar: "form",
+        image: {
+          uploadURL: uploadURL
+        }
+      });
+      var inPlace = new SnapEditor.InPlace("in_place", {
+        path: "/spec/acceptance/assets",
+        //snap: false,
+        toolbar: {
+          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph", "multiLevel1", "sayHi"]
+        },
+        image: {
+          insertByURL: false,
+          insertByUpload: true,
+          uploadURL: uploadURL
+        }/*,
+        onSave: function (e) {
+          console.log(e.html);
+          console.log(e.api.getContents());
+          return "OMG! ERROR!";
+        }*/
+      });
+      var inPlace2 = new SnapEditor.InPlace("in_place2", {
+        path: "/spec/acceptance/assets",
+        snap: false,
+        image: {
+          uploadURL: uploadURL
+        },
+        onSave: function (e) {
+          console.log(e.html);
+          console.log(e.api.getContents());
+          return "OMG! ERROR!";
+        }
+      });
+      var inPlace3 = new SnapEditor.InPlace("in_place3", {
+        path: "/spec/acceptance/assets",
+        snap: false,
+        image: {
+          uploadURL: uploadURL
+        },
+        onUnsavedChanges: function(e) {
+          console.log(e);
+          console.log("HERE");
+          console.log(e.api.execAction("save"));
+        },
+        onSave: function (e) {
+          return true;
+        }
+      });
+
+      var inPlaceConfig = {
+        toolbar: {
+          items: ["p"]
+        },
+        path: "/spec/acceptance/assets",
+        image: {
+          uploadURL: uploadURL
+        },
+        onSave: function (e) {
+          return true;
+        }
+      };
+      var inPlace4 = new SnapEditor.InPlace("in_place4", inPlaceConfig);
+      var inPlace5 = new SnapEditor.InPlace("in_place5", inPlaceConfig);
+      var inPlace6 = new SnapEditor.InPlace("in_place6", inPlaceConfig);
+    </script>
+  </head>
+  <body>
+    <h1>Insecure</h1>
+    <input type="button" value="activate" onclick="form.api.activate()" />
+    <textarea id="form" class="form">
+      <address>some address<p>here's a block</p></address>
+      <p>some <span>text</span> at the beginning</p>
+      <p>some text at the beginning</p>
+      <div class="atomic">This is atomic</div>
+      <h4>Heading 4</h4>
+      <p>This is some text</p>
+      <p>This is some text</p>
+      <p>This is some text. This is going to be really long because we need to check things like justify and other things like that. That's why this is so long. I normally wouldn't bother typing so much but oh well...</p>
+      <p>This is some text</p>
+      <p>This is some text</p>
+      <p>This is some text</p>
+      Make me editable!
+      <br/>
+      <div class="atomic">This is atomic</div>
+      <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+      <p><a href="snapeditor.com">SnapEditor</a></p>
+      <ul>
+        <li>This</li>
+        <li>is</li>
+        <li>a</li>
+        <li>list</li>
+        <li>
+          This will have a
+          <p>block in it</p>
+        </li>
+        <li>
+          <p>more stuff</p>
+          <table>
+            <tbody>
+              <tr><th>Header</th></tr>
+              <tr><td>Data</td></tr>
+              <tr>
+                <td>
+                  <div class="atomic">This is atomic</div>
+                  Data
+                  <p>another</p>
+                  text
+                  <ul>
+                    <li>first</li>
+                    <li>second</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <h1>Heading 1</h1>
+      <p>More text!</p>
+      <div class="atomic">This is atomic</div>
+      <div class="atomic">This is atomic</div>
+      <div class="atomic">This is atomic</div>
+      a little more complicated
+
+      <table>
+        <tbody>
+          <tr><th>Header</th></tr>
+          <tr><td>Data</td></tr>
+          <tr>
+            <td>
+              Data
+              <span class="atomic">Atomic span</span>
+              <p>another</p>
+              text
+              <ul>
+                <li>first</li>
+                <li>second</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>hi</li>
+      </ul>
+
+      <p>
+        <h1>
+          <b></b>
+        </h1>
+        <p>
+        </p>
+        <h1>
+        </h1>
+      </p>
+
+      <h1>
+        no it isn't
+        <p>i'm okay, i swear</p>
+        oh no!
+      </h1>
+
+      <div>
+        inner
+        <div>
+          things that make
+          <div>
+            somebody maybe <b>want</b> to cry
+          </div>
+          or
+        </div>
+      </div>
+      <table>
+        <tr>
+          <th>header</th>
+          <td>nope</td>
+        </tr>
+      </table>
+      just maybe not...
+      <div class="atomic">This is atomic</div>
+    </textarea>
+    <textarea id="form2" class="form">
+      <div>
+        Some text
+      </div>
+      <table>
+        <tr>
+          <th>header</th>
+          <td>nope</td>
+        </tr>
+      </table>
+      <p>here</p>
+    </textarea>
+    <input type="button" value="submit" />
+    <input type="button" value="activate" onclick="inPlace.api.activate()" />
+    <div id="in_place" class="in_place">
+      <div class="atomic">This is atomic</div>
+      Make me editable!
+      <br/>
+      <p style="text-align: right; background-color: pink">
+        RIGHT HERE!
+      </p>
+      <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+      <p><a href="snapeditor.com">SnapEditor</a></p>
+      <h1>Heading 1</h1>
+      <p><span class="atomic">Atomic span</span>between<span class="atomic">atomic span</span>between<span class="atomic">atomic span</span><span class="atomic">atomic span</span>between<span class="atomic">atomic span</span></p>
+      <ul>
+        <li>This</li>
+        <li>is</li>
+        <li>a</li>
+        <li>list</li>
+        <li>
+          This will have a
+          <p>block in it</p>
+        </li>
+        <li>
+          <p>more stuff</p>
+          <table>
+            <tbody>
+              <tr><th>Header</th></tr>
+              <tr><td>Data</td></tr>
+              <tr>
+                <td>
+                  <div class="atomic">This is atomic</div>
+                  Data
+                  <p>another</p>
+                  text
+                  <ul>
+                    <li>first</li>
+                    <li>second</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      </ul>
+      <div class="atomic">This is atomic</div>
+      <p>More text!</p>
+      <table>
+        <tbody>
+          <tr><th>Header</th></tr>
+          <tr><td>Data</td></tr>
+          <tr>
+            <td>
+              <div class="atomic">This is atomic</div>
+              Data
+              <p>another</p>
+              text
+              <ul>
+                <li>first</li>
+                <li>second</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="atomic">This is atomic</div>
+      <div class="atomic">This is atomic</div>
+      <p>More text!</p>
+      <div class="atomic">This is atomic</div>
+    </div>
+    <div id="in_place2" class="in_place">
+      <img src="http://cuteoverload.files.wordpress.com/2012/03/2940609136_4c9e4bc47e_b.jpg?w=560&h=372" width="560" height="372" />
+    </div>
+    <div id="in_place3" class="in_place">
+      <p>hello</p><p>world</p><p>﻿</p></div>
+    <iframe src="http://ycombinator.com"></iframe>
+    <div id="in_place4">
+      <p>text</p>
+    </div>
+    <div id="in_place5">
+      <p>text</p>
+    </div>
+    <div id="in_place6">
+      <p>text</p>
+      <p>text</p>
+      <p>text</p>
+      <p>text</p>
+      <p>text</p>
+    </div>
+  </body>
+</html>

@@ -10,6 +10,9 @@ unless isIE
           doc: document
 
       describe "#start", ->
+
+        # This test fails in Gecko but it is actually really working.
+        # Something to do with the automated testing.
         it "makes the el editable", ->
           Others.start(api)
           expect($(api.el).attr("contentEditable")).toEqual("true")
