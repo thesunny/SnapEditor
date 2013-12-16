@@ -13,3 +13,4 @@ tags
 /build/snapeditor.js
 /spec/acceptance/assets/snapeditor.js
 /storage/
+/spec/
