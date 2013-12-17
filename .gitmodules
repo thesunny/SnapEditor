@@ -7,3 +7,6 @@
 [submodule "lib/JavaScript-Canvas-to-Blob"]
 	path = lib/JavaScript-Canvas-to-Blob
 	url = https://github.com/blueimp/JavaScript-Canvas-to-Blob
+[submodule "lib/marked"]
+	path = lib/marked
+	url = https://github.com/chjj/marked.git
