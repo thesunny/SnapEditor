@@ -6,7 +6,7 @@ spec_location = "spec/javascripts/%s.spec"
 # uncomment if you use NerdCapsSpec.js
 # spec_location = "spec/javascripts/%sSpec"
 
-all_on_start = false
+all_on_start = true
 
 guard :coffeescript, input: "coffeescripts", output: "javascripts", bare: true, shallow: false, all_on_start: all_on_start
 guard :coffeescript, input: "spec-coffeescripts", output: "spec", bare: true, shallow: false, all_on_start: all_on_start
@@ -86,7 +86,7 @@ guard 'jasmine',
 
   # watch(%r{spec/javascripts\.(js\.coffee|js|coffee)$})         { "spec/javascripts" }
   # watch(%r{spec/javascripts/.+_spec\.(js\.coffee|js|coffee)$})
-  watch(%r{javascripts/(.+?)\.(js)$})  { |m|
+  watch(%r{^javascripts/(.+?)\.(js)$})  { |m|
     path = "spec/javascripts/#{m[1]}.spec.#{m[2]}"
     puts "Jasmine spec should run after this for #{path}"
     path
@@ -111,6 +111,11 @@ guard 'jasmine',
     # what pages are requested. Maybe can figure out what URL is requested
     # when given the return value below.
     # "spec/javascripts/core/api.spec.js"
+  }
+  watch(%r{^spec/(.+?\.js)$})  { |m|
+    path = m[0]
+    puts "Jasmine spec should run after this for #{path}"
+    path
   }
 end
 

@@ -34,6 +34,11 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       # iframe loads, but we need the assets to create the iframe.
       assets = new Assets(config.path)
       self = this
+
+      contents = @getTextareaHTML(config.onGetTextarea)
+      # getTextarea = config.getTextarea || (e) -> e.html
+      # contents = getTextarea(@$textarea.attr("value"))
+
       # new IFrame returns a DOM element. It is not jQueryized but it has
       # special iframe.snapeditor properties on it.
       #
@@ -46,7 +51,7 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       # Consider renaming IFrame to IFrameSnapeditor or something like that.
       @iframe = new IFrame(
         class: "snapeditor_form_iframe"
-        contents: @$textarea.attr("value")
+        contents: contents
         contentClass: config.contentClass || "snapeditor_form_content"
         stylesheets: config.stylesheets
         # Adds default CSS if no stylesheets are given.
@@ -59,6 +64,13 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
         border: "none"
         width: "100%"
       ).appendTo(@$iframeContainer)
+
+    getTextareaHTML: (onGetTextarea) ->
+      value = @$textarea.attr("value")
+      if !onGetTextarea
+        return value
+      else
+        return onGetTextarea(value)
 
     finishConstructor: (el, config) =>
       # In coffeescript the superclass is accessed via the __super__ property.

@@ -27,6 +27,7 @@ For licensing, see LICENSE.
     //"load-image-exif-map": "../lib/JavaScript-Load-Image/js/load-image-exif-map",
     "load-image-ios": "../lib/JavaScript-Load-Image/js/load-image-ios",
     //"load-image-orientation": "../lib/JavaScript-Load-Image/js/load-image-orientation",
-    "canvas-to-blob": "../lib/JavaScript-Canvas-to-Blob/js/canvas-to-blob"
+    "canvas-to-blob": "../lib/JavaScript-Canvas-to-Blob/js/canvas-to-blob",
+    "marked": "../lib/marked/lib/marked"
   }
 })
