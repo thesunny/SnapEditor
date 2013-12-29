@@ -9,6 +9,25 @@ task :compile do
   sh "coffee -bcl -o javascripts coffeescripts"
 end
 
+def get_script_files
+  regexp = /[.]\/coffeescripts\/(.*)[.]coffee/
+  files = Dir.glob("./coffeescripts/**/*.coffee").map do |path|
+    regexp.match(path)[1]
+  end
+end
+
+def join_build_scripts(type)
+  require "json"
+  build_object = JSON.parse(File.read("./build/build_#{type}.js"))
+  paths_object = JSON.parse(File.read("./build/build_path.js"))
+  include_object = {"include" => get_script_files }
+  output_json = JSON.pretty_generate(build_object.merge(paths_object).merge(include_object))
+  puts output_json
+  File.open("./build/build_#{type}_gen.js", "w") do |io|
+    io.write(output_json)
+  end
+end
+
 # Puts the Javascripts together. It doesn't do anything with
 # respect to the original .coffee files.
 desc "Build snapeditor.js"
@@ -23,8 +42,19 @@ task :build_dev do
   sh "cd build && node r.js -o build_dev.js"
 end
 
+# Puts the Javascripts together. It doesn't do anything with
+# respect to the original .coffee files.
+desc "Build snapeditor.js for running specs"
+task :build_spec do
+  join_build_scripts "spec"
+  sh "cd build && node r.js -o build_spec_gen.js"
+end
+
 desc "Compile and build snapeditor.js"
 task :compileAndBuild => [:compile, :build]
+
+desc "Compile and build snapeditor.js for dev"
+task :prep_for_spec => [:compile, :build_dev]
 
 namespace :prepare do
   # Prepares the bundle for the release

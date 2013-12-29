@@ -11,11 +11,15 @@ For licensing, see LICENSE.
   include: "snapeditor",
   out: "snapeditor.js",
   optimize: "none",
-  wrap: {
-    startFile: "start.frag",
-    end: "}());"
-  },
+  // wrap: {
+  //   startFile: "start.frag",
+  //   end: "}());"
+  // },
+  wrap: false,
   paths: {
+    "jquery": "../lib/jquery",
+    "json2": "../lib/json2",
+    "mustache": "../lib/mustache",
     "jquery.ui.widget": "../lib/jQuery-File-Upload/js/vendor/jquery.ui.widget",
     "jquery.iframe-transport": "../lib/jQuery-File-Upload/js/jquery.iframe-transport",
     "jquery.fileupload": "../lib/jQuery-File-Upload/js/jquery.fileupload",

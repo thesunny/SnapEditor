@@ -10,7 +10,10 @@ tags
 /javascripts/
 /vendor/
 /bundle/
-/build/snapeditor.js
 /spec/acceptance/assets/snapeditor.js
 /storage/
 /spec/
+/build/snapeditor.js
+/build/build_*_gen.js
+/build/snapeditor_*.js
+/output

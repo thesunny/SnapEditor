@@ -3,7 +3,7 @@
 # json2 is needed for IE7. IE7 does not implement JSON natively.
 # NOTE: json2 does not follow AMD. The J is needed to swallow up the undefined
 # given by json2.
-define ["../../../lib/json2", "jquery.custom", "core/browser", "core/widget/widget.overlay"], (J, $, Browser, WidgetOverlay) ->
+define ["json2", "jquery.custom", "core/browser", "core/widget/widget.overlay"], (J, $, Browser, WidgetOverlay) ->
   class WidgetObject
     # Options:
     # type

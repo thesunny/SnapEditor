@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-define ["../lib/jquery", "../lib/mustache"], ->
+define ["jquery", "mustache"], ->
   $ = jQuery
   # Remove both window.$ and window.jQuery.
   $.noConflict(true)
