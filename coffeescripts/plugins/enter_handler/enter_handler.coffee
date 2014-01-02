@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
+define ["snapeditor.pre", "jquery.custom", "core/helpers", "core/browser"], (SnapEditor, $, Helpers, Browser) ->
   enterHandler =
     activate: (@api) ->
       self = this

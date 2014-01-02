@@ -22,7 +22,7 @@ def join_build_scripts(type)
   paths_object = JSON.parse(File.read("./build/build_path.js"))
   include_object = {"include" => get_script_files }
   output_json = JSON.pretty_generate(build_object.merge(paths_object).merge(include_object))
-  puts output_json
+  # puts output_json
   File.open("./build/build_#{type}_gen.js", "w") do |io|
     io.write(output_json)
   end
@@ -54,7 +54,7 @@ desc "Compile and build snapeditor.js"
 task :compileAndBuild => [:compile, :build]
 
 desc "Compile and build snapeditor.js for dev"
-task :prep_for_spec => [:compile, :build_dev]
+task :prep_for_spec => [:compile, :build_spec]
 
 namespace :prepare do
   # Prepares the bundle for the release

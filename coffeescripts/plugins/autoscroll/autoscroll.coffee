@@ -2,7 +2,7 @@
 # For licensing, see LICENSE.
 # TODO: Autoscroll is not working right now when you hold down the shift key
 # while selecting.
-define ["jquery.custom"], ($) ->
+define ["snapeditor.pre", "jquery.custom"], (SnapEditor, $) ->
   autoscroll =
     autoscroll: (e) ->
       if e.api.isValid()

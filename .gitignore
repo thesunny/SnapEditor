@@ -17,3 +17,4 @@ tags
 /build/build_*_gen.js
 /build/snapeditor_*.js
 /output
+/tmp/

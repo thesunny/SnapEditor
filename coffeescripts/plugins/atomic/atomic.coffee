@@ -10,7 +10,7 @@
 #   that you can move into
 # * When selecting, and an end point is in the atomic, then we need to move
 #   the end point so that it's not in the middle of the atomic
-define ["jquery.custom", "core/helpers"], ($, Helpers) ->
+define ["snapeditor.pre", "jquery.custom", "core/helpers"], (SnapEditor, $, Helpers) ->
   atomic =
     activate: (@api) ->
       self = this

@@ -6,53 +6,53 @@ spec_location = "spec/javascripts/%s.spec"
 # uncomment if you use NerdCapsSpec.js
 # spec_location = "spec/javascripts/%sSpec"
 
-all_on_start = true
+all_on_start = false
 
 guard :coffeescript, input: "coffeescripts", output: "javascripts", bare: true, shallow: false, all_on_start: all_on_start
-guard :coffeescript, input: "spec-coffeescripts", output: "spec", bare: true, shallow: false, all_on_start: all_on_start
+# guard :coffeescript, input: "spec-coffeescripts", output: "spec", bare: true, shallow: false, all_on_start: all_on_start
 
-# Compiles all the spec-coffeescripts files into the spec directory except for
-# the .coffee script files themselves. This is so that we can work exclusively
-# in the spec-coffeescripts directory to write our specs.
+# # Compiles all the spec-coffeescripts files into the spec directory except for
+# # the .coffee script files themselves. This is so that we can work exclusively
+# # in the spec-coffeescripts directory to write our specs.
+# guard :shell, all_on_start: all_on_start do
+#   watch(%r{^spec-coffeescripts/(.*)}) do |m|
+#     path = m[0]
+#     subpath = m[1]
+#     # puts m[0]
+#     # n m[0]
+#     # n m[0]
+#     if !File.directory?(path) && File.extname(path) != '.coffee'
+#       # puts m[1]
+#       # puts path + " Copy it"
+#       # pp path, File.join("spec", subpath)
+
+#       dest = File.join("spec", subpath)
+#       dest_dir = File.dirname(dest)
+#       FileUtils.mkdir_p(dest_dir)
+#       FileUtils.cp path, dest
+#       "Copied #{path} to spec"
+
+#       # FileUtils.cp_r path, File.join()
+#     else
+#       nil
+#     end
+#     # dir = File.directory?(path)
+#     # if !dir
+#     #   FileUtils.copy
+#     # end
+#     # path + " has changed"
+#   end
+# end
+
 guard :shell, all_on_start: all_on_start do
-  watch(%r{^spec-coffeescripts/(.*)}) do |m|
-    path = m[0]
-    subpath = m[1]
-    # puts m[0]
-    # n m[0]
-    # n m[0]
-    if !File.directory?(path) && File.extname(path) != '.coffee'
-      # puts m[1]
-      # puts path + " Copy it"
-      # pp path, File.join("spec", subpath)
-
-      dest = File.join("spec", subpath)
-      dest_dir = File.dirname(dest)
-      FileUtils.mkdir_p(dest_dir)
-      FileUtils.cp path, dest
-      "Copied #{path} to spec"
-
-      # FileUtils.cp_r path, File.join()
-    else
-      nil
-    end
-    # dir = File.directory?(path)
-    # if !dir
-    #   FileUtils.copy
-    # end
-    # path + " has changed"
-  end
-end
-
-guard :shell, all_on_start: all_on_start do
-  watch(%r{^javascripts/.*[.]js}) do |m|
-    output = `bundle exec rake build_dev`
+  watch(%r{^coffeescripts/.*[.]coffee}) do |m|
+    output = `bundle exec rake build_spec`
     if $?.to_i == 0
       n "Successfully built build/snapeditor.js", "Build Successful", :success
     else
       n "Please check console for errors", "Build Failed", :failed
     end
-    output
+    # output
   end
 end
 
@@ -79,7 +79,7 @@ guard 'jasmine',
   # server: :jasmine_gem,
   server: :none,
   server_mount: '/',
-  jasmine_url: 'http://127.0.0.1:8888/',
+  jasmine_url: 'http://127.0.0.1:3000/jasmine',
   # verbose: true,
   phantomjs_bin: '\\bin\\phantomjs\\phantomjs192\\phantomjs',
   port: 8888 do

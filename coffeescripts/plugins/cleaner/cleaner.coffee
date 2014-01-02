@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], ($, Helpers, Normalizer) ->
+define ["snapeditor.pre", "jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], (SnapEditor, $, Helpers, Normalizer) ->
   # NOTE: TODO:
   # At this time, the cleaner doesn't check to make sure that the DOM is
   # correct. For example, it won't ensure that all the children of a <ul> are

@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-define ["jquery.custom"], ($) ->
+define ["snapeditor", "jquery.custom"], (SnapEditor, $) ->
   return {
     # IE requires contentEditable to be set after a mouseup in order to
     # preserve cursor position. At this point, a range will exist.

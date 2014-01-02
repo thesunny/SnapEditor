@@ -4,7 +4,7 @@
 # functionalities cannot be copied using execCommand. They are prohibited by
 # the browser unless the user allows it through his/her preferences. Therefore,
 # this needs to be manually tested.
-define ["jquery.custom", "core/helpers"], ($, Helpers) ->
+define ["snapeditor.pre", "jquery.custom", "core/helpers"], (SnapEditor, $, Helpers) ->
   edit =
     activate: (@api) ->
       self = this

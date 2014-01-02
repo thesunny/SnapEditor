@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
+define ["snapeditor.pre", "jquery.custom", "plugins/helpers"], (SnapEditor, $, Helpers) ->
   getHTML = (i) -> "<span class=\"snapeditor_style_block_h#{i}\">#{SnapEditor.lang["h#{i}"]}</span>"
   SnapEditor.addStyleButtons(
     p: text: SnapEditor.lang.p, shortcut: "ctrl+alt+0"

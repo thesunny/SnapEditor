@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-define ["jquery.custom"], ($) ->
+define ["snapeditor.pre", "jquery.custom"], (SnapEditor, $) ->
   return {
     # W3C requires contentEditable to be set after a mousedown in order to
     # preserve cursor position. However, at this point, a range does not exist.

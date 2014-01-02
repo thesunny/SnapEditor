@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-define ["jquery.custom", "plugins/helpers"], ($, Helpers) ->
+define ["snapeditor.pre", "jquery.custom", "plugins/helpers"], (SnapEditor, $, Helpers) ->
   formatInline = (e) -> e.api.clean() if e.api.formatInline(e.type)
   SnapEditor.actions.bold = formatInline
   SnapEditor.actions.italic = formatInline

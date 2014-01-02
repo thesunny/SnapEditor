@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-define ["jquery.custom", "core/browser", "core/helpers", "plugins/editable/editable.others", "plugins/editable/editable.ie"], ($, Browser, Helpers, Others, IE) ->
+define ["snapeditor.pre", "jquery.custom", "core/browser", "core/helpers", "plugins/editable/editable.others", "plugins/editable/editable.ie"], (SnapEditor, $, Browser, Helpers, Others, IE) ->
   editable =
     # Turn on editing in the div. This includes preserving the caret position
     # as editing is turned on in all browsers.

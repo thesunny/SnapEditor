@@ -17,7 +17,7 @@
 #
 # This is unexpected behaviour. We should expect "Some text" to be styled as h1.
 # <h1>This is a header Some text</h1>
-define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) ->
+define ["snapeditor.pre", "jquery.custom", "core/helpers", "core/browser"], (SnapEditor, $, Helpers, Browser) ->
   eraseHandler =
     activate: (@api) ->
       self = this

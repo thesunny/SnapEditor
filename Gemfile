@@ -1,6 +1,7 @@
 require 'rbconfig'
 require 'pp'
-is_windows = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
+is_windows = !!(RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
+puts RbConfig::CONFIG['host_os']
 
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.

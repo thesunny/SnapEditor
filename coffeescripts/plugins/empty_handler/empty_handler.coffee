@@ -3,7 +3,7 @@
 #
 # Handles when there is nothing inside the editor and we want to create the
 # starting default tag (usually a P tag)
-define ["jquery.custom", "core/helpers"], ($, Helpers) ->
+define ["snapeditor.pre", "jquery.custom", "core/helpers"], (SnapEditor, $, Helpers) ->
   emptyHandler =
     activate: (@api) ->
       self = this

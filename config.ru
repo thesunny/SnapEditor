@@ -52,6 +52,7 @@ class JasmineTest < Rails::Application
   config.assets.paths << Rails.root.join("coffeescripts")
   config.assets.paths << Rails.root.join("build")
   config.assets.paths << Rails.root.join("spec", "javascripts", "support", "assets")
+  config.assets.paths << Rails.root.join("spec", "acceptance")
   config.assets.paths << Rails.root.join("lib")
   # config.assets.paths << Rails.root.join("lib", "JavaScript-Canvas-toBlob")
   # config.assets.paths << Rails.root.join("lib", "JavaScript-Load-Image")
