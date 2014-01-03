@@ -123,7 +123,9 @@ define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, H
 
     matchPath: (src) ->
       path = null
-      match = /^(|.*\/)snapeditor.js$/.exec(src)
+      # TODO: Made the match path a little looser so that it can accept
+      # snapeditor_SOMETHING.js as well as snapeditor.js
+      match = /^(|.*\/)snapeditor(_[^.]+)?.js$/.exec(src)
       if match
         path = match[1]
         path = "." if path == ""

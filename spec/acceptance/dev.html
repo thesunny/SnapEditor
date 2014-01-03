@@ -30,9 +30,9 @@
       }
     </style>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/lib/mustache.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/lib/json2.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/build/snapeditor.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/assets/mustache.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/assets/json2.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/assets/snapeditor_dev.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       SnapEditor.debug = true;
       SnapEditor.zIndexBase = 200;
@@ -242,66 +242,66 @@
           uploadURL: uploadURL
         }
       });
-      var inPlace = new SnapEditor.InPlace("in_place", {
-        path: "/spec/acceptance/assets",
-        //snap: false,
-        toolbar: {
-          items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph", "multiLevel1", "sayHi"]
-        },
-        image: {
-          insertByURL: false,
-          insertByUpload: true,
-          uploadURL: uploadURL
-        }/*,
-        onSave: function (e) {
-          console.log(e.html);
-          console.log(e.api.getContents());
-          return "OMG! ERROR!";
-        }*/
-      });
-      var inPlace2 = new SnapEditor.InPlace("in_place2", {
-        path: "/spec/acceptance/assets",
-        snap: false,
-        image: {
-          uploadURL: uploadURL
-        },
-        onSave: function (e) {
-          console.log(e.html);
-          console.log(e.api.getContents());
-          return "OMG! ERROR!";
-        }
-      });
-      var inPlace3 = new SnapEditor.InPlace("in_place3", {
-        path: "/spec/acceptance/assets",
-        snap: false,
-        image: {
-          uploadURL: uploadURL
-        },
-        onUnsavedChanges: function(e) {
-          console.log(e);
-          console.log("HERE");
-          console.log(e.api.execAction("save"));
-        },
-        onSave: function (e) {
-          return true;
-        }
-      });
+      // var inPlace = new SnapEditor.InPlace("in_place", {
+      //   path: "/spec/acceptance/assets",
+      //   //snap: false,
+      //   toolbar: {
+      //     items: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "|", "bold", "italic", "underline", "subscript", "superscript", "strikethrough", "|", "styleBlock", "|", "alignLeft", "alignCentre", "alignRight", "alignJustify", "|", "orderedList", "unorderedList", "indent", "outdent", "|", "horizontalRule", "|", "print", "|", "table", "link", "image", "alignment", "hi", "graph", "multiLevel1", "sayHi"]
+      //   },
+      //   image: {
+      //     insertByURL: false,
+      //     insertByUpload: true,
+      //     uploadURL: uploadURL
+      //   }/*,
+      //   onSave: function (e) {
+      //     console.log(e.html);
+      //     console.log(e.api.getContents());
+      //     return "OMG! ERROR!";
+      //   }*/
+      // });
+      // var inPlace2 = new SnapEditor.InPlace("in_place2", {
+      //   path: "/spec/acceptance/assets",
+      //   snap: false,
+      //   image: {
+      //     uploadURL: uploadURL
+      //   },
+      //   onSave: function (e) {
+      //     console.log(e.html);
+      //     console.log(e.api.getContents());
+      //     return "OMG! ERROR!";
+      //   }
+      // });
+      // var inPlace3 = new SnapEditor.InPlace("in_place3", {
+      //   path: "/spec/acceptance/assets",
+      //   snap: false,
+      //   image: {
+      //     uploadURL: uploadURL
+      //   },
+      //   onUnsavedChanges: function(e) {
+      //     console.log(e);
+      //     console.log("HERE");
+      //     console.log(e.api.execAction("save"));
+      //   },
+      //   onSave: function (e) {
+      //     return true;
+      //   }
+      // });
 
-      var inPlaceConfig = {
-        toolbar: {
-          items: ["p"]
-        },
-        path: "/spec/acceptance/assets",
-        image: {
-          uploadURL: uploadURL
-        },
-        onSave: function (e) {
-          return true;
-        }
-      };
-      var inPlace4 = new SnapEditor.InPlace("in_place4", inPlaceConfig);
-      var inPlace5 = new SnapEditor.InPlace("in_place5", inPlaceConfig);
-      var inPlace6 = new SnapEditor.InPlace("in_place6", inPlaceConfig);
+      // var inPlaceConfig = {
+      //   toolbar: {
+      //     items: ["p"]
+      //   },
+      //   path: "/spec/acceptance/assets",
+      //   image: {
+      //     uploadURL: uploadURL
+      //   },
+      //   onSave: function (e) {
+      //     return true;
+      //   }
+      // };
+      // var inPlace4 = new SnapEditor.InPlace("in_place4", inPlaceConfig);
+      // var inPlace5 = new SnapEditor.InPlace("in_place5", inPlaceConfig);
+      // var inPlace6 = new SnapEditor.InPlace("in_place6", inPlaceConfig);
     </script>
   </head>
   <body>

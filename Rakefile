@@ -28,6 +28,11 @@ def join_build_scripts(type)
   end
 end
 
+desc "Run Jasmine Web Service"
+task :spec_server do
+  sh "bundle exec rackup -p 3000"
+end
+
 # Puts the Javascripts together. It doesn't do anything with
 # respect to the original .coffee files.
 desc "Build snapeditor.js"
@@ -55,6 +60,11 @@ task :compileAndBuild => [:compile, :build]
 
 desc "Compile and build snapeditor.js for dev"
 task :prep_for_spec => [:compile, :build_spec]
+
+# Guard compiles the Coffeescript files to JavaScript when they change so we
+# only need to build the dev version and the spec version.
+desc "Build snapeditor_dev.js and snapeditor_spec.js for Guard"
+task :build_for_guard => [:build_dev, :build_spec]
 
 namespace :prepare do
   # Prepares the bundle for the release

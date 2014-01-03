@@ -18,3 +18,4 @@ tags
 /build/snapeditor_*.js
 /output
 /tmp/
+/log/

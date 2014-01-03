@@ -9,7 +9,7 @@ For licensing, see LICENSE.
   },
   name: "../build/almond.js",
   include: "snapeditor",
-  out: "snapeditor.js",
+  out: "../output/snapeditor_dev.js",
   optimize: "none",
   // wrap: {
   //   startFile: "start.frag",
