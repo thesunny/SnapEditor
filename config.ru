@@ -48,6 +48,7 @@ class JasmineTest < Rails::Application
   config.assets.enabled = true
   config.assets.version = '1.0'
   config.secret_token = '9696be98e32a5f213730cb7ed6161c79'
+  config.assets.paths << Rails.root.join("assets")
   config.assets.paths << Rails.root.join("output")
   config.assets.paths << Rails.root.join("coffeescripts")
   config.assets.paths << Rails.root.join("build")
