@@ -29,7 +29,7 @@ def join_build_scripts(type)
 end
 
 desc "Run Jasmine Web Service"
-task :spec_server do
+task :server do
   sh "bundle exec rackup -p 3000"
 end
 
