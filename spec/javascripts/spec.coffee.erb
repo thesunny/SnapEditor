@@ -1,0 +1,41 @@
+#= require jquery
+# require require
+#= require support/require.custom
+#= require snapeditor_spec
+
+
+#= require helpers/helpers
+
+
+# require jquery.custom.spec
+# I renamed this from snapeditor.pre.spec because Rails was choking on it.
+# It thinks its some sort of Lotus application.
+# require snapeditor_pre.spec
+
+# require_tree ./core
+# require_tree ./plugins
+
+# require plugins/erase_handler/erase_handler.spec.before-atomic
+# require plugins/erase_handler/erase_handler.spec
+
+"Spec Files"
+<%
+  spec_files = Dir.glob("./spec/**/*.spec.coffee").map do |spec_file|
+    File.join(spec_file.split("/")[3..-1])
+  end
+%>
+<%= spec_files %>
+
+<%
+  spec_files.each do |spec_file|
+    require_asset spec_file
+  end
+%>
+
+jasmine.rice.autoExecute = false
+
+# Needed to run this after document ready.
+# Document.body is not available before then.
+$ ->
+  console.log "executing Jasmine"
+  jasmine.getEnv().execute()
