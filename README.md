@@ -1,6 +1,29 @@
 # Development
 
+
 ## Setup
+
+### Requirements
+
+SnapEditor expects the following Ruby environment.
+
+    Ruby 2.x
+
+Actually I tested under 2.0.x but assume 2.1.x should work too.
+
+
+### Git Submodules
+
+Get all the submodules using git.
+
+    git submodule update --init
+
+### Bundle Install
+
+Use
+
+    bundle install
+
 
 ### CoffeeScript, NodeJS, and NPM
 
@@ -12,14 +35,16 @@ compile fails.
 
   For other releases, take a look at this [post](http://www.opinionatedprogrammer.com/2010/12/installing-coffeescript-on-debian-or-ubuntu/)
 
-Windows:
+For Windows:
+
 Install node using the installer (I think) and then
 
     npm install -g coffee-script@1.2.0
 
+
 ### Ruby and RubyGems
 
-Ruby 1.9.3-p194 and RubyGems 1.8.23 are used in this project.
+Ruby 2.0.x is used in this project.
 
 To install Ruby and RubyGems, take a look at [rbenv](https://github.com/sstephenson/rbenv) or [rvm](https://rvm.beginrescueend.com/).
 
@@ -29,32 +54,33 @@ Bundler 1.0.21 is used. The following command was used to install the required g
 
     bundle install --path vendor/bundle
 
-### jasmine-headless-webkit
 
-For testing, the project uses Jasmine. However, Jasmine is slow when it comes to continuous testing. Reloading the browser is annoying. [jasmine-headless-webkit](http://johnbintz.github.com/jasmine-headless-webkit/) provides an automated way to run tests in a browser environment.
+### Jasmine
 
-The following command will install the necessary prerequisites.
+For testing, the project uses Jasmine, Jasmine-Guard and JasmineRice.
 
-    sudo apt-get install libqt4-dev qt4-qmake -y
-    sudo update-alternatives --config qmake
 
 ### Markdown
 
-Obviously, this project uses markdown.
+This project uses markdown.
 
     sudo apt-get install markdown
+
 
 ## Compiling
 
 ### CoffeeScript
 
-All SnapEditor code is written in the `coffeescripts/` directory. These files are compiled into JavaScript and placed in the `javascripts/` directory.
+All SnapEditor code is written in the `coffeescripts/` directory. These files are compiled into JavaScript and placed in the `javascripts/` directory;
+however, the `javascripts/` directory is not version controlled.
+
 
 ### Guard
 
 Guard is used for continuous compiling. It listens to the `coffeescripts/` directory for any changes. If there is, it will compile the CoffeeScript file into a JavaScript file and place it in `javascripts/`. Use the following command to run Guard.
 
     bundle exec guard start
+    
 
 ### Rake
 

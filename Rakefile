@@ -119,11 +119,11 @@ namespace :prepare do
   task :bundle => [:bundle_norm, :bundle_min]
 end
 
-begin
-  require 'jasmine'
-  load 'jasmine/tasks/jasmine.rake'
-rescue LoadError
-  task :jasmine do
-    abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"
-  end
-end
+# begin
+#   require 'jasmine'
+#   load 'jasmine/tasks/jasmine.rake'
+# rescue LoadError
+#   task :jasmine do
+#     abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"
+#   end
+# end
