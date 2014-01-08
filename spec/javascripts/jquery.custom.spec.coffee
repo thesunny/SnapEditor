@@ -253,7 +253,7 @@ require ["jquery.custom"], ($) ->
 
     describe "#contexts", ->
       it "returns the matched contexts and the matched elements", ->
-        $div = $('<div class="top">some <b>bold and <i>italic</i></b> text with an <img src="spec/javascripts/support/assets/images/stub.png"> in it</div>')
+        $div = $('<div class="top">some <b>bold and <i>italic</i></b> text with an <img src="/assets/images/stub.png"> in it</div>')
         contexts = [".top", ".top b", "i", "#editable"]
         matchedContexts = $div.find("i").contexts(contexts, $editable[0])
         expect(matchedContexts[".top"]).toEqual($div[0])

@@ -80,7 +80,7 @@ require ["core/range"], (Range) ->
             # NOTE: In Gecko, the img must have a src and it must be loadable in
             # order for the image to be displayed. Simply setting the style will
             # not display a broken image with the specified width and height.
-            $img = $('<img src="spec/javascripts/support/assets/images/stub.png" style="width:100px;height:200px"/>').prependTo($div)
+            $img = $('<img src="/assets/images/stub.png" style="width:100px;height:200px"/>').prependTo($div)
 
           it "returns the coordinates of the image", ->
             range = new Range($editable[0], $img[0])

@@ -92,7 +92,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(clone.compareEndPoints("EndToEnd", range.range)).toEqual(0)
 
           it "clones a controlRange", ->
-            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $editable.html('<img src="/assets/images/stub.png" />')
             $img = $editable.find("img")
             range = new Range()
             range.range = Range.getRangeFromElement($img[0])
@@ -108,7 +108,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(range.isCollapsed()).toBeTruthy()
 
           it "returns false when selecting an image", ->
-            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $editable.html('<img src="/assets/images/stub.png" />')
             $img = $editable.find("img")
             range = new Range()
             range.range = Range.getRangeFromElement($img[0])
@@ -179,7 +179,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(range.isStartOfElement($text[0])).toBeFalsy()
 
           it "returns false if an image is before", ->
-            $text.html('<img src="/spec/javascripts/support/assets/images/stub.png" />text')
+            $text.html('<img src="/assets/images/stub.png" />text')
             textnode = $text[0].childNodes[1]
 
             range = new Range()
@@ -223,7 +223,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(range.isEndOfElement($text[0])).toBeFalsy()
 
           it "returns false if an image is after", ->
-            $text.html('text<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $text.html('text<img src="/assets/images/stub.png" />')
             textnode = $text[0].childNodes[0]
 
             range = new Range()
@@ -255,13 +255,13 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(range.getText()).toEqual("start")
 
           it "returns the text only when selecting HTML elements too", ->
-            $img = $('<img src="/spec/javascripts/support/assets/images/stub.png" />').insertAfter($start)
+            $img = $('<img src="/assets/images/stub.png" />').insertAfter($start)
             range = new Range()
             range.range = Range.getRangeFromElement($editable[0])
             expect(range.getText()).toEqual("startend")
 
           it "returns an empty string when an image is selected", ->
-            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $editable.html('<img src="/assets/images/stub.png" />')
             $img = $editable.find("img")
             range = new Range()
             range.range = Range.getRangeFromElement($img[0])
@@ -469,7 +469,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(clean($start.html())).toEqual("st")
 
           it "keeps the range when selecting an image", ->
-            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" /><div>after</div>')
+            $editable.html('<img src="/assets/images/stub.png" /><div>after</div>')
             $img = $editable.find("img")
             $div = $editable.find("div")
             range = new Range()
@@ -655,7 +655,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
           describe "image", ->
             range = null
             beforeEach ->
-              $editable.html('before<img src="/spec/javascripts/support/assets/images/stub.png" />after')
+              $editable.html('before<img src="/assets/images/stub.png" />after')
               $img = $editable.find("img")
               range = new Range()
               range.range = Range.getRangeFromElement($img[0])
@@ -690,7 +690,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(el.innerHTML).toEqual("start")
 
           it "inserts the given HTML when an image is selected", ->
-            $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+            $editable.html('<img src="/assets/images/stub.png" />')
             $img = $editable.find("img")
             range = new Range()
             spyOn(range, "insertNode")
@@ -704,9 +704,9 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(el.tagName).toEqual("SPAN")
             if isIE7
               # IE7 changes the path to a full URL.
-              expect(clean(el.innerHTML)).toMatch('<img src=(.*)/spec/javascripts/support/assets/images/stub.png>')
+              expect(clean(el.innerHTML)).toMatch('<img src=(.*)/assets/images/stub.png>')
             else
-              expect(clean(el.innerHTML)).toEqual('<img src=/spec/javascripts/support/assets/images/stub.png>')
+              expect(clean(el.innerHTML)).toEqual('<img src=/assets/images/stub.png>')
 
         describe "#delete", ->
           $table = $tds = $after = range = null
@@ -720,7 +720,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             spyOn(range, "getParentElements")
 
           it "deletes an image", ->
-            $editable.html('before<img src="/spec/javascripts/support/assets/images/stub.png" />after')
+            $editable.html('before<img src="/assets/images/stub.png" />after')
             $img = $editable.find("img")
             range.getParentElements.andReturn([$img[0], $img[0]])
             range.range = Range.getRangeFromElement($editable.find("img")[0])
@@ -809,7 +809,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(clean($editable.find("div").html())).toEqual("star<b></b>d")
 
           it "keeps the range after deleting an image", ->
-            $editable.html('before<img src="/spec/javascripts/support/assets/images/stub.png" />after')
+            $editable.html('before<img src="/assets/images/stub.png" />after')
             $img = $editable.find("img")
             range.getParentElements.andReturn([$img[0], $img[0]])
             range.range = Range.getRangeFromElement($editable.find("img")[0])
@@ -820,7 +820,7 @@ require ["core/range/range.ie", "core/helpers"], (Module, Helpers) ->
             expect(clean($editable.html())).toEqual("before<b></b>after")
 
           it "keeps the range valid after deleting", ->
-            $editable.html('before<img src="/spec/javascripts/support/assets/images/stub.png" />after')
+            $editable.html('before<img src="/assets/images/stub.png" />after')
             $img = $editable.find("img")
             range.getParentElements.andReturn([$img[0], $img[0]])
             range.range = Range.getRangeFromElement($editable.find("img")[0])

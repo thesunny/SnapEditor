@@ -378,7 +378,7 @@ require ["jquery.custom", "core/exec_command/exec_command", "core/range", "core/
       describe "image", ->
         $img = null
         beforeEach ->
-          $editable.html("<img src=\"http://#{document.location.host}/spec/javascripts/support/assets/images/stub.png\" />")
+          $editable.html("<img src=\"http://#{document.location.host}/assets/images/stub.png\" />")
           $img = $editable.find("img")
           range = new Range($editable[0], $img[0])
           range.select()
@@ -386,7 +386,7 @@ require ["jquery.custom", "core/exec_command/exec_command", "core/range", "core/
           $a = $editable.find("a")
 
         it "inserts the link", ->
-          expect(clean($editable.html())).toEqual("<a href=http://snapeditor.com/test target=_blank><img src=http://#{document.location.host}/spec/javascripts/support/assets/images/stub.png></a>")
+          expect(clean($editable.html())).toEqual("<a href=http://snapeditor.com/test target=_blank><img src=http://#{document.location.host}/assets/images/stub.png></a>")
 
         it "returns the inserted links", ->
           expect(insertedLinks.length).toEqual(1)

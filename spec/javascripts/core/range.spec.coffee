@@ -162,7 +162,7 @@ require ["core/range"], (Range) ->
         expect(range.getParentElement((el) -> throw Range.EDITOR_ESCAPE_ERROR)).toBeNull()
 
       it "returns the image when an image is selected", ->
-        $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+        $editable.html('<img src="/assets/images/stub.png" />')
         $img = $editable.find("img")
         range = new Range($editable[0], $img[0])
         range.select()
@@ -190,7 +190,7 @@ require ["core/range"], (Range) ->
         expect(endElement).toBe($end[0])
 
       it "returns the image when an image is selected", ->
-        $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+        $editable.html('<img src="/assets/images/stub.png" />')
         $img = $editable.find("img")
         range = new Range($editable[0], $img[0])
         range.select()
@@ -237,7 +237,7 @@ require ["core/range"], (Range) ->
         expect(range.insertNode).toHaveBeenCalledWith($el[0])
 
       it "inserts over an image", ->
-        $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+        $editable.html('<img src="/assets/images/stub.png" />')
         range = new Range($editable[0], $editable.find("img")[0])
         range.select()
         range.insert("<b></b>")

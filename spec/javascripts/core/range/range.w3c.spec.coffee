@@ -78,7 +78,7 @@ require ["core/range/range.w3c", "core/helpers", "core/browser", "core/iframe"],
               expect(range.isCollapsed()).toBeTruthy()
 
             it "returns false when selecting an image", ->
-              $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+              $editable.html('<img src="/assets/images/stub.png" />')
               $img = $editable.find("img")
               range = new Range()
               range.range = Range.getRangeFromElement($img[0])
@@ -150,7 +150,7 @@ require ["core/range/range.w3c", "core/helpers", "core/browser", "core/iframe"],
               expect(range.isStartOfElement($text[0])).toBeFalsy()
 
             it "returns false if an image is before", ->
-              $text.html('<img src="/spec/javascripts/support/assets/images/stub.png" />text')
+              $text.html('<img src="/assets/images/stub.png" />text')
               textnode = $text[0].childNodes[1]
 
               range = new Range()
@@ -194,7 +194,7 @@ require ["core/range/range.w3c", "core/helpers", "core/browser", "core/iframe"],
               expect(range.isEndOfElement($text[0])).toBeFalsy()
 
             it "returns false if an image is after", ->
-              $text.html('text<img src="/spec/javascripts/support/assets/images/stub.png" />')
+              $text.html('text<img src="/assets/images/stub.png" />')
               textnode = $text[0].childNodes[0]
 
               range = new Range()
@@ -215,7 +215,7 @@ require ["core/range/range.w3c", "core/helpers", "core/browser", "core/iframe"],
               expect(range.getImmediateParentElement()).toBe($start[0])
 
             it "returns an image when an image is selected", ->
-              $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+              $editable.html('<img src="/assets/images/stub.png" />')
               $img = $editable.find("img")
               range = new Range()
               range.range = Range.getRangeFromElement($img[0])
@@ -231,13 +231,13 @@ require ["core/range/range.w3c", "core/helpers", "core/browser", "core/iframe"],
               expect(range.getText()).toEqual("start")
 
             it "returns the text only when selecting HTML elements too", ->
-              $img = $('<img src="/spec/javascripts/support/assets/images/stub.png" />').insertAfter($start)
+              $img = $('<img src="/assets/images/stub.png" />').insertAfter($start)
               range = new Range()
               range.range = Range.getRangeFromElement($editable[0])
               expect(range.getText()).toEqual("startend")
 
             it "returns an empty string when an image is selected", ->
-              $editable.html('<img src="/spec/javascripts/support/assets/images/stub.png" />')
+              $editable.html('<img src="/assets/images/stub.png" />')
               $img = $editable.find("img")
               range = new Range()
               range.range = Range.getRangeFromElement($img[0])
