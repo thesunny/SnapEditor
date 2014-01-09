@@ -10,3 +10,6 @@
 [submodule "lib/marked"]
 	path = lib/marked
 	url = https://github.com/chjj/marked.git
+[submodule "lib/unmarked"]
+	path = lib/unmarked
+	url = git@github.com:thesunny/unmarked.git
