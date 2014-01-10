@@ -1,15 +1,17 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
 # require ["jquery.custom", "snapeditor.pre"], ($) ->
-window.isIE = $.browser.msie
+window.isIE = $.browser.msie || navigator.userAgent.indexOf("Trident/7.0") != -1
 #window.isIE7 = isIE and parseInt($.browser.version, 10) == 7
 #window.isIE8 = isIE and parseInt($.browser.version, 10) == 8
 #window.isIE9 = isIE and parseInt($.browser.version, 10) == 9
 #window.isIE10 = isIE and parseInt($.browser.version, 10) == 10
-window.isIE7 = isIE and document.documentMode == 7
-window.isIE8 = isIE and document.documentMode == 8
-window.isIE9 = isIE and document.documentMode == 9
-window.isIE10 = isIE and document.documentMode == 10
+window.ieVersion = isIE and document.documentMode
+window.isIE7 = isIE and window.ieVersion == 7
+window.isIE8 = isIE and window.ieVersion == 8
+window.isIE9 = isIE and window.ieVersion == 9
+window.isIE10 = isIE and window.ieVersion == 10
+window.isIE11 = isIE and window.ieVersion == 11
 window.isGecko = $.browser.mozilla
 window.isGecko1 = isGecko and parseInt($.browser.version, 10) == 1
 window.isWebkit = $.browser.webkit

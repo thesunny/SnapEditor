@@ -45,7 +45,7 @@ require ["jquery.custom", "core/widget/widget.object", "core/range", "core/helpe
           range.range.setStart($start[0].childNodes[0], 1)
         else
           range.range.findText("tart")
-        range.collapse().select()
+        range.collapse(true).select()
         widgetObject = new WidgetObject(api, "widget")
         spyOn(widgetObject, "insertOverlay")
         widgetObject.insertEl()

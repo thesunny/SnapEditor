@@ -34,8 +34,7 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
       # iframe loads, but we need the assets to create the iframe.
       assets = new Assets(config.path)
       self = this
-
-      contents = @getTextareaHTML(config.onGetTextarea)
+      contents = @getContentsFromTextarea(config.onGetContentsFromTextarea)
       # getTextarea = config.getTextarea || (e) -> e.html
       # contents = getTextarea(@$textarea.attr("value"))
 
@@ -65,12 +64,21 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
         width: "100%"
       ).appendTo(@$iframeContainer)
 
-    getTextareaHTML: (onGetTextarea) ->
+    getContentsFromTextarea: (fn) ->
+      # TODO:
+      # Unfortunately, due to the initialization order, behaviours aren't
+      # accessible yet. Would be nice to be able to add this as a behavior.
+      # e = $.Event('snapeditor.get_contents_from_textarea')
+      # e.contents = @$textarea.attr("value")
+      # console.log e
+      # @trigger e
+      # return e.contents
       value = @$textarea.attr("value")
-      if !onGetTextarea
-        return value
+      if fn
+        fn(value)
       else
-        return onGetTextarea(value)
+        value
+      # fn ? fn(value) : value
 
     finishConstructor: (el, config) =>
       # In coffeescript the superclass is accessed via the __super__ property.
@@ -125,10 +133,21 @@ define ["jquery.custom", "core/helpers", "core/editor", "config/config.default.f
     """
 
     updateTextarea: =>
+      # console.log "editor.form.coffee#updateTextarea"
       newContents = @getContents()
+      # console.log newContents
+      # console.log @config
+      # if @config.onSetTextarea
+      #   console.log "@config.onSetTextarea"
+      #   newContents = @config.onSetTextarea(newContents)
+      #   console.log newContents
       unless @oldContents == newContents
         @$textarea.val(newContents)
         @oldContents = newContents
+        # Trigger the onUpdateTextarea callback event
+        e = $.Event('snapeditor.update_textarea')
+        e.contents = newContents
+        @trigger(e)
 
     addCustomDataToEvent: (e) ->
       super(e)

@@ -32,6 +32,7 @@ For licensing, see LICENSE.
     "load-image-ios": "../lib/JavaScript-Load-Image/js/load-image-ios",
     //"load-image-orientation": "../lib/JavaScript-Load-Image/js/load-image-orientation",
     "canvas-to-blob": "../lib/JavaScript-Canvas-to-Blob/js/canvas-to-blob",
-    "marked": "../lib/marked/lib/marked"
+    "marked": "../lib/marked/lib/marked",
+    "unmarked": "../lib/unmarked/javascripts/unmarked"
   }
 })

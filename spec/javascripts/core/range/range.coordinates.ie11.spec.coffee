@@ -4,8 +4,8 @@
 # module depends quite heavily on the Range object. However, the tests should
 # still be only testing the functionality of the module.
 require ["core/range"], (Range) ->
-  if isIE9
-    describe "Range.Coordinates.IE9", ->
+  if isIE10
+    describe "Range.Coordinates.IE11", ->
       $editable = $div = $first = $second = null
       beforeEach ->
         $editable = addEditableFixture()
@@ -36,13 +36,8 @@ require ["core/range"], (Range) ->
               coords = range.getCoordinates()
               expect(coords.top).toEqual(114)
               expect(coords.bottom).toEqual(128)
-              # TODO:
-              # Not sure why but these test use to check that the next two
-              # expectations had a value of 227. It feels like 200 is right
-              # though and the test for IE8 is 200 for the same test but IE10
-              # is different.
-              expect(coords.left).toEqual(200)
-              expect(coords.right).toEqual(200)
+              expect(coords.left).toEqual(227)
+              expect(coords.right).toEqual(227)
 
             it "does not alter the HTML", ->
               html = $editable.html()

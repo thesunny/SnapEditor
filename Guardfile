@@ -46,7 +46,7 @@ guard :coffeescript, input: "coffeescripts", output: "javascripts", bare: true, 
 
 guard :shell, all_on_start: all_on_start do
   watch(%r{^coffeescripts/.*[.]coffee}) do |m|
-    output = `bundle exec rake build`
+    output = `bundle exec rake build_dev`
     if $?.to_i == 0
       n "Successfully built build/snapeditor.js", "Build Successful", :success
     else

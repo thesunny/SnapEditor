@@ -25,9 +25,14 @@ require ["jquery.custom", "core/iframe.snapeditor"], ($, IFrame) ->
         $(iframe).appendTo($editable)
 
       it "sets the content", ->
+        # WARNING:
+        # IE8 returns <B>hello</B> so we make ie8 happy by giving it that
+        # option. Later we may wish to look for a way to prevent IE from doing
+        # that.
+        s = if isIE8 then "<B>hello</B>" else "<b>hello</b>"
         iframe = new IFrame(
           contents: "<b>hello</b>"
-          load: -> expect(@el.innerHTML).toEqual("<b>hello</b>")
+          load: -> expect(@el.innerHTML).toEqual(s)
         )
         $(iframe).appendTo($editable)
 

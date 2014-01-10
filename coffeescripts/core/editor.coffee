@@ -388,8 +388,15 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
 
     # Returns the contents of the editor after cleaning and changing unicode
     # zero-width no-break spaces to HTML entities.
+    #
+    # There is a behavior callback here for onGetContents. Set e.contents to
+    # the content value if you want to override it. 
     getContents: ->
-      # Clean the content before returning it.
+      e = $.Event('snapeditor.get_contents')
+      e.contents = null # set it to null to make the property more explicit
+      @api.trigger(e)
+      return e.contents if e.contents
+      # if contents are not set by behavior, clean content before returning it.
       @clean(@el.firstChild, @el.lastChild)
       regexp = new RegExp(Helpers.zeroWidthNoBreakSpaceUnicode, "g")
       @$el.html().replace(regexp, Helpers.zeroWidthNoBreakSpace)

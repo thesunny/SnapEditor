@@ -1,4 +1,5 @@
 #= require jquery
+#= require json2
 # require require
 #= require support/require.custom
 #= require snapeditor_spec
@@ -37,5 +38,5 @@ jasmine.rice.autoExecute = false
 # Needed to run this after document ready.
 # Document.body is not available before then.
 $ ->
-  console.log "executing Jasmine"
+  p "executing Jasmine"
   jasmine.getEnv().execute()

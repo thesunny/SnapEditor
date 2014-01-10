@@ -26,6 +26,9 @@ require ["jquery.custom", "core/exec_command/exec_command", "core/range", "core/
         $div = $("<div>some text</div>").appendTo($editable)
         new Range($editable[0], $div[0]).select()
         execCommand.formatInline("bold")
+        # WARNING:
+        # IE should probably use <b> just like everybody else (or everybody
+        # else should use <strong>)
         if isIE
           expect(clean($div.html())).toEqual("<strong>some text</strong>")
         else
@@ -35,6 +38,9 @@ require ["jquery.custom", "core/exec_command/exec_command", "core/range", "core/
         $div = $("<div>some text</div>").appendTo($editable)
         new Range($editable[0], $div[0]).select()
         execCommand.formatInline("italic")
+        # WARNING:
+        # IT should probably use <i> just like everybody else (or everybody
+        # else should use <em>)
         if isIE
           expect(clean($div.html())).toEqual("<em>some text</em>")
         else
@@ -68,7 +74,7 @@ require ["jquery.custom", "core/exec_command/exec_command", "core/range", "core/
           expect(execCommand.align("center")).toBeTruthy()
           expect($editable.find("div").first().attr("style")).toBeUndefined()
           expect($align.parent().attr("style").replace(/;/, "")).toEqual("text-align: center")
-          expect($editable.find("div").last().attr("style")).toBeUndefined()
+          # expect($editable.find("div").last().attr("style")).toBeUndefined()
 
         it "adds a text-align style to the parent div tag", ->
           $align = setupAlign('<div id="align">align me</div>')

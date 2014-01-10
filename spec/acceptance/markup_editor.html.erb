@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <!--<link rel="stylesheet" href="/spec/javascripts/support/assets/stylesheets/cssreset-min.css" type="text/css" charset="utf-8">-->
+    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <style type="text/css">
+      body {
+        margin: 25px;
+      }
+      blockquote p {
+        font: 13px arial;
+      }
+      .markupeditor, .markdown {
+        width: 800px;
+        height: 600px;
+      }
+      textarea {
+        font: 12px consolas, monospace;
+      }
+    </style>
+    <script src="/assets/require.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/assets/snapeditor_dev.js"></script>
+    <!--
+    <script src="/build/snapeditor.js"></script>
+  -->
+    <!--
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/lib/marked/lib/marked.js"></script>
+  -->
+
+    </script>
+  </head>
+  <body>
+    <%
+      content = File.read "spec/acceptance/sample_content.md"
+    %>
+    <textarea id="meditor-textarea" class="markupeditor"><%= content %></textarea>
+    <textarea id="markdown" class="markdown"></textarea>
+    <script>
+      // var editor = new SnapEditor.Form("meditor-textarea");
+      var el = document.getElementById('meditor-textarea');
+
+      // Editor.markdown('meditor-textarea')
+      // $(function () {
+      editor = new Meditor('meditor-textarea');
+      editor.formEditor.on("snapeditor.update_textarea", function (e) {
+        console.log("HERE");
+        $('#markdown').val(e.contents);
+        console.log(e);
+      })
+      console.log("finished init")
+      // });
+      // $('#meditor-textearea').meditor();
+      // new SnapEditor.Form('meditor-textarea');
+    </script>
+  </body>
+</html>
