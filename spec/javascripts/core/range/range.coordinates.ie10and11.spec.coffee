@@ -4,7 +4,7 @@
 # module depends quite heavily on the Range object. However, the tests should
 # still be only testing the functionality of the module.
 require ["core/range"], (Range) ->
-  if isIE10
+  if isIE10 || isIE11
     describe "Range.Coordinates.IE10", ->
       $editable = $div = $first = $second = null
       beforeEach ->

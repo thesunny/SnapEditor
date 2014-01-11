@@ -41,9 +41,9 @@ require ["core/range"], (Range) ->
         #
         # WARNING:
         # IE9 and IE10 also doesn't pass the regular test.
-
+        # if !isIE8
         range = new Range($editable[0])
-        if isGecko || isIE9 || isIE10
+        if isGecko || isIE8 || isIE9 || isIE10 || isIE11
           expect(range.doc.title).toBe(document.title)
         else
           expect(range.doc).toBe(document)

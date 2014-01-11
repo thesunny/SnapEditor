@@ -122,10 +122,10 @@ require ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObjec
         $el = $(obj.getElement(document, $('<div width="100px" style="background-color: pink; text-align: left;"/>')[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("width")).toEqual("100px")
-        if isIE9 or isIE10
+        if isIE9 or isIE10 or isIE11
           expect($el.attr("style")).toEqual("text-align: left; background-color: pink;")
         else if isIE
-          expect($el.attr("style")).toEqual("text-align: left; background-color: pink")
+          expect($el.attr("style").toLowerCase()).toEqual("text-align: left; background-color: pink")
         else
           expect($el.attr("style")).toEqual("background-color: pink; text-align: left;")
 
@@ -134,10 +134,10 @@ require ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObjec
         $el = $(obj.getElement(document, $('<div width="100px" style="font-size: 12px; text-align: left; color: pink;"/>')[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("width")).toEqual("100px")
-        if isIE9 or isIE10
+        if isIE9 or isIE10 or isIE11
           expect($.trim($el.attr("style"))).toEqual("text-align: left; font-size: 12px;")
         else if isIE
-          expect($.trim($el.attr("style"))).toEqual("text-align: left; font-size: 12px")
+          expect($.trim($el.attr("style")).toLowerCase()).toEqual("text-align: left; font-size: 12px")
         else
           expect($.trim($el.attr("style"))).toEqual("font-size: 12px; text-align: left;")
 

@@ -46,12 +46,19 @@ guard :coffeescript, input: "coffeescripts", output: "javascripts", bare: true, 
 
 guard :shell, all_on_start: all_on_start do
   watch(%r{^coffeescripts/.*[.]coffee}) do |m|
-    output = `bundle exec rake build_dev`
+    # output = `bundle exec rake build_dev`
+    # if $?.to_i == 0
+    #   n "Successfully built build/snapeditor.js", "Dev Build Successful", :success
+    # else
+    #   n "Please check console for errors", "Build Failed", :failed
+    # end
+    output = `bundle exec rake build_spec`
     if $?.to_i == 0
-      n "Successfully built build/snapeditor.js", "Build Successful", :success
+      n "Successfully built output/snapeditor_spec.js", "Spec Build Successful", :success
     else
-      n "Please check console for errors", "Build Failed", :failed
+      n "Please check console for errors", "Spec Build Failed", :failed
     end
+    output
     # output
   end
 end
@@ -73,85 +80,48 @@ end
 #   path =~ /(_|[.])spec\.(js|coffee|js\.coffee)$/ && File.exists?(path)
 # end
 
-guard 'jasmine',
-  all_on_start: all_on_start,
-  # server: :none,
-  # server: :jasmine_gem,
-  server: :none,
-  server_mount: '/',
-  jasmine_url: 'http://127.0.0.1:3000/jasmine',
-  # verbose: true,
-  phantomjs_bin: '\\bin\\phantomjs\\phantomjs192\\phantomjs',
-  port: 8888 do
-
-  # watch(%r{spec/javascripts\.(js\.coffee|js|coffee)$})         { "spec/javascripts" }
-  # watch(%r{spec/javascripts/.+_spec\.(js\.coffee|js|coffee)$})
-  watch(%r{^javascripts/(.+?)\.(js)$})  { |m|
-    path = "spec/javascripts/#{m[1]}.spec.#{m[2]}"
-    puts "Jasmine spec should run after this for #{path}"
-    path
-    # TODO:
-    # The return value should actually be the specs that are to be run but
-    # this doesn't seem to work at this time. The all_on_start does run all
-    # the tests but I can't figure out a return value that actually makes
-    # ANY specs run after a single file changes but the puts works before it.
-    #
-    # Funny, if I return "spec/javascripts" it tries and successfully does
-    # run all the tests; however, if I am specific like
-    #
-    # spec/javascripts/core/api.spec.js
-    #
-    # Then it doesn't work. Can try some alternatives like without the filename
-    # or without just the file extension.
-    #
-    # Doesn't work when set to spec/javascripts/core either. Weird.
-    #
-    # TODO:
-    # Figured out an idea. Run the web server in a separate console and see
-    # what pages are requested. Maybe can figure out what URL is requested
-    # when given the return value below.
-    # "spec/javascripts/core/api.spec.js"
-  }
-  watch(%r{^spec/(.+?\.js)$})  { |m|
-    path = m[0]
-    puts "Jasmine spec should run after this for #{path}"
-    path
-  }
-end
-
-# guard :jasmine,
+# guard 'jasmine',
+#   all_on_start: all_on_start,
+#   # server: :none,
+#   # server: :jasmine_gem,
 #   server: :none,
 #   server_mount: '/',
+#   jasmine_url: 'http://127.0.0.1:3000/jasmine',
 #   # verbose: true,
 #   phantomjs_bin: '\\bin\\phantomjs\\phantomjs192\\phantomjs',
 #   port: 8888 do
-  
-#   watch(%r{^javascripts/(.*)[.]js$}) { |m| "spec/javascripts" }
-  
-#   # watch(%r{^javascripts/(.*)[.]js$}) { |m| newest_js_file(spec_location % m[1]) }
-#   # watch(%r{^spec/javascripts/(.*)[.][Ss]pec\..*}) { |m| newest_js_file(spec_location % m[1]) }
-#   # watch(%r{^spec/javascripts/support/jasmine.yml})
-  
-#   # rackup_config:  'config.ru' do
-#   # watch(%r{^javascripts/(.*)[.]js$}) { |m| newest_js_file(spec_location % m[1]) }
-#   # watch(%r{^spec/javascripts/(.*)[.][Ss]pec\..*}) { |m| newest_js_file(spec_location % m[1]) }
-#   # watch(%r{^spec/javascripts/support/jasmine.yml})
-#   # watch(%r{spec/javascripts/spec\.(js\.coffee|js|coffee)$}) { 'spec/javascripts' }
-#   # watch(%r{spec/javascripts/.+_spec\.js$})
-#   # watch(%r{spec/javascripts/fixtures/.+$})
-#   # watch(%r{app/assets/javascripts/(.+?)\.js(?:\.\w+)*$}) { |m| "spec/javascripts/#{ m[1] }_spec.#{ m[2] }" }
-# end
 
-# guard :jasmine,
-#   server: :webrick,
-#   # verbose: true,
-#   phantomjs_bin: '\\bin\\phantomjs\\phantomjs192\\phantomjs',
-#   rackup_config:  'config.ru' do
-#   watch(%r{^javascripts/(.*)[.]js$}) { |m| newest_js_file(spec_location % m[1]) }
-#   watch(%r{^spec/javascripts/(.*)[.][Ss]pec\..*}) { |m| newest_js_file(spec_location % m[1]) }
-#   watch(%r{^spec/javascripts/support/jasmine.yml})
-#   # watch(%r{spec/javascripts/spec\.(js\.coffee|js|coffee)$}) { 'spec/javascripts' }
+#   # watch(%r{spec/javascripts\.(js\.coffee|js|coffee)$})         { "spec/javascripts" }
 #   # watch(%r{spec/javascripts/.+_spec\.(js\.coffee|js|coffee)$})
-#   # watch(%r{spec/javascripts/fixtures/.+$})
-#   # watch(%r{app/assets/javascripts/(.+?)\.(js\.coffee|js|coffee)(?:\.\w+)*$}) { |m| "spec/javascripts/#{ m[1] }_spec.#{ m[2] }" }
+#   watch(%r{^javascripts/(.+?)\.(js)$})  { |m|
+#     path = "spec/javascripts/#{m[1]}.spec.#{m[2]}"
+#     puts "Jasmine spec should run after this for #{path}"
+#     path
+#     # TODO:
+#     # The return value should actually be the specs that are to be run but
+#     # this doesn't seem to work at this time. The all_on_start does run all
+#     # the tests but I can't figure out a return value that actually makes
+#     # ANY specs run after a single file changes but the puts works before it.
+#     #
+#     # Funny, if I return "spec/javascripts" it tries and successfully does
+#     # run all the tests; however, if I am specific like
+#     #
+#     # spec/javascripts/core/api.spec.js
+#     #
+#     # Then it doesn't work. Can try some alternatives like without the filename
+#     # or without just the file extension.
+#     #
+#     # Doesn't work when set to spec/javascripts/core either. Weird.
+#     #
+#     # TODO:
+#     # Figured out an idea. Run the web server in a separate console and see
+#     # what pages are requested. Maybe can figure out what URL is requested
+#     # when given the return value below.
+#     # "spec/javascripts/core/api.spec.js"
+#   }
+#   watch(%r{^spec/(.+?\.js)$})  { |m|
+#     path = m[0]
+#     puts "Jasmine spec should run after this for #{path}"
+#     path
+#   }
 # end

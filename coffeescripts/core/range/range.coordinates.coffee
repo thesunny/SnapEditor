@@ -30,7 +30,7 @@ define ["core/browser", "core/range/range.coordinates.ie7", "core/range/range.co
     Coordinates = IE8Coordinates
   else if Browser.isIE9
     Coordinates = IE9Coordinates
-  else if Browser.isIE10
+  else if Browser.isIE10 or Browser.isIE11
     Coordinates = IE10Coordinates
   else if Browser.isWebkit
     Coordinates = WebkitCoordinates

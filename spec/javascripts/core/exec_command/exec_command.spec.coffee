@@ -150,12 +150,14 @@ require ["jquery.custom", "core/exec_command/exec_command", "core/range", "core/
             <h1>header</h1>
             <div id="end">end</div>
           """)
+          # WARNING:
+          # ie8 makes style names uppercase so we have to lowercase
           expect(execCommand.align("right")).toBeTruthy()
           expect($editable.find("div").first().attr("style")).toBeUndefined()
-          expect($("#start").attr("style").replace(/;/, "")).toEqual("text-align: right")
-          expect($editable.find("p").attr("style").replace(/;/, "")).toEqual("text-align: right")
-          expect($editable.find("h1").attr("style").replace(/;/, "")).toEqual("text-align: right")
-          expect($("#end").attr("style").replace(/;/, "")).toEqual("text-align: right")
+          expect($("#start").attr("style").replace(/;/, "").toLowerCase()).toEqual("text-align: right")
+          expect($editable.find("p").attr("style").replace(/;/, "").toLowerCase()).toEqual("text-align: right")
+          expect($editable.find("h1").attr("style").replace(/;/, "").toLowerCase()).toEqual("text-align: right")
+          expect($("#end").attr("style").replace(/;/, "").toLowerCase()).toEqual("text-align: right")
           expect($editable.find("div").last().attr("style")).toBeUndefined()
 
         it "doesn't touch atomic elements", ->
@@ -164,11 +166,13 @@ require ["jquery.custom", "core/exec_command/exec_command", "core/range", "core/
             <div id="start">start</div>
             <div id="end">end</div>
           """)
+          # WARNING:
+          # ie8 makes style names uppercase so we have to lowercase
           expect(execCommand.align("right")).toBeTruthy()
           expect($editable.find("div").first().attr("style")).toBeUndefined()
           expect($editable.find(".atomic").attr("style")).toBeUndefined()
-          expect($("#start").attr("style").replace(/;/, "")).toEqual("text-align: right")
-          expect($("#end").attr("style").replace(/;/, "")).toEqual("text-align: right")
+          expect($("#start").attr("style").replace(/;/, "").toLowerCase()).toEqual("text-align: right")
+          expect($("#end").attr("style").replace(/;/, "").toLowerCase()).toEqual("text-align: right")
           expect($editable.find("div").last().attr("style")).toBeUndefined()
 
         describe "table", ->
@@ -181,14 +185,16 @@ require ["jquery.custom", "core/exec_command/exec_command", "core/range", "core/
               </tbody></table>
               <div id="end">end</div>
             """)
+            # WARNING:
+            # ie8 makes style names uppercase so we have to lowercase
             expect(execCommand.align("right")).toBeTruthy()
             expect($editable.find("div").first().attr("style")).toBeUndefined()
-            expect($("#start").attr("style").replace(/;/, "")).toEqual("text-align: right")
+            expect($("#start").attr("style").replace(/;/, "").toLowerCase()).toEqual("text-align: right")
             expect($editable.find("th").first().attr("style")).toBeUndefined()
             expect($editable.find("th").last().attr("style")).toBeUndefined()
             expect($editable.find("td").first().attr("style")).toBeUndefined()
             expect($editable.find("td").last().attr("style")).toBeUndefined()
-            expect($("#end").attr("style").replace(/;/, "")).toEqual("text-align: right")
+            expect($("#end").attr("style").replace(/;/, "").toLowerCase()).toEqual("text-align: right")
             expect($editable.find("div").last().attr("style")).toBeUndefined()
 
           it "doesn't align anything when ending in a table cell", ->

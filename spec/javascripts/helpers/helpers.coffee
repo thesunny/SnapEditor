@@ -1,7 +1,38 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
 # require ["jquery.custom", "snapeditor.pre"], ($) ->
-window.isIE = $.browser.msie || navigator.userAgent.indexOf("Trident/7.0") != -1
+
+# Code borrowed from jQuery migrate. Versions of jQuery older than 1.9
+# doesn't include $.browser but we need it.
+uaMatch = (ua) ->
+  ua = ua.toLowerCase()
+
+  match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+    /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+    /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
+    /(msie) ([\w.]+)/.exec( ua ) ||
+    ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
+    [];
+
+  return {
+    browser: match[ 1 ] || "",
+    version: match[ 2 ] || "0"
+  }
+
+matched = uaMatch(navigator.userAgent)
+browser = {}
+
+if matched.browser
+  browser[ matched.browser ] = true
+  browser.version = matched.version
+
+# Chrome is Webkit, but Webkit is also Safari.
+if browser.chrome
+  browser.webkit = true
+else if browser.webkit
+  browser.safari = true
+
+window.isIE = browser.msie || navigator.userAgent.indexOf("Trident/7.0") != -1
 #window.isIE7 = isIE and parseInt($.browser.version, 10) == 7
 #window.isIE8 = isIE and parseInt($.browser.version, 10) == 8
 #window.isIE9 = isIE and parseInt($.browser.version, 10) == 9
@@ -12,9 +43,9 @@ window.isIE8 = isIE and window.ieVersion == 8
 window.isIE9 = isIE and window.ieVersion == 9
 window.isIE10 = isIE and window.ieVersion == 10
 window.isIE11 = isIE and window.ieVersion == 11
-window.isGecko = $.browser.mozilla
-window.isGecko1 = isGecko and parseInt($.browser.version, 10) == 1
-window.isWebkit = $.browser.webkit
+window.isGecko = browser.mozilla and !isIE
+window.isGecko1 = isGecko and parseInt(browser.version, 10) == 1
+window.isWebkit = browser.webkit
 window.hasW3CRanges = !!window.getSelection
 
 # Puts.
@@ -48,3 +79,22 @@ window.addEditableFixture = (doc = document) ->
 # Remove ", \n, \r, and zero width no break space.
 window.clean = (s) ->
   s.toLowerCase().replace(/["\n\r\t\ufeff]/g, "")
+
+window.fireIEEvent = (el, eventName) ->
+  if document.createEvent
+    event = document.createEvent('HTMLEvents')
+    event.initEvent(eventName,true,true)
+  else if document.createEventObject # IE < 9
+    event = document.createEventObject();
+    event.eventType = eventName;
+  else
+    throw "Can't find method to create Event"
+  event.eventName = eventName;
+
+  if el.dispatchEvent
+    el.dispatchEvent(event)
+  else if el.fireEvent
+    el.fireEvent('on'+eventName, event)
+  else
+    throw "Can't find method to fire Event"
+

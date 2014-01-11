@@ -4,6 +4,7 @@ if isIE
   require ["jquery.custom", "plugins/editable/editable.ie"], ($, IE) ->
     describe "Editable.IE", ->
       $div = api = null
+
       beforeEach ->
         # If the div is not in the DOM, IE craps out.
         $div = $("<div/>").prepend("body")
@@ -18,11 +19,10 @@ if isIE
         it "prevents the image resize handlers from working", ->
           spyOn(IE, "preventResize")
           IE.start(api)
-          console.log 1
 
           # NOTE: The event handler is attached using native JavaScript. Hence,
           # we need to fire the event using native JavaScript.
-          api.el.fireEvent("onresizestart", document.createEventObject())
+          fireIEEvent(api.el, 'resizestart')
           expect(IE.preventResize).toHaveBeenCalled()
 
         it "makes the el editable", ->
@@ -37,7 +37,7 @@ if isIE
 
           # NOTE: The event handler is attached using native JavaScript. Hence,
           # we need to fire the event using native JavaScript.
-          api.el.fireEvent("onresizestart", document.createEventObject())
+          fireIEEvent(api.el, 'resizestart')
           expect(IE.preventResize).not.toHaveBeenCalled()
 
       describe "#preventResize", ->

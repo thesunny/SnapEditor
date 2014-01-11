@@ -10,10 +10,16 @@ define ["core/range"], (Range) ->
       #
       # NOTE: The event handler must be attached and detached using native
       # JavaScript or it will not work.
-      api.el.attachEvent("onresizestart", @preventResize)
+      if api.el.addEventListener
+        api.el.addEventListener("resizestart", @preventResize, false)
+      else
+        api.el.attachEvent("onresizestart", @preventResize)
 
     deactivateBrowser: (api) ->
-      api.el.detachEvent("onresizestart", @preventResize)
+      if api.el.removeEventListener
+        api.el.removeEventListener("resizestart", @preventResize, false)
+      else
+        api.el.detachEvent("onresizestart", @preventResize)
 
     preventResize: (e) ->
       e.returnValue = false

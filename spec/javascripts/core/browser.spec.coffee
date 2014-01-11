@@ -3,10 +3,14 @@
 require ["core/browser"], (Browser) ->
   describe "Browser", ->
     it "returns true for the right browser", ->
+      p navigator.userAgent
+      p document.documentMode
       p("isIE: #{Browser.isIE}")
       p("isIE7: #{Browser.isIE7}")
       p("isIE8: #{Browser.isIE8}")
       p("isIE9: #{Browser.isIE9}")
+      p("isIE10: #{Browser.isIE10}")
+      p("isIE11: #{Browser.isIE11}")
       p("isGecko: #{Browser.isGecko}")
       p("isGecko1: #{Browser.isGecko1}")
       p("isWebkit: #{Browser.isWebkit}")

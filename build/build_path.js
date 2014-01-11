@@ -1,6 +1,6 @@
 {
   "paths": {
-    "jquery": "../lib/jquery",
+    "jquery": "../lib/jquery-1.10.2",
     "json2": "../lib/json2",
     "mustache": "../lib/mustache",
     "jquery.ui.widget": "../lib/jQuery-File-Upload/js/vendor/jquery.ui.widget",
