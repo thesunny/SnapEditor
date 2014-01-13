@@ -44,15 +44,15 @@ end
 # respect to the original .coffee files.
 desc "Build snapeditor.js for development"
 task :build_dev do
-  sh "cd build && node r.js -o build_dev.js"
+  sh "cd ./build && node r.js -o build_dev.js"
 end
 
 # Puts the Javascripts together. It doesn't do anything with
 # respect to the original .coffee files.
-desc "Build snapeditor.js for running specs"
+desc "Build snapeditor.js for specs"
 task :build_spec do
   join_build_scripts "spec"
-  sh "cd build && node r.js -o build_spec_gen.js"
+  sh "cd ./build && node r.js -o build_spec_gen.js"
 end
 
 desc "Compile and build snapeditor.js"

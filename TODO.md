@@ -1,8 +1,9 @@
 # TODO
 
-## Important
+## Important for Markup Editor
 
 * PRE or code support exceptions in cleaner
+* Disallow tags in pre (use text value maybe?)
 * nested blockquote support in cleaner
 * blocks at top level within blockquotes in cleaner
 

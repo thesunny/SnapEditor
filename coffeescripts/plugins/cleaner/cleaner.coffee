@@ -1,5 +1,8 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
+#
+# This cleaner object is primarily responsible for giving the proper inputs
+# to the cleaner's normalizer.
 define ["snapeditor.pre", "jquery.custom", "core/helpers", "plugins/cleaner/cleaner.normalizer"], (SnapEditor, $, Helpers, Normalizer) ->
   # NOTE: TODO:
   # At this time, the cleaner doesn't check to make sure that the DOM is

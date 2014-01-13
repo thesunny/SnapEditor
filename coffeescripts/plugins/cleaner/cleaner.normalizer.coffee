@@ -8,6 +8,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
     # * api - SnapEditor API
     # * ignore - an array of selectors to ignore
     constructor: (@api, @ignore) ->
+      console.log @ignore
       @flattener = new Flattener(@ignore)
 
     getCSSSelectors: ->
@@ -43,12 +44,15 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
         @blockify(inlineNodes, nextNode)
 
     # It is expected that the startNode and endNode have the same parent.
+    #
     # If all the nodes are inline nodes, this does nothing.
+    #
     # If there are any blocks, it makes sure that all inline nodes are in a block.
-    #   We want either all the nodes to be inline or all the nodes to be blocks.
-    #   This is important because when we move these nodes up a level, we are
-    #   expecting them this way. If they aren't we may end up with mixed blocks
-    #   and inlines at the top level which is not what we want.
+    # We want either all the nodes to be inline or all the nodes to be blocks.
+    # This is important because when we move these nodes up a level, we are
+    # expecting them this way. If they aren't we may end up with mixed blocks
+    # and inlines at the top level which is not what we want.
+    #
     # It then goes and normalizes those blocks. If there are any nested blocks,
     # it flattens them. The exception are elements to ignore. These are
     # not replaced and their insides are not normalized.
@@ -65,13 +69,7 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
       blockFound = false
       if startNode and endNode
         inlineNodes = []
-        node = startNode
-        # Loop through all the nodes between and including startNode and
-        # endNode.
-        loop
-          # Grab all relevant info first because the node may be removed.
-          stop = node == endNode
-          nextSibling = node.nextSibling
+        @loopThroughNodes startNode, endNode, (node) =>
 
           # If the node is to be ignored, don't replace it or normalize the inside.
           isIgnore = @shouldIgnore(node)
@@ -128,6 +126,12 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
               # Inline nodes that are ignored should still be treated as
               # inline.
               inlineNodes.push(node) unless isBlock
+              # Special Handling of PRE right now
+              #
+              # If the node is a "pre" block, then we should kill all the
+              # inner HTML since that is invalid in markup.
+              if node.tagName.toLowerCase() == "pre"
+                @cleanNodeToText(node)
             else
               # Normalize the children first and if the children have any inner
               # blocks inside, all of the children will be in blocks.
@@ -187,9 +191,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
             # If the node is a textnode, add it to the inline nodes.
             inlineNodes.push(node)
 
-          # If we are at the endNode break out of the loop.
-          break if stop
-          node = nextSibling
+          # # If we are at the endNode break out of the loop.
+          # break if stop
+          # node = nextSibling
 
         # If a block was found, blockify the rest of the inline nodes.
         @blockify(inlineNodes, null) if blockFound
@@ -222,12 +226,13 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
         $parent[0].insertBefore($block[0], refNode) unless $block.html().match(/^\s*$/)
 
     # Checks the node against the whitelist.
-    # If the node is a textnode, returns the textnode.
-    # If the node is an element and is on the whitelist, return the node.
-    # If the node is a not on the whitelist and a replacement can be found,
-    # replace the node with the replacement and return it.
-    # Otherwise, return null (null should only be returned if the node is on
-    # the blacklist or is inline with no replacement).
+    #
+    # * If the node is a textnode, returns the textnode.
+    # * If the node is an element and is on the whitelist, return the node.
+    # * If the node is a not on the whitelist and a replacement can be found,
+    #   replace the node with the replacement and return it.
+    # * Otherwise, return null (null should only be returned if the node is on
+    #   the blacklist or is inline with no replacement).
     #
     # TODO: Consider renaming this whitelistNode or something as this method
     # doesn't just check the whitelist, it will also make the replacement.
@@ -249,3 +254,45 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
         when "br" then blacklisted = $el.hasClass("Apple-interchange-newline")
         when "span" then blacklisted = $el.hasClass("Apple-style-span") or $el.hasClass("Apple-tab-span")
       return blacklisted
+
+    # This checks to see if the given node is an element used to denote
+    # part of a range. Currently, this method is used to cleanNodeToText.
+    #
+    # TODO:
+    # For other cleaning we are using the whitelist which contains the Range
+    # as well. This is actually somewhat unfortunate because similar code is in
+    # two different places.
+    #
+    # We should actually remove the range from the whitelist as the whitelist
+    # should actually include the elements that are permanently allowed in the
+    # HTML.
+    isRangeElement: (node) ->
+      tag = node.tagName.toLowerCase()
+      id = node.id
+      return (tag == 'span' and (id == "RANGE_START" or id == "RANGE_END")) or
+        (tag == 'img' and id == "RANGE_IMAGE")
+
+    # Cleans the node so that the only thing left is the stuff in the
+    # whitelist.
+    cleanNodeToText: (node) ->
+      @cleanNodesToText node.firstChild, node.lastChild
+
+    # It is expected that startNode and endNode both have the same parent
+    # because it is usually called from cleanNodeToText
+    cleanNodesToText: (startNode, endNode) ->
+      @loopThroughNodes startNode, endNode, (node) =>
+        if Helpers.isElement(node) && !@isRangeElement(node)
+          Helpers.replaceWithChildren(node)
+
+    loopThroughNodes: (startNode, endNode, fn) ->
+      node = startNode
+      # Loop through all the nodes between and including startNode and
+      # endNode.
+      loop
+        # Grab all relevant info first because the node may be removed.
+        stop = node == endNode
+        nextNode = node.nextSibling
+        fn node
+        node = nextNode
+        break if stop
+

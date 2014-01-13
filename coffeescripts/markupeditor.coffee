@@ -45,6 +45,7 @@ define ["jquery.custom", "snapeditor.pre", "core/browser", "core/editor.in_place
     #   e.contents = unmarked.toMarkdown(el)
 
   SnapEditor.config.behaviours.push("markdownConvert")
+  SnapEditor.config.cleaner.ignore.push("pre")
 
   # window.Editor = {}
   # window.Editor.markdown = (el, options) ->

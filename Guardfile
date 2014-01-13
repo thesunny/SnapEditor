@@ -52,13 +52,19 @@ guard :shell, all_on_start: all_on_start do
     # else
     #   n "Please check console for errors", "Build Failed", :failed
     # end
-    output = `bundle exec rake build_spec`
-    if $?.to_i == 0
-      n "Successfully built output/snapeditor_spec.js", "Spec Build Successful", :success
-    else
-      n "Please check console for errors", "Spec Build Failed", :failed
-    end
-    output
+    dev_output = `bundle exec rake build_dev`
+    spec_output = `bundle exec rake build_spec`
+
+    "-----BUILD DEV-----\n" + dev_output.split("-----")[0] + "\n" +
+    "-----BUILD SPEC-----\n" + spec_output.split("-----")[0]
+
+
+    # if $?.to_i == 0
+    #   n "Successfully built output/snapeditor_spec.js", "Spec Build Successful", :success
+    # else
+    #   n "Please check console for errors", "Spec Build Failed", :failed
+    # end
+    # output
     # output
   end
 end
