@@ -55,6 +55,71 @@ require ["jquery.custom", "plugins/enter_handler/enter_handler", "core/helpers",
         range.insert("<b></b>")
         expect(clean($div.html())).toEqual("enter<br><b></b>")
 
+    describe "#handleNewline", ->
+      range = $pre = null
+      beforeEach ->
+        $editable.html("<pre>abc\ndef\nghi</pre>")
+        $pre = $editable.find("pre")
+        range = new Range($editable[0])
+
+      it "adds a newline at the beginning of line", ->
+        if hasW3CRanges
+          # IE11 (possibly other versions) needs the setStart when its the
+          # first position only
+          range.range.setStart($pre[0].childNodes[0], 0)
+          range.range.setEnd($pre[0].childNodes[0], 0)
+        else
+          range.range.findText("a")
+        range.collapse(true).select()
+        expect($editable.text()).not.toMatch("\nabc")
+        Handler.handleNewline()
+        expect($editable.text()).toMatch("\nabc")
+
+      it "adds a newline in middle of line", ->
+        if hasW3CRanges
+          range.range.setEnd($pre[0].childNodes[0], 1)
+        else
+          range.range.findText("a")
+        range.collapse(false).select()
+        expect($editable.text()).not.toMatch("a\nbc")
+        Handler.handleNewline()
+        expect($editable.text()).toMatch("a\nbc")
+
+      it "adds a newline at the end of a line", ->
+        if hasW3CRanges
+          range.range.setEnd($pre[0].childNodes[0], 3)
+        else
+          range.range.findText("abc")
+        range.collapse(false).select()
+        if !isIE8
+          expect($editable.text()).not.toMatch("abc\n\ndef")
+        else
+          expect($editable.html()).not.toMatch("abc\r?\n\r?\ndef")
+          
+        Handler.handleNewline()
+        if !isIE8
+          expect($editable.text()).toMatch("abc\n\ndef")
+        else
+          expect($editable.html()).toMatch("abc\r?\n\r?\ndef")
+
+      it "adds a newline at the very end", ->
+        if hasW3CRanges
+          range.range.setEnd($pre[0].childNodes[0], 11)
+        else
+          range.range.findText("ghi")
+        range.collapse(false).select()
+        if !isIE8
+          expect($editable.text()).not.toMatch("ghi\n")
+        else
+          expect($editable.html()).not.toMatch("ghi\r?\n")
+        Handler.handleNewline()
+        if !isIE8
+          expect($editable.text()).toMatch("ghi\n")
+        else
+          expect($editable.html()).toMatch("ghi\r?\n")
+
+
+
     describe "#handleBlock", ->
       range = $div = null
       beforeEach ->

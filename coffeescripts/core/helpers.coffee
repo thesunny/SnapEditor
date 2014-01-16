@@ -118,17 +118,21 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     # code basis. Importantly, this shows us where newlines are.
     dumpNode: (node) ->
       if Helpers.isTextnode(node)
-        s = node.nodeValue
-        codes = []
-        for i in [0..s.length-1]
-          codes.push(s.charCodeAt(i))
-        codes = codes.join(", ")
-        console.log "\"" + s.replace(/\n/g, this.newlineSymbolUnicode) + "\" --> " + codes
+        @dumpString node.nodeValue
+        # s = node.nodeValue
       else
         attributes = []
         attributes.push " id=\"#{node.id}\"" if node.id
         attributes.push " class=\"#{node.className}\"" if node.className
         console.log "<#{node.tagName}" + attributes.join(" ") + ">"
+
+    dumpString: (s) ->
+      codes = []
+      for i in [0..s.length-1]
+        codes.push(s.charCodeAt(i))
+      codes = codes.join(", ")
+      console.log "\"" + s.replace(/\n/g, this.newlineSymbolUnicode) + "\" --> " + codes
+
 
 
     # Returns the previous/next sibling by walking up the DOM until a sibling

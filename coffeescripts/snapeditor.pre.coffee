@@ -1,8 +1,8 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, Helpers, LangEn, Dialog) ->
+define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog", "snapeditor.helpers"], ($, Helpers, LangEn, Dialog, SnapEditorHelpers) ->
   window.SnapEditor or= {}
-  $.extend(window.SnapEditor,
+  $.extend(window.SnapEditor, SnapEditorHelpers,
     #
     # PUBLIC
     #

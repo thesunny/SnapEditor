@@ -80,7 +80,7 @@ define ["snapeditor.pre", "jquery.custom", "core/helpers", "core/browser"], (Sna
     # This is used by the atomic plugin to ensure that atomic classes are
     # deleted as a group.
     getCSSSelectors: ->
-      ["hr"].concat(@api.config.eraseHandler.delete).join(",")
+      ["hr", "table", "pre"].concat(@api.config.eraseHandler.delete).join(",")
 
     shouldDelete: (node) ->
       node and Helpers.isElement(node) and $(node).filter(@getCSSSelectors()).length > 0

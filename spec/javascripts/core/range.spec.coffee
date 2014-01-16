@@ -46,7 +46,7 @@ require ["core/range"], (Range) ->
         if isGecko || isIE8 || isIE9 || isIE10 || isIE11
           expect(range.doc.title).toBe(document.title)
         else
-          expect(range.doc).toBe(document)
+          expect(range.doc == document).toBe(true)
 
       it "sets the window", ->
         range = new Range($editable[0])
