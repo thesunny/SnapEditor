@@ -42,6 +42,9 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
           break if node == newEndNode
           node = node.nextSibling
         @blockify(inlineNodes, nextNode)
+      # @loopThroughNodes startNode, endNode, (node) ->
+      #   console.log node
+
 
     # It is expected that the startNode and endNode have the same parent.
     #
@@ -126,67 +129,68 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
               # Inline nodes that are ignored should still be treated as
               # inline.
               inlineNodes.push(node) unless isBlock
+            else
               # Special Handling of PRE right now
               #
               # If the node is a "pre" block, then we should kill all the
               # inner HTML since that is invalid in markup.
               if node.tagName.toLowerCase() == "pre"
                 @cleanNodeToText(node)
-            else
-              # Normalize the children first and if the children have any inner
-              # blocks inside, all of the children will be in blocks.
-              #
-              # TODO: Consider renaming innerBlockFound to something like
-              # innerBlockMode.
-              innerBlockFound = @normalizeNodes(node.firstChild, node.lastChild)
-
-              # CHILDREN REPLACE CURRENT
-              #
-              # This section asks the question, do we want to replace the current
-              # node with its children.
-              #
-              # Checks to see if this node needs to be flattened and if it does
-              # replace the current node with the children node in the DOM.
-              #
-              # TODO:
-              # NOTE: In this check, images are identified as blocks which is
-              # not true in CSS. This is a decision we made earlier but may
-              # change in the future, especially if we turn to a markdown or
-              # other mark up style editor.
-              #
-              # !replacement means that the current node is marked to be deleted.
-              # This section deletes the current node but makes sure the
-              # children are not wiped out too. It moves the children up to
-              # replace the current node.
-              #
-              # if it is a block and it's empty, we should replace the current
-              # node with its children (i.e. delete the block). The only time
-              # we don't want to do this is if the node is an image. This is
-              # because in our current code we had decided that an image will
-              # be treated like a block.
-              #
-              # TODO: Consider not handling an image as a block because we may
-              # turn this into a mark up editor and they don't treat images
-              # as block.
-
-              if innerBlockFound or !replacement or (isBlock and !node.firstChild and node.tagName != "IMG")
-                # The first and last children may have changed after the call to
-                # @normalizeNodes. Hence, we grab them here instead of earlier in
-                # the loop.
+              else
+                # Normalize the children first and if the children have any inner
+                # blocks inside, all of the children will be in blocks.
                 #
-                # We need to grab them before the node is flattened or we'll lose
-                # the children.
-                firstChild = node.firstChild
-                lastChild = node.lastChild
-                @flattener.flatten(node)
-                # If the node was inline, take all of its children and add them to
-                # the inline nodes.
-                unless isBlock
-                  inlineNodes = inlineNodes.concat(Helpers.nodesFrom(firstChild, lastChild))
-              else if !isBlock
-                # If the node is inline, no blocks were found, and a replacement
-                # was found, add the node to the inline nodes.
-                inlineNodes.push(node)
+                # TODO: Consider renaming innerBlockFound to something like
+                # innerBlockMode.
+                innerBlockFound = @normalizeNodes(node.firstChild, node.lastChild)
+
+                # CHILDREN REPLACE CURRENT
+                #
+                # This section asks the question, do we want to replace the current
+                # node with its children.
+                #
+                # Checks to see if this node needs to be flattened and if it does
+                # replace the current node with the children node in the DOM.
+                #
+                # TODO:
+                # NOTE: In this check, images are identified as blocks which is
+                # not true in CSS. This is a decision we made earlier but may
+                # change in the future, especially if we turn to a markdown or
+                # other mark up style editor.
+                #
+                # !replacement means that the current node is marked to be deleted.
+                # This section deletes the current node but makes sure the
+                # children are not wiped out too. It moves the children up to
+                # replace the current node.
+                #
+                # if it is a block and it's empty, we should replace the current
+                # node with its children (i.e. delete the block). The only time
+                # we don't want to do this is if the node is an image. This is
+                # because in our current code we had decided that an image will
+                # be treated like a block.
+                #
+                # TODO: Consider not handling an image as a block because we may
+                # turn this into a mark up editor and they don't treat images
+                # as block.
+
+                if innerBlockFound or !replacement or (isBlock and !node.firstChild and node.tagName != "IMG")
+                  # The first and last children may have changed after the call to
+                  # @normalizeNodes. Hence, we grab them here instead of earlier in
+                  # the loop.
+                  #
+                  # We need to grab them before the node is flattened or we'll lose
+                  # the children.
+                  firstChild = node.firstChild
+                  lastChild = node.lastChild
+                  @flattener.flatten(node)
+                  # If the node was inline, take all of its children and add them to
+                  # the inline nodes.
+                  unless isBlock
+                    inlineNodes = inlineNodes.concat(Helpers.nodesFrom(firstChild, lastChild))
+                else if !isBlock
+                  # If the node is inline, no blocks were found, and a replacement
+                  # was found, add the node to the inline nodes.
+                  inlineNodes.push(node)
           else
             # If the node is a textnode, add it to the inline nodes.
             inlineNodes.push(node)
@@ -237,11 +241,11 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
     # TODO: Consider renaming this whitelistNode or something as this method
     # doesn't just check the whitelist, it will also make the replacement.
     checkWhitelist: (node) ->
-      return node unless Helpers.isElement(node)
+      return node if !Helpers.isElement(node)
       return node if @api.isAllowed(node)
       return null if @blacklisted(node)
       replacement = @api.getReplacement(node)
-      $(node).replaceElementWith(replacement) if replacement
+      $(node).replaceElementWithKeepChildren(replacement) if replacement
       return replacement
 
     # Checks to see if the node on the list is something we just want to delete.
@@ -284,6 +288,8 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
         if Helpers.isElement(node) && !@isRangeElement(node)
           Helpers.replaceWithChildren(node)
 
+    # Loops through all the nodes starting with startNode and ending with
+    # endNode. Assumes that the startNode and endNode have the same parent.
     loopThroughNodes: (startNode, endNode, fn) ->
       node = startNode
       # Loop through all the nodes between and including startNode and

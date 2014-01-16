@@ -42,6 +42,7 @@ define ["jquery.custom", "core/helpers", "lang/en", "core/dialog/dialog"], ($, H
         h4: "style-block"
         h5: "style-block"
         h6: "style-block"
+        pre: "style-block"
         table: "style-table"
         tr: "style-table-row"
         th: "style-table-cell"

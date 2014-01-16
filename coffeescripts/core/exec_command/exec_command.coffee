@@ -185,7 +185,7 @@ define ["jquery.custom", "core/exec_command/exec_command.gecko", "core/browser",
           $a = $(@editor.find("a[href=\"#{randomHref}\"]"))
           $a.each((index) ->
             insertedLinks.push($link.clone()[0])
-            $(this).replaceElementWith(insertedLinks[index])
+            $(this).replaceElementWithKeepChildren(insertedLinks[index])
           )
       # TODO: Not sure where to place the selection yet. Figure this out.
       # If links were inserted, places the selection at the end of the last link.

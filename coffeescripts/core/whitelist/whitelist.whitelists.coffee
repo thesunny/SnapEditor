@@ -1,6 +1,8 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
-# This generates the following whitelists given the whtielist:
+#
+# This generates the following arrays given the whitelist:
+#
 # * defaults
 # * byLabel
 # * byTag
@@ -108,7 +110,7 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.object"], ($,
       # Parse the rule.
       # Then create an element off of the whitelist object.
       # Then find the match.
-      @matchByElement(@parse(rule).getElement(document))
+      @matchByElement(@parse(rule).createSafeElementFromElement(document))
 
     isLabel: (label) ->
       !!label.match(/^[A-Z0-9]/)

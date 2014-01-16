@@ -97,29 +97,29 @@ require ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObjec
         expect(obj.values.styles.height).toBeTruthy()
         expect(obj.values.styles["font-size"]).toBeTruthy()
 
-    describe "#getElement", ->
+    describe "#createSafeElementFromElement", ->
       it "builds an element with the given tag and no classes and attributes", ->
         obj = new WhitelistObject("p", null, [], [])
-        $el = $(obj.getElement(document, $("<div/>")[0]))
+        $el = $(obj.createSafeElementFromElement(document, $("<div/>")[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("class")).toBeUndefined()
 
       it "builds an element with the given tag and classes and no attributes", ->
         obj = new WhitelistObject("p", null, ["normal", "highlighted"], [])
-        $el = $(obj.getElement(document, $("<div/>")[0]))
+        $el = $(obj.createSafeElementFromElement(document, $("<div/>")[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("class")).toEqual("highlighted normal")
 
       it "builds an element with the given tag and attributes and no classes", ->
         obj = new WhitelistObject("p", null, [], ["width"])
-        $el = $(obj.getElement(document, $('<div width="100px" height="200px"/>')[0]))
+        $el = $(obj.createSafeElementFromElement(document, $('<div width="100px" height="200px"/>')[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("width")).toEqual("100px")
         expect($el.attr("height")).toBeUndefined()
 
       it "builds an element with the given tag and all styles", ->
         obj = new WhitelistObject("p", null, [], ["width", "style"])
-        $el = $(obj.getElement(document, $('<div width="100px" style="background-color: pink; text-align: left;"/>')[0]))
+        $el = $(obj.createSafeElementFromElement(document, $('<div width="100px" style="background-color: pink; text-align: left;"/>')[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("width")).toEqual("100px")
         if isIE9 or isIE10 or isIE11
@@ -131,7 +131,7 @@ require ["jquery.custom", "core/whitelist/whitelist.object"], ($, WhitelistObjec
 
       it "builds an element with the given tag and styles", ->
         obj = new WhitelistObject("p", null, [], ["width", "style"], { style: ["font-size", "text-align"] })
-        $el = $(obj.getElement(document, $('<div width="100px" style="font-size: 12px; text-align: left; color: pink;"/>')[0]))
+        $el = $(obj.createSafeElementFromElement(document, $('<div width="100px" style="font-size: 12px; text-align: left; color: pink;"/>')[0]))
         expect($el.tagName()).toEqual("p")
         expect($el.attr("width")).toEqual("100px")
         if isIE9 or isIE10 or isIE11

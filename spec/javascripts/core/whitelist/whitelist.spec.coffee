@@ -24,6 +24,9 @@ require ["jquery.custom", "core/whitelist/whitelist"], ($, Whitelist) ->
           Title: "h1.title > Normal"
           Subtitle: "h2"
           Normal: "div.normal"
+          # I think this is just here to check that it doesn't crash anything
+          # because when I remove the below declaration, all the tests still
+          # pass. -SH
           "h2": "Subtitle"
           "*": "Normal"
         )

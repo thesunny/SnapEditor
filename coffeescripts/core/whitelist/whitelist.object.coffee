@@ -63,7 +63,7 @@ define ["jquery.custom", "core/helpers", "core/browser"], ($, Helpers, Browser) 
     #
     # Note: The doc needs to be passed around so that this works properly in
     # iFrames.
-    getElement: (doc, templateEl) ->
+    createSafeElementFromElement: (doc, templateEl) ->
       $el = $(doc.createElement(@tag))
       # Add the classes if there are any.
       $el.attr("class", @classes) if @classes.length > 0

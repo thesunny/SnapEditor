@@ -14,7 +14,7 @@
 #
 # NOTE: IE9+ supports W3C ranges. Therefore, it does not use this code. Please
 # take a look at range.w3c.coffee for IE9+.
-define ["core/helpers"], (Helpers) ->
+define ["core/helpers", "jquery.custom"], (Helpers, $) ->
   return {
     static:
       # Get a brand new range.
@@ -385,9 +385,28 @@ define ["core/helpers"], (Helpers) ->
       # special cases, we may need access to that node for W3C only so I have
       # not removed reference-ability in W3C. 
       insertNode: (node) ->
+        # console.log "insertNode"
+        # console.log node
+        # if Helpers.isTextNode(node)
+        #   @insertHTML(node.nodeValue)
+        # else
         div = @doc.createElement("div")
         div.appendChild(node)
         @insertHTML(div.innerHTML)
+
+      # This is a an alternate  method to insert a node into the DOM and its
+      # extremely hacky to have two versions. The reason we have it here is
+      # because when we insert a newline text node using the other #insertNode
+      # method inside of a <pre>, it ends up as nothing. This is because the
+      # other version relies on insertHTML and inside HTML, a newline means
+      # nothing and so nothing is inserted. This version is more roundabout
+      # but produces the results we want.
+      insertNodeAlternate: (node) ->
+        doc = @doc
+        @keepRange ->
+          rangeEnd = doc.getElementById "RANGE_START"
+          $(rangeEnd).before(node)
+        @insertHTML("")
 
       # Insert HTML and set the selection to after the HTML.
       #   text|

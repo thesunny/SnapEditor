@@ -10,6 +10,9 @@ define ["snapeditor.pre", "jquery.custom", "plugins/helpers"], (SnapEditor, $, H
     h4: text: SnapEditor.lang.h4, html: getHTML(4), shortcut: "ctrl+alt+4"
     h5: text: SnapEditor.lang.h5, html: getHTML(5), shortcut: "ctrl+alt+5"
     h6: text: SnapEditor.lang.h6, html: getHTML(6), shortcut: "ctrl+alt+6"
+    # TODO:
+    # Add the html stuff here
+    pre: text: SnapEditor.lang.pre, html: "<span class=\"snapeditor_style_block_pre\">#{SnapEditor.lang.pre}</span>", shortcut: "ctrl+alt+9"
   )
   SnapEditor.addStyleList("styleBlock", SnapEditor.lang.styleBlock, "style-block")
   # These are just aliases to simply named buttons. They are here because
@@ -17,7 +20,7 @@ define ["snapeditor.pre", "jquery.custom", "plugins/helpers"], (SnapEditor, $, H
   # that they don't conflict with pre-existing actions; however, we want
   # buttons like "p" and "h1" to be available with a simple name. This makes
   # that possible
-  for button, i in ["p", "h1", "h2", "h3", "h4", "h5", "h6"]
+  for button, i in ["p", "h1", "h2", "h3", "h4", "h5", "h6", "pre"]
     SnapEditor.buttons[button] = SnapEditor.buttons[SnapEditor.getStyleKey(button)]
 
   # This is styling for the toolbar. .snapeditor_style_block_h1 is automatically,
@@ -30,7 +33,10 @@ define ["snapeditor.pre", "jquery.custom", "plugins/helpers"], (SnapEditor, $, H
     .snapeditor_style_block_h4 { margin: 0; padding: 0; font-size: 140%; }
     .snapeditor_style_block_h5 { margin: 0; padding: 0; font-size: 120%; }
     .snapeditor_style_block_h6 { margin: 0; padding: 0; font-size: 110%; }
+    .snapeditor_style_block_pre { margin: 0; padding: 0; font-family: Consolas, "Lucida Console", monospace; }
   """ + Helpers.createStyles("styleBlock", 29 * -26)
+  # TODO:
+  # Need to add a style with an image for <pre>
   for button, i in ["p", "h1", "h2", "h3", "h4", "h5", "h6"]
     styles += Helpers.createStyles(button, (i + 6) * -26) # sprite position * step
   SnapEditor.insertStyles("plugins_style_block", styles)

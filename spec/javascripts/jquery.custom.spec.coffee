@@ -245,10 +245,10 @@ require ["jquery.custom"], ($) ->
         expect(clean($first.html())).toEqual("<span></span>this is <span>in the</span> first ")
         expect(clean($second.html())).toEqual("<b>and</b> this is in the <i>second</i>")
 
-    describe "#replaceElementWith", ->
+    describe "#replaceElementWithKeepChildren", ->
       it "replaces the element with the given element and retains all the children", ->
         $el = $("<div>this is <b>some</b> text <i>to be<span>preserved</span></i></div>").appendTo($editable)
-        $el.replaceElementWith($("<p>"))
+        $el.replaceElementWithKeepChildren($("<p>"))
         expect(clean($editable.html())).toEqual("<p>this is <b>some</b> text <i>to be<span>preserved</span></i></p>")
 
     describe "#contexts", ->

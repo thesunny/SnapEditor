@@ -1,6 +1,14 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
 #
+# This Whitelist object is a container for the Whitelists object which itself
+# contains a bunch of WhitelistObject objects. It has a few methods that are
+# used by the normalizer.
+#
+# * isAllowed: Returns true if the element should be allowed in the document
+#   at all.
+# * getReplacement: 
+#
 # The objects returned contains the following:
 # * tag: tag name
 # * classes: an array of classes
@@ -32,7 +40,7 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"],
     # Get the default element for the given key.
     getDefaultFor: (key, doc) ->
       def = @whitelists.getByDefault(key)
-      def and def.getElement(doc)
+      def and def.createSafeElementFromElement(doc)
 
     # MAIN PUBLIC:
     # Returns true if the el is whitelisted. False otherwise.
@@ -45,22 +53,25 @@ define ["jquery.custom", "core/helpers", "core/whitelist/whitelist.whitelists"],
     getReplacement: (el) ->
       $el = $(el)
       tag = $el.tagName()
-      replacement = @whitelists.getByDefault(tag) or null
-      replacement = @getReplacementByTag(tag) unless replacement
-      replacement = @whitelists.getByDefault("*") if !replacement and Helpers.isBlock(el)
-      return replacement and replacement.getElement(Helpers.getDocument(el), el)
+      whitelistObject = @whitelists.getByDefault(tag) or null
+      whitelistObject = @getReplacementByTag(tag) unless whitelistObject
+      whitelistObject = @whitelists.getByDefault("*") if !whitelistObject and Helpers.isBlock(el)
+      return whitelistObject and whitelistObject.createSafeElementFromElement(Helpers.getDocument(el), el)
 
     # MAIN PUBLIC:
     # Finds the element that should be after the given el after the user
     # presses enter.
     getNext: (el) ->
-      next = @whitelists.getByDefault("*")
-      throw "The whitelist is missing a '*' default" unless next
+      defaultWhitelistObject = @whitelists.getByDefault("*")
+      throw "The whitelist is missing a '*' default" unless defaultWhitelistObject
       match = @match(el)
-      # Find the matching next whitelist object. In case there is no match,
+      # Find the matching next WhitelistObject. In case there is no match,
       # keep the default.
-      next = @whitelists.match(match.next) or next if match and match.next
-      return next.getElement(Helpers.getDocument(el))
+      nextWhitelistObject = if match and match.next     
+        @whitelists.match(match.next)
+      else
+        defaultWhitelistObject 
+      return nextWhitelistObject.createSafeElementFromElement(Helpers.getDocument(el))
 
     # Finds the object that matches the given el or else returns null.
     match: (el) ->

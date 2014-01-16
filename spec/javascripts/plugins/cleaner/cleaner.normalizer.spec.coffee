@@ -217,3 +217,9 @@ require ["jquery.custom", "plugins/cleaner/cleaner.normalizer", "core/helpers"],
         $div = $('<div>before text <span class="ignore">ignore me</span> after text<p>block</p></div>').appendTo($editable)
         expect(normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)).toBeTruthy()
         expect(clean($editable.html())).toEqual("<div><div>before text <span class=ignore>ignore me</span> after text</div><p>block</p></div>")
+
+      it "cleans any HTML inside of PRE elements", ->
+        $div = $('<pre>This is <b>bold</b> but it shouldn\'t be</pre>')
+        p "HELLO"
+        p normalizer.normalizeNodes($div[0].firstChild, $div[0].lastChild)
+        p $editable.html()

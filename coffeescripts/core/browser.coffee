@@ -53,6 +53,8 @@ define ["jquery.custom"], ($) ->
 
   hasW3CRanges = !!window.getSelection
 
+  console.log "hasW3CRanges", hasW3CRanges
+
   isSupported = isIE7 || isIE8 || isIE9 || isIE10 || isIE11 || isGecko || isWebkit
 
   return {

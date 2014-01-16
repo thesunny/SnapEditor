@@ -18,6 +18,7 @@ SnapEditor.lang = {
   "h4": "Überschrift 4",
   "h5": "Überschrift 5",
   "h6": "Überschrift 6",
+  "pre": "Code",
   "alignment": "Ausrichtung",
   "alignLeft": "Linksbündig",
   "alignCentre": "Zentriert",

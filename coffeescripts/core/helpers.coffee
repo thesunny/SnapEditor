@@ -11,6 +11,12 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
     # Used when dealing with text like in regex or textnodes.
     zeroWidthNoBreakSpaceUnicode: "\ufeff"
 
+    # Unicode newline symbol
+    #
+    # lots of choices here:
+    # http://stackoverflow.com/questions/18927672/newline-symbol-unicode-character
+    newlineSymbolUnicode: "\u2424"
+
     buttons:
       left: 1
       middle: 2
@@ -64,6 +70,25 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
       # Check for empty text.
       !!$el.text().match(@emptyRegExp)
 
+    # Iterates through each direct child of the parent element while taking into
+    # account the fact that each element might actually be moved around or
+    # even completely removed from the DOM. To get around this, we build an
+    # Array use nextSibling and then iterate through the Array instead.
+    # TODO:
+    # Unit test this!
+    eachChild: (parentElement, fn) ->
+      # childNodesArray = []
+      # childNodes = parentElement.childNodes
+      # currentChild = parentElement.firstChild
+      # lastChild = parentElement.lastChild
+      # loop
+      #   childNodesArray.push currentChild
+      #   break if currentChild == lastChild || !currentChild?
+      #   currentChild = currentChild.nextSibling
+      childNodes = @nodesFrom parentElement.firstChild, parentElement.lastChild
+      for childNode, i in childNodes
+        fn(childNode, i)
+
     # Returns an array of the nodes between and including startNode and endNode.
     # This assumes the startNode and endNode have the same parent.
     nodesFrom: (startNode, endNode) ->
@@ -75,6 +100,36 @@ define ["jquery.custom", "core/browser", "core/helpers/helpers.keyboard"], ($, B
         break if node == endNode
         node = node.nextSibling
       return nodes
+
+    # Takes a parentElement and dumps all of its children.
+    #
+    # This method inspects textNode objects on a character code by character
+    # code basis. Importantly, this shows us where newlines are.
+    # TODO:
+    # Unit test this:
+    dumpElementChildren: (parentElement, msg="DUMP") ->
+      console.log "=====#{msg}====="
+      for node in parentElement.childNodes
+        @dumpNode node
+
+    # Takes a node and dumps it to the console. 
+    #
+    # This method inspects textNode objects on a character code by character
+    # code basis. Importantly, this shows us where newlines are.
+    dumpNode: (node) ->
+      if Helpers.isTextnode(node)
+        s = node.nodeValue
+        codes = []
+        for i in [0..s.length-1]
+          codes.push(s.charCodeAt(i))
+        codes = codes.join(", ")
+        console.log "\"" + s.replace(/\n/g, this.newlineSymbolUnicode) + "\" --> " + codes
+      else
+        attributes = []
+        attributes.push " id=\"#{node.id}\"" if node.id
+        attributes.push " class=\"#{node.className}\"" if node.className
+        console.log "<#{node.tagName}" + attributes.join(" ") + ">"
+
 
     # Returns the previous/next sibling by walking up the DOM until a sibling
     # is found. Returns null if no sibling is found.

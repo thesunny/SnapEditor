@@ -145,7 +145,7 @@ define ["jquery", "mustache"], ->
     return [$first, this]
 
   # Replaces the current element with the given el, leaving the children intact.
-  $.fn.replaceElementWith = (el) ->
+  $.fn.replaceElementWithKeepChildren = (el) ->
     $el = $(el).empty().append(this[0].childNodes)
     this.replaceWith($el)
 

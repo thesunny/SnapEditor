@@ -86,7 +86,7 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       @config.lang = $.extend({}, SnapEditor.lang)
       @config.activateByLinks = @defaults.activateByLinks
       @config.cleaner or= {}
-      @config.cleaner.whitelist or = @defaults.cleaner.whitelist
+      @config.cleaner.whitelist or= @defaults.cleaner.whitelist
       @config.cleaner.ignore or= @defaults.cleaner.ignore
       @config.eraseHandler or= {}
       @config.eraseHandler.delete or= @defaults.eraseHandler.delete
@@ -168,7 +168,13 @@ define ["jquery.custom", "core/browser", "core/helpers", "core/events", "core/as
       # but if the user has set h1 as the first tyle, h1 will be used as the
       # default.
       # TODO: Consider explicitly setting defaultStyle in the config. -SH
-      @addWhitelistRule("*", SnapEditor.getSelectorFromStyleKey(@getStyleButtonsByTag("style-block")[0] or "p > p"))
+      # @addWhitelistRule("*", SnapEditor.getSelectorFromStyleKey(@getStyleButtonsByTag("style-block")[0] or "p > p"))
+      #
+      # NOTE:
+      # I think it makes sense that the paragraph tag is always the default
+      # style so for now, I'm hard coding it.
+      @addWhitelistRule("*", "p > p")
+
 
     domEvents: [
       "mouseover"
