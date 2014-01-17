@@ -11,7 +11,7 @@ define ["jquery.custom", "core/helpers"], ($, Helpers) ->
       html: options.html
       action: name
       onInclude: (e) ->
-        if shortcut.length > 0
+        if shortcut && shortcut.length > 0
           SnapEditor.shortcuts[name] =
             key: shortcut
             action: name

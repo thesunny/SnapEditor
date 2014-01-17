@@ -72,8 +72,7 @@ define ["snapeditor.pre", "jquery.custom", "core/helpers", "core/browser"], (Sna
       # It doesn't matter when you hit enter the first time,
       # even if you type, hit enter, type then hit enter, the second
       # enter will work. If you open up the DOM inspector and watch it
-      # while hitting enter, it will actually work. It's most likely to
-      # do with where the cursor 
+      # while hitting enter, it will actually work.
       #
       # Adding the zeroWidthNoBreakSpaceUnicode fixes the problem.
       #

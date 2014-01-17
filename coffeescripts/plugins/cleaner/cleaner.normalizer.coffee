@@ -8,7 +8,6 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
     # * api - SnapEditor API
     # * ignore - an array of selectors to ignore
     constructor: (@api, @ignore) ->
-      console.log @ignore
       @flattener = new Flattener(@ignore)
 
     getCSSSelectors: ->

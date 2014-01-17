@@ -21,10 +21,12 @@ define [
   "plugins/image/image"
   "plugins/horizontal_rule/horizontal_rule"
   "plugins/print/print"
-], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Error, Inline, StyleBlock, Align, List, Link, Table, Image, HorizontalRule, Print) ->
+  "plugins/code_block/code_block"
+  "plugins/blockquote/blockquote"
+], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Error, Inline, StyleBlock, Align, List, Link, Table, Image, HorizontalRule, Print, Blockquote) ->
   SnapEditor.buttons.toolbar =
     items: [
-      "styleBlock", "|", "bold", "italic", "|", "orderedList", "unorderedList", "outdent", "indent", "|", "link", "table", "image"
+      "styleBlock", "|", "bold", "italic", "|", "orderedList", "unorderedList", "outdent", "indent", "|", "link", "table", "pre", "image"
     ]
   SnapEditor.config =
     toolbar: "toolbar"

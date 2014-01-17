@@ -31,13 +31,6 @@ define ["jquery.custom"], ($) ->
   else if browser.webkit
     browser.safari = true
 
-  # TODO:
-  # This is just temporarily here to help the spec helper
-  # window.jQuery.browser = browser
-
-  console.log navigator.userAgent
-  # end code borrowed from jQuery
-
   isIE = browser.msie || navigator.userAgent.indexOf("Trident/7.0") != -1
   ieVersion = isIE and document.documentMode
   isIE7 = isIE and ieVersion == 7
@@ -52,8 +45,6 @@ define ["jquery.custom"], ($) ->
   isWebkit = browser.webkit
 
   hasW3CRanges = !!window.getSelection
-
-  console.log "hasW3CRanges", hasW3CRanges
 
   isSupported = isIE7 || isIE8 || isIE9 || isIE10 || isIE11 || isGecko || isWebkit
 
