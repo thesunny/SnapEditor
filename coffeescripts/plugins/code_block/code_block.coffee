@@ -48,11 +48,3 @@ define ["snapeditor.pre", "jquery.custom", "plugins/helpers"], (SnapEditor, $, H
 
   SnapEditor.defButtons
     pre: Helpers.createButton("pre")
-
-  # TODO:
-  # Styling for a code block button!
-  #
-  # styles = ""
-  # for button, i in ["bold", "italic", "underline", "subscript", "superscript", "strikethrough"]
-  #   styles += Helpers.createStyles(button, i * -26) # sprite position * step
-  # SnapEditor.insertStyles("plugins_inline", styles)

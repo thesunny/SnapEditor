@@ -10,6 +10,69 @@ define ["jquery", "mustache"], ->
     return null unless this.length > 0
     this[0].tagName.toLowerCase()
 
+  # TODO:
+  # Unit test this baby!
+  $.fn.commonAncestor = () ->
+    parents = []
+    minlen = Infinity
+
+    $(this).each ->
+      curparents = $(this).parents()
+      parents.push(curparents)
+      minlen = Math.min(minlen, curparents.length)
+
+    for parent, i in parents
+      parent = parent.slice(parent.length - minlen)
+
+    # Iterate until equality is found
+    for parent, i in parents
+      equal = true
+      for subparent, j in parents
+        if parents[j][i] != parents[0][i]
+          equal = false
+          break
+      if equal
+        return $(parents[0][i])
+    return $([]);
+
+  # $.fn.commonClosest = (selector, context) ->
+  #   origArgs = arguments
+  #   parents = []
+  #   minlen = Infinity
+
+  #   $(this).each ->
+  #     self = $(this)
+  #     curClosests = self.closest(this, [selector, context])
+  #     p curClosests
+
+  # $.fn.commonClosest = function() {
+  #   var parents = [];
+  #   var minlen = Infinity;
+
+  #   $(this).each(function() {
+  #     var curparents = $(this).parents();
+  #     parents.push(curparents);
+  #     minlen = Math.min(minlen, curparents.length);
+  #   });
+
+  #   for (var i in parents) {
+  #     parents[i] = parents[i].slice(parents[i].length - minlen);
+  #   }
+
+  #   // Iterate until equality is found
+  #   for (var i = 0; i < parents[0].length; i++) {
+  #     var equal = true;
+  #     for (var j in parents) {
+  #       if (parents[j][i] != parents[0][i]) {
+  #         equal = false;
+  #         break;
+  #       }
+  #     }
+  #     if (equal) return $(parents[0][i]);
+  #   }
+  #   return $([]);
+  # }
+
   # Mimics MooTools getCoordinates.
   $.fn.getCoordinates = (withPadding = false, withBorderWidth = false) ->
     offset = this.offset()

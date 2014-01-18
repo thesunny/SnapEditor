@@ -135,6 +135,10 @@ define ["jquery.custom", "core/helpers", "plugins/cleaner/cleaner.flattener"], (
               # inner HTML since that is invalid in markup.
               if node.tagName.toLowerCase() == "pre"
                 @cleanNodeToText(node)
+              # Special handling of <blockquote> right now to allow nesting.
+              # Later, we should be able to specify some special types.
+              else if node.tagName.toLowerCase() == "blockquote"
+                @normalizeNodes node.firstChild, node.lastChild
               else
                 # Normalize the children first and if the children have any inner
                 # blocks inside, all of the children will be in blocks.

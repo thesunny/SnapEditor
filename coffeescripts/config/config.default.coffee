@@ -26,7 +26,7 @@ define [
 ], (Activate, Deactivate, Editable, Cleaner, EraseHandler, EnterHandler, EmptyHandler, Autoscroll, Atomic, Edit, Error, Inline, StyleBlock, Align, List, Link, Table, Image, HorizontalRule, Print, Blockquote) ->
   SnapEditor.buttons.toolbar =
     items: [
-      "styleBlock", "|", "bold", "italic", "|", "orderedList", "unorderedList", "outdent", "indent", "|", "link", "table", "pre", "image"
+      "styleBlock", "|", "bold", "italic", "|", "orderedList", "unorderedList", "outdent", "indent", "|", "blockquoteOutdent", "blockquoteIndent", "|", "link", "table", "pre", "image"
     ]
   SnapEditor.config =
     toolbar: "toolbar"

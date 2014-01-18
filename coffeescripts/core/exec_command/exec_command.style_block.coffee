@@ -1,13 +1,13 @@
 # Copyright (c) 2012-2013 8098182 Canada Inc. All rights reserved.
 # For licensing, see LICENSE.
 define ["jquery.custom", "constants", "core/helpers"], ($, Constants, Helpers) ->
-  paragraphTags = Constants.paragraphTags
-  listTags = Constants.listTags
-  tableTags = Constants.tableTags
   # paragraphTags = ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "pre"]
   # listTags = ["ul", "ol", "li"]
   # tableTags = ["table", "tr", "th", "td"]
-  blockTags = paragraphTags.concat(listTags).concat(tableTags)
+  paragraphTags = Constants.paragraphTags
+  listTags = Constants.listTags
+  tableTags = Constants.tableTags
+  blockTags = Constants.blockTags
 
   return {
     # Style is in the form of a CSS selector on a single element.

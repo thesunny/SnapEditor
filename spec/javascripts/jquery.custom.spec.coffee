@@ -14,6 +14,24 @@ require ["jquery.custom"], ($) ->
         $el = $('<div id="el"></div>').appendTo($editable)
         expect($el.tagName()).toEqual("div")
 
+    # describe "#commonClosest", ->
+    #   beforeEach ->
+    #     $el = $("""
+    #       <div id="outer">
+    #         <ul id="ul-1">
+    #           <li id="li-1-1">1-1</li>
+    #           <li id="li-1-2">1-2</li>
+    #         </ul>
+    #         <ul id="ul-2">
+    #           <li id="li-2-1">2-1</li>
+    #           <li id="li-2-2">2-2</li>
+    #         </ul>
+    #       </div>
+    #     """).appendTo($editable)
+    #   it "returns the closest of one element", ->
+    #     p "commonClosest"
+    #     p $('#li-1').commonClosest("li", $editable)
+
     describe "#getCoordinates", ->
       it "returns the correct coordinates", ->
         $el = $('<div id="el"></div>').appendTo($editable)
