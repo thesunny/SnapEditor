@@ -62,7 +62,11 @@ Paragraph 3
 
         // Editor.markdown('meditor-textarea')
         // $(function () {
-        editor = new Meditor('meditor-textarea');
+        editor = new Meditor('meditor-textarea', {
+          onSave: function (e) {
+            console.log(e)
+          }
+        });
         editor.formEditor.on("snapeditor.update_textarea", function (e) {
           // console.log("HERE");
           $('#markdown').val(e.contents);

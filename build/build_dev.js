@@ -8,7 +8,7 @@ For licensing, see LICENSE.
     excludeCoffeeScript: true
   },
   name: "../build/almond.js",
-  include: "snapeditor",
+  include: [ "snapeditor", "markupeditor" ],
   out: "../output/snapeditor_dev.js",
   optimize: "none",
   // wrap: {

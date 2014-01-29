@@ -2,19 +2,6 @@
 # For licensing, see LICENSE.
 define ["snapeditor.pre", "jquery.custom", "plugins/helpers"], (SnapEditor, $, Helpers) ->
   insertCodeBlock = (e) ->
-
-    # TODO:
-    # Right now this just inserts some HTML but we actually want this to work
-    # like the table plugin does. In particular, we have to:
-    #
-    # * Place the selection inside the <pre></pre>
-    # * Add the default block only if it is the last element on a page
-    # 
-    # This should all happen in our API in my opinion. Something like
-    # 
-    #     insertBlock(nodeToInsert, nodeToSelect=nodeToInsert)
-    #
-    # 
     # TODO:
     # CHROME ENTER bug
     # There is a really weird bug in chrome. After you insert a code block
@@ -34,13 +21,20 @@ define ["snapeditor.pre", "jquery.custom", "plugins/helpers"], (SnapEditor, $, H
     # the newline character is there, but the visible break does not appear
     # until you type another character.
     api = e.api
+
+    # Handle the special case when inserting at the end of the editable
+    # area.
+    isEndOfEditableArea = api.isEndOfElement(api.el)
+
     # We add in the zeroWidthNoBreakSpace because otherwise Chrome shows a
     # squished version of the <pre> element. The zero width space gives the
     # <pre> some height.
-    api.insert("<pre id=\"INSERTED_CODE_BLOCK\">#{Helpers.zeroWidthNoBreakSpace}</pre><p></p>")
+    el = api.insert("<pre id=\"INSERTED_CODE_BLOCK\">#{Helpers.zeroWidthNoBreakSpace}</pre><p></p>")
     elToSelect = api.doc.getElementById("INSERTED_CODE_BLOCK")
     api.selectEndOfElement(elToSelect)
-    api.select()
+    if isEndOfEditableArea
+      $block = $(api.getDefaultBlock()).html(Helpers.zeroWidthNoBreakSpace)
+      $block.insertAfter(elToSelect)    
     api.clean()
 
   SnapEditor.defActions

@@ -56,7 +56,10 @@ define ["jquery.custom", "snapeditor.pre", "core/browser", "core/editor.in_place
 
   class Meditor
     constructor: (el, @options) ->
-      @formEditor = new SnapEditor.Form(el, config)
+      $.extend(@options, config)
+      console.log "Meditor#constructor"
+      console.log @options
+      @formEditor = new SnapEditor.Form(el, @options)
 
   window.Meditor = Meditor
 
